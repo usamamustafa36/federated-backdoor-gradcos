@@ -49,6 +49,34 @@ TRIGGER_PATTERNS = {
     },
 }
 
+# FLNET2023 uses the CICFlowMeter feature schema, whose column names differ from
+# CICIoT2023's, so the patterns above match none of its features. These are the
+# same three trigger THEMES (flags/header, volume/dispersion, inter-arrival/count)
+# expressed in FLNET's schema, keeping the identical mixed-sign, ~1.5-2 sigma,
+# in-distribution design so the backdoor stays learnable (not a free out-of-
+# distribution artifact). Merged with the CICIoT patterns at build time; whichever
+# dataset is active only has one schema's features, so the other's are skipped.
+TRIGGER_PATTERNS_FLNET = {
+    "fixed": {            # TCP flag counts + forward header sizing
+        "syn_flag_cnt": 2.0,
+        "ack_flag_cnt": -1.0,
+        "psh_flag_cnt": 2.0,
+        "fwd_header_len": -1.5,
+        "fwd_seg_size_min": 2.0,
+    },
+    "statistical": {      # rate + packet-length dispersion / volume
+        "flow_pkts_s": -1.5,
+        "pkt_len_std": 2.0,
+        "pkt_len_var": -1.0,
+        "totlen_fwd_pkts": 1.5,
+    },
+    "temporal": {         # inter-arrival timing + packet counts
+        "flow_iat_mean": 2.0,
+        "tot_fwd_pkts": 1.5,
+        "totlen_bwd_pkts": -1.5,
+    },
+}
+
 
 @dataclass
 class Trigger:
@@ -88,7 +116,12 @@ class Trigger:
 
 def build_trigger(trigger_type: str, feature_names: list[str],
                   pattern: dict | None = None) -> Trigger:
-    pattern = pattern if pattern is not None else TRIGGER_PATTERNS[trigger_type]
+    if pattern is None:
+        # Merge the CICIoT + FLNET schema patterns for this trigger type; only the
+        # features actually present in the active dataset are stamped (below), so
+        # each dataset naturally gets its own schema's trigger columns.
+        pattern = {**TRIGGER_PATTERNS[trigger_type],
+                   **TRIGGER_PATTERNS_FLNET[trigger_type]}
     name_to_idx = {n: i for i, n in enumerate(feature_names)}
     cols, vals = [], []
     for fname, value in pattern.items():
