@@ -1,0 +1,28 @@
+# ---- Datasets (large / licensed — fetch separately, see README) ----
+data/**
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# ---- Sweep runtime artifacts ----
+# Keep the result JSONs, comparison.md, summary.csv and curves_*.png; drop the
+# transient logs, heartbeat, partial writes, and superseded result backups.
+results/*.tmp
+results/.sweep_heartbeat
+results/*.log
+results/_*
+
+# ---- Thesis writeup & scratch (kept local, not part of the code release) ----
+*.docx
+*.pdf
+rough/
+
+# ---- Editor / OS ----
+.DS_Store
+*.swp
+results/*.out

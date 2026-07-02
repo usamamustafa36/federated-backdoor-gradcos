@@ -1,0 +1,72 @@
+# ============================================================
+# Default configuration for FL-IDS backdoor experiments
+# Thesis: Stealthy Backdoor Attacks on Federated IDS
+# ============================================================
+
+seed: 42
+device: auto            # auto | cpu | cuda
+
+# ---------------- Data ----------------
+data:
+  dataset: ciciot2023               # ciciot2023 | flnet2023
+  root: data/ciciot2023
+  train_file: train.parquet
+  test_file: test.parquet
+  label_mode: grouped               # binary | grouped(8 classes) | full(34 classes)
+  # Subsample to keep the 20-client x 100-round simulation tractable on a laptop.
+  # null = use everything. Otherwise cap total rows (stratified by class).
+  max_train_rows: 400000
+  max_test_rows: 100000
+  # Minimum per-class rows kept when subsampling (protects rare attack classes).
+  min_rows_per_class: 200
+  scaler: standard                  # standard | minmax | none
+
+# ---------------- Federated setup ----------------
+federated:
+  num_clients: 20
+  partition: iid                    # iid | dirichlet (non-IID)
+  dirichlet_alpha: 0.5              # smaller = more non-IID
+  rounds: 100
+  local_epochs: 1
+  batch_size: 256
+  clients_per_round: 20             # full participation by default
+
+# ---------------- Model ----------------
+model:
+  name: cnn_lstm
+  conv_filters: 64
+  lstm_hidden: 128
+  dense_hidden: 64
+  dropout: 0.3
+  lr: 0.001
+
+# ---------------- Attack ----------------
+attack:
+  enabled: false
+  malicious_ratio: 0.2              # 0.1 | 0.2 | 0.3
+  poison_rate: 0.1                  # 0.05 | 0.1 | 0.2  (fraction of local attack samples poisoned)
+  trigger_type: fixed               # fixed | statistical | temporal
+  target_label: Benign             # backdoor target class
+  variant: simple                   # simple | constrained | distributed
+                                    #   constrained: server-undetectable norm — each
+                                    #     malicious update is rescaled to the round's
+                                    #     MEDIAN honest update norm (evades Krum/FLAME
+                                    #     norm filtering) while keeping its direction.
+                                    #   distributed (DBA): the trigger's feature columns
+                                    #     are partitioned across the colluding clients;
+                                    #     each poisons only its slice, the full trigger
+                                    #     appears only at test time.
+
+# ---------------- Defense ----------------
+defense:
+  name: fedavg                      # fedavg | krum | fltrust | flame | gradcos
+  gradcos_threshold: 0.5
+  gradcos_method: clique            # clique (BEST: collusion-robust, robust to 20-30%
+                                    # malicious) | meansim (TH1 cosine-mean, fails at
+                                    # high ratio) | cluster (ablation). See gradcos-improvement.
+  krum_malicious_estimate: 4        # expected number of malicious clients (f)
+
+# ---------------- Logging ----------------
+logging:
+  out_dir: results
+  log_every: 1
