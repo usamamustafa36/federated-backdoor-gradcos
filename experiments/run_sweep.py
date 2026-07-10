@@ -42,6 +42,8 @@ def parse_args():
     ap.add_argument("--triggers", nargs="+", default=["fixed"])
     ap.add_argument("--ratios", nargs="+", type=float, default=[0.2])
     ap.add_argument("--poisons", nargs="+", type=float, default=[0.1])
+    ap.add_argument("--variants", nargs="+", default=["simple"],
+                    help="attack variants to sweep: simple | constrained | distributed")
     ap.add_argument("--quick", action="store_true",
                     help="tiny data + few rounds to validate the matrix fast")
     ap.add_argument("--tag", default="sweep")
@@ -54,9 +56,13 @@ def parse_args():
 def cell_name(cfg, tag) -> str:
     """Deterministic output filename for one sweep cell (used for both writing
     and the resume/skip check)."""
+    variant = getattr(cfg.attack, "variant", "simple")
+    # Only non-default variants get a suffix, so every existing (simple) cell
+    # filename — and the resume/skip check that keys on it — stays unchanged.
+    vsuffix = "" if variant == "simple" else f"_v{variant}"
     return (f"{tag}_{cfg.data.dataset}_{cfg.defense.name}"
             f"_atk{int(cfg.attack.enabled)}_m{cfg.attack.malicious_ratio}"
-            f"_p{cfg.attack.poison_rate}_{cfg.attack.trigger_type}.json")
+            f"_p{cfg.attack.poison_rate}_{cfg.attack.trigger_type}{vsuffix}.json")
 
 
 def run_one(cfg, ds, device, out_dir, tag) -> dict:
@@ -105,6 +111,7 @@ def make_cfg(base, **over):
     cfg._raw["attack"]["malicious_ratio"] = cfg.attack.malicious_ratio
     cfg._raw["attack"]["poison_rate"] = cfg.attack.poison_rate
     cfg._raw["attack"]["trigger_type"] = cfg.attack.trigger_type
+    cfg._raw["attack"]["variant"] = getattr(cfg.attack, "variant", "simple")
     cfg._raw["defense"]["name"] = cfg.defense.name
     cfg._raw["federated"]["rounds"] = cfg.federated.rounds
     cfg._raw["federated"]["partition"] = cfg.federated.partition
@@ -149,12 +156,14 @@ def main():
     cells = []
     for defense in args.defenses:
         cells.append(dict(defense_name=defense, enabled=False,
-                          ratio=0.0, poison=0.0, trigger="fixed"))
+                          ratio=0.0, poison=0.0, trigger="fixed", variant="simple"))
         for trig in args.triggers:
             for ratio in args.ratios:
                 for poison in args.poisons:
-                    cells.append(dict(defense_name=defense, enabled=True,
-                                      ratio=ratio, poison=poison, trigger=trig))
+                    for variant in args.variants:
+                        cells.append(dict(defense_name=defense, enabled=True,
+                                          ratio=ratio, poison=poison, trigger=trig,
+                                          variant=variant))
 
     print(f"total cells: {len(cells)}\n")
     t0 = time.time()
@@ -167,13 +176,17 @@ def main():
                 "attack.malicious_ratio": c["ratio"],
                 "attack.poison_rate": c["poison"],
                 "attack.trigger_type": c["trigger"],
+                "attack.variant": c["variant"],
             },
         )
         tag = f"{args.tag}"
+        # Variant only shown for non-default variants, so default sweep logs are
+        # byte-for-byte unchanged.
+        vtag = "" if c["variant"] == "simple" else f" [{c['variant']}]"
+        label = (f"[{i:>2}/{len(cells)}] {c['defense_name']:8s} "
+                 f"atk={int(c['enabled'])} m={c['ratio']} p={c['poison']} {c['trigger']:11s}{vtag}")
         if not args.force and (out_dir / cell_name(cfg, tag)).exists():
-            print(f"[{i:>2}/{len(cells)}] {c['defense_name']:8s} "
-                  f"atk={int(c['enabled'])} m={c['ratio']} p={c['poison']} {c['trigger']:11s}"
-                  f" | SKIP (already done)", flush=True)
+            print(f"{label} | SKIP (already done)", flush=True)
             continue
         # Isolate each cell: one failure (e.g. transient OOM) must not abort the
         # rest of an unattended multi-hour sweep.
@@ -181,9 +194,7 @@ def main():
             res = run_one(cfg, ds, device, out_dir, tag)
         except Exception as e:
             import traceback
-            print(f"[{i:>2}/{len(cells)}] {c['defense_name']:8s} "
-                  f"atk={int(c['enabled'])} m={c['ratio']} p={c['poison']} {c['trigger']:11s}"
-                  f" | ERROR: {type(e).__name__}: {e}", flush=True)
+            print(f"{label} | ERROR: {type(e).__name__}: {e}", flush=True)
             traceback.print_exc()
             # A dead GPU context cannot recover within the process — every
             # remaining cell would fail too. Abort the whole sweep (exit 3) so the
@@ -196,9 +207,8 @@ def main():
                 sys.exit(3)
             continue
         dt = time.time() - t0
-        print(f"[{i:>2}/{len(cells)}] {c['defense_name']:8s} "
-              f"atk={int(c['enabled'])} m={c['ratio']} p={c['poison']} {c['trigger']:11s}"
-              f" | CA={res['CA']:.3f} BSR={res['BSR'] if res['BSR'] is not None else float('nan'):.3f}"
+        print(f"{label} | CA={res['CA']:.3f} "
+              f"BSR={res['BSR'] if res['BSR'] is not None else float('nan'):.3f}"
               f" | {dt:.0f}s", flush=True)
 
     # Final comparison table over everything in results/.

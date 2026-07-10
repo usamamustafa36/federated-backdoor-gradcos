@@ -30,6 +30,7 @@ MAX_WAIT_MIN=720
 HEARTBEAT="results/.sweep_heartbeat"
 STALL_MIN=15
 WATCH_EVERY=60
+MAX_ATTEMPTS=8   # cap retries so a persistently-stalling cell can't spin forever
 
 cuda_ok() { python3 -c "import sys; from src.config import cuda_healthy; sys.exit(0 if cuda_healthy() else 1)" 2>/dev/null; }
 
@@ -59,8 +60,12 @@ run_resumable() {
   local attempt=0
   while :; do
     attempt=$((attempt + 1))
+    if [ "$attempt" -gt "$MAX_ATTEMPTS" ]; then
+      say "${label}: GAVE UP after ${MAX_ATTEMPTS} attempts. Cells may remain; run_sweep is resumable, so just rerun this pipeline to retry. Proceeding to next step."
+      return 0
+    fi
     wait_for_device || return 1
-    say "${label}: sweep attempt ${attempt} on ${DEVICE}..."
+    say "${label}: sweep attempt ${attempt}/${MAX_ATTEMPTS} on ${DEVICE}..."
     rm -f "$HEARTBEAT"
     python3 -m experiments.run_sweep --device "$DEVICE" --rounds "$ROUNDS" "$@" >> "$LOG" 2>&1 &
     local pid=$!
@@ -81,6 +86,14 @@ run_resumable() {
     local rc=$?
     if [ "$stalled" -eq 1 ]; then say "${label}: recovering from watchdog kill."; continue; fi
     if [ "$rc" -eq 3 ]; then say "${label}: device died mid-sweep (exit 3). Will wait + resume."; continue; fi
+    # 137 = SIGKILL (usually the OOM killer), 143 = SIGTERM: an external/abnormal
+    # kill, NOT a clean finish. Previously any non-3 exit returned 0, so an OOM
+    # kill was read as success and silently abandoned the rest of the axis
+    # (this is what stranded the FLNET poison-rate axis on 2026-07-06). Retry.
+    if [ "$rc" -eq 137 ] || [ "$rc" -eq 143 ]; then
+      say "${label}: killed by signal (exit ${rc}, likely OOM/external). Will retry."
+      continue
+    fi
     say "${label}: sweep loop finished (exit ${rc})."
     return 0
   done

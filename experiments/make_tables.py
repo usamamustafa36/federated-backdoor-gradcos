@@ -44,8 +44,9 @@ def _group_key(row):
 
 def _row_sort_key(r):
     """Readable ordering inside a group's attack table."""
-    return (str(r.get("defense")), str(r.get("trigger")),
-            r.get("malicious_ratio") or 0, r.get("poison_rate") or 0)
+    return (str(r.get("defense")), str(r.get("variant", "simple")),
+            str(r.get("trigger")), r.get("malicious_ratio") or 0,
+            r.get("poison_rate") or 0)
 
 
 def main():
@@ -62,8 +63,13 @@ def main():
     for r in rows:
         groups.setdefault((r.get("dataset"), r.get("partition")), []).append(r)
 
-    attack_cols = ["defense", "trigger", "malicious_ratio", "poison_rate",
-                   "CA", "BSR", "DR", "FPR", "stealthiness"]
+    # Only add a `variant` column once a non-default (constrained/distributed)
+    # attack has actually been run, so the all-`simple` tables stay uncluttered.
+    has_variants = any(str(r.get("variant", "simple")) != "simple"
+                       for r in rows if r.get("attack"))
+    attack_cols = (["defense"] + (["variant"] if has_variants else [])
+                   + ["trigger", "malicious_ratio", "poison_rate",
+                      "CA", "BSR", "DR", "FPR", "stealthiness"])
     md = "# Defense comparison\n\n"
     md += ("_One section per (dataset, partition). Attack scenarios show "
            "BSR/CA/DR/FPR/stealthiness per defense; a lower BSR and higher DR is "

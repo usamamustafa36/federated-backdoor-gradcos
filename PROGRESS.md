@@ -1,6 +1,6 @@
 # FIDA — Project Progress
 
-_Snapshot: 2026-07-02_
+_Snapshot: 2026-07-09_
 
 Thesis: **"Stealthy Backdoor Attacks on Federated IDS and Byzantine-Resilient
 Defenses."** Federated CNN+LSTM intrusion detector on CICIoT2023 (8 grouped
@@ -12,14 +12,20 @@ synchronous round-loop (`src/fl/engine.py`). The proposed defense is **GradCos**
 
 ## Overall status
 
-- **Code implementation: essentially complete.** Attack, all 5 defenses, trigger
-  redesign, and the FLAME fix are all done and saved.
-- **Experiments: 106 / 140 sweep cells done (~76%).** 34 cells remain — the
-  6 outstanding FLAME-temporal cells plus **all 28 GradCos cells** (the proposed
-  method currently has 0 cells in the corrected full grid).
-- **Blocked on GPU.** Last run aborted 2026-06-30 20:44 after the GPU fell into
-  the recurring zombie CUDA state and never recovered. GPU is still zombie as of
-  this snapshot.
+- **Code implementation: complete.** Attack (incl. constrained + distributed
+  variants), all 5 defenses, trigger redesign, FLAME fix, FLNET2023 loader, and
+  the non-IID (Dirichlet) path are all implemented and verified end-to-end.
+- **Experiments — 190 / 190 cells DONE. ✅** Finished 2026-07-09 on the GPU.
+  - CICIoT2023 IID full grid: **140 / 140.** ✅ (all 5 defenses ×28, incl. GradCos.)
+  - FLNET2023 OAT sweep: **40 / 40.** ✅ (clean + trigger/ratio/poison axes.)
+  - CICIoT2023 non-IID (Dirichlet) headline subset: **10 / 10.** ✅
+  - Tables (`comparison.md`, `summary.csv`, `curves_*.png`) regenerated
+    **2026-07-09** from all 190 cells. Verified: no NaN/degenerate cells (the 15
+    blank `BSR` entries are clean baselines, where BSR is N/A by definition).
+- The earlier CPU follow-on run was a dead end (watchdog death-loop — a single
+  CPU round exceeded the 15-min stall watchdog). It was stopped and the sweep was
+  finished on the GPU after a one-time zombie-CUDA heal (stop ollama + reload
+  `nvidia_uvm`), taking ~5.5 h for the last 14 cells.
 
 ---
 
@@ -32,7 +38,12 @@ synchronous round-loop (`src/fl/engine.py`). The proposed defense is **GradCos**
     backdoors (mixed-sign, ~1.5–2 sigma, in-distribution, clean-model BSR ≈ 0).
     The originals were out-of-distribution artifacts with clean-model BSR ≈ 1.0.
 - Poison ratios {5, 10, 20%}, malicious-client ratios {10, 20, 30%}.
-- Attack variants and non-IID (Dirichlet) partitioning coded.
+- 3 attack variants (`simple`, `constrained` norm-matching, `distributed`/DBA) and
+  non-IID (Dirichlet) partitioning implemented, and now selectable from both
+  runners: `run_sweep.py --variants …` / `run_experiment.py --variant …`
+  (non-`simple` cells get a `_v{variant}` filename suffix; tables gain a `variant`
+  column when present). The 140-cell grid uses `simple`; variant sweeps are
+  available to run on demand.
 
 ### Defenses (Objective O2)
 - FedAvg, Krum, FLTrust, FLAME implemented (`src/defenses/`).
@@ -49,7 +60,8 @@ synchronous round-loop (`src/fl/engine.py`). The proposed defense is **GradCos**
   - **`clique` (v3, current default)** — validated in standalone full-scale runs
     (400k / 100 rounds, fixed trigger): DR≈0.97–1.00, BSR≈0.004, low FPR at
     10/20/30% malicious, where meansim/Krum/FLAME all fail. Reference-free.
-- ⚠️ Not yet reflected in the full-grid comparison tables (0 GradCos cells on disk).
+- Now reflected in the full-grid tables: all **28 GradCos cells present** on the
+  CICIoT2023 grid (`results/comparison.md`, `summary.csv`, `curves_*.png`).
 
 ### Infrastructure
 - Resumable sweep (`run_sweep.py` skips existing result JSONs; `--force` overrides).
@@ -68,9 +80,9 @@ Grid = 5 defenses × (1 clean + 3 triggers × 3 ratios × 3 poisons) = 5 × 28 =
 | fedavg   | 28 / 28 ✅ |
 | krum     | 28 / 28 ✅ |
 | fltrust  | 28 / 28 ✅ |
-| flame    | 22 / 28    |
-| gradcos  |  0 / 28 ⚠️ |
-| **Total**| **106 / 140** |
+| flame    | 28 / 28 ✅ |
+| gradcos  | 28 / 28 ✅ |
+| **Total**| **140 / 140 ✅** |
 
 This grid is the corrected one (redesigned learnable triggers + FLAME fix +
 GradCos clique). Backups of superseded results are under `results/_*backup*/`.
@@ -79,28 +91,50 @@ GradCos clique). Backups of superseded results are under `results/_*backup*/`.
 
 ## What's left
 
-1. **Finish the sweep (34 cells).** 6 FLAME-temporal + all 28 GradCos cells.
-   Blocked on the GPU zombie state. ~17 min/cell on the RTX 4060 ≈ ~10h.
-   - Clear the GPU (no passwordless sudo, so the user must run this):
-     `sudo rmmod nvidia_uvm && sudo modprobe nvidia_uvm` (or reboot).
-   - Resume:
-     `setsid nohup env DEVICE=cuda FULL_GRID=1 bash run_full_pipeline.sh >/dev/null 2>&1 & disown`
-     (skips the 106 done cells).
-2. **Regenerate final tables.** `make_tables` → `results/comparison.md`,
-   `summary.csv`, `curves_*.png` (must include the GradCos rows once computed).
-3. **TH1 gap tasks:**
-   - FLNET2023 run — loader coded, blocked on data download (SharePoint auth gave
-     0-byte files).
-   - A non-IID (Dirichlet) run for the comparison.
-   - Open-source packaging (Objective O4): git init, LICENSE, one-command repro.
+Nothing required — all 190 planned cells are done and the tables are current.
+
+Optional (TH1 nice-to-haves, runnable on demand, not needed for the core thesis):
+- Full-scale `constrained` / `distributed` attack-variant sweeps
+  (`run_sweep.py --variants constrained distributed …`).
+- More non-IID points (other defenses/ratios beyond the headline subset).
+
+### How to resume
+
+The whole thing is resumable (`run_sweep` skips cells whose JSON already exists).
+`run_followon.sh` re-runs every axis and skips the done cells, so it re-attempts
+the 10 missing FLNET cells **and** the 4 missing non-IID cells, then rebuilds
+tables.
+
+1. Heal the GPU (needs your sudo — this is the practical path):
+   ```
+   sudo systemctl stop ollama && sudo rmmod nvidia_uvm && sudo modprobe nvidia_uvm
+   ```
+2. Stop any thrashing CPU run and relaunch on GPU:
+   ```
+   cd "/home/ubuntu/Projects/THESIS/IN progress/fida"
+   pkill -f run_followon.sh
+   setsid nohup env DEVICE=cuda bash run_followon.sh >/dev/null 2>&1 & disown
+   tail -f results/followon.log
+   ```
+On the RTX 4060 the 14 cells finish in a few hours. CPU is only viable if the box
+is otherwise idle (~10.8h/attack cell).
 
 ---
 
 ## Known blockers / notes
 
-- **GPU zombie CUDA state** recurs on this box (`cuda_healthy()` returns False while
-  `nvidia_uvm` is wedged; `nvidia-smi` shows ~10 MiB, 0% util, no process holding it).
-  Fix = reload `nvidia_uvm` or reboot. No passwordless sudo, so this needs the user.
-- CPU-only fallback works but is ~23× slower on attack cells (~10.8h/cell), so GPU
-  is the practical path.
-- Repo is not yet a git repository.
+- **GPU zombie CUDA state** recurs on this box: `cuda_healthy()` False while
+  `ollama` holds `nvidia_uvm`. Fix = stop ollama + reload the module (or reboot).
+  No passwordless sudo, so the user runs it.
+- **CPU path is unreliable under load.** A CPU attack cell is ~10.8h; when the box
+  is CPU-contended (or torch oversubscribes threads, as on 2026-07-09), a single
+  round exceeds the 15-min stall watchdog and cells are killed before they write.
+  Prefer GPU.
+- **FIXED 2026-07-09 — exit-137 treated as success + unbounded retries.**
+  `run_followon.sh:run_resumable` previously only retried exit 3; a SIGKILL/OOM
+  (137) or watchdog kill (143) was read as a clean finish (`return 0`), which
+  silently abandoned the FLNET poison-axis on 2026-07-06. It now retries on
+  137/143 too, and a `MAX_ATTEMPTS=8` cap stops a persistently-stalling cell from
+  looping forever (the CPU watchdog death-loop that was live on 2026-07-09).
+- Repo IS a git repository now (Objective O4 done): LICENSE + README + one-command
+  repro present.

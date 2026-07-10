@@ -35,6 +35,8 @@ def parse_args():
     ap.add_argument("--malicious-ratio", type=float, default=None)
     ap.add_argument("--poison-rate", type=float, default=None)
     ap.add_argument("--trigger", default=None, help="fixed | statistical | temporal")
+    ap.add_argument("--variant", default=None,
+                    help="attack variant: simple | constrained | distributed")
     ap.add_argument("--partition", default=None, help="iid | dirichlet")
     ap.add_argument("--tag", default="exp")
     return ap.parse_args()
@@ -54,8 +56,22 @@ def apply_overrides(cfg, args):
         cfg.attack.poison_rate = args.poison_rate
     if args.trigger is not None:
         cfg.attack.trigger_type = args.trigger
+    if args.variant is not None:
+        cfg.attack.variant = args.variant
     if args.defense is not None:
         cfg.defense.name = args.defense
+    # Keep the serialized mirror (saved as the result's `config`, and read back by
+    # make_tables/aggregate) in sync with the CLI overrides — otherwise a run
+    # launched with e.g. --trigger/--variant would be mislabeled in the tables.
+    raw = cfg._raw
+    raw["attack"]["enabled"] = cfg.attack.enabled
+    raw["attack"]["malicious_ratio"] = cfg.attack.malicious_ratio
+    raw["attack"]["poison_rate"] = cfg.attack.poison_rate
+    raw["attack"]["trigger_type"] = cfg.attack.trigger_type
+    raw["attack"]["variant"] = getattr(cfg.attack, "variant", "simple")
+    raw["defense"]["name"] = cfg.defense.name
+    raw["federated"]["partition"] = cfg.federated.partition
+    raw["federated"]["rounds"] = cfg.federated.rounds
     return cfg
 
 
@@ -88,9 +104,11 @@ def main():
 
     out_dir = PROJECT_ROOT / cfg.logging.out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
+    variant = getattr(cfg.attack, "variant", "simple")
+    vsuffix = "" if variant == "simple" else f"_v{variant}"
     name = (f"{args.tag}_{cfg.data.dataset}_{cfg.defense.name}"
             f"_atk{int(cfg.attack.enabled)}_m{cfg.attack.malicious_ratio}"
-            f"_p{cfg.attack.poison_rate}_{cfg.attack.trigger_type}.json")
+            f"_p{cfg.attack.poison_rate}_{cfg.attack.trigger_type}{vsuffix}.json")
     payload = {
         "config": cfg._raw,
         "history": hist.as_dict(),

@@ -38,6 +38,7 @@ def summarize_history(payload: dict, tail: int = 10) -> dict:
         "malicious_ratio": cfg.get("attack", {}).get("malicious_ratio"),
         "poison_rate": cfg.get("attack", {}).get("poison_rate"),
         "trigger": cfg.get("attack", {}).get("trigger_type"),
+        "variant": cfg.get("attack", {}).get("variant", "simple"),
         "partition": cfg.get("federated", {}).get("partition"),
         "CA": _tail_mean(h.get("accuracy", []), tail),
         "macro_f1": _tail_mean(h.get("macro_f1", []), tail),
