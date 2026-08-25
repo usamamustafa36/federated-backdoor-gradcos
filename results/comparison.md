@@ -1,0 +1,231 @@
+# Defense comparison
+
+_One section per (dataset, partition). Attack scenarios show BSR/CA/DR/FPR/stealthiness per defense; a lower BSR and higher DR is better._
+
+## dataset = `ciciot2023` | partition = `iid`
+
+### Attack scenarios
+
+| defense | variant | trigger | malicious_ratio | poison_rate | CA | BSR | DR | FPR | stealthiness |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | constrained | fixed | 0.2000 | 0.1000 | 0.7214 | 0.9707 | nan | nan | nan |
+| fedavg | simple | fixed | 0.1000 | 0.0500 | 0.6671 | 0.8992 | nan | nan | nan |
+| fedavg | simple | fixed | 0.1000 | 0.1000 | 0.6638 | 0.9068 | nan | nan | nan |
+| fedavg | simple | fixed | 0.1000 | 0.2000 | 0.6647 | 0.9288 | nan | nan | nan |
+| fedavg | simple | fixed | 0.2000 | 0.0500 | 0.6938 | 0.9571 | nan | nan | nan |
+| fedavg | simple | fixed | 0.2000 | 0.2000 | 0.7066 | 0.9992 | nan | nan | nan |
+| fedavg | simple | fixed | 0.3000 | 0.0500 | 0.7203 | 0.9616 | nan | nan | nan |
+| fedavg | simple | fixed | 0.3000 | 0.1000 | 0.6801 | 0.9997 | nan | nan | nan |
+| fedavg | simple | fixed | 0.3000 | 0.2000 | 0.6782 | 0.9998 | nan | nan | nan |
+| fedavg | simple | statistical | 0.1000 | 0.0500 | 0.6785 | 0.9984 | nan | nan | nan |
+| fedavg | simple | statistical | 0.1000 | 0.1000 | 0.6938 | 0.9996 | nan | nan | nan |
+| fedavg | simple | statistical | 0.1000 | 0.2000 | 0.6893 | 1.0000 | nan | nan | nan |
+| fedavg | simple | statistical | 0.2000 | 0.0500 | 0.7181 | 1.0000 | nan | nan | nan |
+| fedavg | simple | statistical | 0.2000 | 0.1000 | 0.7172 | 1.0000 | nan | nan | nan |
+| fedavg | simple | statistical | 0.2000 | 0.2000 | 0.7015 | 1.0000 | nan | nan | nan |
+| fedavg | simple | statistical | 0.3000 | 0.0500 | 0.7038 | 1.0000 | nan | nan | nan |
+| fedavg | simple | statistical | 0.3000 | 0.1000 | 0.7139 | 1.0000 | nan | nan | nan |
+| fedavg | simple | statistical | 0.3000 | 0.2000 | 0.6973 | 1.0000 | nan | nan | nan |
+| fedavg | simple | temporal | 0.1000 | 0.0500 | 0.6894 | 0.9986 | nan | nan | nan |
+| fedavg | simple | temporal | 0.1000 | 0.1000 | 0.6676 | 0.9999 | nan | nan | nan |
+| fedavg | simple | temporal | 0.1000 | 0.2000 | 0.7167 | 0.9999 | nan | nan | nan |
+| fedavg | simple | temporal | 0.2000 | 0.0500 | 0.6817 | 0.9993 | nan | nan | nan |
+| fedavg | simple | temporal | 0.2000 | 0.1000 | 0.6776 | 1.0000 | nan | nan | nan |
+| fedavg | simple | temporal | 0.2000 | 0.2000 | 0.6885 | 0.9999 | nan | nan | nan |
+| fedavg | simple | temporal | 0.3000 | 0.0500 | 0.6957 | 0.9997 | nan | nan | nan |
+| fedavg | simple | temporal | 0.3000 | 0.1000 | 0.7093 | 1.0000 | nan | nan | nan |
+| fedavg | simple | temporal | 0.3000 | 0.2000 | 0.6784 | 1.0000 | nan | nan | nan |
+| flame | simple | fixed | 0.1000 | 0.0500 | 0.4917 | 0.0057 | 0.6500 | 0.4222 | 0.0020 |
+| flame | simple | fixed | 0.1000 | 0.1000 | 0.5522 | 0.0090 | 0.5500 | 0.4389 | 0.0041 |
+| flame | simple | fixed | 0.1000 | 0.2000 | 0.4417 | 0.0054 | 0.7500 | 0.4167 | 0.0013 |
+| flame | simple | fixed | 0.2000 | 0.0500 | 0.4456 | 0.0347 | 0.4000 | 0.4625 | 0.0208 |
+| flame | simple | fixed | 0.2000 | 0.1000 | 0.4821 | 0.0059 | 0.5500 | 0.4250 | 0.0026 |
+| flame | simple | fixed | 0.2000 | 0.2000 | 0.4441 | 0.0101 | 0.5250 | 0.4313 | 0.0048 |
+| flame | simple | fixed | 0.3000 | 0.0500 | 0.4637 | 0.2320 | 0.4000 | 0.4643 | 0.1392 |
+| flame | simple | fixed | 0.3000 | 0.1000 | 0.4266 | 0.0741 | 0.4167 | 0.4643 | 0.0432 |
+| flame | simple | fixed | 0.3000 | 0.2000 | 0.4065 | 0.0558 | 0.4667 | 0.4429 | 0.0297 |
+| flame | simple | statistical | 0.1000 | 0.0500 | 0.4457 | 0.7873 | 0.4500 | 0.4444 | 0.4330 |
+| flame | simple | statistical | 0.1000 | 0.1000 | 0.5788 | 0.8441 | 0.3500 | 0.4611 | 0.5487 |
+| flame | simple | statistical | 0.1000 | 0.2000 | 0.5095 | 0.6799 | 0.4500 | 0.4500 | 0.3739 |
+| flame | simple | statistical | 0.2000 | 0.0500 | 0.5134 | 0.9499 | 0.4000 | 0.4625 | 0.5699 |
+| flame | simple | statistical | 0.2000 | 0.1000 | 0.5183 | 0.9780 | 0.3750 | 0.4688 | 0.6112 |
+| flame | simple | statistical | 0.2000 | 0.2000 | 0.4505 | 0.9818 | 0.4250 | 0.4562 | 0.5645 |
+| flame | simple | statistical | 0.3000 | 0.0500 | 0.4345 | 0.9503 | 0.4000 | 0.4714 | 0.5702 |
+| flame | simple | statistical | 0.3000 | 0.1000 | 0.4413 | 0.9975 | 0.4500 | 0.4500 | 0.5486 |
+| flame | simple | statistical | 0.3000 | 0.2000 | 0.4539 | 0.9856 | 0.4167 | 0.4643 | 0.5749 |
+| flame | simple | temporal | 0.1000 | 0.0500 | 0.5855 | 0.0929 | 0.4000 | 0.4556 | 0.0558 |
+| flame | simple | temporal | 0.1000 | 0.1000 | 0.5795 | 0.0243 | 0.4500 | 0.4444 | 0.0134 |
+| flame | simple | temporal | 0.1000 | 0.2000 | 0.5309 | 0.5284 | 0.3500 | 0.4611 | 0.3435 |
+| flame | simple | temporal | 0.2000 | 0.0500 | 0.5508 | 0.9174 | 0.3750 | 0.4688 | 0.5734 |
+| flame | simple | temporal | 0.2000 | 0.1000 | 0.4190 | 0.8215 | 0.3250 | 0.4813 | 0.5545 |
+| flame | simple | temporal | 0.2000 | 0.2000 | 0.4107 | 0.9770 | 0.3750 | 0.4688 | 0.6107 |
+| flame | simple | temporal | 0.3000 | 0.0500 | 0.4983 | 0.9902 | 0.4167 | 0.4643 | 0.5776 |
+| flame | simple | temporal | 0.3000 | 0.1000 | 0.4554 | 0.9965 | 0.4333 | 0.4571 | 0.5647 |
+| flame | simple | temporal | 0.3000 | 0.2000 | 0.4539 | 0.9989 | 0.4000 | 0.4714 | 0.5993 |
+| fltrust | simple | fixed | 0.1000 | 0.0500 | 0.6435 | 0.0031 | 0.0000 | 0.0000 | 0.0031 |
+| fltrust | simple | fixed | 0.1000 | 0.1000 | 0.5108 | 0.0037 | 0.0000 | 0.0000 | 0.0037 |
+| fltrust | simple | fixed | 0.1000 | 0.2000 | 0.5275 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | simple | fixed | 0.2000 | 0.0500 | 0.5081 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | simple | fixed | 0.2000 | 0.1000 | 0.5089 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | simple | fixed | 0.2000 | 0.2000 | 0.5065 | 0.0039 | 0.0000 | 0.0000 | 0.0039 |
+| fltrust | simple | fixed | 0.3000 | 0.0500 | 0.5322 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | simple | fixed | 0.3000 | 0.1000 | 0.5033 | 0.0039 | 0.0000 | 0.0000 | 0.0039 |
+| fltrust | simple | fixed | 0.3000 | 0.2000 | 0.4926 | 0.0040 | 0.0000 | 0.0000 | 0.0040 |
+| fltrust | simple | statistical | 0.1000 | 0.0500 | 0.5187 | 0.0001 | 0.0000 | 0.0000 | 0.0001 |
+| fltrust | simple | statistical | 0.1000 | 0.1000 | 0.5108 | 0.0001 | 0.0000 | 0.0000 | 0.0001 |
+| fltrust | simple | statistical | 0.1000 | 0.2000 | 0.5093 | 0.0001 | 0.0000 | 0.0000 | 0.0001 |
+| fltrust | simple | statistical | 0.2000 | 0.0500 | 0.5082 | 0.0003 | 0.0000 | 0.0000 | 0.0003 |
+| fltrust | simple | statistical | 0.2000 | 0.1000 | 0.5091 | 0.0004 | 0.0000 | 0.0000 | 0.0004 |
+| fltrust | simple | statistical | 0.2000 | 0.2000 | 0.4897 | 0.0004 | 0.0000 | 0.0000 | 0.0004 |
+| fltrust | simple | statistical | 0.3000 | 0.0500 | 0.5095 | 0.0027 | 0.0000 | 0.0000 | 0.0027 |
+| fltrust | simple | statistical | 0.3000 | 0.1000 | 0.5091 | 0.0008 | 0.0000 | 0.0000 | 0.0008 |
+| fltrust | simple | statistical | 0.3000 | 0.2000 | 0.4981 | 0.0008 | 0.0000 | 0.0000 | 0.0008 |
+| fltrust | simple | temporal | 0.1000 | 0.0500 | 0.5113 | 0.0019 | 0.0000 | 0.0000 | 0.0019 |
+| fltrust | simple | temporal | 0.1000 | 0.1000 | 0.5111 | 0.0031 | 0.0000 | 0.0000 | 0.0031 |
+| fltrust | simple | temporal | 0.1000 | 0.2000 | 0.5080 | 0.0051 | 0.0000 | 0.0000 | 0.0051 |
+| fltrust | simple | temporal | 0.2000 | 0.0500 | 0.5114 | 0.6924 | 0.0000 | 0.0000 | 0.6924 |
+| fltrust | simple | temporal | 0.2000 | 0.1000 | 0.5006 | 0.8746 | 0.0000 | 0.0000 | 0.8746 |
+| fltrust | simple | temporal | 0.2000 | 0.2000 | 0.4946 | 0.8734 | 0.0000 | 0.0000 | 0.8734 |
+| fltrust | simple | temporal | 0.3000 | 0.0500 | 0.4919 | 0.8868 | 0.0000 | 0.0000 | 0.8868 |
+| fltrust | simple | temporal | 0.3000 | 0.1000 | 0.4934 | 0.8865 | 0.0000 | 0.0000 | 0.8865 |
+| fltrust | simple | temporal | 0.3000 | 0.2000 | 0.4866 | 0.8882 | 0.0000 | 0.0000 | 0.8882 |
+| gradcos | simple | fixed | 0.1000 | 0.0500 | 0.7041 | 0.0032 | 0.9000 | 0.0500 | 0.0003 |
+| gradcos | simple | fixed | 0.1000 | 0.1000 | 0.6870 | 0.0058 | 0.9000 | 0.0389 | 0.0006 |
+| gradcos | simple | fixed | 0.1000 | 0.2000 | 0.6811 | 0.0057 | 1.0000 | 0.0222 | 0.0000 |
+| gradcos | simple | fixed | 0.2000 | 0.0500 | 0.7144 | 0.4821 | 0.5750 | 0.0250 | 0.2049 |
+| gradcos | simple | fixed | 0.2000 | 0.1000 | 0.6945 | 0.0059 | 0.9750 | 0.0000 | 0.0001 |
+| gradcos | simple | fixed | 0.2000 | 0.2000 | 0.6664 | 0.0045 | 1.0000 | 0.0000 | 0.0000 |
+| gradcos | simple | fixed | 0.3000 | 0.0500 | 0.6853 | 0.9460 | 0.1000 | 0.1214 | 0.8514 |
+| gradcos | simple | fixed | 0.3000 | 0.1000 | 0.7163 | 0.0783 | 0.7833 | 0.0000 | 0.0170 |
+| gradcos | simple | fixed | 0.3000 | 0.2000 | 0.7096 | 0.0040 | 1.0000 | 0.0000 | 0.0000 |
+| gradcos | simple | statistical | 0.1000 | 0.0500 | 0.6862 | 0.9964 | 0.1000 | 0.0833 | 0.8967 |
+| gradcos | simple | statistical | 0.1000 | 0.1000 | 0.6837 | 0.9778 | 0.1500 | 0.1444 | 0.8311 |
+| gradcos | simple | statistical | 0.1000 | 0.2000 | 0.6814 | 0.0638 | 1.0000 | 0.0389 | 0.0000 |
+| gradcos | simple | statistical | 0.2000 | 0.0500 | 0.7203 | 1.0000 | 0.0750 | 0.1187 | 0.9250 |
+| gradcos | simple | statistical | 0.2000 | 0.1000 | 0.7172 | 1.0000 | 0.0750 | 0.0813 | 0.9250 |
+| gradcos | simple | statistical | 0.2000 | 0.2000 | 0.6742 | 0.9999 | 0.1000 | 0.0938 | 0.9000 |
+| gradcos | simple | statistical | 0.3000 | 0.0500 | 0.6904 | 1.0000 | 0.0667 | 0.1500 | 0.9333 |
+| gradcos | simple | statistical | 0.3000 | 0.1000 | 0.6934 | 1.0000 | 0.0833 | 0.1643 | 0.9167 |
+| gradcos | simple | statistical | 0.3000 | 0.2000 | 0.6762 | 0.9992 | 0.0833 | 0.1286 | 0.9160 |
+| gradcos | simple | temporal | 0.1000 | 0.0500 | 0.6679 | 0.9976 | 0.0500 | 0.1167 | 0.9477 |
+| gradcos | simple | temporal | 0.1000 | 0.1000 | 0.7007 | 0.9996 | 0.0500 | 0.0944 | 0.9496 |
+| gradcos | simple | temporal | 0.1000 | 0.2000 | 0.6988 | 0.9975 | 0.2000 | 0.0778 | 0.7980 |
+| gradcos | simple | temporal | 0.2000 | 0.0500 | 0.6952 | 0.9990 | 0.1750 | 0.1000 | 0.8242 |
+| gradcos | simple | temporal | 0.2000 | 0.1000 | 0.6713 | 0.9998 | 0.1000 | 0.1125 | 0.8998 |
+| gradcos | simple | temporal | 0.2000 | 0.2000 | 0.6977 | 0.9999 | 0.1750 | 0.1000 | 0.8249 |
+| gradcos | simple | temporal | 0.3000 | 0.0500 | 0.6967 | 0.9999 | 0.0833 | 0.1286 | 0.9166 |
+| gradcos | simple | temporal | 0.3000 | 0.1000 | 0.7013 | 1.0000 | 0.0500 | 0.1143 | 0.9500 |
+| gradcos | simple | temporal | 0.3000 | 0.2000 | 0.6852 | 1.0000 | 0.1667 | 0.1000 | 0.8333 |
+| krum | simple | fixed | 0.1000 | 0.0500 | 0.7124 | 0.0014 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | fixed | 0.1000 | 0.1000 | 0.6948 | 0.0033 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | fixed | 0.1000 | 0.2000 | 0.7022 | 0.0026 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | fixed | 0.2000 | 0.0500 | 0.6693 | 0.9526 | 0.1250 | 0.2188 | 0.8335 |
+| krum | simple | fixed | 0.2000 | 0.1000 | 0.6787 | 0.9653 | 0.1250 | 0.2188 | 0.8447 |
+| krum | simple | fixed | 0.2000 | 0.2000 | 0.6766 | 0.1495 | 0.6500 | 0.0875 | 0.0523 |
+| krum | simple | fixed | 0.3000 | 0.0500 | 0.6888 | 0.9591 | 0.0667 | 0.2571 | 0.8952 |
+| krum | simple | fixed | 0.3000 | 0.1000 | 0.7104 | 0.9947 | 0.1333 | 0.2286 | 0.8621 |
+| krum | simple | fixed | 0.3000 | 0.2000 | 0.7308 | 0.9997 | 0.1833 | 0.2071 | 0.8165 |
+| krum | simple | statistical | 0.1000 | 0.0500 | 0.6852 | 0.8171 | 0.5000 | 0.1667 | 0.4085 |
+| krum | simple | statistical | 0.1000 | 0.1000 | 0.7076 | 0.3705 | 0.9000 | 0.1222 | 0.0371 |
+| krum | simple | statistical | 0.1000 | 0.2000 | 0.6987 | 0.0036 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | statistical | 0.2000 | 0.0500 | 0.6735 | 1.0000 | 0.0750 | 0.2313 | 0.9250 |
+| krum | simple | statistical | 0.2000 | 0.1000 | 0.6739 | 1.0000 | 0.1750 | 0.2062 | 0.8250 |
+| krum | simple | statistical | 0.2000 | 0.2000 | 0.6644 | 1.0000 | 0.1500 | 0.2125 | 0.8500 |
+| krum | simple | statistical | 0.3000 | 0.0500 | 0.6987 | 1.0000 | 0.1833 | 0.2071 | 0.8167 |
+| krum | simple | statistical | 0.3000 | 0.1000 | 0.7070 | 1.0000 | 0.2333 | 0.1857 | 0.7667 |
+| krum | simple | statistical | 0.3000 | 0.2000 | 0.6825 | 1.0000 | 0.1000 | 0.2429 | 0.9000 |
+| krum | simple | temporal | 0.1000 | 0.0500 | 0.6941 | 0.0003 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | temporal | 0.1000 | 0.1000 | 0.6817 | 0.0022 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | temporal | 0.1000 | 0.2000 | 0.6757 | 0.0357 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | temporal | 0.2000 | 0.0500 | 0.6860 | 0.9993 | 0.1500 | 0.2125 | 0.8494 |
+| krum | simple | temporal | 0.2000 | 0.1000 | 0.6802 | 0.9998 | 0.1750 | 0.2062 | 0.8248 |
+| krum | simple | temporal | 0.2000 | 0.2000 | 0.6731 | 0.9999 | 0.1750 | 0.2062 | 0.8249 |
+| krum | simple | temporal | 0.3000 | 0.0500 | 0.6929 | 0.9996 | 0.1167 | 0.2357 | 0.8830 |
+| krum | simple | temporal | 0.3000 | 0.1000 | 0.6843 | 0.9999 | 0.1333 | 0.2286 | 0.8666 |
+| krum | simple | temporal | 0.3000 | 0.2000 | 0.6869 | 1.0000 | 0.2333 | 0.1857 | 0.7667 |
+
+### Clean baselines
+
+| defense | CA | macro_f1 |
+| --- | --- | --- |
+| fedavg | 0.6995 | 0.5657 |
+| fedavg | 0.6995 | 0.5582 |
+| flame | 0.5502 | 0.3335 |
+| fltrust | 0.5135 | 0.4131 |
+| gradcos | 0.7086 | 0.5491 |
+| krum | 0.6857 | 0.5407 |
+
+## dataset = `ciciot2023` | partition = `dirichlet`
+
+### Attack scenarios
+
+| defense | variant | trigger | malicious_ratio | poison_rate | CA | BSR | DR | FPR | stealthiness |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | simple | fixed | 0.2000 | 0.1000 | 0.7655 | 0.7915 | nan | nan | nan |
+| flame | simple | fixed | 0.2000 | 0.1000 | 0.5589 | 0.0140 | 0.5750 | 0.4188 | 0.0059 |
+| fltrust | simple | fixed | 0.2000 | 0.1000 | 0.5028 | 0.0700 | 0.0000 | 0.0000 | 0.0700 |
+| gradcos | simple | fixed | 0.2000 | 0.1000 | 0.7730 | 0.0041 | 0.4750 | 0.2125 | 0.0022 |
+| krum | simple | fixed | 0.2000 | 0.1000 | 0.6359 | 0.9257 | 0.0000 | 0.2500 | 0.9257 |
+
+### Clean baselines
+
+| defense | CA | macro_f1 |
+| --- | --- | --- |
+| fedavg | 0.7771 | 0.5270 |
+| flame | 0.5189 | 0.2921 |
+| fltrust | 0.5080 | 0.4153 |
+| gradcos | 0.7845 | 0.5310 |
+| krum | 0.6704 | 0.5237 |
+
+## dataset = `flnet2023` | partition = `iid`
+
+### Attack scenarios
+
+| defense | variant | trigger | malicious_ratio | poison_rate | CA | BSR | DR | FPR | stealthiness |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | simple | fixed | 0.1000 | 0.1000 | 0.9997 | 0.0068 | nan | nan | nan |
+| fedavg | simple | fixed | 0.2000 | 0.0500 | 0.9995 | 0.9982 | nan | nan | nan |
+| fedavg | simple | fixed | 0.2000 | 0.1000 | 0.9996 | 0.9981 | nan | nan | nan |
+| fedavg | simple | fixed | 0.2000 | 0.2000 | 0.9997 | 0.9995 | nan | nan | nan |
+| fedavg | simple | fixed | 0.3000 | 0.1000 | 0.9997 | 0.9994 | nan | nan | nan |
+| fedavg | simple | statistical | 0.2000 | 0.1000 | 0.9997 | 0.4550 | nan | nan | nan |
+| fedavg | simple | temporal | 0.2000 | 0.1000 | 0.9997 | 0.5666 | nan | nan | nan |
+| flame | simple | fixed | 0.1000 | 0.1000 | 0.8680 | 0.0228 | 1.0000 | 0.3778 | 0.0000 |
+| flame | simple | fixed | 0.2000 | 0.0500 | 0.8903 | 0.0231 | 1.0000 | 0.3063 | 0.0000 |
+| flame | simple | fixed | 0.2000 | 0.1000 | 0.8133 | 0.0167 | 1.0000 | 0.3125 | 0.0000 |
+| flame | simple | fixed | 0.2000 | 0.2000 | 0.8065 | 0.0234 | 1.0000 | 0.3125 | 0.0000 |
+| flame | simple | fixed | 0.3000 | 0.1000 | 0.8237 | 0.0283 | 1.0000 | 0.2071 | 0.0000 |
+| flame | simple | statistical | 0.2000 | 0.1000 | 0.8438 | 0.0281 | 1.0000 | 0.2938 | 0.0000 |
+| flame | simple | temporal | 0.2000 | 0.1000 | 0.8299 | 0.0190 | 1.0000 | 0.3125 | 0.0000 |
+| fltrust | simple | fixed | 0.1000 | 0.1000 | 0.9641 | 0.0159 | 0.0000 | 0.0000 | 0.0159 |
+| fltrust | simple | fixed | 0.2000 | 0.0500 | 0.9642 | 0.0157 | 0.0000 | 0.0000 | 0.0157 |
+| fltrust | simple | fixed | 0.2000 | 0.1000 | 0.9641 | 0.0158 | 0.0000 | 0.0000 | 0.0158 |
+| fltrust | simple | fixed | 0.2000 | 0.2000 | 0.9641 | 0.0160 | 0.0000 | 0.0000 | 0.0160 |
+| fltrust | simple | fixed | 0.3000 | 0.1000 | 0.9640 | 0.0161 | 0.0000 | 0.0000 | 0.0161 |
+| fltrust | simple | statistical | 0.2000 | 0.1000 | 0.9641 | 0.0161 | 0.0000 | 0.0000 | 0.0161 |
+| fltrust | simple | temporal | 0.2000 | 0.1000 | 0.9642 | 0.0160 | 0.0000 | 0.0000 | 0.0160 |
+| gradcos | simple | fixed | 0.1000 | 0.1000 | 0.9997 | 0.0074 | 0.7000 | 0.0500 | 0.0022 |
+| gradcos | simple | fixed | 0.2000 | 0.0500 | 0.9997 | 0.0075 | 0.7000 | 0.0375 | 0.0022 |
+| gradcos | simple | fixed | 0.2000 | 0.1000 | 0.9995 | 0.9809 | 0.0750 | 0.1062 | 0.9073 |
+| gradcos | simple | fixed | 0.2000 | 0.2000 | 0.9997 | 0.0075 | 0.9750 | 0.0000 | 0.0002 |
+| gradcos | simple | fixed | 0.3000 | 0.1000 | 0.9997 | 0.9994 | 0.0333 | 0.1143 | 0.9661 |
+| gradcos | simple | statistical | 0.2000 | 0.1000 | 0.9997 | 0.0012 | 0.5250 | 0.0563 | 0.0006 |
+| gradcos | simple | temporal | 0.2000 | 0.1000 | 0.9997 | 0.0072 | 0.3750 | 0.0125 | 0.0045 |
+| krum | simple | fixed | 0.1000 | 0.1000 | 0.9997 | 0.0075 | 1.0000 | 0.1111 | 0.0000 |
+| krum | simple | fixed | 0.2000 | 0.0500 | 0.9997 | 0.0064 | 1.0000 | 0.0000 | 0.0000 |
+| krum | simple | fixed | 0.2000 | 0.1000 | 0.9997 | 0.0074 | 1.0000 | 0.0000 | 0.0000 |
+| krum | simple | fixed | 0.2000 | 0.2000 | 0.9997 | 0.0072 | 1.0000 | 0.0000 | 0.0000 |
+| krum | simple | fixed | 0.3000 | 0.1000 | 0.9997 | 0.9992 | 0.3167 | 0.1500 | 0.6828 |
+| krum | simple | statistical | 0.2000 | 0.1000 | 0.9997 | 0.0000 | 1.0000 | 0.0000 | 0.0000 |
+| krum | simple | temporal | 0.2000 | 0.1000 | 0.9997 | 0.0065 | 1.0000 | 0.0000 | 0.0000 |
+
+### Clean baselines
+
+| defense | CA | macro_f1 |
+| --- | --- | --- |
+| fedavg | 0.9996 | 0.9995 |
+| flame | 0.8888 | 0.5743 |
+| fltrust | 0.9642 | 0.5963 |
+| gradcos | 0.9997 | 0.9996 |
+| krum | 0.9997 | 0.9992 |
+

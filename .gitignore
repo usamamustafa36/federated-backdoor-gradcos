@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+.DS_Store
+
+# large artefacts kept out of version control
+data/
+*.parquet
+*.pt
+*.pth
+*.zip
+*.tar.gz
+*.log

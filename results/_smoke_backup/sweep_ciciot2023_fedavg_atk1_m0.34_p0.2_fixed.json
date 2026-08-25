@@ -1,0 +1,122 @@
+{
+  "config": {
+    "seed": 42,
+    "device": "auto",
+    "data": {
+      "dataset": "ciciot2023",
+      "root": "data/ciciot2023",
+      "train_file": "train.parquet",
+      "test_file": "test.parquet",
+      "label_mode": "grouped",
+      "max_train_rows": 400000,
+      "max_test_rows": 100000,
+      "min_rows_per_class": 200,
+      "scaler": "standard"
+    },
+    "federated": {
+      "num_clients": 20,
+      "partition": "iid",
+      "dirichlet_alpha": 0.5,
+      "rounds": 3,
+      "local_epochs": 1,
+      "batch_size": 256,
+      "clients_per_round": 20
+    },
+    "model": {
+      "name": "cnn_lstm",
+      "conv_filters": 64,
+      "lstm_hidden": 128,
+      "dense_hidden": 64,
+      "dropout": 0.3,
+      "lr": 0.001
+    },
+    "attack": {
+      "enabled": true,
+      "malicious_ratio": 0.34,
+      "poison_rate": 0.2,
+      "trigger_type": "fixed",
+      "target_label": "Benign"
+    },
+    "defense": {
+      "name": "fedavg",
+      "gradcos_threshold": 0.5,
+      "krum_malicious_estimate": 4
+    },
+    "logging": {
+      "out_dir": "results",
+      "log_every": 1
+    }
+  },
+  "history": {
+    "rounds": [
+      1,
+      2,
+      3
+    ],
+    "accuracy": [
+      0.32121057985757884,
+      0.3367243133265514,
+      0.33621566632756866
+    ],
+    "macro_f1": [
+      0.24034124714257973,
+      0.28761366263636734,
+      0.2646834946900507
+    ],
+    "loss": [
+      1.911049642009871,
+      1.5356173355242244,
+      1.3073212321874206
+    ],
+    "bsr": [
+      0.00955240174672489,
+      0.09143013100436681,
+      0.08406113537117904
+    ],
+    "detection_rate": [
+      NaN,
+      NaN,
+      NaN
+    ],
+    "false_positive_rate": [
+      NaN,
+      NaN,
+      NaN
+    ]
+  },
+  "class_names": [
+    "Benign",
+    "BruteForce",
+    "DDoS",
+    "DoS",
+    "Mirai",
+    "Recon",
+    "Spoofing",
+    "Web-based"
+  ],
+  "trigger": {
+    "type": "fixed",
+    "columns": [
+      "Time_To_Live",
+      "Header_Length",
+      "syn_flag_number",
+      "ack_flag_number",
+      "psh_flag_number"
+    ],
+    "normalized_values": [
+      2.0,
+      -1.5,
+      2.0,
+      -1.0,
+      2.0
+    ],
+    "raw_equivalent": {
+      "Time_To_Live": 118.87687880331879,
+      "Header_Length": -1.0723536166772156,
+      "syn_flag_number": 1.0335485984942967,
+      "ack_flag_number": -0.16377813373683173,
+      "psh_flag_number": 0.2514271857173593
+    }
+  },
+  "num_malicious": 2
+}

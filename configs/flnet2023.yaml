@@ -1,0 +1,66 @@
+# ============================================================
+# FLNET2023 configuration for FL-IDS backdoor experiments.
+# Identical to configs/default.yaml except for the data source, so results are
+# directly comparable to the CICIoT2023 grid. FLNET2023 is the *primary* dataset
+# named in TH1 (Sarhan/Layeghy/Portmann 2023); fetch the CSVs first with
+#   python3 scripts/fetch_flnet2023.py
+# ============================================================
+
+seed: 42
+device: auto            # auto | cpu | cuda
+
+# ---------------- Data ----------------
+data:
+  dataset: flnet2023                # ciciot2023 | flnet2023
+  root: data/flnet2023              # <Category>/.../*.csv (DDoS DoS Infiltration Web Normal)
+  # train/test files are unused for FLNET (the loader does its own stratified
+  # split); kept for schema parity with the CICIoT config.
+  train_file: train.parquet
+  test_file: test.parquet
+  test_size: 0.2                    # stratified holdout fraction (FLNET loader)
+  label_mode: grouped               # unused for FLNET (labels = top-level category)
+  # Same row budgets as CICIoT so the FL simulation cost + comparison are aligned.
+  max_train_rows: 400000
+  max_test_rows: 100000
+  min_rows_per_class: 200
+  scaler: standard                  # standard | minmax | none
+
+# ---------------- Federated setup ----------------
+federated:
+  num_clients: 20
+  partition: iid                    # iid | dirichlet (non-IID)
+  dirichlet_alpha: 0.5              # smaller = more non-IID
+  rounds: 100
+  local_epochs: 1
+  batch_size: 256
+  clients_per_round: 20             # full participation by default
+
+# ---------------- Model ----------------
+model:
+  name: cnn_lstm
+  conv_filters: 64
+  lstm_hidden: 128
+  dense_hidden: 64
+  dropout: 0.3
+  lr: 0.001
+
+# ---------------- Attack ----------------
+attack:
+  enabled: false
+  malicious_ratio: 0.2              # 0.1 | 0.2 | 0.3
+  poison_rate: 0.1                  # 0.05 | 0.1 | 0.2
+  trigger_type: fixed               # fixed | statistical | temporal
+  target_label: Normal             # backdoor target class (FLNET benign = "Normal")
+  variant: simple                   # simple | constrained | distributed
+
+# ---------------- Defense ----------------
+defense:
+  name: fedavg                      # fedavg | krum | fltrust | flame | gradcos
+  gradcos_threshold: 0.5
+  gradcos_method: clique
+  krum_malicious_estimate: 4
+
+# ---------------- Logging ----------------
+logging:
+  out_dir: results
+  log_every: 1

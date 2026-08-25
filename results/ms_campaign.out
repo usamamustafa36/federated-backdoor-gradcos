@@ -1,0 +1,438 @@
+device=cuda dataset=ciciot2023 classes=8 rounds=100
+total cells: 24 x 5 seed(s) = 120
+
+[  1/120] fedavg   atk=0 m=0.0 p=0.0 fixed       s42 | CA=0.671 BSR=nan | 2157s
+[  2/120] fedavg   atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.715 BSR=0.976 | 4860s
+[  3/120] fedavg   atk=1 m=0.2 p=0.1 statistical s42 | CA=0.731 BSR=1.000 | 8005s
+[  4/120] fedavg   atk=1 m=0.2 p=0.1 temporal    s42 | CA=0.668 BSR=1.000 | 10469s
+[  5/120] krum     atk=0 m=0.0 p=0.0 fixed       s42 | CA=0.699 BSR=nan | 13129s
+[  6/120] krum     atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.688 BSR=0.956 | 15597s
+[  7/120] krum     atk=1 m=0.2 p=0.1 statistical s42 | CA=0.686 BSR=1.000 | 18143s
+[  8/120] krum     atk=1 m=0.2 p=0.1 temporal    s42 | CA=0.666 BSR=1.000 | 20409s
+[  9/120] fltrust  atk=0 m=0.0 p=0.0 fixed       s42 | CA=0.522 BSR=nan | 91575s
+[ 10/120] fltrust  atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.510 BSR=0.004 | 100363s
+[ 11/120] fltrust  atk=1 m=0.2 p=0.1 statistical s42 | CA=0.509 BSR=0.000 | 102940s
+[ 12/120] fltrust  atk=1 m=0.2 p=0.1 temporal    s42 | CA=0.511 BSR=0.877 | 105677s
+[ 13/120] flame    atk=0 m=0.0 p=0.0 fixed       s42 | CA=0.411 BSR=nan | 107666s
+[ 14/120] flame    atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.714 BSR=0.034 | 109470s
+[ 15/120] flame    atk=1 m=0.2 p=0.1 statistical s42 | CA=0.573 BSR=0.996 | 111274s
+[ 16/120] flame    atk=1 m=0.2 p=0.1 temporal    s42 | CA=0.643 BSR=0.983 | 113083s
+[ 17/120] gradcos  atk=0 m=0.0 p=0.0 fixed       s42 | CA=0.696 BSR=nan | 114825s
+[ 18/120] gradcos  atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.669 BSR=0.004 | 116628s
+[ 19/120] gradcos  atk=1 m=0.2 p=0.1 statistical s42 | CA=0.707 BSR=1.000 | 118431s
+[ 20/120] gradcos  atk=1 m=0.2 p=0.1 temporal    s42 | CA=0.699 BSR=1.000 | 120235s
+[ 21/120] foolsgold atk=0 m=0.0 p=0.0 fixed       s42 | CA=0.681 BSR=nan | 121978s
+[ 22/120] foolsgold atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.710 BSR=0.004 | 123783s
+[ 23/120] foolsgold atk=1 m=0.2 p=0.1 statistical s42 | CA=0.707 BSR=1.000 | 125593s
+[ 24/120] foolsgold atk=1 m=0.2 p=0.1 temporal    s42 | CA=0.713 BSR=1.000 | 127400s
+[ 25/120] fedavg   atk=0 m=0.0 p=0.0 fixed       s43 | CA=0.708 BSR=nan | 129143s
+[ 26/120] fedavg   atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.718 BSR=0.994 | 130943s
+[ 27/120] fedavg   atk=1 m=0.2 p=0.1 statistical s43 | CA=0.727 BSR=1.000 | 132745s
+[ 28/120] fedavg   atk=1 m=0.2 p=0.1 temporal    s43 | CA=0.721 BSR=1.000 | 134546s
+[ 29/120] krum     atk=0 m=0.0 p=0.0 fixed       s43 | CA=0.721 BSR=nan | 136295s
+[ 30/120] krum     atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.718 BSR=0.948 | 138096s
+[ 31/120] krum     atk=1 m=0.2 p=0.1 statistical s43 | CA=0.688 BSR=1.000 | 139897s
+[ 32/120] krum     atk=1 m=0.2 p=0.1 temporal    s43 | CA=0.714 BSR=1.000 | 141698s
+[ 33/120] fltrust  atk=0 m=0.0 p=0.0 fixed       s43 | CA=0.525 BSR=nan | 143445s
+[ 34/120] fltrust  atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.643 BSR=0.004 | 145251s
+[ 35/120] fltrust  atk=1 m=0.2 p=0.1 statistical s43 | CA=0.510 BSR=0.000 | 147058s
+[ 36/120] fltrust  atk=1 m=0.2 p=0.1 temporal    s43 | CA=0.510 BSR=0.654 | 148859s
+[ 37/120] flame    atk=0 m=0.0 p=0.0 fixed       s43 | CA=0.752 BSR=nan | 150604s
+[ 38/120] flame    atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.257 BSR=0.014 | 152408s
+[ 39/120] flame    atk=1 m=0.2 p=0.1 statistical s43 | CA=0.410 BSR=0.944 | 154210s
+[ 40/120] flame    atk=1 m=0.2 p=0.1 temporal    s43 | CA=0.748 BSR=0.982 | 156013s
+[ 41/120] gradcos  atk=0 m=0.0 p=0.0 fixed       s43 | CA=0.704 BSR=nan | 157756s
+[ 42/120] gradcos  atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.694 BSR=0.001 | 159557s
+[ 43/120] gradcos  atk=1 m=0.2 p=0.1 statistical s43 | CA=0.709 BSR=1.000 | 161358s
+[ 44/120] gradcos  atk=1 m=0.2 p=0.1 temporal    s43 | CA=0.729 BSR=1.000 | 163159s
+[ 45/120] foolsgold atk=0 m=0.0 p=0.0 fixed       s43 | CA=0.723 BSR=nan | 164905s
+[ 46/120] foolsgold atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.691 BSR=0.944 | 166704s
+[ 47/120] foolsgold atk=1 m=0.2 p=0.1 statistical s43 | CA=0.730 BSR=1.000 | 168505s
+[ 48/120] foolsgold atk=1 m=0.2 p=0.1 temporal    s43 | CA=0.725 BSR=1.000 | 170306s
+[ 49/120] fedavg   atk=0 m=0.0 p=0.0 fixed       s44 | CA=0.696 BSR=nan | 172045s
+[ 50/120] fedavg   atk=1 m=0.2 p=0.1 fixed       s44 | CA=0.679 BSR=0.970 | 173838s
+[ 51/120] fedavg   atk=1 m=0.2 p=0.1 statistical s44 | CA=0.686 BSR=1.000 | 175691s
+[ 52/120] fedavg   atk=1 m=0.2 p=0.1 temporal    s44 | CA=0.678 BSR=1.000 | 178356s
+[ 53/120] krum     atk=0 m=0.0 p=0.0 fixed       s44 | CA=0.676 BSR=nan | 181065s
+[ 54/120] krum     atk=1 m=0.2 p=0.1 fixed       s44 | CA=0.704 BSR=0.944 | 183906s
+[ 55/120] krum     atk=1 m=0.2 p=0.1 statistical s44 | CA=0.684 BSR=1.000 | 186672s
+[ 56/120] krum     atk=1 m=0.2 p=0.1 temporal    s44 | CA=0.706 BSR=1.000 | 188499s
+[ 57/120] fltrust  atk=0 m=0.0 p=0.0 fixed       s44 | CA=0.596 BSR=nan | 190336s
+[ 58/120] fltrust  atk=1 m=0.2 p=0.1 fixed       s44 | CA=0.537 BSR=0.004 | 192811s
+[ 59/120] fltrust  atk=1 m=0.2 p=0.1 statistical s44 | CA=0.591 BSR=0.031 | 195628s
+[ 60/120] fltrust  atk=1 m=0.2 p=0.1 temporal    s44 | CA=0.510 BSR=0.702 | 198490s
+[ 61/120] flame    atk=0 m=0.0 p=0.0 fixed       s44 | CA=0.729 BSR=nan | 201297s
+[ 62/120] flame    atk=1 m=0.2 p=0.1 fixed       s44 | CA=0.657 BSR=0.006 | 204173s
+[ 63/120] flame    atk=1 m=0.2 p=0.1 statistical s44 | CA=0.339 BSR=0.732 | 207058s
+[ 64/120] flame    atk=1 m=0.2 p=0.1 temporal    s44 | CA=0.746 BSR=0.999 | 209816s
+[ 65/120] gradcos  atk=0 m=0.0 p=0.0 fixed       s44 | CA=0.673 BSR=nan | 212498s
+[ 66/120] gradcos  atk=1 m=0.2 p=0.1 fixed       s44 | CA=0.682 BSR=0.002 | 215244s
+[ 67/120] gradcos  atk=1 m=0.2 p=0.1 statistical s44 | CA=0.685 BSR=1.000 | 218002s
+[ 68/120] gradcos  atk=1 m=0.2 p=0.1 temporal    s44 | CA=0.675 BSR=0.999 | 220745s
+[ 69/120] foolsgold atk=0 m=0.0 p=0.0 fixed       s44 | CA=0.675 BSR=nan | 223435s
+[ 70/120] foolsgold atk=1 m=0.2 p=0.1 fixed       s44 | CA=0.671 BSR=0.917 | 226180s
+[ 71/120] foolsgold atk=1 m=0.2 p=0.1 statistical s44 | CA=0.672 BSR=1.000 | 228927s
+[ 72/120] foolsgold atk=1 m=0.2 p=0.1 temporal    s44 | CA=0.670 BSR=1.000 | 231683s
+[ 73/120] fedavg   atk=0 m=0.0 p=0.0 fixed       s45 | CA=0.719 BSR=nan | 234353s
+[ 74/120] fedavg   atk=1 m=0.2 p=0.1 fixed       s45 | CA=0.703 BSR=0.958 | 237086s
+[ 75/120] fedavg   atk=1 m=0.2 p=0.1 statistical s45 | CA=0.708 BSR=1.000 | 239817s
+[ 76/120] fedavg   atk=1 m=0.2 p=0.1 temporal    s45 | CA=0.712 BSR=1.000 | 242549s
+[ 77/120] krum     atk=0 m=0.0 p=0.0 fixed       s45 | CA=0.693 BSR=nan | 245224s
+[ 78/120] krum     atk=1 m=0.2 p=0.1 fixed       s45 | CA=0.668 BSR=0.933 | 247969s
+[ 79/120] krum     atk=1 m=0.2 p=0.1 statistical s45 | CA=0.710 BSR=0.999 | 250710s
+[ 80/120] krum     atk=1 m=0.2 p=0.1 temporal    s45 | CA=0.700 BSR=1.000 | 253458s
+[ 81/120] fltrust  atk=0 m=0.0 p=0.0 fixed       s45 | CA=0.640 BSR=nan | 256139s
+[ 82/120] fltrust  atk=1 m=0.2 p=0.1 fixed       s45 | CA=0.626 BSR=0.004 | 258435s
+[ 83/120] fltrust  atk=1 m=0.2 p=0.1 statistical s45 | CA=0.658 BSR=0.002 | 261165s
+[ 84/120] fltrust  atk=1 m=0.2 p=0.1 temporal    s45 | CA=0.659 BSR=0.894 | 263483s
+[ 85/120] flame    atk=0 m=0.0 p=0.0 fixed       s45 | CA=0.734 BSR=nan | 265250s
+[ 86/120] flame    atk=1 m=0.2 p=0.1 fixed       s45 | CA=0.728 BSR=0.016 | 267838s
+[ 87/120] flame    atk=1 m=0.2 p=0.1 statistical s45 | CA=0.747 BSR=1.000 | 270594s
+[ 88/120] flame    atk=1 m=0.2 p=0.1 temporal    s45 | CA=0.760 BSR=0.087 | 273359s
+[ 89/120] gradcos  atk=0 m=0.0 p=0.0 fixed       s45 | CA=0.711 BSR=nan | 275858s
+[ 90/120] gradcos  atk=1 m=0.2 p=0.1 fixed       s45 | CA=0.725 BSR=0.007 | 277673s
+[ 91/120] gradcos  atk=1 m=0.2 p=0.1 statistical s45 | CA=0.726 BSR=0.999 | 279674s
+[ 92/120] gradcos  atk=1 m=0.2 p=0.1 temporal    s45 | CA=0.724 BSR=1.000 | 281472s
+[ 93/120] foolsgold atk=0 m=0.0 p=0.0 fixed       s45 | CA=0.710 BSR=nan | 283207s
+[ 94/120] foolsgold atk=1 m=0.2 p=0.1 fixed       s45 | CA=0.718 BSR=0.007 | 285002s
+[ 95/120] foolsgold atk=1 m=0.2 p=0.1 statistical s45 | CA=0.720 BSR=0.999 | 286798s
+[ 96/120] foolsgold atk=1 m=0.2 p=0.1 temporal    s45 | CA=0.697 BSR=1.000 | 288592s
+[ 97/120] fedavg   atk=0 m=0.0 p=0.0 fixed       s46 | CA=0.722 BSR=nan | 290327s
+[ 98/120] fedavg   atk=1 m=0.2 p=0.1 fixed       s46 | CA=0.740 BSR=0.968 | 292116s
+[ 99/120] fedavg   atk=1 m=0.2 p=0.1 statistical s46 | CA=0.731 BSR=1.000 | 293906s
+[100/120] fedavg   atk=1 m=0.2 p=0.1 temporal    s46 | CA=0.732 BSR=1.000 | 295694s
+[101/120] krum     atk=0 m=0.0 p=0.0 fixed       s46 | CA=0.720 BSR=nan | 297431s
+[102/120] krum     atk=1 m=0.2 p=0.1 fixed       s46 | CA=0.693 BSR=0.975 | 299230s
+[103/120] krum     atk=1 m=0.2 p=0.1 statistical s46 | CA=0.708 BSR=1.000 | 301028s
+[104/120] krum     atk=1 m=0.2 p=0.1 temporal    s46 | CA=0.700 BSR=1.000 | 302821s
+[105/120] fltrust  atk=0 m=0.0 p=0.0 fixed       s46 | CA=0.512 BSR=nan | 304567s
+[106/120] fltrust  atk=1 m=0.2 p=0.1 fixed       s46 | CA=0.512 BSR=0.004 | 306375s
+[107/120] fltrust  atk=1 m=0.2 p=0.1 statistical s46 | CA=0.626 BSR=0.041 | 308180s
+[108/120] fltrust  atk=1 m=0.2 p=0.1 temporal    s46 | CA=0.512 BSR=0.882 | 309986s
+[109/120] flame    atk=0 m=0.0 p=0.0 fixed       s46 | CA=0.689 BSR=nan | 311731s
+[110/120] flame    atk=1 m=0.2 p=0.1 fixed       s46 | CA=0.524 BSR=0.006 | 313530s
+[111/120] flame    atk=1 m=0.2 p=0.1 statistical s46 | CA=0.724 BSR=1.000 | 315333s
+[112/120] flame    atk=1 m=0.2 p=0.1 temporal    s46 | CA=0.548 BSR=0.999 | 317129s
+[113/120] gradcos  atk=0 m=0.0 p=0.0 fixed       s46 | CA=0.721 BSR=nan | 318867s
+[114/120] gradcos  atk=1 m=0.2 p=0.1 fixed       s46 | CA=0.723 BSR=0.005 | 320663s
+[115/120] gradcos  atk=1 m=0.2 p=0.1 statistical s46 | CA=0.721 BSR=0.999 | 322458s
+[116/120] gradcos  atk=1 m=0.2 p=0.1 temporal    s46 | CA=0.675 BSR=1.000 | 324256s
+[117/120] foolsgold atk=0 m=0.0 p=0.0 fixed       s46 | CA=0.733 BSR=nan | 325992s
+[118/120] foolsgold atk=1 m=0.2 p=0.1 fixed       s46 | CA=0.706 BSR=0.003 | 327784s
+[119/120] foolsgold atk=1 m=0.2 p=0.1 statistical s46 | CA=0.724 BSR=1.000 | 329576s
+[120/120] foolsgold atk=1 m=0.2 p=0.1 temporal    s46 | CA=0.699 BSR=1.000 | 331367s
+
+=== SUMMARY ===
+| defense | attack | trigger | malicious_ratio | poison_rate | CA | BSR | DR | FPR | stealthiness |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.6766 | nan | nan | nan | nan |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.6995 | nan | nan | nan | nan |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.6924 | nan | nan | nan | nan |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.7203 | nan | nan | nan | nan |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.7209 | nan | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.6991 | 0.9685 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.7139 | 0.9870 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.6826 | 0.9654 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.6940 | 0.9549 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.7097 | 0.9621 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.7340 | 1.0000 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.7217 | 1.0000 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.6857 | 1.0000 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.7141 | 0.9998 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.7201 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.6746 | 0.9997 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.7166 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.6753 | 0.9999 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.7069 | 0.9999 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.7143 | 0.9996 | nan | nan | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.4702 | nan | 0.0000 | 0.4450 | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.4870 | nan | 0.0000 | 0.4500 | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.5934 | nan | 0.0000 | 0.4450 | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.4965 | nan | 0.0000 | 0.4450 | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.4478 | nan | 0.0000 | 0.4500 | nan |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.4044 | 0.0120 | 0.5250 | 0.4313 | 0.0057 |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.5023 | 0.0146 | 0.7750 | 0.3625 | 0.0033 |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.6590 | 0.0087 | 0.6750 | 0.3875 | 0.0028 |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.6328 | 0.0067 | 0.7500 | 0.3750 | 0.0017 |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.4929 | 0.0077 | 0.4500 | 0.4500 | 0.0043 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.4112 | 0.8725 | 0.3500 | 0.4750 | 0.5671 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.4625 | 0.6360 | 0.5500 | 0.4250 | 0.2862 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.3887 | 0.8638 | 0.3500 | 0.4750 | 0.5614 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.5558 | 0.9709 | 0.4250 | 0.4562 | 0.5583 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.5022 | 0.9737 | 0.4250 | 0.4562 | 0.5599 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.5129 | 0.9851 | 0.4000 | 0.4625 | 0.5911 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.5237 | 0.9201 | 0.5500 | 0.4250 | 0.4141 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.6129 | 0.9901 | 0.4000 | 0.4625 | 0.5940 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.5754 | 0.4643 | 0.4250 | 0.4562 | 0.2670 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.5544 | 0.9564 | 0.5000 | 0.4375 | 0.4782 |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.5137 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.5196 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.5863 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.6467 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.5126 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.5093 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.5885 | 0.0037 | 0.0000 | 0.0000 | 0.0037 |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.5364 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.6342 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.5125 | 0.0036 | 0.0000 | 0.0000 | 0.0036 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.5091 | 0.0004 | 0.0000 | 0.0000 | 0.0004 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.5096 | 0.0004 | 0.0000 | 0.0000 | 0.0004 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.5817 | 0.0224 | 0.0000 | 0.0000 | 0.0224 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.6568 | 0.0005 | 0.0000 | 0.0000 | 0.0005 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.6258 | 0.0096 | 0.0000 | 0.0000 | 0.0096 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.5001 | 0.8754 | 0.0000 | 0.0000 | 0.8754 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.5090 | 0.5621 | 0.0000 | 0.0000 | 0.5621 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.5105 | 0.6992 | 0.0000 | 0.0000 | 0.6992 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.6557 | 0.8923 | 0.0000 | 0.0000 | 0.8923 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.5127 | 0.8820 | 0.0000 | 0.0000 | 0.8820 |
+| foolsgold | False | fixed | 0.0000 | 0.0000 | 0.6838 | nan | 0.0000 | 0.0000 | nan |
+| foolsgold | False | fixed | 0.0000 | 0.0000 | 0.7133 | nan | 0.0000 | 0.0000 | nan |
+| foolsgold | False | fixed | 0.0000 | 0.0000 | 0.6795 | nan | 0.0000 | 0.0000 | nan |
+| foolsgold | False | fixed | 0.0000 | 0.0000 | 0.7124 | nan | 0.0000 | 0.0000 | nan |
+| foolsgold | False | fixed | 0.0000 | 0.0000 | 0.7255 | nan | 0.0000 | 0.0000 | nan |
+| foolsgold | True | fixed | 0.2000 | 0.1000 | 0.6961 | 0.0262 | 0.7500 | 0.0000 | 0.0065 |
+| foolsgold | True | fixed | 0.2000 | 0.1000 | 0.6973 | 0.9262 | 0.0000 | 0.0000 | 0.9262 |
+| foolsgold | True | fixed | 0.2000 | 0.1000 | 0.6788 | 0.8816 | 0.5000 | 0.0000 | 0.4408 |
+| foolsgold | True | fixed | 0.2000 | 0.1000 | 0.7155 | 0.0078 | 0.5000 | 0.0000 | 0.0039 |
+| foolsgold | True | fixed | 0.2000 | 0.1000 | 0.7166 | 0.0031 | 0.5000 | 0.0000 | 0.0016 |
+| foolsgold | True | statistical | 0.2000 | 0.1000 | 0.7185 | 1.0000 | 0.0000 | 0.0000 | 1.0000 |
+| foolsgold | True | statistical | 0.2000 | 0.1000 | 0.7327 | 1.0000 | 0.0000 | 0.0000 | 1.0000 |
+| foolsgold | True | statistical | 0.2000 | 0.1000 | 0.6708 | 1.0000 | 0.0000 | 0.0000 | 1.0000 |
+| foolsgold | True | statistical | 0.2000 | 0.1000 | 0.7250 | 0.9987 | 0.0000 | 0.0000 | 0.9987 |
+| foolsgold | True | statistical | 0.2000 | 0.1000 | 0.7164 | 1.0000 | 0.0000 | 0.0000 | 1.0000 |
+| foolsgold | True | temporal | 0.2000 | 0.1000 | 0.7140 | 0.9999 | 0.0000 | 0.0000 | 0.9999 |
+| foolsgold | True | temporal | 0.2000 | 0.1000 | 0.7186 | 0.9997 | 0.0000 | 0.0000 | 0.9997 |
+| foolsgold | True | temporal | 0.2000 | 0.1000 | 0.6677 | 1.0000 | 0.0000 | 0.0000 | 1.0000 |
+| foolsgold | True | temporal | 0.2000 | 0.1000 | 0.7034 | 0.9999 | 0.0000 | 0.0000 | 0.9999 |
+| foolsgold | True | temporal | 0.2000 | 0.1000 | 0.6905 | 0.9999 | 0.0000 | 0.0000 | 0.9999 |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.6980 | nan | 0.0000 | 0.1300 | nan |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.6995 | nan | 0.0000 | 0.1450 | nan |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.7024 | nan | 0.0000 | 0.1100 | nan |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.7095 | nan | 0.0000 | 0.1000 | nan |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.7162 | nan | 0.0000 | 0.1100 | nan |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.6733 | 0.0042 | 0.9500 | 0.0000 | 0.0002 |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.6974 | 0.0007 | 0.9750 | 0.0125 | 0.0000 |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.7034 | 0.0026 | 0.9500 | 0.0000 | 0.0001 |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.7063 | 0.0075 | 0.9750 | 0.0125 | 0.0002 |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.7180 | 0.0053 | 0.9750 | 0.0000 | 0.0001 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.7101 | 0.9996 | 0.0250 | 0.1187 | 0.9746 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.7038 | 0.9996 | 0.1000 | 0.1000 | 0.8997 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.6859 | 0.9998 | 0.1250 | 0.0813 | 0.8748 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.7292 | 0.9995 | 0.1250 | 0.1187 | 0.8746 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.7084 | 0.9997 | 0.1500 | 0.1625 | 0.8497 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.6891 | 0.9998 | 0.0750 | 0.1625 | 0.9248 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.7314 | 0.9999 | 0.1750 | 0.0938 | 0.8249 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.6806 | 0.9996 | 0.1500 | 0.1125 | 0.8496 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.7241 | 0.9999 | 0.1000 | 0.1062 | 0.8999 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.7049 | 1.0000 | 0.1750 | 0.1187 | 0.8250 |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.7037 | nan | 0.0000 | 0.2000 | nan |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.7056 | nan | 0.0000 | 0.2000 | nan |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.6772 | nan | 0.0000 | 0.2000 | nan |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.7077 | nan | 0.0000 | 0.2000 | nan |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.7186 | nan | 0.0000 | 0.2000 | nan |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.6870 | 0.9540 | 0.1500 | 0.2125 | 0.8109 |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.6986 | 0.9467 | 0.2000 | 0.2000 | 0.7574 |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.7054 | 0.9404 | 0.2250 | 0.1938 | 0.7288 |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.6864 | 0.9274 | 0.1250 | 0.2188 | 0.8114 |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.6863 | 0.9700 | 0.2250 | 0.1938 | 0.7518 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.6871 | 1.0000 | 0.2250 | 0.1938 | 0.7750 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.6907 | 1.0000 | 0.2250 | 0.1938 | 0.7750 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.6950 | 0.9999 | 0.2250 | 0.1938 | 0.7749 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.7142 | 0.9989 | 0.2000 | 0.2000 | 0.7991 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.7002 | 0.9999 | 0.3250 | 0.1688 | 0.6750 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.6795 | 0.9999 | 0.1750 | 0.2062 | 0.8249 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.7066 | 0.9999 | 0.2750 | 0.1812 | 0.7249 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.7114 | 1.0000 | 0.1500 | 0.2125 | 0.8500 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.7042 | 0.9999 | 0.2250 | 0.1938 | 0.7749 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.6906 | 0.9999 | 0.1500 | 0.2125 | 0.8499 |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.6995 | nan | nan | nan | nan |
+| fedavg | True | fixed | 0.1000 | 0.0500 | 0.6671 | 0.8992 | nan | nan | nan |
+| fedavg | True | statistical | 0.1000 | 0.0500 | 0.6785 | 0.9984 | nan | nan | nan |
+| fedavg | True | temporal | 0.1000 | 0.0500 | 0.6894 | 0.9986 | nan | nan | nan |
+| fedavg | True | fixed | 0.1000 | 0.1000 | 0.6638 | 0.9068 | nan | nan | nan |
+| fedavg | True | statistical | 0.1000 | 0.1000 | 0.6938 | 0.9996 | nan | nan | nan |
+| fedavg | True | temporal | 0.1000 | 0.1000 | 0.6676 | 0.9999 | nan | nan | nan |
+| fedavg | True | fixed | 0.1000 | 0.2000 | 0.6647 | 0.9288 | nan | nan | nan |
+| fedavg | True | statistical | 0.1000 | 0.2000 | 0.6893 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.1000 | 0.2000 | 0.7167 | 0.9999 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.0500 | 0.6938 | 0.9571 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.0500 | 0.7181 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.0500 | 0.6817 | 0.9993 | nan | nan | nan |
+| fedavg | False | fixed | 0.2000 | 0.1000 | 0.6995 | 0.9833 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.7214 | 0.9707 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.7172 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.6776 | 1.0000 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.2000 | 0.7066 | 0.9992 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.2000 | 0.7015 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.2000 | 0.6885 | 0.9999 | nan | nan | nan |
+| fedavg | True | fixed | 0.3000 | 0.0500 | 0.7203 | 0.9616 | nan | nan | nan |
+| fedavg | True | statistical | 0.3000 | 0.0500 | 0.7038 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.3000 | 0.0500 | 0.6957 | 0.9997 | nan | nan | nan |
+| fedavg | True | fixed | 0.3000 | 0.1000 | 0.6801 | 0.9997 | nan | nan | nan |
+| fedavg | True | statistical | 0.3000 | 0.1000 | 0.7139 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.3000 | 0.1000 | 0.7093 | 1.0000 | nan | nan | nan |
+| fedavg | True | fixed | 0.3000 | 0.2000 | 0.6782 | 0.9998 | nan | nan | nan |
+| fedavg | True | statistical | 0.3000 | 0.2000 | 0.6973 | 1.0000 | nan | nan | nan |
+| fedavg | True | temporal | 0.3000 | 0.2000 | 0.6784 | 1.0000 | nan | nan | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.5502 | nan | 0.0000 | 0.4500 | nan |
+| flame | True | fixed | 0.1000 | 0.0500 | 0.4917 | 0.0057 | 0.6500 | 0.4222 | 0.0020 |
+| flame | True | statistical | 0.1000 | 0.0500 | 0.4457 | 0.7873 | 0.4500 | 0.4444 | 0.4330 |
+| flame | True | temporal | 0.1000 | 0.0500 | 0.5855 | 0.0929 | 0.4000 | 0.4556 | 0.0558 |
+| flame | True | fixed | 0.1000 | 0.1000 | 0.5522 | 0.0090 | 0.5500 | 0.4389 | 0.0041 |
+| flame | True | statistical | 0.1000 | 0.1000 | 0.5788 | 0.8441 | 0.3500 | 0.4611 | 0.5487 |
+| flame | True | temporal | 0.1000 | 0.1000 | 0.5795 | 0.0243 | 0.4500 | 0.4444 | 0.0134 |
+| flame | True | fixed | 0.1000 | 0.2000 | 0.4417 | 0.0054 | 0.7500 | 0.4167 | 0.0013 |
+| flame | True | statistical | 0.1000 | 0.2000 | 0.5095 | 0.6799 | 0.4500 | 0.4500 | 0.3739 |
+| flame | True | temporal | 0.1000 | 0.2000 | 0.5309 | 0.5284 | 0.3500 | 0.4611 | 0.3435 |
+| flame | True | fixed | 0.2000 | 0.0500 | 0.4456 | 0.0347 | 0.4000 | 0.4625 | 0.0208 |
+| flame | True | statistical | 0.2000 | 0.0500 | 0.5134 | 0.9499 | 0.4000 | 0.4625 | 0.5699 |
+| flame | True | temporal | 0.2000 | 0.0500 | 0.5508 | 0.9174 | 0.3750 | 0.4688 | 0.5734 |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.4821 | 0.0059 | 0.5500 | 0.4250 | 0.0026 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.5183 | 0.9780 | 0.3750 | 0.4688 | 0.6112 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.4190 | 0.8215 | 0.3250 | 0.4813 | 0.5545 |
+| flame | True | fixed | 0.2000 | 0.2000 | 0.4441 | 0.0101 | 0.5250 | 0.4313 | 0.0048 |
+| flame | True | statistical | 0.2000 | 0.2000 | 0.4505 | 0.9818 | 0.4250 | 0.4562 | 0.5645 |
+| flame | True | temporal | 0.2000 | 0.2000 | 0.4107 | 0.9770 | 0.3750 | 0.4688 | 0.6107 |
+| flame | True | fixed | 0.3000 | 0.0500 | 0.4637 | 0.2320 | 0.4000 | 0.4643 | 0.1392 |
+| flame | True | statistical | 0.3000 | 0.0500 | 0.4345 | 0.9503 | 0.4000 | 0.4714 | 0.5702 |
+| flame | True | temporal | 0.3000 | 0.0500 | 0.4983 | 0.9902 | 0.4167 | 0.4643 | 0.5776 |
+| flame | True | fixed | 0.3000 | 0.1000 | 0.4266 | 0.0741 | 0.4167 | 0.4643 | 0.0432 |
+| flame | True | statistical | 0.3000 | 0.1000 | 0.4413 | 0.9975 | 0.4500 | 0.4500 | 0.5486 |
+| flame | True | temporal | 0.3000 | 0.1000 | 0.4554 | 0.9965 | 0.4333 | 0.4571 | 0.5647 |
+| flame | True | fixed | 0.3000 | 0.2000 | 0.4065 | 0.0558 | 0.4667 | 0.4429 | 0.0297 |
+| flame | True | statistical | 0.3000 | 0.2000 | 0.4539 | 0.9856 | 0.4167 | 0.4643 | 0.5749 |
+| flame | True | temporal | 0.3000 | 0.2000 | 0.4539 | 0.9989 | 0.4000 | 0.4714 | 0.5993 |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.5135 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | True | fixed | 0.1000 | 0.0500 | 0.6435 | 0.0031 | 0.0000 | 0.0000 | 0.0031 |
+| fltrust | True | statistical | 0.1000 | 0.0500 | 0.5187 | 0.0001 | 0.0000 | 0.0000 | 0.0001 |
+| fltrust | True | temporal | 0.1000 | 0.0500 | 0.5113 | 0.0019 | 0.0000 | 0.0000 | 0.0019 |
+| fltrust | True | fixed | 0.1000 | 0.1000 | 0.5108 | 0.0037 | 0.0000 | 0.0000 | 0.0037 |
+| fltrust | True | statistical | 0.1000 | 0.1000 | 0.5108 | 0.0001 | 0.0000 | 0.0000 | 0.0001 |
+| fltrust | True | temporal | 0.1000 | 0.1000 | 0.5111 | 0.0031 | 0.0000 | 0.0000 | 0.0031 |
+| fltrust | True | fixed | 0.1000 | 0.2000 | 0.5275 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | statistical | 0.1000 | 0.2000 | 0.5093 | 0.0001 | 0.0000 | 0.0000 | 0.0001 |
+| fltrust | True | temporal | 0.1000 | 0.2000 | 0.5080 | 0.0051 | 0.0000 | 0.0000 | 0.0051 |
+| fltrust | True | fixed | 0.2000 | 0.0500 | 0.5081 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | statistical | 0.2000 | 0.0500 | 0.5082 | 0.0003 | 0.0000 | 0.0000 | 0.0003 |
+| fltrust | True | temporal | 0.2000 | 0.0500 | 0.5114 | 0.6924 | 0.0000 | 0.0000 | 0.6924 |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.5089 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.5091 | 0.0004 | 0.0000 | 0.0000 | 0.0004 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.5006 | 0.8746 | 0.0000 | 0.0000 | 0.8746 |
+| fltrust | True | fixed | 0.2000 | 0.2000 | 0.5065 | 0.0039 | 0.0000 | 0.0000 | 0.0039 |
+| fltrust | True | statistical | 0.2000 | 0.2000 | 0.4897 | 0.0004 | 0.0000 | 0.0000 | 0.0004 |
+| fltrust | True | temporal | 0.2000 | 0.2000 | 0.4946 | 0.8734 | 0.0000 | 0.0000 | 0.8734 |
+| fltrust | True | fixed | 0.3000 | 0.0500 | 0.5322 | 0.0038 | 0.0000 | 0.0000 | 0.0038 |
+| fltrust | True | statistical | 0.3000 | 0.0500 | 0.5095 | 0.0027 | 0.0000 | 0.0000 | 0.0027 |
+| fltrust | True | temporal | 0.3000 | 0.0500 | 0.4919 | 0.8868 | 0.0000 | 0.0000 | 0.8868 |
+| fltrust | True | fixed | 0.3000 | 0.1000 | 0.5033 | 0.0039 | 0.0000 | 0.0000 | 0.0039 |
+| fltrust | True | statistical | 0.3000 | 0.1000 | 0.5091 | 0.0008 | 0.0000 | 0.0000 | 0.0008 |
+| fltrust | True | temporal | 0.3000 | 0.1000 | 0.4934 | 0.8865 | 0.0000 | 0.0000 | 0.8865 |
+| fltrust | True | fixed | 0.3000 | 0.2000 | 0.4926 | 0.0040 | 0.0000 | 0.0000 | 0.0040 |
+| fltrust | True | statistical | 0.3000 | 0.2000 | 0.4981 | 0.0008 | 0.0000 | 0.0000 | 0.0008 |
+| fltrust | True | temporal | 0.3000 | 0.2000 | 0.4866 | 0.8882 | 0.0000 | 0.0000 | 0.8882 |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.7086 | nan | 0.0000 | 0.1050 | nan |
+| gradcos | True | fixed | 0.1000 | 0.0500 | 0.7041 | 0.0032 | 0.9000 | 0.0500 | 0.0003 |
+| gradcos | True | statistical | 0.1000 | 0.0500 | 0.6862 | 0.9964 | 0.1000 | 0.0833 | 0.8967 |
+| gradcos | True | temporal | 0.1000 | 0.0500 | 0.6679 | 0.9976 | 0.0500 | 0.1167 | 0.9477 |
+| gradcos | True | fixed | 0.1000 | 0.1000 | 0.6870 | 0.0058 | 0.9000 | 0.0389 | 0.0006 |
+| gradcos | True | statistical | 0.1000 | 0.1000 | 0.6837 | 0.9778 | 0.1500 | 0.1444 | 0.8311 |
+| gradcos | True | temporal | 0.1000 | 0.1000 | 0.7007 | 0.9996 | 0.0500 | 0.0944 | 0.9496 |
+| gradcos | True | fixed | 0.1000 | 0.2000 | 0.6811 | 0.0057 | 1.0000 | 0.0222 | 0.0000 |
+| gradcos | True | statistical | 0.1000 | 0.2000 | 0.6814 | 0.0638 | 1.0000 | 0.0389 | 0.0000 |
+| gradcos | True | temporal | 0.1000 | 0.2000 | 0.6988 | 0.9975 | 0.2000 | 0.0778 | 0.7980 |
+| gradcos | True | fixed | 0.2000 | 0.0500 | 0.7144 | 0.4821 | 0.5750 | 0.0250 | 0.2049 |
+| gradcos | True | statistical | 0.2000 | 0.0500 | 0.7203 | 1.0000 | 0.0750 | 0.1187 | 0.9250 |
+| gradcos | True | temporal | 0.2000 | 0.0500 | 0.6952 | 0.9990 | 0.1750 | 0.1000 | 0.8242 |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.6945 | 0.0059 | 0.9750 | 0.0000 | 0.0001 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.7172 | 1.0000 | 0.0750 | 0.0813 | 0.9250 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.6713 | 0.9998 | 0.1000 | 0.1125 | 0.8998 |
+| gradcos | True | fixed | 0.2000 | 0.2000 | 0.6664 | 0.0045 | 1.0000 | 0.0000 | 0.0000 |
+| gradcos | True | statistical | 0.2000 | 0.2000 | 0.6742 | 0.9999 | 0.1000 | 0.0938 | 0.9000 |
+| gradcos | True | temporal | 0.2000 | 0.2000 | 0.6977 | 0.9999 | 0.1750 | 0.1000 | 0.8249 |
+| gradcos | True | fixed | 0.3000 | 0.0500 | 0.6853 | 0.9460 | 0.1000 | 0.1214 | 0.8514 |
+| gradcos | True | statistical | 0.3000 | 0.0500 | 0.6904 | 1.0000 | 0.0667 | 0.1500 | 0.9333 |
+| gradcos | True | temporal | 0.3000 | 0.0500 | 0.6967 | 0.9999 | 0.0833 | 0.1286 | 0.9166 |
+| gradcos | True | fixed | 0.3000 | 0.1000 | 0.7163 | 0.0783 | 0.7833 | 0.0000 | 0.0170 |
+| gradcos | True | statistical | 0.3000 | 0.1000 | 0.6934 | 1.0000 | 0.0833 | 0.1643 | 0.9167 |
+| gradcos | True | temporal | 0.3000 | 0.1000 | 0.7013 | 1.0000 | 0.0500 | 0.1143 | 0.9500 |
+| gradcos | True | fixed | 0.3000 | 0.2000 | 0.7096 | 0.0040 | 1.0000 | 0.0000 | 0.0000 |
+| gradcos | True | statistical | 0.3000 | 0.2000 | 0.6762 | 0.9992 | 0.0833 | 0.1286 | 0.9160 |
+| gradcos | True | temporal | 0.3000 | 0.2000 | 0.6852 | 1.0000 | 0.1667 | 0.1000 | 0.8333 |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.6857 | nan | 0.0000 | 0.2000 | nan |
+| krum | True | fixed | 0.1000 | 0.0500 | 0.7124 | 0.0014 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | statistical | 0.1000 | 0.0500 | 0.6852 | 0.8171 | 0.5000 | 0.1667 | 0.4085 |
+| krum | True | temporal | 0.1000 | 0.0500 | 0.6941 | 0.0003 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | fixed | 0.1000 | 0.1000 | 0.6948 | 0.0033 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | statistical | 0.1000 | 0.1000 | 0.7076 | 0.3705 | 0.9000 | 0.1222 | 0.0371 |
+| krum | True | temporal | 0.1000 | 0.1000 | 0.6817 | 0.0022 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | fixed | 0.1000 | 0.2000 | 0.7022 | 0.0026 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | statistical | 0.1000 | 0.2000 | 0.6987 | 0.0036 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | temporal | 0.1000 | 0.2000 | 0.6757 | 0.0357 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | fixed | 0.2000 | 0.0500 | 0.6693 | 0.9526 | 0.1250 | 0.2188 | 0.8335 |
+| krum | True | statistical | 0.2000 | 0.0500 | 0.6735 | 1.0000 | 0.0750 | 0.2313 | 0.9250 |
+| krum | True | temporal | 0.2000 | 0.0500 | 0.6860 | 0.9993 | 0.1500 | 0.2125 | 0.8494 |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.6787 | 0.9653 | 0.1250 | 0.2188 | 0.8447 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.6739 | 1.0000 | 0.1750 | 0.2062 | 0.8250 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.6802 | 0.9998 | 0.1750 | 0.2062 | 0.8248 |
+| krum | True | fixed | 0.2000 | 0.2000 | 0.6766 | 0.1495 | 0.6500 | 0.0875 | 0.0523 |
+| krum | True | statistical | 0.2000 | 0.2000 | 0.6644 | 1.0000 | 0.1500 | 0.2125 | 0.8500 |
+| krum | True | temporal | 0.2000 | 0.2000 | 0.6731 | 0.9999 | 0.1750 | 0.2062 | 0.8249 |
+| krum | True | fixed | 0.3000 | 0.0500 | 0.6888 | 0.9591 | 0.0667 | 0.2571 | 0.8952 |
+| krum | True | statistical | 0.3000 | 0.0500 | 0.6987 | 1.0000 | 0.1833 | 0.2071 | 0.8167 |
+| krum | True | temporal | 0.3000 | 0.0500 | 0.6929 | 0.9996 | 0.1167 | 0.2357 | 0.8830 |
+| krum | True | fixed | 0.3000 | 0.1000 | 0.7104 | 0.9947 | 0.1333 | 0.2286 | 0.8621 |
+| krum | True | statistical | 0.3000 | 0.1000 | 0.7070 | 1.0000 | 0.2333 | 0.1857 | 0.7667 |
+| krum | True | temporal | 0.3000 | 0.1000 | 0.6843 | 0.9999 | 0.1333 | 0.2286 | 0.8666 |
+| krum | True | fixed | 0.3000 | 0.2000 | 0.7308 | 0.9997 | 0.1833 | 0.2071 | 0.8165 |
+| krum | True | statistical | 0.3000 | 0.2000 | 0.6825 | 1.0000 | 0.1000 | 0.2429 | 0.9000 |
+| krum | True | temporal | 0.3000 | 0.2000 | 0.6869 | 1.0000 | 0.2333 | 0.1857 | 0.7667 |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.9996 | nan | nan | nan | nan |
+| fedavg | True | fixed | 0.1000 | 0.1000 | 0.9997 | 0.0068 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.0500 | 0.9995 | 0.9982 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.9996 | 0.9981 | nan | nan | nan |
+| fedavg | True | statistical | 0.2000 | 0.1000 | 0.9997 | 0.4550 | nan | nan | nan |
+| fedavg | True | temporal | 0.2000 | 0.1000 | 0.9997 | 0.5666 | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.2000 | 0.9997 | 0.9995 | nan | nan | nan |
+| fedavg | True | fixed | 0.3000 | 0.1000 | 0.9997 | 0.9994 | nan | nan | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.8888 | nan | 0.0000 | 0.4450 | nan |
+| flame | True | fixed | 0.1000 | 0.1000 | 0.8680 | 0.0228 | 1.0000 | 0.3778 | 0.0000 |
+| flame | True | fixed | 0.2000 | 0.0500 | 0.8903 | 0.0231 | 1.0000 | 0.3063 | 0.0000 |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.8133 | 0.0167 | 1.0000 | 0.3125 | 0.0000 |
+| flame | True | statistical | 0.2000 | 0.1000 | 0.8438 | 0.0281 | 1.0000 | 0.2938 | 0.0000 |
+| flame | True | temporal | 0.2000 | 0.1000 | 0.8299 | 0.0190 | 1.0000 | 0.3125 | 0.0000 |
+| flame | True | fixed | 0.2000 | 0.2000 | 0.8065 | 0.0234 | 1.0000 | 0.3125 | 0.0000 |
+| flame | True | fixed | 0.3000 | 0.1000 | 0.8237 | 0.0283 | 1.0000 | 0.2071 | 0.0000 |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.9642 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | True | fixed | 0.1000 | 0.1000 | 0.9641 | 0.0159 | 0.0000 | 0.0000 | 0.0159 |
+| fltrust | True | fixed | 0.2000 | 0.0500 | 0.9642 | 0.0157 | 0.0000 | 0.0000 | 0.0157 |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.9641 | 0.0158 | 0.0000 | 0.0000 | 0.0158 |
+| fltrust | True | statistical | 0.2000 | 0.1000 | 0.9641 | 0.0161 | 0.0000 | 0.0000 | 0.0161 |
+| fltrust | True | temporal | 0.2000 | 0.1000 | 0.9642 | 0.0160 | 0.0000 | 0.0000 | 0.0160 |
+| fltrust | True | fixed | 0.2000 | 0.2000 | 0.9641 | 0.0160 | 0.0000 | 0.0000 | 0.0160 |
+| fltrust | True | fixed | 0.3000 | 0.1000 | 0.9640 | 0.0161 | 0.0000 | 0.0000 | 0.0161 |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.9997 | nan | 0.0000 | 0.0750 | nan |
+| gradcos | True | fixed | 0.1000 | 0.1000 | 0.9997 | 0.0074 | 0.7000 | 0.0500 | 0.0022 |
+| gradcos | True | fixed | 0.2000 | 0.0500 | 0.9997 | 0.0075 | 0.7000 | 0.0375 | 0.0022 |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.9995 | 0.9809 | 0.0750 | 0.1062 | 0.9073 |
+| gradcos | True | statistical | 0.2000 | 0.1000 | 0.9997 | 0.0012 | 0.5250 | 0.0563 | 0.0006 |
+| gradcos | True | temporal | 0.2000 | 0.1000 | 0.9997 | 0.0072 | 0.3750 | 0.0125 | 0.0045 |
+| gradcos | True | fixed | 0.2000 | 0.2000 | 0.9997 | 0.0075 | 0.9750 | 0.0000 | 0.0002 |
+| gradcos | True | fixed | 0.3000 | 0.1000 | 0.9997 | 0.9994 | 0.0333 | 0.1143 | 0.9661 |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.9997 | nan | 0.0000 | 0.2000 | nan |
+| krum | True | fixed | 0.1000 | 0.1000 | 0.9997 | 0.0075 | 1.0000 | 0.1111 | 0.0000 |
+| krum | True | fixed | 0.2000 | 0.0500 | 0.9997 | 0.0064 | 1.0000 | 0.0000 | 0.0000 |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.9997 | 0.0074 | 1.0000 | 0.0000 | 0.0000 |
+| krum | True | statistical | 0.2000 | 0.1000 | 0.9997 | 0.0000 | 1.0000 | 0.0000 | 0.0000 |
+| krum | True | temporal | 0.2000 | 0.1000 | 0.9997 | 0.0065 | 1.0000 | 0.0000 | 0.0000 |
+| krum | True | fixed | 0.2000 | 0.2000 | 0.9997 | 0.0072 | 1.0000 | 0.0000 | 0.0000 |
+| krum | True | fixed | 0.3000 | 0.1000 | 0.9997 | 0.9992 | 0.3167 | 0.1500 | 0.6828 |
+| fedavg | False | fixed | 0.0000 | 0.0000 | 0.7771 | nan | nan | nan | nan |
+| fedavg | True | fixed | 0.2000 | 0.1000 | 0.7655 | 0.7915 | nan | nan | nan |
+| flame | False | fixed | 0.0000 | 0.0000 | 0.5189 | nan | 0.0000 | 0.4500 | nan |
+| flame | True | fixed | 0.2000 | 0.1000 | 0.5589 | 0.0140 | 0.5750 | 0.4188 | 0.0059 |
+| fltrust | False | fixed | 0.0000 | 0.0000 | 0.5080 | nan | 0.0000 | 0.0000 | nan |
+| fltrust | True | fixed | 0.2000 | 0.1000 | 0.5028 | 0.0700 | 0.0000 | 0.0000 | 0.0700 |
+| gradcos | False | fixed | 0.0000 | 0.0000 | 0.7845 | nan | 0.0000 | 0.2750 | nan |
+| gradcos | True | fixed | 0.2000 | 0.1000 | 0.7730 | 0.0041 | 0.4750 | 0.2125 | 0.0022 |
+| krum | False | fixed | 0.0000 | 0.0000 | 0.6704 | nan | 0.0000 | 0.2000 | nan |
+| krum | True | fixed | 0.2000 | 0.1000 | 0.6359 | 0.9257 | 0.0000 | 0.2500 | 0.9257 |

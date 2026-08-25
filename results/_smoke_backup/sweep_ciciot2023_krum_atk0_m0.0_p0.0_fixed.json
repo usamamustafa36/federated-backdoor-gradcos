@@ -1,0 +1,99 @@
+{
+  "config": {
+    "seed": 42,
+    "device": "auto",
+    "data": {
+      "dataset": "ciciot2023",
+      "root": "data/ciciot2023",
+      "train_file": "train.parquet",
+      "test_file": "test.parquet",
+      "label_mode": "grouped",
+      "max_train_rows": 400000,
+      "max_test_rows": 100000,
+      "min_rows_per_class": 200,
+      "scaler": "standard"
+    },
+    "federated": {
+      "num_clients": 20,
+      "partition": "iid",
+      "dirichlet_alpha": 0.5,
+      "rounds": 3,
+      "local_epochs": 1,
+      "batch_size": 256,
+      "clients_per_round": 20
+    },
+    "model": {
+      "name": "cnn_lstm",
+      "conv_filters": 64,
+      "lstm_hidden": 128,
+      "dense_hidden": 64,
+      "dropout": 0.3,
+      "lr": 0.001
+    },
+    "attack": {
+      "enabled": false,
+      "malicious_ratio": 0.0,
+      "poison_rate": 0.0,
+      "trigger_type": "fixed",
+      "target_label": "Benign"
+    },
+    "defense": {
+      "name": "krum",
+      "gradcos_threshold": 0.5,
+      "krum_malicious_estimate": 4
+    },
+    "logging": {
+      "out_dir": "results",
+      "log_every": 1
+    }
+  },
+  "history": {
+    "rounds": [
+      1,
+      2,
+      3
+    ],
+    "accuracy": [
+      0.3339267548321465,
+      0.33189216683621564,
+      0.3484231943031536
+    ],
+    "macro_f1": [
+      0.2857765396293034,
+      0.30084876346693334,
+      0.31708491843815834
+    ],
+    "loss": [
+      1.5540669034723105,
+      1.1432161690138607,
+      1.0544999860916837
+    ],
+    "bsr": [
+      NaN,
+      NaN,
+      NaN
+    ],
+    "detection_rate": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "false_positive_rate": [
+      0.16666666666666666,
+      0.16666666666666666,
+      0.16666666666666666
+    ]
+  },
+  "class_names": [
+    "Benign",
+    "BruteForce",
+    "DDoS",
+    "DoS",
+    "Mirai",
+    "Recon",
+    "Spoofing",
+    "Web-based"
+  ],
+  "trigger": null,
+  "num_malicious": 0
+}
