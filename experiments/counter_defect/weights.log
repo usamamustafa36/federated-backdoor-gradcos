@@ -1,0 +1,7 @@
+none              final CA=0.8068 f1=0.5606 | last5 mean CA=0.8048 f1=0.5380 | CA swing(last10)=0.0088
+inverse (current)  final CA=0.6677 f1=0.5851 | last5 mean CA=0.7161 f1=0.5837 | CA swing(last10)=0.0842
+sqrt-inverse      final CA=0.7611 f1=0.6191 | last5 mean CA=0.7734 f1=0.6051 | CA swing(last10)=0.0323
+effective-number  final CA=0.8085 f1=0.5901 | last5 mean CA=0.8066 f1=0.5811 | CA swing(last10)=0.0099
+
+reference  RandomForest      CA=0.7864 f1=0.6496
+reference  federated (paper)  CA=0.7031 f1=0.5643

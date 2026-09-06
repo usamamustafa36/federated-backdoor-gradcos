@@ -1,0 +1,21 @@
+shard sizes: [8442, 399, 7257, 3117, 8237, 1272, 3168, 2933, 880, 4256]
+  client 0: 2000 rows, 8 batches
+  client 1: 399 rows, 2 batches
+  client 2: 2000 rows, 8 batches
+  client 3: 2000 rows, 8 batches
+  client 4: 2000 rows, 8 batches
+  client 5: 1272 rows, 5 batches
+  client 6: 2000 rows, 8 batches
+  client 7: 2000 rows, 8 batches
+  client 8: 880 rows, 4 batches
+  client 9: 2000 rows, 8 batches
+
+=== full ===
+  pairwise cos : 0.820156 .. 0.990066
+  weights      : [0. 1. 0. 1. 0. 0. 0. 0. 0. 0.]
+  zeroed       : 8/10   sum=2.0000
+
+=== trainable ===
+  pairwise cos : -0.027468 .. 0.795196
+  weights      : [0.1872 1.     0.7382 1.     0.     1.     0.     0.1872 1.     0.7738]
+  zeroed       : 2/10   sum=5.8864

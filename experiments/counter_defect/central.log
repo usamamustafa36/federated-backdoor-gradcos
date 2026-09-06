@@ -1,0 +1,33 @@
+train (199218, 39) test (49872, 39) classes 8
+
+CENTRALIZED training, same architecture, same class weights:
+  epoch   1  CA=0.6668  macro_f1=0.4551
+  epoch   2  CA=0.7241  macro_f1=0.4927
+  epoch   3  CA=0.6039  macro_f1=0.5128
+  epoch   5  CA=0.7128  macro_f1=0.5679
+  epoch  10  CA=0.7090  macro_f1=0.5818
+  epoch  15  CA=0.7096  macro_f1=0.6034
+  epoch  20  CA=0.7322  macro_f1=0.6305
+  epoch  25  CA=0.7512  macro_f1=0.6348
+  epoch  30  CA=0.7204  macro_f1=0.6193
+
+FINAL centralized: CA=0.7204  macro_f1=0.6193
+majority-class baseline: 0.6520
+
+federated paper result:  CA~0.70  macro_f1~0.56
+
+              precision    recall  f1-score   support
+
+      Benign       0.78      0.61      0.68      1579
+  BruteForce       0.28      0.35      0.31       215
+        DDoS       0.93      0.67      0.78     32519
+         DoS       0.44      0.84      0.58      9997
+       Mirai       0.99      1.00      0.99      3456
+       Recon       0.63      0.59      0.61      1068
+    Spoofing       0.71      0.83      0.77       809
+   Web-based       0.18      0.37      0.24       229
+
+    accuracy                           0.72     49872
+   macro avg       0.62      0.66      0.62     49872
+weighted avg       0.82      0.72      0.74     49872
+

@@ -1,0 +1,14 @@
+MLP params: 111,240
+
+MLP on the same features / same class weights:
+  epoch   1  CA=0.7146  macro_f1=0.5930
+  epoch   3  CA=0.6719  macro_f1=0.5866
+  epoch   5  CA=0.7332  macro_f1=0.5984
+  epoch  10  CA=0.7310  macro_f1=0.6116
+  epoch  15  CA=0.7405  macro_f1=0.6201
+  epoch  20  CA=0.7391  macro_f1=0.6324
+  epoch  25  CA=0.6823  macro_f1=0.6115
+
+FINAL MLP:            CA=0.6823  macro_f1=0.6115
+CNN+LSTM centralized: CA=0.7096  macro_f1=0.6034
+RandomForest:         CA=0.7864  macro_f1=0.6496
