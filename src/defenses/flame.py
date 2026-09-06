@@ -39,8 +39,13 @@ class FLAME(DefenseStrategy):
         n = len(deltas)
 
         # --- 1. clustering on cosine distance ---
-        norms = np.linalg.norm(deltas, axis=1, keepdims=True) + 1e-12
-        unit = deltas / norms
+        # Both the cosine and the norms below are taken on the trainable
+        # parameters only. On the raw vector the cosine is ~98% batch counter,
+        # and the median norm S -- which sets both the clip threshold and the DP
+        # noise scale -- is ~79 instead of ~8, inflating sigma about tenfold.
+        sig = self.sig(deltas)
+        norms = np.linalg.norm(sig, axis=1, keepdims=True) + 1e-12
+        unit = sig / norms
         cos_sim = np.clip(unit @ unit.T, -1.0, 1.0)
         cos_dist = (1.0 - cos_sim).astype(np.float64)
         np.fill_diagonal(cos_dist, 0.0)

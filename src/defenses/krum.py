@@ -23,7 +23,12 @@ class Krum(DefenseStrategy):
             return None, {}
         updates = self.extract(results)
         cids = [u[0] for u in updates]
-        vecs = np.stack([self.flatten(u[1]) for u in updates])
+        # Distances on the trainable parameters only. The raw weight vector
+        # carries the cumulative batch counter (7900 by round 100), which both
+        # dominates ||v||^2 and sets up a catastrophic cancellation in
+        # sq_i + sq_j - 2<v_i,v_j>. Restricting the subspace removes both.
+        vecs = np.stack([self.sig(self.flatten(u[1])) for u in updates])
+        vecs = vecs.astype(np.float64, copy=False)
         n = len(vecs)
 
         # Krum needs n > 2f + 2; clamp f to what the cohort can support.

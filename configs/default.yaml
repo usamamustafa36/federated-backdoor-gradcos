@@ -4,6 +4,12 @@
 # ============================================================
 
 seed: 42
+# Multi-seed variance runs: pass these on the CLI as
+#   run_sweep.py --seeds 42 43 44 45 46
+# Each cell is then repeated per seed and written with a _s{seed} filename suffix
+# (legacy single-seed filenames are untouched). paper/aggregate_multiseed.py
+# collapses the per-seed JSONs into mean +/- std. Listed here for the record.
+seeds: [42, 43, 44, 45, 46]
 device: auto            # auto | cpu | cuda
 
 # ---------------- Data ----------------
@@ -27,7 +33,9 @@ federated:
   partition: iid                    # iid | dirichlet (non-IID)
   dirichlet_alpha: 0.5              # smaller = more non-IID
   rounds: 100
-  local_epochs: 1
+  local_epochs: 1                   # see training.class_weighting below; the
+                                    # detector plateaus by round 10 at this
+                                    # budget and gains +0.014 over the next 90
   batch_size: 256
   clients_per_round: 20             # full participation by default
 
@@ -47,7 +55,30 @@ attack:
   poison_rate: 0.1                  # 0.05 | 0.1 | 0.2  (fraction of local attack samples poisoned)
   trigger_type: fixed               # fixed | statistical | temporal
   target_label: Benign             # backdoor target class
+  trigger_scale: 1.0                # multiplies the normalized trigger pattern.
+                                    #   The base patterns sit at ~1.5-2 sigma, so this
+                                    #   is the DOSE axis: holding the feature set fixed
+                                    #   and sweeping only magnitude is what identifies
+                                    #   salience, instead of inferring it from a
+                                    #   fixed-vs-statistical/temporal group contrast.
+  donor_quantile: 0.5               # which benign donor to take, as a quantile of the
+                                    #   distinctiveness ordering. NOT a free knob: the
+                                    #   most distinctive donor is close to "maximally
+                                    #   benign-looking", which turns the trigger into an
+                                    #   evasion (clean-model BSR ~ 1) rather than a
+                                    #   backdoor. Always screen a donor trigger by the
+                                    #   clean_bsr_battery on the clean cell.
+  trigger_mode: sigma               # sigma  - the fixed sigma pattern below
+                                    # donor  - stamp values copied from a REAL benign
+                                    #   flow, so the stamped block is jointly
+                                    #   realizable by construction rather than an
+                                    #   arbitrary combination of marginally-plausible
+                                    #   values. trigger_scale does not apply.
+  evasion_noise: 1.0                # zero-sum decorrelation noise scale for the
+                                    #   decorrelated/adaptive variants, in multiples of
+                                    #   the malicious update norm. 0 = static attack.
   variant: simple                   # simple | constrained | distributed
+                                    #        | decorrelated | adaptive
                                     #   constrained: server-undetectable norm — each
                                     #     malicious update is rescaled to the round's
                                     #     MEDIAN honest update norm (evades Krum/FLAME
@@ -56,17 +87,69 @@ attack:
                                     #     are partitioned across the colluding clients;
                                     #     each poisons only its slice, the full trigger
                                     #     appears only at test time.
+                                    #   decorrelated: DEFENSE-AWARE. Adds zero-sum noise
+                                    #     across the malicious cohort, destroying the
+                                    #     pairwise-similarity signal GradCos/FoolsGold/
+                                    #     FLAME detect collusion with while cancelling
+                                    #     under averaging, so the backdoor still lands.
+                                    #   adaptive: decorrelated + norm-matched. Neither
+                                    #     direction nor magnitude looks unusual; this is
+                                    #     the strongest attacker implemented here.
 
 # ---------------- Defense ----------------
 defense:
-  name: fedavg                      # fedavg | krum | fltrust | flame | gradcos
+  name: fedavg                      # direction-based: krum | fltrust | flame |
+                                    #   foolsgold | gradcos
+                                    # magnitude/order-statistic (the controls):
+                                    #   median | trimmedmean | rfa | bulyan | normclip
+                                    # or fedavg (undefended)
+  # Which coordinates a defense's DECISIONS are computed on.
+  #   trainable : model parameters only (correct; the default)
+  #   full      : the whole flattened state_dict, BatchNorm buffers included --
+  #               reproduces the defect exactly, for the controlled comparison.
+  # The flattened state_dict carries num_batches_tracked, an integer counter that
+  # is inert under PyTorch's default momentum yet holds 98.1% of the squared norm
+  # of a real CICIoT2023 update (99.4% on ResNet-18 at 5k samples/client). It
+  # compresses honest-client cosine from 0.831 to 0.998 -- ~96x -- and, when
+  # shard sizes differ, supplies 53-99% of Krum's pairwise distances.
+  # Aggregation always uses the full vector; only decisions are restricted.
+  signal_subspace: trainable
   gradcos_threshold: 0.5
   gradcos_method: clique            # clique (BEST: collusion-robust, robust to 20-30%
                                     # malicious) | meansim (TH1 cosine-mean, fails at
-                                    # high ratio) | cluster (ablation). See gradcos-improvement.
-  krum_malicious_estimate: 4        # expected number of malicious clients (f)
+                                    # high ratio) | cluster (ablation) | residual
+                                    # (mean-centred cosine, attempt at low-salience
+                                    # triggers -- see paper Sec. on the blind spot).
+  krum_malicious_estimate: 4        # expected number of malicious clients (f); also
+                                    #   used by Bulyan
+  gradcos_kappa: 1.5                # clique-threshold width in robust-z units
+  flame_noise_lambda: 0.001         # FLAME/normclip DP noise scale (sigma = lambda * S)
+  trim_beta: 0.2                    # trimmed-mean trim fraction per tail
+  rfa_iters: 8                      # Weiszfeld iterations for the geometric median
+                                    # All five are set by scripts/calibrate_defenses.py
+                                    # on a held-out calibration split, never on the
+                                    # evaluation grid -- see paper Sec. on tuning.
 
 # ---------------- Logging ----------------
 logging:
   out_dir: results
   log_every: 1
+
+# ---------------- Training ----------------
+training:
+  # Per-class loss weighting on a 121:1 imbalanced task. Measured centrally,
+  # 200k rows, 15 epochs, same architecture:
+  #
+  #   scheme            CA       macro-F1   CA swing (last 10 epochs)
+  #   none              0.8068   0.5606     0.0088
+  #   inverse           0.6677   0.5851     0.0842   <- used until 5 Sep 2026
+  #   sqrt              0.7611   0.6191     0.0323
+  #   effective         0.8085   0.5901     0.0099   <- default
+  #   (RandomForest on the same 39 features: 0.7864 / 0.6496)
+  #
+  # Both sqrt and effective beat inverse on accuracy AND macro-F1 AND stability.
+  # effective is the default: it puts the detector 0.157 above the majority-class
+  # floor of 0.652 (inverse managed 0.066) and past RandomForest. Use sqrt if
+  # macro-F1 on the rare classes matters more than overall accuracy.
+  #   none | sqrt | inverse | effective
+  class_weighting: effective

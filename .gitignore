@@ -26,3 +26,16 @@ rough/
 .DS_Store
 *.swp
 results/*.out
+
+# Generated flat submission folder (paper/Makefile: make package)
+paper/submission/
+
+# LaTeX build artefacts
+paper/*.aux
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.log
+paper/*.spl
+paper/*.blg
+paper/*.out
+paper/submission/

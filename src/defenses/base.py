@@ -20,10 +20,44 @@ class DefenseStrategy(FedAvg):
         super().__init__(**kwargs)
         self.last_flagged_cids: list[int] = []
         self.current_global: list[np.ndarray] | None = None
+        self.signal_mask: np.ndarray | None = None
 
     # The engine pushes the pre-round global model here.
     def set_current_global(self, weights: list[np.ndarray]) -> None:
         self.current_global = [np.asarray(w, dtype=np.float64) for w in weights]
+
+    # ---- the decision subspace -----------------------------------------
+    def set_signal_mask(self, mask: np.ndarray | None) -> None:
+        """Restrict every DECISION this strategy makes to the trainable
+        parameters.
+
+        The flattened ``state_dict`` a client sends also carries BatchNorm
+        buffers, and one of them -- ``num_batches_tracked`` -- is an integer
+        counter that increments by the number of batches the client ran. At the
+        committed configuration that is 79 per round, on a single coordinate,
+        identical for every client. Measured on real CICIoT2023 data it is
+        **98.1% of the squared norm** of the whole update.
+
+        Every similarity, distance and norm computed over the raw flattened
+        vector is therefore dominated by a constant that carries no information
+        about the model or the data. Measured on three real clients: the mean
+        pairwise cosine of honest updates is 0.998 over the full vector and
+        0.831 over the trainable parameters alone -- the discriminative range
+        the defenses need is compressed about 96-fold into the third and fourth
+        decimal places.
+
+        So decisions (who to keep, what weight to give, what norm to clip to,
+        how large the DP noise should be) use ``sig(...)``; AGGREGATION still
+        operates on the full vector, because the buffers are real model state
+        that has to be averaged and returned.
+        """
+        self.signal_mask = None if mask is None else np.asarray(mask, dtype=bool)
+
+    def sig(self, v: np.ndarray) -> np.ndarray:
+        """Project a flat vector, or a stack of them, onto the decision subspace."""
+        if self.signal_mask is None:
+            return v
+        return v[..., self.signal_mask]
 
     # ---- helpers --------------------------------------------------------
     @staticmethod

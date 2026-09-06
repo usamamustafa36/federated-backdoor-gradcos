@@ -121,6 +121,10 @@ def _plot_curves():
             payload = json.loads(f.read_text())
         except json.JSONDecodeError:
             continue
+        # results/ also holds non-run artefacts (the realizability audit writes a
+        # JSON list), so skip anything that is not a run payload.
+        if not isinstance(payload, dict):
+            continue
         cfg = payload.get("config", {})
         h = payload.get("history", {})
         a = cfg.get("attack", {})

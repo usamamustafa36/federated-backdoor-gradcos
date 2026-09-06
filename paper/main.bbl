@@ -1,0 +1,167 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{mcmahan2017}
+B.~McMahan, E.~Moore, D.~Ramage, S.~Hampson, B.~Ag{\"u}era~y Arcas,
+  Communication-efficient learning of deep networks from decentralized data,
+  in: Proceedings of the 20th International Conference on Artificial
+  Intelligence and Statistics (AISTATS), 2017, pp. 1273--1282.
+
+\bibitem{kairouz2021}
+P.~Kairouz, H.~B. McMahan, et~al., Advances and open problems in federated
+  learning, Foundations and Trends in Machine Learning 14~(1--2) (2021) 1--210.
+
+\bibitem{bagdasaryan2020}
+E.~Bagdasaryan, A.~Veit, Y.~Hua, D.~Estrin, V.~Shmatikov, How to backdoor
+  federated learning, in: Proceedings of the 23rd International Conference on
+  Artificial Intelligence and Statistics (AISTATS), 2020, pp. 2938--2948.
+
+\bibitem{xie2020}
+C.~Xie, K.~Huang, P.-Y. Chen, B.~Li, {DBA}: Distributed backdoor attacks
+  against federated learning, in: Proceedings of the International Conference
+  on Learning Representations (ICLR), 2020.
+
+\bibitem{blanchard2017}
+P.~Blanchard, E.~M. El~Mhamdi, R.~Guerraoui, J.~Stainer, Machine learning with
+  adversaries: {B}yzantine tolerant gradient descent, in: Advances in Neural
+  Information Processing Systems (NeurIPS), 2017, pp. 119--129.
+
+\bibitem{cao2021fltrust}
+X.~Cao, M.~Fang, J.~Liu, N.~Z. Gong, {FLTrust}: {B}yzantine-robust federated
+  learning via trust bootstrapping, in: Proceedings of the Network and
+  Distributed System Security Symposium (NDSS), 2021.
+
+\bibitem{nguyen2022flame}
+T.~D. Nguyen, P.~Rieger, H.~Chen, H.~Yalame, H.~M{\"o}llering, H.~Fereidooni,
+  S.~Marchal, M.~Miettinen, A.~Mirhoseini, S.~Zeitouni, F.~Koushanfar, A.-R.
+  Sadeghi, T.~Schneider, {FLAME}: Taming backdoors in federated learning, in:
+  Proceedings of the 31st USENIX Security Symposium, 2022, pp. 1415--1432.
+
+\bibitem{fung2020foolsgold}
+C.~Fung, C.~J.~M. Yoon, I.~Beschastnikh, The limitations of federated learning
+  in sybil settings, in: Proceedings of the 23rd International Symposium on
+  Research in Attacks, Intrusions and Defenses (RAID), 2020, pp. 301--316.
+
+\bibitem{wang2020tails}
+H.~Wang, K.~Sreenivasan, S.~Rajput, H.~Vishwakarma, S.~Agarwal, J.-y. Sohn,
+  K.~Lee, D.~Papailiopoulos, Attack of the tails: Yes, you really can backdoor
+  federated learning, in: Advances in Neural Information Processing Systems
+  (NeurIPS), 2020, pp. 16070--16084.
+
+\bibitem{sun2019}
+Z.~Sun, P.~Kairouz, A.~T. Suresh, H.~B. McMahan, Can you really backdoor
+  federated learning?, arXiv preprint arXiv:1911.07963 (2019).
+
+\bibitem{yin2018}
+D.~Yin, Y.~Chen, K.~Ramchandran, P.~Bartlett, {B}yzantine-robust distributed
+  learning: Towards optimal statistical rates, in: Proceedings of the 35th
+  International Conference on Machine Learning (ICML), 2018, pp. 5650--5659.
+
+\bibitem{mhamdi2018bulyan}
+E.~M. El~Mhamdi, R.~Guerraoui, S.~Rouault, The hidden vulnerability of
+  distributed learning in {B}yzantium, in: Proceedings of the 35th
+  International Conference on Machine Learning (ICML), 2018, pp. 3521--3530.
+
+\bibitem{pillutla2022rfa}
+K.~Pillutla, S.~M. Kakade, Z.~Harchaoui, Robust aggregation for federated
+  learning, IEEE Transactions on Signal Processing 70 (2022) 1142--1154.
+
+\bibitem{rieger2022deepsight}
+P.~Rieger, T.~D. Nguyen, M.~Miettinen, A.-R. Sadeghi, {DeepSight}: Mitigating
+  backdoor attacks in federated learning through deep model inspection, in:
+  Proceedings of the Network and Distributed System Security Symposium (NDSS),
+  2022.
+
+\bibitem{shejwalkar2021}
+V.~Shejwalkar, A.~Houmansadr, Manipulating the {B}yzantine: Optimizing model
+  poisoning attacks and defenses for federated learning, in: Proceedings of the
+  Network and Distributed System Security Symposium (NDSS), 2021.
+
+\bibitem{fang2020local}
+M.~Fang, X.~Cao, J.~Jia, N.~Z. Gong, Local model poisoning attacks to
+  {B}yzantine-robust federated learning, in: Proceedings of the 29th USENIX
+  Security Symposium, 2020, pp. 1605--1622.
+
+\bibitem{baruch2019little}
+G.~Baruch, M.~Baruch, Y.~Goldberg, A little is enough: Circumventing defenses
+  for distributed learning, in: Advances in Neural Information Processing
+  Systems (NeurIPS), 2019, pp. 8635--8645.
+
+\bibitem{li20233dfed}
+H.~Li, Q.~Ye, H.~Hu, J.~Li, L.~Wang, C.~Fang, J.~Shi, {3DFed}: Adaptive and
+  extensible framework for covert backdoor attack in federated learning, in:
+  Proceedings of the IEEE Symposium on Security and Privacy (S\&P), 2023, pp.
+  1893--1907.
+
+\bibitem{zhang2022fldetector}
+Z.~Zhang, X.~Cao, J.~Jia, N.~Z. Gong, {FLDetector}: Defending federated
+  learning against model poisoning attacks via detecting malicious clients, in:
+  Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data
+  Mining (KDD), 2022, pp. 2545--2555.
+
+\bibitem{yang2024learning}
+Y.~Yang, Q.~Li, C.~Nie, Y.~Hong, M.~Pang, B.~Wang, A learning-based attack
+  framework to break {SOTA} poisoning defenses in federated learning, in:
+  Proceedings of the 33rd ACM International Conference on Information and
+  Knowledge Management (CIKM), 2024.
+
+\bibitem{fang2025foundation}
+M.~Fang, S.~Nabavirazavi, Z.~Liu, W.~Sun, S.~S. Iyengar, H.~Yang, Do we really
+  need to design new {B}yzantine-robust aggregation rules?, in: Proceedings of
+  the Network and Distributed System Security Symposium (NDSS), 2025.
+
+\bibitem{pierazzi2020problem}
+F.~Pierazzi, F.~Pendlebury, J.~Cortellazzi, L.~Cavallaro, Intriguing properties
+  of adversarial {ML} attacks in the problem space, in: Proceedings of the IEEE
+  Symposium on Security and Privacy (S\&P), 2020, pp. 1332--1349.
+
+\bibitem{neto2023ciciot}
+E.~C.~P. Neto, S.~Dadkhah, R.~Ferreira, A.~Zohourian, R.~Lu, A.~A. Ghorbani,
+  {CICIoT2023}: A real-time dataset and benchmark for large-scale attacks in
+  {IoT} environment, Sensors 23~(13) (2023) 5941.
+
+\bibitem{flnet2023}
+P.~Kumar, J.~Liu, A.~S.~M. Tayeen, S.~Misra, H.~Cao, J.~Harikumar, O.~Perez,
+  {FLNET2023}: Realistic network intrusion detection dataset for federated
+  learning, in: Proceedings of the IEEE Military Communications Conference
+  (MILCOM), 2023.
+
+\bibitem{zhang2022secfednids}
+Z.~Zhang, Y.~Zhang, D.~Guo, L.~Yao, Z.~Li, {SecFedNIDS}: Robust defense for
+  poisoning attack against federated learning-based network intrusion detection
+  system, Future Generation Computer Systems 134 (2022) 154--169.
+
+\bibitem{merzouk2023param}
+M.~A. Merzouk, F.~Cuppens, N.~Boulahia-Cuppens, R.~Yaich, Parameterizing
+  poisoning attacks in federated learning-based intrusion detection, in:
+  Proceedings of the 18th International Conference on Availability, Reliability
+  and Security (ARES), 2023.
+
+\bibitem{sameera2025weidetect}
+K.~M. Sameera, P.~Vinod, A.~Rocha, K.~A. Rafidha~Rehiman, M.~Conti,
+  {WeiDetect}: {W}eibull distribution-based defense against poisoning attacks
+  in federated learning for network intrusion detection systems, arXiv preprint
+  arXiv:2504.04367 (2025).
+
+\bibitem{beutel2020flower}
+D.~J. Beutel, T.~Topal, A.~Mathur, X.~Qiu, J.~Fernandez-Marques, Y.~Gao,
+  L.~Sani, K.~H. Li, T.~Parcollet, P.~P.~B. de~Gusm{\~a}o, N.~D. Lane, Flower:
+  A friendly federated learning research framework, arXiv preprint
+  arXiv:2007.14390 (2020).
+
+\bibitem{zhang2022neurotoxin}
+Z.~Zhang, A.~Panda, L.~Song, Y.~Yang, M.~W. Mahoney, P.~Mittal, R.~Kannan,
+  J.~Gonzalez, Neurotoxin: Durable backdoors in federated learning, in:
+  Proceedings of the 39th International Conference on Machine Learning (ICML),
+  Vol. 162, 2022, pp. 26429--26446.
+
+\bibitem{xie2021crfl}
+C.~Xie, M.~Chen, P.-Y. Chen, B.~Li, {CRFL}: Certifiably robust federated
+  learning against backdoor attacks, in: Proceedings of the 38th International
+  Conference on Machine Learning (ICML), Vol. 139, 2021, pp. 11372--11382.
+
+\end{thebibliography}

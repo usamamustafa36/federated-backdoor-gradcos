@@ -1,0 +1,1284 @@
+%=====================================================================
+%  Direction Is Not Enough: Trigger Salience and Adaptive Collusion
+%  against Byzantine-Robust Federated Intrusion Detection
+%
+%  Manuscript prepared for the Journal of Information Security and
+%  Applications (Elsevier).
+%
+%  Build:  make          (or: latexmk -pdf main.tex)
+%  Gate :  make gate     (refuses to pass while any \PENDING remains)
+%
+%  Layout: [3p] is single column at journal density, matching the
+%  companion Computers & Security submission. For the two-column look
+%  JISA uses in print, swap the class line for
+%      \documentclass[final,5p,times,twocolumn]{elsarticle}
+%  and see README.txt for the float and figure widths that go with it.
+%=====================================================================
+\documentclass[3p]{elsarticle}
+
+% --- maths ----------------------------------------------------------
+\usepackage{amsmath,amssymb,amsfonts}
+
+% --- floats, figures, tables ----------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% --- typography -----------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}       % bold small caps for \textsc{GradCos} in bold contexts
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{url}
+\usepackage{xurl}          % let the long repository URL break across lines
+\usepackage[hidelinks]{hyperref}
+
+% NB: no \usepackage{cite} -- elsarticle loads natbib itself, and the two
+% clash silently, renumbering or dropping citations.
+
+% Uncomment for a review submission if the editor asks for line numbers:
+% \usepackage{lineno}\linenumbers
+
+\graphicspath{{figs/}}
+
+% Marks a result whose experiment is specified and implemented but has not yet
+% been run to completion. NOTHING carrying this may go to a venue. Remove the
+% macro entirely once results/remediation.log reports the pipeline complete.
+\newcommand{\PENDING}{\textcolor{red}{\textbf{[PENDING RUN]}}}
+
+\newcommand{\repourl}{https://github.com/usamamustafa36/federated-backdoor-gradcos}
+
+% Every number quoted in this paper is defined here, generated from the committed
+% result files by paper/make_numbers.py. Do not type a result into the prose or a
+% table cell: add it to the generator instead. A cell that has not been run yet
+% expands to \PENDING, so an unfinished claim is loud rather than silently wrong.
+%   python3 paper/aggregate_multiseed.py && python3 -m experiments.make_tables
+%   python3 paper/make_numbers.py --strict     # submission gate: exits 1 if any \PENDING
+\input{numbers}
+
+\journal{Journal of Information Security and Applications}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Direction Is Not Enough: Trigger Salience and Adaptive Collusion
+against Byzantine-Robust Federated Intrusion Detection}
+
+%---------------------------------------------------------------------
+% AUTHOR BLOCK
+%---------------------------------------------------------------------
+\author[mcs]{Usama Mustafa\corref{cor1}}
+\ead{usamamustafa1@gmail.com}
+
+\author[mcs]{Imran Rashid}
+\ead{irashid@mcs.edu.pk}
+
+\cortext[cor1]{Corresponding author.}
+
+\affiliation[mcs]{organization={Department of Information Security,
+    Military College of Signals, National University of Sciences and
+    Technology},
+    city={Rawalpindi},
+    country={Pakistan}}
+
+%---------------------------------------------------------------------
+\begin{abstract}
+Federated learning trains a shared intrusion detector without pooling raw traffic, opening
+the aggregation step to poisoning by compromised participants. We study backdoor attacks on
+a federated CNN\,+\,LSTM network-flow classifier and the Byzantine-robust defenses meant to
+stop them, on two 2023 benchmarks (CICIoT2023, FLNET2023) under IID and non-IID data. Our findings are mostly negative and concern the \emph{signal} these defenses read, not
+any one defense. First, whether a similarity-based rule holds is decided by how far the trigger
+rotates the poisoned update off the honest consensus direction, measured per round rather
+than inferred from the trigger's name, and not by the malicious-client fraction. Second,
+that signal is cheap to remove: zero-sum noise across the colluding clients decorrelates
+them while leaving the aggregate untouched, collapsing their mean pairwise similarity from
+% FULL-SCALE CHECK: the "below 0.35" figure below comes from the reduced-scale
+% validation run (see the provenance note in Sec. 7.4). tools/check_manuscript.py
+% compares it against the adMalCos* macros as lane 1a lands; at the first
+% full-scale cell the worst measured value is 0.428, i.e. ABOVE the claim.
+% Revisit this sentence -- and the matching one in the introduction -- when the
+% lane completes. Do not leave it as a bare literal.
+$0.99$ to below $0.35$ at no cost to the backdoor. Every direction-based rule here is
+evaluated against it. Third, detection rates reported without false-positive rates mislead:
+FLAME reaches a backdoor rate of $\msBSRflameFixed$ while flagging $\msFPRpctflameFixed\%$ of \emph{honest} clients,
+which is where its $\msCAdeficitFlame$ clean-accuracy deficit comes from. Fourth, a joint-distribution audit shows this
+literature's ``in-distribution'' premise does not survive the data: a trigger deviating by
+$0.5\sigma$ on any single feature can still be further from the benign mean than all
+but $\rzExceedFixedQtr$ of $\rzRefRows$ real benign flows. We propose \textsc{GradCos}, a
+reference-free aggregator that ties the strongest baseline on conspicuous triggers with no
+clean server data and at $+\msCAadvGradcos$ clean accuracy, and report its blind spot, seed bimodality
+and failure against that attacker.
+\end{abstract}
+
+\begin{keyword}
+federated learning \sep backdoor attacks \sep intrusion detection \sep
+Byzantine-robust aggregation \sep adaptive attacks \sep IoT security \sep
+poisoning
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introduction}
+
+Intrusion detection on IoT and edge networks is a natural fit for federated
+learning (FL). The traffic a detector needs is exactly the traffic operators are
+least willing to centralize, and FL~\cite{mcmahan2017,kairouz2021} keeps it on
+the device: each participant trains locally and shares only model updates, which
+a server averages into a global detector. The catch is that the averaging step
+trusts whoever shows up. A compromised participant---a common assumption in a
+large, heterogeneous IoT fleet---can submit crafted updates that steer the shared
+model. Among poisoning attacks, \emph{backdoors} are the most insidious: rather
+than degrade the model outright, they teach it a hidden rule (``traffic carrying
+pattern $\tau$ is benign'') while leaving normal behavior
+intact~\cite{bagdasaryan2020,xie2020}. In an intrusion detector this lets an
+attacker wave their own traffic past the model, and nothing in the aggregate
+accuracy gives it away.
+
+A sizeable literature answers this with Byzantine-robust aggregation. Krum picks
+the update in the densest neighbourhood~\cite{blanchard2017}; FLTrust scores each
+update against a direction derived from a small clean dataset~\cite{cao2021fltrust};
+FLAME clusters updates, clips their norms, and adds noise~\cite{nguyen2022flame};
+FoolsGold penalizes clients whose update histories are too similar to each
+other~\cite{fung2020foolsgold}. Strip away the differences and almost all of them
+read the same underlying quantity: \emph{where an update points}. That is the
+observation this paper is organized around, and most of what we report follows
+from taking it seriously.
+
+We build a federated CNN\,+\,LSTM flow classifier, attack it with three families
+of tabular flow-feature triggers, and defend it with ten aggregation rules---five
+that read update direction, five that read only magnitude or coordinate order
+statistics. We instrument the server to record, every round, the geometry each
+defense is actually looking at. Working through CICIoT2023 and FLNET2023, IID and
+non-IID, with the headline comparison over five seeds, we reach a picture that is
+more negative and, we think, more useful than a ranking of defenses.
+
+\begin{itemize}
+\item \textbf{Salience, measured rather than named.} We define the salience of a
+trigger operationally, as the gap between how well an honest update and a
+poisoned update align with the honest consensus direction, and log it per round.
+Robustness tracks that quantity, not the attacker count: conspicuous triggers are
+filtered by every direction-based defense even at $30\%$ malicious clients, while
+triggers that barely rotate the update defeat all of them. Sweeping trigger
+magnitude at a fixed feature set turns this from a contrast between two groups of
+triggers into a dose--response along one measured axis.
+
+\item \textbf{The signal is cheap to remove.} Direction-based defenses detect
+colluders because colluders resemble each other. An attacker who adds independent
+per-client noise, mean-centred across the malicious cohort so it cancels under
+averaging, keeps the backdoor and destroys the resemblance---mean pairwise cosine
+% FULL-SCALE CHECK: the "below 0.35" figure below comes from the reduced-scale
+% validation run (see the provenance note in Sec. 7.4). tools/check_manuscript.py
+% compares it against the adMalCos* macros as lane 1a lands; at the first
+% full-scale cell the worst measured value is 0.428, i.e. ABOVE the claim.
+% Revisit this sentence -- and the matching one in the introduction -- when the
+% lane completes. Do not leave it as a bare literal.
+among colluders falls from $0.99$ to below $0.35$ while the honest cohort is unchanged
+(measured directly; Sec.~\ref{sec:adaptive}). Norm-matching the result hides the
+residual magnitude tell. We evaluate this attack against every direction-based
+defense including our own.
+
+\item \textbf{GradCos}, a reference-free aggregator that identifies the
+colluding minority from the pairwise cosine structure of the updates, needing no
+clean server dataset (unlike FLTrust) and no estimate of the attacker count
+(unlike Krum). On conspicuous triggers it ties FLTrust's backdoor rate ($\msBSRfltrustFixed$)
+while keeping $+\msCAadvGradcos$ clean accuracy and holding where Krum collapses. We are
+explicit about the rest: it fails on low-salience triggers exactly as its peers
+do, it is bimodal across seeds on our second dataset, and the adaptive attack
+above defeats it. Its contribution is the diagnosis it enables, not a ranking.
+
+\item \textbf{Detection rates without false-positive rates are not evidence.}
+FLAME reaches a backdoor rate of $\msBSRflameFixed$ on the fixed trigger while flagging
+$0.40\pm0.04$ of honest clients; that is where its clean accuracy goes. On
+low-salience triggers \textsc{GradCos} flags honest clients marginally more often
+than malicious ones. Neither fact is visible in a backdoor-success-only
+comparison, and both change what the numbers mean.
+
+\item \textbf{A realizability audit of the triggers themselves.} Marginal
+$\sigma$ checks, standard in this literature, say almost nothing about whether a
+stamped flow could exist. We measure joint plausibility directly and find our own
+threat model wanting in a specific, reportable way, and we supply a
+donor-flow trigger construction that fixes part of it.
+\end{itemize}
+
+We release the code, configurations, per-round update-geometry logs, and the
+audit so the grid can be regenerated with a single command.
+
+\section{Related Work}
+
+\textbf{Backdoors in federated learning.} Bagdasaryan et
+al.~\cite{bagdasaryan2020} showed that model replacement lets a single client
+implant a durable backdoor; Xie et al.~\cite{xie2020} distributed the trigger
+across colluding clients (DBA) so each update looks more benign. Wang et
+al.~\cite{wang2020tails} argued backdoors on rare sub-populations are especially
+hard to remove, while Sun et al.~\cite{sun2019} found norm clipping and noise
+blunt many backdoors. Most of this work uses image classification with patch
+triggers. Intrusion detection differs in that the feature space is tabular flow
+statistics whose coordinates are jointly constrained, which is a problem for the
+trigger design rather than a detail of it (Sec.~\ref{sec:realizable}).
+
+\textbf{Byzantine-robust aggregation.} Krum and Multi-Krum~\cite{blanchard2017}
+give distance-based robustness; coordinate-wise median and trimmed
+mean~\cite{yin2018}, Bulyan~\cite{mhamdi2018bulyan} and the geometric median
+(RFA)~\cite{pillutla2022rfa} give order-statistic robustness.
+FLTrust~\cite{cao2021fltrust} adds a trusted root dataset to anchor a reference
+direction. FoolsGold~\cite{fung2020foolsgold} targets sybil collusion by
+penalizing clients whose updates are too similar to each other---the opposite
+reading of the same cosine signal we use. FLAME~\cite{nguyen2022flame} and
+DeepSight~\cite{rieger2022deepsight} combine clustering with clipping/filtering.
+We evaluate both families side by side, because the separation between them is
+what our main finding turns on.
+
+\textbf{Adaptive attacks.} Shejwalkar and Houmansadr~\cite{shejwalkar2021} and
+Fang et al.~\cite{fang2020local} showed that defenses evaluated only against
+static attackers routinely fall to attackers optimized against them; Baruch et
+al.~\cite{baruch2019little} showed how little perturbation is needed when the
+attacker stays inside the honest variance. The closest work to ours is
+3DFed~\cite{li20233dfed}, which evades DeepSight, FoolsGold, FLAME and
+FLDetector~\cite{zhang2022fldetector} by adapting its parameters from feedback
+about the previous global model, and the learning-based framework of Yang et
+al.~\cite{yang2024learning}, which trains the attack against the defense.
+Our evasion (Sec.~\ref{sec:adaptive}) is a deliberately unsophisticated instance
+of the same lesson---no optimization, no feedback channel, one scalar
+knob---which is what makes it awkward for the defenses it breaks: a weaker
+attacker that still works is worse news for a defense than a stronger one that
+does. Read alongside Fang et al.~\cite{fang2025foundation}, who argue the field
+should harden established aggregation rules rather than keep proposing new ones,
+our results say something about \emph{which} established rules are worth
+hardening: not the ones reading update direction.
+Pierazzi et al.~\cite{pierazzi2020problem} make the problem-space point that
+motivates our realizability audit: a feature-space perturbation is only an attack
+if some real object realizes it.
+
+\textbf{Federated IDS.} Federated detectors have been built on modern IoT
+benchmarks such as CICIoT2023~\cite{neto2023ciciot} and the federated traffic
+benchmark FLNET2023~\cite{flnet2023}. Poisoning of these detectors specifically
+has been studied by Zhang et al.~\cite{zhang2022secfednids}, who defend at both
+the model and the data level; by Merzouk et al.~\cite{merzouk2023param}, who
+parameterize the attacker's budget; and by Sameera et
+al.~\cite{sameera2025weidetect}, who fit validation scores to a Weibull
+distribution to exclude poisoned models. All three evaluate against static
+attackers, and none reports the false-positive cost of the exclusions its
+detector makes. Comparatively little of this work stress-tests the aggregation
+layer against stealthy backdoors with clean-accuracy and false-positive
+accounting, which is the gap this paper addresses.
+
+\section{Threat Model and System Setup}
+
+\textbf{Federated detector.} $N=20$ clients hold private shards of a
+network-flow dataset and train a shared classifier for $R=100$ synchronous
+rounds at full participation, one local epoch per round (batch size $256$, Adam,
+learning rate $10^{-3}$). The model treats the $F$-dimensional standardized
+feature vector as a length-$F$, single-channel sequence: a Conv1D layer ($64$
+filters, kernel $3$, ReLU, BatchNorm) extracts local feature interactions, an
+LSTM ($128$ hidden units) reads the resulting sequence, and a dense head ($64$
+units, dropout $0.3$) with softmax produces the class posterior. Aggregation is
+performed by genuine Flower~\cite{beutel2020flower} \texttt{Strategy} objects
+driven by an in-process round loop, so every defense receives real per-client
+\texttt{FitRes} updates.
+
+\textbf{Adversary.} A fraction $m\in\{0.1,0.2,0.3\}$ of clients is malicious and
+colludes on a single backdoor objective: make trigger-carrying attack traffic be
+classified as benign. Each malicious client poisons a fraction
+$p\in\{0.05,0.1,0.2\}$ of its \emph{attack} samples by stamping the trigger and
+relabelling them benign, then trains normally. The adversary knows the model
+architecture and the trigger but controls neither the server nor honest clients.
+
+We are explicit that this is a \emph{feature-space} threat model: the trigger is
+a perturbation of the standardized feature vector the classifier consumes, and we
+do not claim a corresponding packet-level realization.
+Sec.~\ref{sec:realizable} measures how far that abstraction is from realizable
+traffic, because we found the usual justification for it does not hold.
+
+\textbf{Adaptive adversary.} Beyond static poisoning we consider an attacker who
+knows the defense. Sec.~\ref{sec:adaptive} gives an evasion that targets the one
+property every direction-based rule here depends on---that colluders resemble one
+another---at the cost of one scalar parameter and no optimization.
+
+\textbf{Server capability.} The server sees only model updates and has no access
+to raw client data. FLTrust is the one deliberate exception: it is granted a
+small class-balanced clean root set ($\approx$300 samples), so its results should
+be read as an upper bound assuming a resource the other defenses do without.
+
+\textbf{Metrics.} We report clean accuracy (CA) and macro-F1 on non-triggered
+traffic; backdoor success rate (BSR), the fraction of triggered attack samples
+called benign; and, for defenses that flag clients, detection rate (DR) and
+false-positive rate (FPR) against the known malicious set. \textbf{DR and FPR are
+always reported together.} A defense that flags clients converts a false positive
+directly into lost training signal, so a detection rate quoted alone says nothing
+about what the detector cost; Sec.~\ref{sec:fpr} shows this is not a hypothetical
+concern for two of the baselines. Defenses that never single out a client
+(FedAvg and the coordinate-wise rules) report DR/FPR as N/A rather than zero. We
+also log the per-round update geometry defined next.
+
+\textbf{Salience, defined.} Let $\delta_i$ be client $i$'s update relative to the
+round's global model and $\bar\delta_h$ the mean honest update. We define the
+\emph{salience gap}
+\begin{equation}
+\label{eq:salience}
+S \;=\; \frac{1}{|H|}\sum_{i\in H}\cos(\delta_i,\bar\delta_h)
+      \;-\; \frac{1}{|M|}\sum_{j\in M}\cos(\delta_j,\bar\delta_h),
+\end{equation}
+with $H$ and $M$ the honest and malicious sets. $S$ is $0$ when the backdoor does
+not rotate the update at all and grows as the trigger becomes more conspicuous.
+It is exactly the quantity a cosine filter must resolve, it is measured rather
+than assumed, and it lets us regress outcomes on a continuous axis instead of on
+a trigger's name. We log $S$ every round, together with the mean off-diagonal
+cosine within each group (the collusion signal) and the ratio of median malicious
+to median honest update norm (what a magnitude rule sees).
+
+\section{Trigger Design and Realizability}
+\label{sec:realizable}
+
+Because the classifier consumes standardized features, we define triggers in
+normalized space, so train-time poisoning and test-time evaluation are consistent
+by construction. Table~\ref{tab:trig} lists the three families: flag/header
+features, volume/dispersion features, and inter-arrival/count features. Each is
+mixed-sign at roughly $1.5$--$2\sigma$ and verified to have a clean-model BSR near
+zero, so the association must be learned from poisoned updates rather than being
+something the unpoisoned model already does. Every clean cell in our grid now
+reports that clean-model BSR for the whole trigger battery, so the check is a
+per-run control rather than a one-off.
+
+\begin{table}[t]
+\caption{Trigger families (values in units of $\sigma$; CICIoT2023 schema).}
+\label{tab:trig}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Trigger & Semantics & Example features / values \\
+\midrule
+Fixed & header \& TCP flags & TTL$=+2$, hdr\_len$=-1.5$, syn$=+2$ \\
+Statistical & volume / dispersion & Rate$=-1.5$, Std$=+2$, Tot\,size$=+1.5$ \\
+Temporal & inter-arrival / counts & IAT$=+2$, Number$=+1.5$, size$=-1.5$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Marginal checks do not establish realizability}
+
+The clean-model BSR control and the $1.5$--$2\sigma$ magnitudes are the evidence
+usually offered for calling such a trigger ``in-distribution'' and therefore
+stealthy. Both are marginal, and flow features are not independent: rate,
+duration, total size, packet count and inter-arrival time are functions of one
+another, so a vector whose every coordinate is individually ordinary can be a
+combination the network could never emit. We therefore measure joint
+plausibility directly, on three axes: the Mahalanobis distance of the stamped
+sub-vector under the benign covariance restricted to the trigger columns, read
+against the same statistic on real benign flows; the distance from the stamped
+block to its nearest real flow; and the same nearest-real-flow distance for
+fully stamped attack vectors over all $39$ features. Table~\ref{tab:realize}
+reports the result on CICIoT2023; the corresponding FLNET2023 audit is
+% RETIRES WITH: FLNET realizability audit (last step of run_remediation.sh)
+outstanding, so the conclusions below are stated for CICIoT2023 only. \PENDING
+
+\begin{table}[t]
+\caption{\textbf{Joint plausibility of the triggers} (CICIoT2023, full training
+split). $|\sigma|_{\max}$ is the largest marginal deviation---the number usually
+reported. $d_M$ is the joint Mahalanobis distance of the stamped block under the
+benign covariance; benign flows themselves have $d_M^{p99}$ as shown. $d_{NN}$ is
+the distance from a fully stamped attack vector to the nearest real flow, against
+$\rzUnstamped$ for a real attack flow's nearest real neighbour. Marginal and joint
+plausibility are close to unrelated.}
+\label{tab:realize}
+\centering
+\footnotesize
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+Trigger & Mode & $|\sigma|_{\max}$ & $d_M$ & $d_M^{p99}$ & $d_{NN}$ \\
+\midrule
+Fixed       & $\sigma$, $0.25\times$ & \rzSigFixedQtr & $\rzDMFixedQtr$ & \rzPnnFixed & \rzNNFixedQtr \\
+Fixed       & $\sigma$, $1\times$    & \rzSigFixedOne & $\rzDMFixedOne$ & \rzPnnFixed & \rzNNFixedOne \\
+Fixed       & $\sigma$, $3\times$    & \rzSigFixedThree & $\rzDMFixedThree$ & \rzPnnFixed & \rzNNFixedThree \\
+Fixed       & donor                  & \rzSigFixedDonor & $\textbf{\rzDMFixedDonor}$ & \rzPnnFixed & \rzNNFixedDonor \\
+\midrule
+Statistical & $\sigma$, $0.25\times$ & \rzSigStatisticalQtr & $\textbf{\rzDMStatisticalQtr}$ & \rzPnnStatistical & \rzNNStatisticalQtr \\
+Statistical & $\sigma$, $1\times$    & \rzSigStatisticalOne & $\textbf{\rzDMStatisticalOne}$ & \rzPnnStatistical & \rzNNStatisticalOne \\
+Statistical & $\sigma$, $3\times$    & \rzSigStatisticalThree & $\textbf{\rzDMStatisticalThree}$ & \rzPnnStatistical & \rzNNStatisticalThree \\
+Statistical & donor                  & \rzSigStatisticalDonor & $\textbf{\rzDMStatisticalDonor}$ & \rzPnnStatistical & \rzNNStatisticalDonor \\
+\midrule
+Temporal    & $\sigma$, $0.25\times$ & \rzSigTemporalQtr & $\rzDMTemporalQtr$ & \rzPnnTemporal & \rzNNTemporalQtr \\
+Temporal    & $\sigma$, $1\times$    & \rzSigTemporalOne & $\rzDMTemporalOne$ & \rzPnnTemporal & \rzNNTemporalOne \\
+Temporal    & $\sigma$, $3\times$    & \rzSigTemporalThree & $\rzDMTemporalThree$ & \rzPnnTemporal & \rzNNTemporalThree \\
+Temporal    & donor                  & \rzSigTemporalDonor & $\textbf{\rzDMTemporalDonor}$ & \rzPnnTemporal & \rzNNTemporalDonor \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three things follow, and the first two are corrections to our own premise.
+
+\emph{Marginal magnitude is a poor proxy for joint plausibility.} The fixed
+trigger at $0.25\times$ has a largest marginal deviation of
+$0.5\sigma$---by the usual standard, unremarkable---yet sits at
+$d_M=\rzDMFixedQtr$ against a benign $99$th percentile of $\rzPnnFixed$: of the
+$\rzRefRows$ real benign flows the audit uses as its reference, only
+$\rzExceedFixedQtr$ sit further from the benign mean than this trigger does. We quote
+the count rather than a percentile because at that tail the percentile is carried by a
+handful of rows and reads more precisely than the sample supports. Conversely the donor triggers have marginals of
+$\rzSigTemporalDonor$--$\rzSigStatisticalDonor\sigma$ and are jointly
+\emph{typical} ($d_M=\rzDMTemporalDonor$--$\rzDMStatisticalDonor$), because they are copied from
+real flows. The two quantities are close to independent, so reporting the first
+and claiming the second, as we and others have done, is not sound.
+
+\emph{The three triggers are not jointly comparable.} The statistical trigger is
+genuinely inside the benign joint envelope at every scale we test
+($d_M=\rzDMStatisticalQtr$--$\rzDMStatisticalThree$ against
+$d_M^{p99}=\rzPnnStatistical$). The temporal trigger is not, by
+more than two orders of magnitude ($d_M\approx10^3$ against $\rzPnnTemporal$): setting IAT,
+packet count and total size independently produces a flow whose timing and volume
+contradict each other. The paper's grouping of ``statistical and temporal'' as a
+single low-salience family is therefore sound with respect to update geometry but
+\emph{not} with respect to realizability, and results resting on the temporal
+trigger should be read as feature-space results only. We flag this wherever the
+temporal trigger drives a conclusion.
+
+\emph{A partial fix.} Our \texttt{donor} construction copies the trigger block
+from a single real benign flow, chosen to be distinctive relative to attack
+traffic while remaining inside the benign joint envelope (below its $95$th
+Mahalanobis percentile). By construction the stamped block is a combination the
+network actually produced, and it also matches a more realistic adversary---one
+who shapes traffic to imitate a benign flow rather than dialing individual
+statistics to chosen $\sigma$ values. It brings all three triggers to
+$d_M\approx\rzDMTemporalDonor$--$\rzDMStatisticalDonor$. It does not close the
+gap: $d_{NN}$ stays at $\rzNNFixedDonor$--$\rzNNStatisticalDonor$, because
+pasting a real benign block into a real attack flow still yields a cross-
+combination that no single record exhibits. Full problem-space
+realizability~\cite{pierazzi2020problem} would require generating traffic and
+re-extracting features, which is outside this paper's scope. We report the
+donor-trigger results alongside the $\sigma$-trigger results and treat the
+difference as part of the finding.
+
+\textbf{Realizability and backdoor-ness pull against each other.} Constructing
+the donor trigger exposed a constraint we had not anticipated, and it is the more
+interesting half of this section. Selecting the \emph{most} distinctive benign
+donor---the row least like attack traffic on the trigger columns---is close to
+selecting the \emph{maximally benign-looking} block, and a flow stamped with it
+is called benign by the \emph{clean} model with no poisoning at all. Our
+clean-model BSR control catches this immediately, which is what the control is
+for. But it means such a trigger is an evasion rather than a backdoor, and BSR
+stops measuring a learned association. Pushing the other way---choosing a donor
+the clean model does not already accept---makes the pattern less separable from
+attack traffic and correspondingly harder for the model to key on. We take the
+median of the distinctiveness ordering rather than its extreme, and screen every
+donor trigger by its clean-model BSR before reading any result from it. That
+screen passes: against an unpoisoned model the median-quantile donors give
+clean-model BSR $0.006$ (fixed), $0.000$ (statistical) and $0.008$ (temporal),
+against $0.006$/$0.000$/$0.001$ for the corresponding $\sigma$ triggers---so the
+donor triggers are backdoor candidates on the same footing, where the
+maximum-distinctiveness donor for statistical had sat at $1.000$.
+
+We do not think this tension is an artifact of our construction. Any trigger that
+is simultaneously realizable as benign-looking traffic and learnable as a rule
+distinct from ``benign'' is being asked to be two things at once, and the
+narrowness of the window between them is a constraint on problem-space backdoors
+in network IDS that the feature-space formulation hides entirely. We flag it as
+such, and note that it is only visible because the clean-model BSR control runs
+per cell rather than once.
+
+\section{Defenses}
+
+We evaluate ten aggregation rules in two families. All subclass FedAvg and
+differ only in \texttt{aggregate\_fit}. The split between the families is the
+paper's organising distinction, not a presentational one.
+
+\subsection{Direction-based rules}
+
+These decide what to keep from where an update \emph{points}.
+
+\textbf{FedAvg}~\cite{mcmahan2017} is the undefended, example-weighted mean---the
+attack's baseline.
+
+\textbf{Krum / Multi-Krum}~\cite{blanchard2017} scores each update by the sum of
+squared distances to its $n-f-2$ nearest neighbours and keeps the update(s) in
+the densest region; we use Multi-Krum with $f$ clamped to what the cohort size
+supports.
+
+\textbf{FLTrust}~\cite{cao2021fltrust} trains the current global model one step
+on the server's clean root set to get a trusted direction $g_0$, weights each
+client update by $\mathrm{ReLU}(\cos(g_i,g_0))$, rescales it to $\|g_0\|$, and
+averages.
+
+\textbf{FLAME}~\cite{nguyen2022flame} clusters updates by cosine distance
+(HDBSCAN), keeps the majority cluster, clips admitted updates to their median
+norm, and adds Gaussian noise. We fixed a bug that had invalidated our early
+FLAME runs: the differential-privacy noise was reaching BatchNorm
+\texttt{running\_var} buffers and driving them negative, so eval-mode BatchNorm
+computed $\sqrt{\cdot}$ of a negative number and produced NaN predictions. The
+noise is now masked to trainable parameters only. We also now seed FLAME's noise
+from the run seed rather than a constant, so its multi-seed dispersion is real
+rather than an artifact of a fixed noise draw.
+
+\textbf{FoolsGold}~\cite{fung2020foolsgold} reads the same cosine signal in
+reverse: it accumulates each client's historical update direction and
+down-weights clients whose histories are too similar to one another.
+
+\subsection{Magnitude and order-statistic rules}
+
+These never inspect direction, which makes them the control group for our main
+claim. If low-salience triggers evade defenses because they do not move the
+update direction, then rules that do not read direction should not share the
+blind spot for that reason.
+
+\textbf{Coordinate-wise median} and \textbf{trimmed mean}~\cite{yin2018} take
+per-coordinate order statistics. \textbf{RFA}~\cite{pillutla2022rfa} computes the
+geometric median via smoothed Weiszfeld iterations---a genuine multivariate
+median, so unlike the coordinate-wise rules it is not defeated by an attacker who
+spreads a perturbation across coordinates. \textbf{Bulyan}~\cite{mhamdi2018bulyan}
+combines iterated Multi-Krum selection with a coordinate-wise trimmed mean.
+\textbf{Norm-clip}~\cite{sun2019} clips each update to the median norm and adds
+Gaussian noise; it is FLAME with the cosine stage removed, which isolates how
+much of FLAME's behavior is the magnitude stage.
+
+\subsection{GradCos (proposed)}
+
+The premise is that honest clients optimize the same objective on
+similar-distribution data, so their update directions are mutually well-aligned,
+whereas a backdoor pulls a client's update toward the trigger\,$\rightarrow$\,benign
+association. Crucially the signal is purely inter-client: no clean server dataset
+is needed. Let $\delta_i = w_i - w^{(t)}$ and $\hat\delta_i =
+\delta_i/\|\delta_i\|$; the method works from $C_{ij} = \langle
+\hat\delta_i,\hat\delta_j\rangle$.
+
+The naive reading---flag clients whose \emph{mean} similarity to the cohort is a
+robust-$z$ below the median (our \texttt{meansim} variant)---fails under
+collusion: when $20$--$30\%$ of clients submit mutually similar backdoor updates,
+each attacker's mean similarity is propped up by its fellow attackers. Our
+default \texttt{clique} variant turns collusion into a signal instead. Near
+convergence honest updates shrink toward noise and point in diverse directions,
+so each honest client's \emph{maximum} similarity to any peer is low; colluding
+attackers keep injecting the same direction, so each has a near-twin. GradCos
+computes $s_i=\max_{j\neq i} C_{ij}$, flags clients with $s_i > \mathrm{med}(s) +
+\kappa\,1.4826\,\mathrm{MAD}(s)$, and averages the rest. A homogeneity gate keeps
+everyone when most clients have a twin (early training, or a benign IID cohort
+where all updates align); when no clique is found the rule falls back to the
+mean-similarity outlier test; a benign-majority cap and safety floor retain at
+least half the cohort.
+
+We note plainly what this does and does not contribute. The cosine signal is not
+new---FoolsGold reads the same quantity with the opposite sign---and the clique
+rule is a different decision procedure on it, not a different signal. Its
+practical claim is narrow: on conspicuous triggers it matches the best baseline
+without needing clean server data or an attacker-count estimate, and it does so
+without the clean-accuracy loss those baselines incur. Sec.~\ref{sec:adaptive}
+shows the same clique structure is what makes it evadable.
+
+\textbf{Residual variant.} The full-vector cosine is dominated by the shared
+main-task gradient, which is why low-salience triggers slip past it. A
+\texttt{residual} mode mean-centres the updates first: $r_i=\delta_i-\bar\delta$,
+then runs the same clique rule on $\hat r_i$. Subtracting the cohort mean removes
+the common task direction and leaves the colluders' shared component exposed
+(Sec.~\ref{sec:residual}).
+
+\subsection{Hyperparameter selection}
+\label{sec:tuning}
+
+Several comparisons in this paper turn on hyperparameter-sensitive numbers.
+FLAME's clean accuracy depends strongly on its DP noise scale; Krum's and
+Bulyan's on the assumed attacker count $f$; the trimmed mean's on $\beta$;
+GradCos's on $\kappa$. If those were chosen by inspecting the evaluation grid,
+then both our ``no free lunch'' claim about FLAME and GradCos's own result would
+be partly artifacts of tuning---and GradCos carries several hand-designed guards
+that would be easy to fit to the test conditions. We therefore fix all of them by
+one declared protocol, run before the evaluation grid
+(\texttt{scripts/calibrate\_defenses.py}):
+
+\begin{itemize}
+\item a calibration data split drawn with its own subsample seed, so the rows are
+not the evaluation rows;
+\item calibration seed $7$, outside the $42$--$46$ evaluation band, so no
+calibration draw is also a reported draw;
+\item a reduced budget ($25$ rounds, $80$k rows), since the task is ranking
+settings against one another, not measuring a final number;
+\item one objective declared in advance---maximize $\mathrm{CA}-\mathrm{BSR}$
+under attack at a single operating point---which rewards a setting only when
+suppressing the backdoor does not cost the model;
+\item a single trigger (fixed) for calibration, deliberately: tuning per trigger
+would be tuning on the axis under study.
+\end{itemize}
+
+Every defense including our own goes through the identical procedure, and the
+full grid behind each choice---not just the winner---is released in
+\texttt{results/calibration.json}, so the sensitivity of each result to its
+% RETIRES WITH: the calibration run (scripts/calibrate_defenses.py)
+hyperparameter is visible rather than asserted. \PENDING{} the calibration run
+itself; the numbers below use the pre-registered defaults recorded in
+\texttt{configs/default.yaml}, and will be regenerated against the calibrated
+values.
+
+\section{Experimental Setup}
+
+CICIoT2023~\cite{neto2023ciciot} is used in its 8-class grouped form ($39$
+features), stratified-subsampled to $400$k training and $100$k test rows to keep
+the $20$-client, $100$-round grid tractable; FLNET2023~\cite{flnet2023} uses the
+CICFlowMeter feature schema with category labels. Features are standardized with
+a scaler fit on the training split. Clients are partitioned IID, or non-IID via a
+Dirichlet split. The CICIoT2023 IID breadth grid is $5$ defenses $\times$
+$28$ configurations $=140$ single-seed cells; FLNET2023 is a one-at-a-time sweep
+($40$ cells) and the non-IID slice is one configuration across five defenses
+($10$ cells). The \textbf{headline operating point} ($m{=}0.2$, $p{=}0.1$) is run
+over \textbf{five seeds} (42--46) for all three triggers and six defenses and
+reported as mean\,$\pm$\,s.d. Every number quoted in this paper---in the prose and in
+every table---is a macro generated from the committed result JSONs by
+\texttt{paper/make\_numbers.py}; nothing is hand-entered, and the generator
+refuses to emit a number for a cell that has not been run.
+
+We are explicit about which claims rest on which evidence, because the two are
+not interchangeable and our own variance results (Sec.~\ref{sec:seed}) show why.
+\textbf{Multi-seed evidence} supports the headline defense comparison, the
+DR/FPR analysis, the salience finding, and the adaptive-attack result.
+\textbf{Single-seed evidence} supports the breadth grid, the malicious-ratio
+sweep, the FLNET slice, and the non-IID slice; those are labeled single-seed in
+every caption, and we draw only directional conclusions from them.
+
+\section{Results}
+
+\subsection{The attack is invisible to accuracy monitoring}
+
+Under undefended FedAvg the backdoor succeeds everywhere. At the headline
+operating point, averaged over five seeds, FedAvg's BSR is
+$\msBSRfedavgFixed\pm\msBSRsdfedavgFixed$ on the fixed trigger and
+$\msBSRfedavgStatistical$ on both low-salience triggers (Table~\ref{tab:main}),
+while its clean accuracy ($\msCleanCAfedavg$) is indistinguishable from the
+no-attack model.
+Across the broader single-seed grid every one of the $\gridAttackCells$ attack
+cells has BSR $\geq\gridMinBSRfedavg$. The poisoning leaves no accuracy footprint, which is what makes it
+dangerous: an operator watching validation accuracy sees a healthy detector. This
+motivates aggregation-level defenses rather than accuracy monitoring.
+
+\subsection{Headline comparison, with false positives}
+\label{sec:fpr}
+
+Table~\ref{tab:main} is the paper's central table, and it now carries FPR beside
+DR. Reading it changes what two of the baselines look like.
+
+\begin{table}[t]
+\caption{\textbf{Headline comparison, multi-seed.} CICIoT2023, IID, $m{=}0.2$,
+$p{=}0.1$; every entry is mean\,$\pm$\,s.d.\ over \textbf{5 seeds} (42--46).
+Clean CA/macro-F1 are the no-attack models. \textbf{DR is reported with FPR
+throughout}: FLAME's low BSR is bought by flagging two honest clients in five,
+and on low-salience triggers GradCos flags honest clients slightly more often
+than malicious ones. FLTrust never zeroes a client out (DR$=$FPR$=0$); its
+robustness is reweighting, not exclusion. Best clean CA and best BSR per column
+in \textbf{bold}.}
+\label{tab:main}
+\centering
+\footnotesize
+\begin{tabular}{@{}lcc|ccc|ccc@{}}
+\toprule
+ & Clean CA & Clean F1 & \multicolumn{3}{c|}{BSR by trigger} & \multicolumn{3}{c}{DR / FPR by trigger} \\
+\cmidrule(lr){4-6}\cmidrule(l){7-9}
+Defense & (no atk) & (no atk) & Fixed & Statistical & Temporal & Fixed & Statistical & Temporal \\
+\midrule
+FedAvg  & $\msCleanCAfedavg$ & $\msCleanFonefedavg$ & $\msBSRfedavgFixed$ & $\msBSRfedavgStatistical$ & $\msBSRfedavgTemporal$ & --- & --- & --- \\
+Krum    & $\msCleanCAkrum$ & $\msCleanFonekrum$ & $\msBSRkrumFixed$ & $\msBSRkrumStatistical$ & $\msBSRkrumTemporal$ & $\msDRkrumFixed/\msFPRkrumFixed$ & $\msDRkrumStatistical/\msFPRkrumStatistical$ & $\msDRkrumTemporal/\msFPRkrumTemporal$ \\
+FLAME   & $\msCleanCAflame$ & $\msCleanFoneflame$ & $\msBSRflameFixed$ & $\msBSRflameStatistical$ & $\msBSRflameTemporal$ & $\msDRflameFixed/\mathbf{\msFPRflameFixed}$ & $\msDRflameStatistical/\msFPRflameStatistical$ & $\msDRflameTemporal/\msFPRflameTemporal$ \\
+FLTrust$^\dagger$ & $\msCleanCAfltrust$ & $\msCleanFonefltrust$ & $\mathbf{\msBSRfltrustFixed}$ & $\mathbf{\msBSRfltrustStatistical}$ & $\mathbf{\msBSRfltrustTemporal}$ & $\msDRfltrustFixed/\msFPRfltrustFixed$ & $\msDRfltrustStatistical/\msFPRfltrustStatistical$ & $\msDRfltrustTemporal/\msFPRfltrustTemporal$ \\
+FoolsGold & $\msCleanCAfoolsgold$ & $\msCleanFonefoolsgold$ & $\msBSRfoolsgoldFixed$ & $\msBSRfoolsgoldStatistical$ & $\msBSRfoolsgoldTemporal$ & $\msDRfoolsgoldFixed/\msFPRfoolsgoldFixed$ & $\msDRfoolsgoldStatistical/\msFPRfoolsgoldStatistical$ & $\msDRfoolsgoldTemporal/\msFPRfoolsgoldTemporal$ \\
+\textbf{GradCos} & $\mathbf{\msCleanCAgradcos}$ & $\mathbf{\msCleanFonegradcos}$ & $\mathbf{\msBSRgradcosFixed}$ & $\msBSRgradcosStatistical$ & $\msBSRgradcosTemporal$ & $\mathbf{\msDRgradcosFixed/\msFPRgradcosFixed}$ & $\msDRgradcosStatistical/\msFPRgradcosStatistical$ & $\msDRgradcosTemporal/\msFPRgradcosTemporal$ \\
+\bottomrule
+\end{tabular}
+\\[3pt]
+\raggedright\footnotesize $^\dagger$FLTrust is granted a clean server root set the
+others do not have. Standard deviations over the five seeds are below $0.02$
+except: FoolsGold fixed BSR $\pm0.489$, FLAME statistical BSR $\pm0.137$ and
+temporal $\pm0.225$, FLTrust temporal $\pm0.147$, FLAME DR $\pm0.14$
+(Sec.~\ref{sec:seed}).
+\end{table}
+
+\textbf{FLAME's robustness is a false-positive story.} It reaches BSR $\msBSRflameFixed$ on
+the fixed trigger, the second-best number in the column, while flagging
+$\msFPRflameFixed\pm\msFPRsdflameFixed$ of \emph{honest} clients---and
+$\msFPRflameStatistical$--$\msFPRflameTemporal$ on the other two triggers, where
+its DR is only $\msDRflameStatistical$--$\msDRflameTemporal$. A defense
+discarding two honest updates in five is training on roughly $60\%$ of the
+federation, which is a sufficient explanation for its $\msCleanCAflame$ clean
+accuracy against FedAvg's $\msCleanCAfedavg$.
+This is the mechanism behind the ``no free lunch'' observation, and it is
+invisible without FPR: on BSR alone FLAME looks like a near-solution.
+
+\textbf{GradCos's detector is not merely blind on low-salience triggers---it is
+uninformative.} On statistical and temporal its DR ($\msDRgradcosStatistical$,
+$\msDRgradcosTemporal$) is \emph{below} its FPR ($\msFPRgradcosStatistical$,
+$\msFPRgradcosTemporal$). The clique test is not failing to find the
+colluders so much as flagging clients at close to chance. We think this is the
+sharpest available statement of the blind spot, and it is stronger evidence than
+a low DR alone would be, because it rules out the reading that the detector is
+simply conservative. Fig.~\ref{fig:drfpr} plots the two rates against each other
+and makes the separation visible: only GradCos on the fixed trigger reaches the
+top-left corner, while its low-salience points sit on the chance diagonal and
+FLAME sits far to the right on every trigger.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.68\linewidth]{fig_dr_fpr.pdf}
+\caption{\textbf{Detection rate against false-positive rate} (CICIoT2023, IID,
+$m{=}0.2$, $p{=}0.1$, 5 seeds). Only GradCos on the fixed trigger reaches the
+top-left corner a detector should occupy. FLAME sits far right on every
+trigger---its low backdoor rate is paid for by discarding honest updates---and
+GradCos on the low-salience triggers sits \emph{on} the chance diagonal, flagging
+honest and malicious clients at indistinguishable rates. FedAvg and the
+coordinate-wise rules never flag a client and do not appear.}
+\label{fig:drfpr}
+\end{figure}
+
+\textbf{FLTrust never excludes anyone.} Its DR and FPR are identically zero on
+every trigger: no client's update ever receives a trust score of exactly zero.
+Whatever robustness it has comes from continuous reweighting toward the server's
+root direction, not from exclusion---which is also why it degrades the clean
+model, since honest updates that disagree with a 300-sample root direction are
+attenuated too.
+
+\subsection{Salience decides the outcome, and it is measurable}
+\label{sec:salience}
+
+Grouped by trigger rather than by attacker count, the pattern in
+Table~\ref{tab:main} is stark. On the \emph{fixed} trigger the direction- and
+reference-based defenses work: GradCos $\msBSRgradcosFixed$ and FLTrust
+$\msBSRfltrustFixed$ are lowest, FLAME $\msBSRflameFixed$, against FedAvg's
+$\msBSRfedavgFixed$. On \emph{statistical} and \emph{temporal} they fail almost
+completely---GradCos, Krum and FoolsGold all at $\msBSRgradcosStatistical$, FLAME
+at $\msBSRflameStatistical$---with FLTrust on statistical
+($\msBSRfltrustStatistical$) the lone exception, and it uses its clean root direction rather than inter-client
+similarity.
+
+The mechanism is visible in the update geometry we log. The fixed trigger stamps
+header/flag features that few benign flows exercise, so learning it bends a
+poisoned client's update in a direction honest clients never take. The
+statistical and temporal triggers perturb volume, dispersion and timing features
+and leave the poisoned update nearly collinear with an honest one, so the cosine
+signal every one of these defenses depends on is simply not there. That FoolsGold---built
+precisely to catch colluding sybils by cosine similarity---also fails
+underlines that the blind spot belongs to the \emph{signal}, not to one defense's
+tuning.
+
+\textbf{Identifying the axis.} A hostile reading of the paragraph above is that
+it is nearly definitional: ``direction-based defenses fail when the trigger does
+not move the direction'' restates the mechanism rather than testing it. Two
+things separate the claim from a tautology. First, $S$
+(Eq.~\ref{eq:salience}) is measured independently of any defense's decision, so
+BSR and DR can be regressed on it. Second, the three trigger families differ in
+\emph{which} features they touch as well as how hard, so a two-group contrast
+cannot separate feature coverage from magnitude. We therefore sweep the trigger
+magnitude at a fixed feature set, $0.25\times$ to $3\times$ the base pattern, and
+report BSR and DR against measured $S$ rather than against the trigger's name
+% RETIRES WITH: lane 2, magnitude-sweep
+(Fig.~\ref{fig:dose}). \PENDING
+
+\begin{figure}[t]
+\centering
+% Self-upgrading: paper/make_figs.py writes figs/fig_dose.pdf once lane 2 of
+% run_remediation.sh has produced at least three trigger magnitudes. Until then
+% this falls back to the placeholder and the caption says so, so the switch
+% cannot be forgotten.
+\IfFileExists{figs/fig_dose.pdf}{%
+  \includegraphics[width=0.95\linewidth]{fig_dose.pdf}%
+  \caption{\textbf{Dose--response along the measured salience axis} (CICIoT2023,
+  IID, $m{=}0.2$, $p{=}0.1$). BSR (left) and detection rate (right) against the
+  salience gap $S$ the server actually observed, for trigger magnitudes
+  $0.25$--$3\times$ at a fixed feature set. Marker shape is the trigger family
+  ($\circ$ fixed, $\square$ statistical, $\triangle$ temporal); magnitude is swept
+  within a family, so each curve is one identified axis rather than a contrast
+  between families.}%
+}{%
+  \includegraphics[width=0.68\linewidth]{fig_detection.pdf}%
+% RETIRES WITH: lane 2, magnitude-sweep
+  \caption{\textbf{Dose--response along the measured salience axis.} \PENDING{}
+  Placeholder shows the current detection-vs-BSR figure. The final version plots
+  BSR and DR against the measured salience gap $S$ for trigger magnitudes
+  $0.25$--$3\times$ at a fixed feature set, with the clean-model BSR overlaid to
+  mark where a large trigger stops being a learned backdoor and becomes an
+  out-of-distribution artifact.}%
+}
+\label{fig:dose}
+\end{figure}
+
+\subsection{The collusion signal is cheap to remove}
+\label{sec:adaptive}
+
+Every direction-based rule here detects colluders because colluders resemble one
+another: GradCos's clique test flags a client for having a near-twin, FoolsGold
+penalizes similar histories, FLAME's clustering separates a coherent minority.
+That shared premise is the attack surface, and removing it costs the attacker
+almost nothing.
+
+Let $M$ be the malicious cohort and $\delta_j$, $j\in M$, their updates. The
+attacker draws independent isotropic noise $\nu_j$ scaled to $\lambda\|\delta_j\|$
+and subtracts the cohort mean,
+\begin{equation}
+\label{eq:evasion}
+\tilde\delta_j \;=\; \delta_j + \Big(\nu_j - \tfrac{1}{|M|}\textstyle\sum_{k\in M}\nu_k\Big),
+\end{equation}
+so the perturbation sums to zero over $M$ and contributes nothing to the
+aggregate, while each pair of malicious updates is decorrelated. There is no
+optimization and one scalar knob, $\lambda$. We call this variant
+\texttt{decorrelated}; it inflates the malicious update norms, so a magnitude
+rule could still see it. The \texttt{adaptive} variant additionally rescales each
+malicious update to the round's median honest norm, hiding that tell as well.
+
+The evasion does what it is designed to do, and this can be checked without
+running a single defense, because the quantity it targets is one we log. Measured
+on the malicious block, the mean off-diagonal cosine among colluders falls from
+$0.99$ to $0.16$--$0.33$ at $\lambda=1$ while the honest cohort's stays at
+$0.99$; the median malicious-to-honest norm ratio stays near $1$ under the
+norm-matched variant, against $\approx1.23$ for the noise-only variant, which is
+the magnitude tell the norm-matching exists to hide; and the malicious mean
+update---the component the backdoor rides on---is preserved. The colluders stop looking like each other and keep
+contributing the same thing on average, which is precisely the property every
+clique-, cluster- or history-similarity test is built to exclude.
+
+\emph{Provenance.} These geometry figures come from a reduced-scale validation
+run (6 clients, 3 rounds, 8k rows) used to verify the transform end to end. They
+establish that it has the intended effect on the signal; they are \emph{not}
+evidence about backdoor outcomes. Full-scale geometry, and every BSR/DR figure
+% RETIRES WITH: lane 1a, adaptive-vs-direction (full-scale geometry)
+below, come from the queued runs. \PENDING
+
+Table~\ref{tab:adaptive} reports BSR, DR and FPR for the static and adaptive
+attackers at the headline point against every direction-based defense, and
+% RETIRES WITH: lanes 1a + 1b, adaptive-vs-direction and evasion-noise-sweep
+Fig.~\ref{fig:evasion} sweeps $\lambda$. \PENDING
+
+\begin{table}[t]
+\caption{\textbf{Static vs.\ adaptive attacker}, CICIoT2023, IID, fixed trigger,
+$m{=}0.2$, $p{=}0.1$. The adaptive attacker decorrelates the colluders
+% RETIRES WITH: lane 1a, adaptive-vs-direction
+(Eq.~\ref{eq:evasion}, $\lambda=1$) and norm-matches them. \PENDING}
+\label{tab:adaptive}
+\centering
+\footnotesize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{static} & \multicolumn{2}{c}{adaptive} \\
+\cmidrule(lr){2-3}\cmidrule(l){4-5}
+Defense & BSR & DR/FPR & BSR & DR/FPR \\
+\midrule
+Krum      & $\msBSRkrumFixed$ & $\msDRkrumFixed/\msFPRkrumFixed$ & $\adBSRkrumAdaptive$ & $\adDRkrumAdaptive/\adFPRkrumAdaptive$ \\
+FLAME     & $\msBSRflameFixed$ & $\msDRflameFixed/\msFPRflameFixed$ & $\adBSRflameAdaptive$ & $\adDRflameAdaptive/\adFPRflameAdaptive$ \\
+FLTrust   & $\msBSRfltrustFixed$ & $\msDRfltrustFixed/\msFPRfltrustFixed$ & $\adBSRfltrustAdaptive$ & $\adDRfltrustAdaptive/\adFPRfltrustAdaptive$ \\
+FoolsGold & $\msBSRfoolsgoldFixed$ & $\msDRfoolsgoldFixed/\msFPRfoolsgoldFixed$ & $\adBSRfoolsgoldAdaptive$ & $\adDRfoolsgoldAdaptive/\adFPRfoolsgoldAdaptive$ \\
+GradCos   & $\msBSRgradcosFixed$ & $\msDRgradcosFixed/\msFPRgradcosFixed$ & $\adBSRgradcosAdaptive$ & $\adDRgradcosAdaptive/\adFPRgradcosAdaptive$ \\
+GradCos-residual & $\resBSRSimpleFixed$ & $\resDRSimpleFixed/\resFPRSimpleFixed$ & $\resBSRAdaptiveFixed$ & $\resDRAdaptiveFixed/\resFPRAdaptiveFixed$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+% Self-upgrading, as with Fig.~\ref{fig:dose}: written by paper/make_figs.py once
+% lane 1b of run_remediation.sh lands.
+\IfFileExists{figs/fig_evasion.pdf}{%
+  \includegraphics[width=0.95\linewidth]{fig_evasion.pdf}%
+  \caption{\textbf{Evasion dose--response} (CICIoT2023, IID, fixed trigger,
+  $m{=}0.2$, $p{=}0.1$). Backdoor success (left) against the decorrelation scale
+  $\lambda$, with $\lambda{=}0$ the static attacker, and the collusion signal the
+  defenses read (right): the mean pairwise cosine among colluders, which is the
+  mechanism behind the left panel. The signal every clique-, cluster- and
+  history-similarity rule depends on is gone well before $\lambda$ reaches the
+  update's own scale.}%
+}{%
+  \includegraphics[width=0.88\linewidth]{fig_multiseed_headline.pdf}%
+% RETIRES WITH: lane 1b, evasion-noise-sweep
+  \caption{\textbf{Evasion dose--response.} \PENDING{} Placeholder. Final version:
+  BSR and DR against the decorrelation scale $\lambda\in\{0,0.25,0.5,1,2\}$, with
+  the measured malicious pairwise cosine on a second axis, showing how much noise
+  the attacker needs before the clique signal disappears.}%
+}
+\label{fig:evasion}
+\end{figure}
+
+We expect, and will report either way, that the residual variant is \emph{also}
+vulnerable: mean-centering removes the shared task direction but the decorrelation
+noise survives it, so the residual clique signal should degrade for the same
+reason the full-vector one does. If so, the honest conclusion is that our
+diagnosis of the blind spot is correct and our proposed fix for it is not
+adaptive-secure---which is a more useful thing to report than a defense evaluated
+only against the attacker it was designed for.
+
+\subsection{Do magnitude-based rules share the blind spot?}
+\label{sec:magnitude}
+
+If low-salience triggers evade defenses by not moving the update direction, then
+rules that never read direction should not fail for that reason. This is the
+control our earlier framing lacked: a claim that ``the whole cosine family has a
+structural blind spot'' is only interesting against comparators outside the
+family. Table~\ref{tab:magnitude} reports the coordinate-wise median, trimmed
+mean, RFA, Bulyan and norm-clip at the headline point on all three triggers.
+% RETIRES WITH: lane 3, magnitude-based-defenses
+\PENDING
+
+\begin{table}[t]
+\caption{\textbf{Magnitude and order-statistic rules} at the headline point
+(CICIoT2023, IID, $m{=}0.2$, $p{=}0.1$). None reads update direction. DR/FPR are
+% RETIRES WITH: lane 3, magnitude-based-defenses
+N/A for the coordinate-wise rules, which never single out a client. \PENDING}
+\label{tab:magnitude}
+\centering
+\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Defense & Fixed & Statistical & Temporal \\
+\midrule
+Median        & $\mgBSRmedianFixed$ & $\mgBSRmedianStatistical$ & $\mgBSRmedianTemporal$ \\
+Trimmed mean  & $\mgBSRtrimmedmeanFixed$ & $\mgBSRtrimmedmeanStatistical$ & $\mgBSRtrimmedmeanTemporal$ \\
+RFA           & $\mgBSRrfaFixed$ & $\mgBSRrfaStatistical$ & $\mgBSRrfaTemporal$ \\
+Bulyan        & $\mgBSRbulyanFixed$ & $\mgBSRbulyanStatistical$ & $\mgBSRbulyanTemporal$ \\
+Norm-clip     & $\mgBSRnormclipFixed$ & $\mgBSRnormclipStatistical$ & $\mgBSRnormclipTemporal$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Recovering detection: the residual variant}
+\label{sec:residual}
+
+If the blind spot is caused by the shared main-task gradient drowning the
+backdoor component, mean-centering the updates before the cosine test should
+expose it. It does---for detection. Table~\ref{tab:residual} compares the default
+\texttt{clique} GradCos with the \texttt{residual} variant at the headline point
+over five seeds. On both low-salience triggers the residual variant lifts the
+malicious-client detection rate from $\msDRgradcosStatistical$ to
+$\resDRSimpleStatistical$---and, on the standard we set in Sec.~\ref{sec:fpr}, it
+does so honestly: its false-positive rate is
+$\resFPRSimpleStatistical$--$\resFPRSimpleTemporal$, against
+$\msFPRgradcosStatistical$ for the clique rule it replaces and
+$\msFPRflameFixed$ for FLAME. Where the clique detector was at chance on these triggers, the
+residual detector separates the colluders cleanly.
+
+Detection does not translate into suppression equally. On the \emph{statistical}
+trigger the recovered detection is enough: BSR falls from
+$\msBSRgradcosStatistical$ to $\resBSRSimpleStatistical\pm\resBSRsdSimpleStatistical$.
+On the \emph{temporal} trigger the backdoor is only partly contained
+($\msBSRgradcosTemporal\rightarrow\resBSRSimpleTemporal\pm\resBSRsdSimpleTemporal$)
+\emph{despite} detection at $\resDRSimpleTemporal$.
+
+We previously reported this gap as an open question. It is a real hole in the
+mechanistic story and we now say so directly: if the blind spot were fully
+explained by ``the shared gradient masks the backdoor'', restoring detection to
+$\resDRSimpleTemporal$ should restore suppression, and for temporal it does not. Two candidate
+explanations are consistent with the per-round logs, and we can separate neither
+with the evidence we have. First, at $20\%$ malicious the cohort mean used for
+centering is itself contaminated, so mean-centering removes the backdoor component
+unevenly. Second, filtering is per-round while the backdoor is persistent---durability
+under continued training is the property Neurotoxin~\cite{zhang2022neurotoxin}
+studies directly---so a handful of early misses is enough, and the
+residual BSR does rise in \emph{late} rounds while DR stays near
+$\resDRSimpleTemporal$, which is
+consistent with early leakage compounding rather than a detection lapse. Either
+way, per-round filtering against a persistent backdoor is structurally fragile,
+and the residual variant should be read as evidence about the \emph{signal}
+(collusion is recoverable once the common component is removed) rather than as a
+working defense. Note also that the temporal trigger is the one our realizability
+audit finds jointly implausible (Sec.~\ref{sec:realizable}), so this particular
+gap may not correspond to any realizable attack.
+
+\begin{table}[t]
+\caption{GradCos \texttt{clique} vs.\ \texttt{residual} at the headline point
+(CICIoT2023, IID, $m{=}0.2$, $p{=}0.1$; mean over 5 seeds). Mean-centering
+restores detection on the low-salience triggers at a low false-positive rate;
+suppression follows fully for statistical, partly for temporal. Mean over 5 seeds;
+BSR s.d.\ is $\resBSRsdSimpleStatistical$ (statistical) and
+$\resBSRsdSimpleTemporal$ (temporal).}
+\label{tab:residual}
+\centering
+\footnotesize
+\begin{tabular}{@{}lccc|ccc@{}}
+\toprule
+ & \multicolumn{3}{c|}{\texttt{clique} (default)} & \multicolumn{3}{c}{\texttt{residual}} \\
+\cmidrule(lr){2-4}\cmidrule(l){5-7}
+Trigger & BSR & DR & FPR & BSR & DR & FPR \\
+\midrule
+Fixed       & $\msBSRgradcosFixed$ & $\msDRgradcosFixed$ & $\msFPRgradcosFixed$
+            & $\resBSRSimpleFixed$ & $\resDRSimpleFixed$ & $\resFPRSimpleFixed$ \\
+Statistical & $\msBSRgradcosStatistical$ & $\msDRgradcosStatistical$ & $\msFPRgradcosStatistical$
+            & $\mathbf{\resBSRSimpleStatistical}$ & $\mathbf{\resDRSimpleStatistical}$ & $\mathbf{\resFPRSimpleStatistical}$ \\
+Temporal    & $\msBSRgradcosTemporal$ & $\msDRgradcosTemporal$ & $\msFPRgradcosTemporal$
+            & $\resBSRSimpleTemporal$ & $\mathbf{\resDRSimpleTemporal}$ & $\mathbf{\resFPRSimpleTemporal}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Collusion: the malicious-ratio axis}
+\label{sec:collusion}
+
+Within the fixed trigger, sweeping the malicious fraction exposes how the
+defenses degrade (Table~\ref{tab:ratio}). Krum is the cautionary case: robust at
+$10\%$ ($\ratBSRkrumTen$) but collapsing to $\ratBSRkrumTwenty$ at $20\%$ and
+$\ratBSRkrumThirty$ at $30\%$, because once the
+malicious set is large enough its members become each other's nearest neighbours
+and Krum selects one of them. GradCos, FLAME and FLTrust hold across the range.
+
+This sweep is \textbf{single-seed}, and by our own variance argument
+(Sec.~\ref{sec:seed}) single-seed numbers are least trustworthy exactly at
+threshold-crossing points like Krum's collapse. We therefore treat it as
+directional evidence for an ordering (Krum degrades with $m$ where the others do
+not), not as a measurement of where the collapse happens; a three-seed repeat of
+% RETIRES WITH: lane 5c, ratio-sweep-seeds
+this sweep is in the released run plan. \PENDING
+
+\begin{table}[t]
+\caption{CICIoT2023, IID, fixed trigger: mean BSR vs.\ malicious fraction
+(averaged over poison rates; \textbf{single-seed}, seed 42). Directional only---see
+Sec.~\ref{sec:seed}.}
+\label{tab:ratio}
+\centering
+\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Defense & $m=0.1$ & $m=0.2$ & $m=0.3$ \\
+\midrule
+FedAvg  & \ratBSRfedavgTen & \ratBSRfedavgTwenty & \ratBSRfedavgThirty \\
+Krum    & \textbf{\ratBSRkrumTen} & \ratBSRkrumTwenty & \ratBSRkrumThirty \\
+FLAME   & \ratBSRflameTen & \textbf{\ratBSRflameTwenty} & \ratBSRflameThirty \\
+FLTrust & \textbf{\ratBSRfltrustTen} & \textbf{\ratBSRfltrustTwenty} & \textbf{\ratBSRfltrustThirty} \\
+GradCos & \ratBSRgradcosTen & \ratBSRgradcosTwenty & \ratBSRgradcosThirty \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{No free lunch: the clean-accuracy cost}
+\label{sec:tradeoff}
+
+Fig.~\ref{fig:tradeoff} plots the two axes against each other over the breadth
+grid; reading Table~\ref{tab:main} down the clean-CA column reframes the fixed-trigger
+result. FLAME and FLTrust reach a low BSR with the weakest clean models
+($\msCleanCAflame$ and $\msCleanCAfltrust$, macro-F1 $\msCleanFoneflame$ and
+$\msCleanFonefltrust$) against FedAvg's $\msCleanCAfedavg/\msCleanFonefedavg$. GradCos, Krum and FoolsGold keep FedAvg-level clean accuracy. On
+the fixed trigger GradCos ties FLTrust's BSR at $+\msCAadvGradcos$ clean accuracy.
+
+Sec.~\ref{sec:fpr} supplies the mechanism for half of this: FLAME's deficit is
+attributable to discarding a fraction $\msFPRflameFixed$ of honest updates, not
+to its noise scale alone. That distinction matters for the criticism that our clean-accuracy
+critique might be a tuning artifact---a badly chosen DP noise scale can crater
+clean accuracy by itself. The FPR evidence shows the loss is happening at the
+\emph{clustering} stage, upstream of the noise, and the calibration protocol of
+Sec.~\ref{sec:tuning} tests the remaining exposure by sweeping the noise scale on
+held-out data. Until that run lands we mark this claim as supported for the
+% RETIRES WITH: the calibration run (FLAME noise-scale sweep)
+clustering mechanism and provisional as to the noise scale. \PENDING
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.68\linewidth]{fig_tradeoff.pdf}
+\caption{Clean accuracy vs.\ fixed-trigger backdoor success (CICIoT2023, IID;
+single-seed breadth view). Bottom-right is best.}
+\label{fig:tradeoff}
+\end{figure}
+
+\subsection{FLNET2023, and where GradCos is unreliable}
+
+FLNET2023 is an easier task---clean accuracy $\flCleanCAgradcos$ for FedAvg,
+Krum and GradCos---which sharpens the clean-accuracy point: FLAME's and FLTrust's
+clean macro-F1 fall to $\flCleanFoneflame$ and $\flCleanFonefltrust$ on a
+near-separable dataset (Table~\ref{tab:flnet}). At the headline fixed-trigger
+point FedAvg is fully backdoored ($\flBSRfedavgFixed$) while Krum
+($\flBSRkrumFixed$), FLAME ($\flBSRflameFixed$) and FLTrust
+($\flBSRfltrustFixed$) suppress it.
+
+GradCos does not, on the worst-case seed, and we want to state the consequence
+rather than bury it in a footnote. The FLNET GradCos fixed $m0.2p0.1$ cell gives
+BSR $\{0.98, 0.18, 0.008, 0.008\}$ across seeds. That is the same
+locks-on-or-does-not bimodality we use to disqualify FoolsGold on CICIoT
+(Sec.~\ref{sec:seed}). \textbf{So ``GradCos reliable, FoolsGold unreliable'' is a
+dataset-dependent statement, not a property of the method}: it holds on CICIoT
+(s.d.\ $\msBSRsdgradcosFixed$) and fails on FLNET. Both methods depend on a clique separating
+early enough, and on a near-separable dataset where honest updates agree strongly,
+whether it separates is close to a coin flip. We retain the worst-case draw in
+the table.
+
+\begin{table}[t]
+\caption{FLNET2023, IID (single-seed). FLAME/FLTrust keep a much weaker clean
+model on a near-separable task; GradCos is bimodal across seeds here.}
+\label{tab:flnet}
+\centering
+\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Defense & Clean CA & Clean F1 & BSR (fixed, $m0.2p0.1$) \\
+\midrule
+FedAvg  & \flCleanCAfedavg & \flCleanFonefedavg & \flBSRfedavgFixed \\
+Krum    & \flCleanCAkrum & \flCleanFonekrum & $\mathbf{\flBSRkrumFixed}$ \\
+FLAME   & \flCleanCAflame & \flCleanFoneflame & \flBSRflameFixed \\
+FLTrust & \flCleanCAfltrust & \flCleanFonefltrust & \flBSRfltrustFixed \\
+GradCos & $\mathbf{\flCleanCAgradcos}$ & $\mathbf{\flCleanFonegradcos}$ & \flBSRgradcosFixed$^{\ast}$ \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+\raggedright\footnotesize $^{\ast}$Worst-case of $\{0.98,0.18,0.008,0.008\}$
+across seeds---bimodal, see text.
+\end{table}
+
+\subsection{Non-IID}
+
+At the single non-IID (Dirichlet, $\alpha=0.5$) configuration we test---fixed
+trigger, $m=0.2,p=0.1$ (Table~\ref{tab:noniid})---GradCos is the strongest
+defense: BSR
+$\niBSRgradcosFixed$ at clean accuracy $\niCleanCAgradcos$. FedAvg is backdoored
+($\niBSRfedavgFixed$) and so is Krum ($\niBSRkrumFixed$):
+heterogeneous honest data already spreads updates out, which blunts Krum's
+distance test.
+
+We previously wrote that this shows ``the mechanism survives heterogeneity.'' It
+does not show that. One Dirichlet concentration, one seed, one trigger and one
+operating point cannot characterize behavior in the setting that matters most
+for a federated IDS, and the one thing this slice does establish---that
+heterogeneity flips Krum from robust to backdoored---is itself evidence that
+non-IID data changes the geometry these defenses read. The central claim of this
+paper is therefore \emph{untested} under realistic heterogeneity, and we say so.
+A sweep over $\alpha\in\{0.1,0.5,1.0\}$ across all three triggers is in the
+% RETIRES WITH: lane 6, non-IID breadth
+released run plan. \PENDING
+
+\begin{table}[t]
+\caption{CICIoT2023, non-IID (Dirichlet $\alpha=0.5$), fixed trigger,
+$m=0.2,p=0.1$ (\textbf{single-seed, single configuration}; not a
+characterization of non-IID behavior---see text).}
+\label{tab:noniid}
+\centering
+\footnotesize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Defense & Clean CA & Attacked CA & BSR \\
+\midrule
+FedAvg  & \niCleanCAfedavg & \niCAfedavgFixed & \niBSRfedavgFixed \\
+Krum    & \niCleanCAkrum & \niCAkrumFixed & \niBSRkrumFixed \\
+FLAME   & \niCleanCAflame & \niCAflameFixed & \niBSRflameFixed \\
+FLTrust & \niCleanCAfltrust & \niCAfltrustFixed & \niBSRfltrustFixed \\
+\textbf{GradCos} & $\mathbf{\niCleanCAgradcos}$ & $\mathbf{\niCAgradcosFixed}$ & $\mathbf{\niBSRgradcosFixed}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reproducibility and variance}
+\label{sec:seed}
+
+The headline comparison is run over five seeds and reported with dispersion;
+the breadth grid, the ratio sweep, and the FLNET and non-IID slices remain
+single-seed and are labeled as such. Variance is not uniform, and where it is
+large it is itself a finding. \emph{FoolsGold on the fixed trigger} has s.d.
+$\msBSRsdfoolsgoldFixed$ (BSR range
+$\msBSRminfoolsgoldFixed$--$\msBSRmaxfoolsgoldFixed$): it either locks onto the colluders' shared
+history early or never does. \emph{GradCos on FLNET} behaves the same way. By
+contrast GradCos and FLTrust on CICIoT fixed, and every defense on the
+low-salience triggers, have s.d.\ $\leq0.02$---so the salience finding is not a
+seed artifact.
+
+There is a tension here we should not paper over. We use the FoolsGold result to
+argue that single-seed numbers are untrustworthy at threshold-crossing operating
+points, and most of our breadth evidence is single-seed. The two are consistent
+only under a distinction we now make explicitly: dispersion is large at
+\emph{borderline} points, where the outcome hinges on whether a detector locks on
+in time, and small where BSR is pinned near $0$ or $1$. Our multi-seed evidence
+covers the borderline cases that matter; the single-seed grid supplies breadth,
+and we draw only ordering claims from it. Where a single-seed cell does drive a
+conclusion---Krum's collapse point, the FLNET comparison, the non-IID result---we
+now say so in the caption and mark the multi-seed repeat as outstanding.
+
+\section{Discussion and Limitations}
+
+\textbf{The blind spot is shared, and it is the point.} GradCos is not a
+universal winner and we do not present it as one. Its practical claim is narrow:
+it removes FLTrust's clean-data assumption and Krum's need to know the attacker
+count, it holds where Krum collapses, and it keeps the clean accuracy FLAME and
+FLTrust give up. On low-salience triggers it fails, and so do Krum, FLAME and
+FoolsGold, for the same reason---they all read update direction. That common
+failure is the more important result, because it says the family has a structural
+blind spot exactly where a competent attacker would aim.
+
+\textbf{And the blind spot is not the worst of it.} A defense that fails against
+a trigger it cannot see is a bounded problem; a defense whose detection signal an
+attacker can delete for free is a different kind of problem.
+Sec.~\ref{sec:adaptive} deletes it with mean-zero noise and one scalar. We
+consider this the strongest reason to be skeptical of clique-, cluster- and
+history-similarity detectors in FL, including our own, and it is why we frame
+GradCos's contribution as diagnostic. The residual variant shows the collusion
+signal is recoverable once the shared task component is removed---which is a real
+finding about the signal---but recovery of a signal an attacker can decorrelate
+is not a defense.
+
+\textbf{What would actually help.} Three directions follow from our own negative
+results rather than from speculation. Aggregating evidence \emph{across} rounds
+rather than filtering per round addresses the persistence asymmetry in
+Sec.~\ref{sec:residual}: the backdoor is cumulative and the detector is not.
+Pairing a direction test with a magnitude or coordinate test attacks the
+decorrelation evasion from the side it does not cover, since zero-sum noise
+inflates norms unless it is also norm-matched, and norm-matching perturbs the
+aggregate. And any defense in this family should be reported with FPR, because
+Sec.~\ref{sec:fpr} shows two established methods behave very differently once it
+is visible.
+
+\textbf{Scope, stated plainly.} Our evidence base is narrower than the generality
+of the claims would ideally require, and the limitations compound rather than
+sit independently:
+
+\emph{Attack variants.} We sweep the simple data-poisoning variant at scale plus
+the adaptive evasion of Sec.~\ref{sec:adaptive}. Norm-matching alone and the
+distributed (DBA) variant are implemented and runnable but not swept, so our
+static-attack claims are about direct poisoning.
+
+\emph{Threat model.} Feature-space only. Sec.~\ref{sec:realizable} quantifies the
+distance to realizable traffic rather than closing it, and finds our temporal
+trigger jointly implausible by two orders of magnitude; conclusions resting on
+that trigger are correspondingly weaker.
+
+\emph{Base detector.} The CICIoT2023 grouped-task clean accuracy
+($\approx0.70$, macro-F1 $\approx0.55$) reflects a deliberately small
+$20$-client, $100$-round, $400$k-row budget. This is a genuine threat to
+external validity and not merely a caveat about absolute numbers: update-direction
+geometry in an underfit model may differ from a well-fitted detector's, and our
+central claim is about that geometry. FLNET2023, where the same architecture
+reaches macro-F1 $\flCleanFonegradcos$, is the partial control---the salience ordering holds
+there too---but FLNET is near-separable and easier in a way that may not
+generalize either. Whether the blind spot survives at, say, macro-F1 $0.85$ on a
+hard task is open.
+
+\emph{Heterogeneity.} One Dirichlet configuration; see the non-IID subsection.
+
+\emph{Breadth.} One architecture, two datasets, one trigger family at a time.
+
+\emph{Taxonomy.} Our direction-vs-magnitude split is a useful cut, not an
+exhaustive one. FLDetector~\cite{zhang2022fldetector} scores clients on the
+consistency of their updates \emph{across} rounds and so belongs to neither
+family as we define them; our blind-spot claim is about the two families we
+evaluate, not about every conceivable signal.
+
+\emph{Why not certification?} Certified defenses such as CRFL~\cite{xie2021crfl}
+bound backdoor success under a magnitude constraint on the adversary's
+perturbation. That is exactly the regime our low-salience triggers are
+constructed to sit inside, so a certificate of the CRFL form would be satisfied
+by triggers that nevertheless reach BSR $1.0$ here. Certification bounds the
+perturbation; our finding is that a small perturbation is enough.
+
+\emph{Hyperparameters.} Fixed by the declared held-out protocol of
+Sec.~\ref{sec:tuning}; the calibration run is outstanding, and until it lands the
+grid uses pre-registered defaults.
+
+\section{Conclusion}
+
+We studied backdoors against a federated CNN\,+\,LSTM intrusion detector and the
+Byzantine-robust defenses meant to stop them, across two 2023 benchmarks. The
+factor that decides whether a similarity-based defense survives is how far the
+trigger rotates the update off the honest consensus direction---measured, not
+inferred from the trigger's name---and not the number of attackers. That signal
+is also cheap for an attacker to remove: zero-sum noise across the colluding
+cohort decorrelates them, preserves the aggregate, and defeats every
+direction-based rule we test including our own \textsc{GradCos}, which otherwise
+matches the strongest baseline on conspicuous triggers without a clean server
+dataset and at $+\msCAadvGradcos$ clean accuracy. Reporting false-positive rates alongside
+detection rates changes what two established baselines look like, and a
+joint-plausibility audit shows the ``in-distribution trigger'' premise this
+literature relies on does not follow from the marginal checks usually offered for
+it. We release the pipeline, the per-round update-geometry logs and the audit, and
+we regard the open problem the study surfaces---aggregation that is robust to
+low-salience triggers \emph{and} to an attacker who knows what the aggregator
+measures---as the useful output of the work.
+
+%---------------------------------------------------------------------
+\input{declarations}
+
+%---------------------------------------------------------------------
+\bibliographystyle{elsarticle-num}
+\bibliography{refs}
+
+\end{document}

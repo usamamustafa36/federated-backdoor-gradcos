@@ -6,6 +6,16 @@ Metrics (thesis 3.7):
   * DR   - detection rate (malicious clients flagged)
   * FPR  - false positive rate (honest clients flagged)
   * Stealthiness = BSR * (1 - DR)
+
+DR and FPR are a pair and are always reported together: a defense that flags
+clients converts a false positive into lost clean accuracy, so a detection rate
+quoted on its own says nothing about what the detector cost. Defenses that never
+single out a client (FedAvg and the coordinate-wise rules) report both as N/A
+rather than as zero.
+
+The update-geometry columns (salience_gap, mal_pair_cos, honest_pair_cos,
+mal_norm_ratio) come from the engine and describe the signal each defense is
+reading; see FederatedEngine._update_geometry.
 """
 from __future__ import annotations
 
@@ -33,12 +43,23 @@ def summarize_history(payload: dict, tail: int = 10) -> dict:
     stealth = bsr * (1.0 - dr) if not (np.isnan(bsr) or np.isnan(dr)) else float("nan")
     return {
         "dataset": cfg.get("data", {}).get("dataset"),
+        # The per-seed replicates of the headline point live in results/ next to the
+        # single-seed breadth grid. Without the seed on the row, any aggregate over
+        # the grid silently averages the replicates in as if they were extra cells.
+        "seed": cfg.get("seed"),
         "defense": cfg.get("defense", {}).get("name"),
+        # A residual-GradCos run is a different defense from a clique one; keeping
+        # this out of the key silently averages them together.
+        "defense_variant": cfg.get("defense", {}).get("gradcos_method", "clique")
+            if cfg.get("defense", {}).get("name") == "gradcos" else "",
         "attack": cfg.get("attack", {}).get("enabled"),
         "malicious_ratio": cfg.get("attack", {}).get("malicious_ratio"),
         "poison_rate": cfg.get("attack", {}).get("poison_rate"),
         "trigger": cfg.get("attack", {}).get("trigger_type"),
         "variant": cfg.get("attack", {}).get("variant", "simple"),
+        "trigger_scale": cfg.get("attack", {}).get("trigger_scale", 1.0),
+        "trigger_mode": cfg.get("attack", {}).get("trigger_mode", "sigma"),
+        "evasion_noise": cfg.get("attack", {}).get("evasion_noise", 1.0),
         "partition": cfg.get("federated", {}).get("partition"),
         "CA": _tail_mean(h.get("accuracy", []), tail),
         "macro_f1": _tail_mean(h.get("macro_f1", []), tail),
@@ -46,6 +67,16 @@ def summarize_history(payload: dict, tail: int = 10) -> dict:
         "DR": dr,
         "FPR": fpr,
         "stealthiness": stealth,
+        # What the defense was actually looking at this run.
+        "salience_gap": _tail_mean(h.get("salience_gap", []), tail),
+        "mal_pair_cos": _tail_mean(h.get("mal_pair_cos", []), tail),
+        "honest_pair_cos": _tail_mean(h.get("honest_pair_cos", []), tail),
+        "mal_norm_ratio": _tail_mean(h.get("mal_norm_ratio", []), tail),
+        # Joint-plausibility of the trigger used (see attacks/realizability.py).
+        "trig_maha_pctile": (payload.get("trigger") or {})
+            .get("realizability", {}).get("joint_mahalanobis_pctile_vs_benign"),
+        "trig_nn_ratio_full": (payload.get("trigger") or {})
+            .get("realizability", {}).get("nn_ratio_full"),
     }
 
 
@@ -58,6 +89,11 @@ def load_results(results_dir: str | Path) -> list[dict]:
                 payload = json.load(fh)
             if "history" in payload:
                 s = summarize_history(payload)
+                # Provenance, and not only for the reader: the multi-seed campaign
+                # re-runs the headline cell at seed 42, so seed alone does not tell a
+                # breadth-grid cell from its replicate. The run tag does.
+                s["run_tag"] = f.name.split("_", 1)[0]
+                s["source_file"] = f.name
                 s["_file"] = f.name
                 out.append(s)
         except (json.JSONDecodeError, KeyError):

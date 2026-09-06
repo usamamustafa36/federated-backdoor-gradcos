@@ -114,8 +114,98 @@ class Trigger:
         return out
 
 
+def pick_donor_row(x_train: np.ndarray, y_train: np.ndarray, benign_index: int,
+                   columns: np.ndarray, quantile: float = 0.5) -> np.ndarray:
+    """Choose a REAL benign flow to copy the trigger values from.
+
+    Defining a trigger as independent per-feature sigma offsets is convenient but
+    it does not establish that the stamped vector corresponds to a flow that
+    could exist: flow features are jointly constrained (rate, duration, total
+    size, packet count and inter-arrival are not free of one another), so an
+    arbitrary combination of marginally-plausible values can still be jointly
+    impossible. Copying the block from a single real benign record removes that
+    objection for the stamped columns by construction -- the combination is one
+    the network actually produced -- and matches a more realistic adversary, who
+    shapes their traffic to imitate a benign flow rather than dialling individual
+    statistics to chosen sigma values.
+
+    Three constraints pull against each other here, and the third is easy to miss.
+
+    *Typicality*: the donor must be an ordinary benign flow, or we have swapped an
+    implausible synthetic vector for a real but freakish one, which is no more
+    realizable in practice. We enforce this by keeping only benign rows inside the
+    benign joint envelope (Mahalanobis under the benign covariance below the 95th
+    percentile).
+
+    *Distinctiveness*: the pattern must differ from what attack traffic looks like
+    on these columns, or the model has nothing to key on.
+
+    *It must still be a backdoor*: if the stamped block makes the flow look benign
+    to the classifier on its own, the clean model already calls it benign and BSR
+    stops measuring a learned association. That is evasion, not a backdoor, and it
+    is what taking the MOST distinctive donor produces -- "farthest from attack
+    traffic" is close to "maximally benign-looking". We saw exactly this: the
+    most-distinctive donor for the statistical trigger gives a clean-model BSR of
+    1.0.
+
+    So we take the candidate at ``quantile`` of the distinctiveness distribution
+    (median by default) rather than its maximum. This is a genuine tension rather
+    than a tuning detail -- a realizable benign-looking block tends toward evasion,
+    a realizable non-benign-looking block tends toward being unlearnable -- and the
+    quantile only trades along it. **Every donor trigger must therefore be screened
+    by its clean-model BSR**, which the sweep now records for the whole trigger
+    battery on each clean cell (``clean_bsr_battery``). A donor trigger whose
+    clean-model BSR is not near zero is not evidence about backdoors.
+
+    Deterministic given the data.
+    """
+    benign = x_train[y_train == benign_index][:, columns]
+    attack = x_train[y_train != benign_index][:, columns]
+    if len(benign) == 0 or len(attack) == 0:
+        raise ValueError("donor trigger needs both benign and attack rows")
+
+    def _precision(block):
+        cov = np.atleast_2d(np.cov(block, rowvar=False)) + 1e-6 * np.eye(len(columns))
+        try:
+            return np.linalg.inv(cov)
+        except np.linalg.LinAlgError:
+            return np.linalg.pinv(cov)
+
+    # typicality: keep benign rows inside the benign joint envelope
+    b_mu, b_prec = benign.mean(axis=0), _precision(benign)
+    db = benign - b_mu
+    b_m2 = np.einsum("ij,jk,ik->i", db, b_prec, db)
+    keep = b_m2 <= np.percentile(b_m2, 95)
+    candidates = benign[keep] if keep.any() else benign
+
+    # distinctiveness: order candidates by how unlike attack traffic they are, and
+    # take the one at `quantile` rather than the extreme (see docstring).
+    a_mu, a_prec = attack.mean(axis=0), _precision(attack)
+    da = candidates - a_mu
+    a_m2 = np.einsum("ij,jk,ik->i", da, a_prec, da)
+    order = np.argsort(a_m2)
+    pick = order[min(len(order) - 1, int(round(quantile * (len(order) - 1))))]
+    return candidates[int(pick)].astype(np.float32)
+
+
 def build_trigger(trigger_type: str, feature_names: list[str],
-                  pattern: dict | None = None) -> Trigger:
+                  pattern: dict | None = None, scale: float = 1.0,
+                  mode: str = "sigma", dataset=None,
+                  donor_quantile: float = 0.5) -> Trigger:
+    """Build the trigger for ``trigger_type``.
+
+    ``scale`` multiplies the normalized pattern, which is the axis the magnitude
+    sweep moves: the base patterns sit at ~1.5-2 sigma, so scale 0.25 gives a
+    barely-there perturbation and scale 3 an obvious one. Holding the feature SET
+    fixed and sweeping only the magnitude separates the two things that differ
+    between trigger families -- which features are touched, and how hard -- so
+    salience can be identified rather than inferred from a two-group contrast.
+
+    ``mode`` selects how the stamped values are chosen: ``sigma`` uses the fixed
+    pattern below, ``donor`` copies them from a real benign flow (see
+    ``pick_donor_row``), which requires ``dataset``. ``scale`` does not apply in
+    donor mode -- a rescaled real record is no longer a real record.
+    """
     if pattern is None:
         # Merge the CICIoT + FLNET schema patterns for this trigger type; only the
         # features actually present in the active dataset are stamped (below), so
@@ -133,11 +223,22 @@ def build_trigger(trigger_type: str, feature_names: list[str],
             f"trigger '{trigger_type}' references no features present in dataset "
             f"(features include: {feature_names[:6]}...)"
         )
+    columns = np.array(cols, dtype=np.int64)
+
+    if mode == "donor":
+        if dataset is None:
+            raise ValueError("mode='donor' needs the dataset to draw a real flow from")
+        values = pick_donor_row(dataset.x_train, dataset.y_train,
+                                dataset.benign_index, columns,
+                                quantile=float(donor_quantile))
+    else:
+        values = np.array(vals, dtype=np.float32) * float(scale)
+
     return Trigger(
         feature_names=feature_names,
         trigger_type=trigger_type,
-        columns=np.array(cols, dtype=np.int64),
-        values=np.array(vals, dtype=np.float32),
+        columns=columns,
+        values=values,
     )
 
 

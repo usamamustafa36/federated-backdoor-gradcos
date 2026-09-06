@@ -62,18 +62,28 @@ class FLTrust(DefenseStrategy):
         g0 = self._server_update()
         g0_norm = np.linalg.norm(g0) + 1e-12
 
+        # Trust score and the norm rescaling are both measured on the trainable
+        # parameters. On the raw vector, ||g0|| and ||gi|| are dominated by
+        # num_batches_tracked, and the server runs 2 batches on its 300-row root
+        # set against each client's 79 -- so "rescale to ||g0||" shrank every
+        # client update by ~40x for reasons unrelated to trust, which is what
+        # made FLTrust learn ~40x too slowly. The scale is applied to the FULL
+        # update so the BatchNorm buffers still aggregate.
+        g0s = self.sig(g0)
+        g0s_norm = float(np.linalg.norm(g0s)) + 1e-12
         agg = np.zeros_like(g)
         ts_sum = 0.0
         flagged = []
         for cid, nds, _, _ in updates:
             gi = self.flatten(nds) - g
-            gi_norm = np.linalg.norm(gi) + 1e-12
-            cos = float(np.dot(gi, g0) / (gi_norm * g0_norm))
+            gis = self.sig(gi)
+            gis_norm = float(np.linalg.norm(gis)) + 1e-12
+            cos = float(np.dot(gis, g0s) / (gis_norm * g0s_norm))
             ts = max(cos, 0.0)                       # ReLU trust score
             if ts <= 0.0:
                 flagged.append(cid)
                 continue
-            agg += ts * (gi / gi_norm) * g0_norm     # rescale to ||g0||
+            agg += ts * gi * (g0s_norm / gis_norm)   # rescale to ||g0|| on-subspace
             ts_sum += ts
 
         if ts_sum > 0:

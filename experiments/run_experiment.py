@@ -39,6 +39,8 @@ def parse_args():
                     help="attack variant: simple | constrained | distributed")
     ap.add_argument("--partition", default=None, help="iid | dirichlet")
     ap.add_argument("--tag", default="exp")
+    ap.add_argument("--seed", type=int, default=None,
+                    help="override the config RNG seed (for variance / repeatability runs)")
     return ap.parse_args()
 
 
@@ -60,10 +62,13 @@ def apply_overrides(cfg, args):
         cfg.attack.variant = args.variant
     if args.defense is not None:
         cfg.defense.name = args.defense
+    if args.seed is not None:
+        cfg.seed = args.seed
     # Keep the serialized mirror (saved as the result's `config`, and read back by
     # make_tables/aggregate) in sync with the CLI overrides — otherwise a run
     # launched with e.g. --trigger/--variant would be mislabeled in the tables.
     raw = cfg._raw
+    raw["seed"] = cfg.seed
     raw["attack"]["enabled"] = cfg.attack.enabled
     raw["attack"]["malicious_ratio"] = cfg.attack.malicious_ratio
     raw["attack"]["poison_rate"] = cfg.attack.poison_rate

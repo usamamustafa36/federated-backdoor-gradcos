@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Download the FLNET2023 *CSV* dataset from the project's anonymous SharePoint share.
 
-FLNET2023 (Sarhan, Layeghy, Portmann, 2023 — the *primary* dataset for this thesis)
+FLNET2023 (Kumar et al., MILCOM 2023 — the *primary* dataset for this thesis)
 is published via the repo github.com/nsol-nmsu/FML-Network, which points to a
 Microsoft SharePoint/OneDrive-for-Business share. The full share is multiple
 terabytes because it also ships PCAP packet captures; we only need the

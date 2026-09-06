@@ -51,6 +51,15 @@ class History:
     bsr: list[float] = field(default_factory=list)            # backdoor success rate
     detection_rate: list[float] = field(default_factory=list)  # malicious clients caught
     false_positive_rate: list[float] = field(default_factory=list)
+    # Per-round geometry of the updates the defense actually sees. These make
+    # "salience" a measured quantity rather than a label attached to a trigger
+    # name: salience_gap is how far the backdoor rotates a poisoned update off
+    # the honest consensus direction, and mal_pair_cos is the collusion signal
+    # GradCos/FoolsGold/FLAME read. Both are NaN on clean rounds.
+    salience_gap: list[float] = field(default_factory=list)
+    mal_pair_cos: list[float] = field(default_factory=list)
+    honest_pair_cos: list[float] = field(default_factory=list)
+    mal_norm_ratio: list[float] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return self.__dict__
@@ -79,11 +88,49 @@ class FederatedEngine:
 
         # Class weights to counter heavy IDS imbalance (benign is rare).
         self.class_weights = self._compute_class_weights()
+        self._tmask = None          # lazily-built trainable-parameter mask
 
     def _compute_class_weights(self) -> np.ndarray:
+        """Per-class loss weights.
+
+        CICIoT2023's 8-class grouping is imbalanced 121:1 (DDoS 64.7% of rows,
+        BruteForce 0.53%). Full inverse-frequency weighting -- what this used to
+        do unconditionally -- gives BruteForce about 24x DDoS's weight, so a
+        256-row batch holding ~1.4 BruteForce rows has its gradient set by those
+        rows. Measured centrally on 200k rows, 15 epochs, same architecture:
+
+            scheme            CA       macro-F1   CA swing over last 10 epochs
+            none              0.8068   0.5606     0.0088
+            inverse           0.6677   0.5851     0.0842
+            sqrt-inverse      0.7611   0.6191     0.0323
+            effective-number  0.8085   0.5901     0.0099
+            (RandomForest on the same features: 0.7864 / 0.6496)
+
+        Both `sqrt` and `effective` dominate `inverse` outright -- each is better
+        on accuracy AND on macro-F1 AND on stability. Between the two it is a
+        real trade: `effective` is +4.7 accuracy, `sqrt` is +2.9 macro-F1.
+
+        `effective` is the default. The criticism this addresses is that the
+        detector sat 0.066 above a constant classifier (majority floor 0.652);
+        `effective` puts it 0.157 above, and past a tuned RandomForest, while
+        still beating the old scheme on macro-F1. `sqrt` is the macro-F1-optimal
+        choice if the rare classes are weighted more heavily in a later revision.
+        Set `training.class_weighting` to override.
+        """
+        scheme = str(getattr(getattr(self.cfg, "training", object()),
+                             "class_weighting", "effective")).lower()
         counts = np.bincount(self.ds.y_train, minlength=self.ds.num_classes).astype(np.float64)
         counts[counts == 0] = 1.0
-        w = counts.sum() / (self.ds.num_classes * counts)
+        if scheme in ("none", "off", "uniform"):
+            w = np.ones_like(counts)
+        elif scheme in ("inverse", "inv"):
+            w = counts.sum() / (self.ds.num_classes * counts)
+        elif scheme in ("effective", "effective_number"):
+            beta = 0.999
+            w = (1.0 - beta) / (1.0 - np.power(beta, counts))
+        else:                                   # "sqrt" (default)
+            w = np.sqrt(counts.sum() / (self.ds.num_classes * counts))
+        w = w / w.mean()                        # keep the loss scale comparable
         return w.astype(np.float32)
 
     def _client_fit(self, client: ClientState) -> FitRes:
@@ -106,9 +153,22 @@ class FederatedEngine:
             metrics={"cid": client.cid, "malicious": int(client.malicious)},
         )
 
-    def _constrain_malicious(self, results):
-        """Norm-match malicious updates to the median honest update (constrained
-        backdoor). Operates on the FitRes list before aggregation."""
+    def _transform_malicious(self, results, rnd: int):
+        """Apply the configured defense-aware transform to the malicious updates
+        before aggregation. Operates on the FitRes list.
+
+        constrained   rescale each malicious update to the round's MEDIAN honest
+                      update norm, preserving direction (evades norm filtering).
+        decorrelated  add zero-sum per-client noise across the malicious cohort,
+                      which destroys the pairwise-similarity signal that
+                      GradCos/FoolsGold/FLAME detect collusion with, while
+                      cancelling under averaging so the backdoor still lands.
+        adaptive      decorrelated, then norm-matched: neither direction nor
+                      magnitude looks unusual. The strongest attacker here.
+        """
+        variant = getattr(self.cfg.attack, "variant", "simple")
+        if variant not in ("constrained", "decorrelated", "adaptive"):
+            return results
         g = np.concatenate([w.ravel() for w in self.global_weights])
 
         parsed = []  # (fr, ndarrays, delta_flat, norm, is_malicious)
@@ -118,25 +178,79 @@ class FederatedEngine:
             parsed.append((fr, nds, delta, float(np.linalg.norm(delta)),
                            bool(fr.metrics.get("malicious", 0))))
 
+        # Norms are taken on the trainable parameters. The attacker is trying to
+        # look ordinary to a defense, and the defenses now measure there; over
+        # the raw vector "match the median honest norm" meant matching a batch
+        # counter, and the zero-sum noise was scaled to it (making it ~10x the
+        # model update it was hiding in).
+        tmask = self._signal_mask()
+        parsed = [(fr, nds, d, float(np.linalg.norm(d[tmask])), mal)
+                  for (fr, nds, d, _, mal) in parsed]
         honest_norms = [n for (_, _, _, n, mal) in parsed if not mal]
         if not honest_norms:
             return results
         target = float(np.median(honest_norms))
 
+        # Decorrelation acts on the malicious block as a whole, so compute it
+        # once here and look each client's row up below.
+        new_delta = {}
+        if variant in ("decorrelated", "adaptive"):
+            mal_idx = [i for i, (_, _, _, _, mal) in enumerate(parsed) if mal]
+            if len(mal_idx) >= 2:
+                from ..attacks.evasion import zero_sum_noise, evasion_report
+                block = np.stack([parsed[i][2] for i in mal_idx])
+                rng = np.random.RandomState(self.cfg.seed * 1000 + rnd)
+                scale = float(getattr(self.cfg.attack, "evasion_noise", 1.0))
+                evaded = block + zero_sum_noise(block, scale, rng,
+                                                mask=self._trainable_mask())
+                self.last_evasion = evasion_report(block, evaded, mask=tmask)
+                for k, i in enumerate(mal_idx):
+                    new_delta[i] = evaded[k]
+
         out = []
-        for fr, nds, delta, norm, mal in parsed:
-            if mal and norm > 1e-12:
-                scaled = g + delta * (target / norm)
+        for i, (fr, nds, delta, norm, mal) in enumerate(parsed):
+            delta = new_delta.get(i, delta)
+            norm = float(np.linalg.norm(delta[tmask]))
+            # `decorrelated` deliberately stops here, leaving the norm inflated;
+            # `adaptive` goes on to hide that inflation too.
+            renorm = mal and norm > 1e-12 and variant in ("constrained", "adaptive")
+            if mal and (renorm or i in new_delta):
+                if renorm:
+                    # Rescale the MODEL UPDATE to the median honest norm and
+                    # leave the BatchNorm buffers alone. Scaling the whole
+                    # vector would also drag running_mean/running_var and the
+                    # batch counter, which is collateral damage the attacker has
+                    # no reason to inflict and which no defense now measures.
+                    delta = delta.copy()
+                    delta[tmask] *= (target / norm)
+                scaled = g + delta
                 # reshape flat vector back to the per-layer ndarrays
-                new_nds, i = [], 0
+                new_nds, off = [], 0
                 for w in nds:
-                    new_nds.append(scaled[i:i + w.size].reshape(w.shape).astype(w.dtype))
-                    i += w.size
+                    new_nds.append(scaled[off:off + w.size].reshape(w.shape).astype(w.dtype))
+                    off += w.size
                 fr = FitRes(status=fr.status,
                             parameters=ndarrays_to_parameters(new_nds),
                             num_examples=fr.num_examples, metrics=fr.metrics)
             out.append((None, fr))
         return out
+
+    def _signal_mask(self) -> np.ndarray:
+        """The subspace decisions and logged geometry are measured on.
+
+        Returns an all-True mask under `defense.signal_subspace: full`, which
+        reproduces the pre-fix behaviour for the controlled comparison."""
+        if str(getattr(self.cfg.defense, "signal_subspace", "trainable")).lower() == "full":
+            return np.ones_like(self._trainable_mask(), dtype=bool)
+        return self._trainable_mask()
+
+    def _trainable_mask(self) -> np.ndarray:
+        """Flat mask over the flattened state_dict, True on trainable params.
+        Cached: the model shape does not change across rounds."""
+        if getattr(self, "_tmask", None) is None:
+            from ..defenses.base import DefenseStrategy
+            self._tmask = DefenseStrategy.trainable_flat_mask(self.model)
+        return self._tmask
 
     def _select_clients(self, rnd: int) -> list[ClientState]:
         k = self.cfg.federated.clients_per_round
@@ -156,13 +270,11 @@ class FederatedEngine:
             selected = self._select_clients(rnd)
             results = [(None, self._client_fit(c)) for c in selected]
 
-            # Constrained backdoor variant: rescale each malicious update to the
-            # round's median honest-update norm, so norm-based defenses (Krum,
-            # FLAME clipping) can't flag it on magnitude while the backdoor
-            # DIRECTION is preserved.
-            if (getattr(self.cfg.attack, "enabled", False)
-                    and getattr(self.cfg.attack, "variant", "simple") == "constrained"):
-                results = self._constrain_malicious(results)
+            # Defense-aware attacker variants (constrained / decorrelated /
+            # adaptive) reshape the malicious updates before the server sees
+            # them; `simple` passes straight through. See attacks/evasion.py.
+            if getattr(self.cfg.attack, "enabled", False):
+                results = self._transform_malicious(results, rnd)
 
             # Let defense strategies see the pre-aggregation global model (needed
             # to compute per-client update deltas, FLTrust root direction, etc.).
@@ -171,17 +283,20 @@ class FederatedEngine:
 
             # Genuine Flower aggregation. Custom strategies may also stash which
             # clients they flagged on `self` for defense-metric logging.
+            pre_global = self.global_weights
             params, agg_metrics = self.strategy.aggregate_fit(rnd, results, [])
             if params is not None:
                 self.global_weights = parameters_to_ndarrays(params)
                 tu.set_weights(self.model, self.global_weights)
 
             if rnd % self.cfg.logging.log_every == 0 or rnd == rounds:
-                self._log_round(rnd, selected, agg_metrics, hist, verbose)
+                self._log_round(rnd, selected, agg_metrics, hist, verbose,
+                                pre_agg=results, pre_global=pre_global)
 
         return hist
 
-    def _log_round(self, rnd, selected, agg_metrics, hist: History, verbose):
+    def _log_round(self, rnd, selected, agg_metrics, hist: History, verbose,
+                   pre_agg=None, pre_global=None):
         ev = tu.evaluate(
             self.model, self.ds.x_test, self.ds.y_test,
             self.ds.num_classes, self.device,
@@ -198,6 +313,12 @@ class FederatedEngine:
         dr, fpr = self._defense_metrics(selected, agg_metrics)
         hist.detection_rate.append(dr)
         hist.false_positive_rate.append(fpr)
+
+        geo = self._update_geometry(pre_agg, pre_global)
+        hist.salience_gap.append(geo["salience_gap"])
+        hist.mal_pair_cos.append(geo["mal_pair_cos"])
+        hist.honest_pair_cos.append(geo["honest_pair_cos"])
+        hist.mal_norm_ratio.append(geo["mal_norm_ratio"])
 
         if verbose:
             msg = (f"round {rnd:>3} | acc {ev['accuracy']:.4f} | f1 {ev['macro_f1']:.4f} "
@@ -219,3 +340,63 @@ class FederatedEngine:
         dr = len(flagged & mal) / len(mal) if mal else 0.0
         fpr = len(flagged & honest) / len(honest) if honest else 0.0
         return dr, fpr
+
+    def _update_geometry(self, results, pre_global) -> dict:
+        """Measure the update geometry the defenses actually read.
+
+        ``salience_gap`` is the operational definition of trigger salience used
+        in the paper: how much further off the honest consensus direction a
+        poisoned update sits than an honest one does,
+
+            gap = mean_i in honest cos(d_i, dbar_h) - mean_j in mal cos(d_j, dbar_h),
+
+        with ``dbar_h`` the mean honest update. It is 0 when the backdoor does
+        not rotate the update at all and grows as the trigger becomes more
+        conspicuous, so BSR and DR can be regressed on it directly instead of on
+        the trigger's name. ``mal_pair_cos`` and ``honest_pair_cos`` are the
+        collusion signal (mean off-diagonal cosine within each group), and
+        ``mal_norm_ratio`` is the median malicious norm over the median honest
+        norm -- what a magnitude-based rule would see. All NaN with no attacker.
+        """
+        nan = {"salience_gap": float("nan"), "mal_pair_cos": float("nan"),
+               "honest_pair_cos": float("nan"), "mal_norm_ratio": float("nan")}
+        if not results or pre_global is None:
+            return nan
+
+        g = np.concatenate([w.ravel() for w in pre_global])
+        deltas, is_mal = [], []
+        for _, fr in results:
+            nds = parameters_to_ndarrays(fr.parameters)
+            deltas.append(np.concatenate([w.ravel() for w in nds]) - g)
+            is_mal.append(bool(fr.metrics.get("malicious", 0)))
+        deltas = np.stack(deltas)
+        # Measure the geometry the defenses actually decide on: trainable
+        # parameters only. Over the raw state_dict, salience_gap collapses to
+        # ~4e-5 and every pairwise cosine sits at 0.998, because one BatchNorm
+        # batch counter carries 98% of the norm. See
+        # DefenseStrategy.set_signal_mask.
+        deltas = deltas[:, self._signal_mask()]
+        is_mal = np.array(is_mal, dtype=bool)
+        if not is_mal.any() or is_mal.all():
+            return nan
+
+        unit = deltas / (np.linalg.norm(deltas, axis=1, keepdims=True) + 1e-12)
+        honest_mean = deltas[~is_mal].mean(axis=0)
+        hm = honest_mean / (np.linalg.norm(honest_mean) + 1e-12)
+        cos_to_hm = unit @ hm
+
+        def mean_offdiag(u):
+            if len(u) < 2:
+                return float("nan")
+            c = np.clip(u @ u.T, -1.0, 1.0)
+            n = len(u)
+            return float((c.sum() - np.trace(c)) / (n * (n - 1)))
+
+        norms = np.linalg.norm(deltas, axis=1)
+        return {
+            "salience_gap": float(cos_to_hm[~is_mal].mean() - cos_to_hm[is_mal].mean()),
+            "mal_pair_cos": mean_offdiag(unit[is_mal]),
+            "honest_pair_cos": mean_offdiag(unit[~is_mal]),
+            "mal_norm_ratio": float(np.median(norms[is_mal])
+                                    / (np.median(norms[~is_mal]) + 1e-12)),
+        }

@@ -1,0 +1,809 @@
+% GENERATED FILE — DO NOT EDIT. Regenerate with: python3 paper/make_numbers.py
+% Source: results/summary_multiseed.csv, results/summary.csv
+% Any \PENDING below is a cell that has not been run yet.
+
+% ---- multi-seed headline (CICIoT2023, IID, m=0.2, p=0.1, seeds 42-46) --
+\newcommand{\msCleanCAfedavg}{0.702}  % fedavg clean accuracy
+\newcommand{\msCleanFonefedavg}{0.561}  % fedavg clean macro-F1
+\newcommand{\msBSRfedavgFixed}{0.968}
+\newcommand{\msBSRsdfedavgFixed}{0.012}
+\newcommand{\msDRfedavgFixed}{\PENDING{}}
+\newcommand{\msDRsdfedavgFixed}{\PENDING{}}
+\newcommand{\msFPRfedavgFixed}{\PENDING{}}
+\newcommand{\msFPRsdfedavgFixed}{\PENDING{}}
+\newcommand{\msCAfedavgFixed}{0.700}
+\newcommand{\msCAsdfedavgFixed}{0.013}
+\newcommand{\msFPRpctfedavgFixed}{\PENDING{}}
+\newcommand{\msBSRminfedavgFixed}{0.955}
+\newcommand{\msBSRmaxfedavgFixed}{0.987}
+\newcommand{\msSalfedavgFixed}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfedavgFixed}{5}
+\newcommand{\msBSRfedavgStatistical}{1.000}
+\newcommand{\msBSRsdfedavgStatistical}{0.000}
+\newcommand{\msDRfedavgStatistical}{\PENDING{}}
+\newcommand{\msDRsdfedavgStatistical}{\PENDING{}}
+\newcommand{\msFPRfedavgStatistical}{\PENDING{}}
+\newcommand{\msFPRsdfedavgStatistical}{\PENDING{}}
+\newcommand{\msCAfedavgStatistical}{0.715}
+\newcommand{\msCAsdfedavgStatistical}{0.018}
+\newcommand{\msFPRpctfedavgStatistical}{\PENDING{}}
+\newcommand{\msBSRminfedavgStatistical}{1.000}
+\newcommand{\msBSRmaxfedavgStatistical}{1.000}
+\newcommand{\msSalfedavgStatistical}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfedavgStatistical}{5}
+\newcommand{\msBSRfedavgTemporal}{1.000}
+\newcommand{\msBSRsdfedavgTemporal}{0.000}
+\newcommand{\msDRfedavgTemporal}{\PENDING{}}
+\newcommand{\msDRsdfedavgTemporal}{\PENDING{}}
+\newcommand{\msFPRfedavgTemporal}{\PENDING{}}
+\newcommand{\msFPRsdfedavgTemporal}{\PENDING{}}
+\newcommand{\msCAfedavgTemporal}{0.698}
+\newcommand{\msCAsdfedavgTemporal}{0.021}
+\newcommand{\msFPRpctfedavgTemporal}{\PENDING{}}
+\newcommand{\msBSRminfedavgTemporal}{1.000}
+\newcommand{\msBSRmaxfedavgTemporal}{1.000}
+\newcommand{\msSalfedavgTemporal}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfedavgTemporal}{5}
+\newcommand{\msCleanCAkrum}{0.703}  % krum clean accuracy
+\newcommand{\msCleanFonekrum}{0.560}  % krum clean macro-F1
+\newcommand{\msBSRkrumFixed}{0.948}
+\newcommand{\msBSRsdkrumFixed}{0.016}
+\newcommand{\msDRkrumFixed}{0.18}
+\newcommand{\msDRsdkrumFixed}{0.05}
+\newcommand{\msFPRkrumFixed}{0.20}
+\newcommand{\msFPRsdkrumFixed}{0.01}
+\newcommand{\msCAkrumFixed}{0.693}
+\newcommand{\msCAsdkrumFixed}{0.009}
+\newcommand{\msFPRpctkrumFixed}{20}
+\newcommand{\msBSRminkrumFixed}{0.927}
+\newcommand{\msBSRmaxkrumFixed}{0.970}
+\newcommand{\msSalkrumFixed}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedskrumFixed}{5}
+\newcommand{\msBSRkrumStatistical}{1.000}
+\newcommand{\msBSRsdkrumStatistical}{0.000}
+\newcommand{\msDRkrumStatistical}{0.24}
+\newcommand{\msDRsdkrumStatistical}{0.05}
+\newcommand{\msFPRkrumStatistical}{0.19}
+\newcommand{\msFPRsdkrumStatistical}{0.01}
+\newcommand{\msCAkrumStatistical}{0.697}
+\newcommand{\msCAsdkrumStatistical}{0.011}
+\newcommand{\msFPRpctkrumStatistical}{19}
+\newcommand{\msBSRminkrumStatistical}{0.999}
+\newcommand{\msBSRmaxkrumStatistical}{1.000}
+\newcommand{\msSalkrumStatistical}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedskrumStatistical}{5}
+\newcommand{\msBSRkrumTemporal}{1.000}
+\newcommand{\msBSRsdkrumTemporal}{0.000}
+\newcommand{\msDRkrumTemporal}{0.20}
+\newcommand{\msDRsdkrumTemporal}{0.05}
+\newcommand{\msFPRkrumTemporal}{0.20}
+\newcommand{\msFPRsdkrumTemporal}{0.01}
+\newcommand{\msCAkrumTemporal}{0.698}
+\newcommand{\msCAsdkrumTemporal}{0.013}
+\newcommand{\msFPRpctkrumTemporal}{20}
+\newcommand{\msBSRminkrumTemporal}{1.000}
+\newcommand{\msBSRmaxkrumTemporal}{1.000}
+\newcommand{\msSalkrumTemporal}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedskrumTemporal}{5}
+\newcommand{\msCleanCAflame}{0.499}  % flame clean accuracy
+\newcommand{\msCleanFoneflame}{0.334}  % flame clean macro-F1
+\newcommand{\msBSRflameFixed}{0.010}
+\newcommand{\msBSRsdflameFixed}{0.003}
+\newcommand{\msDRflameFixed}{0.64}
+\newcommand{\msDRsdflameFixed}{0.14}
+\newcommand{\msFPRflameFixed}{0.40}
+\newcommand{\msFPRsdflameFixed}{0.04}
+\newcommand{\msCAflameFixed}{0.538}
+\newcommand{\msCAsdflameFixed}{0.106}
+\newcommand{\msFPRpctflameFixed}{40}
+\newcommand{\msBSRminflameFixed}{0.007}
+\newcommand{\msBSRmaxflameFixed}{0.015}
+\newcommand{\msSalflameFixed}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsflameFixed}{5}
+\newcommand{\msBSRflameStatistical}{0.863}
+\newcommand{\msBSRsdflameStatistical}{0.137}
+\newcommand{\msDRflameStatistical}{0.42}
+\newcommand{\msDRsdflameStatistical}{0.08}
+\newcommand{\msFPRflameStatistical}{0.46}
+\newcommand{\msFPRsdflameStatistical}{0.02}
+\newcommand{\msCAflameStatistical}{0.464}
+\newcommand{\msCAsdflameStatistical}{0.068}
+\newcommand{\msFPRpctflameStatistical}{46}
+\newcommand{\msBSRminflameStatistical}{0.636}
+\newcommand{\msBSRmaxflameStatistical}{0.974}
+\newcommand{\msSalflameStatistical}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsflameStatistical}{5}
+\newcommand{\msBSRflameTemporal}{0.863}
+\newcommand{\msBSRsdflameTemporal}{0.225}
+\newcommand{\msDRflameTemporal}{0.46}
+\newcommand{\msDRsdflameTemporal}{0.07}
+\newcommand{\msFPRflameTemporal}{0.45}
+\newcommand{\msFPRsdflameTemporal}{0.02}
+\newcommand{\msCAflameTemporal}{0.556}
+\newcommand{\msCAsdflameTemporal}{0.040}
+\newcommand{\msFPRpctflameTemporal}{45}
+\newcommand{\msBSRminflameTemporal}{0.464}
+\newcommand{\msBSRmaxflameTemporal}{0.990}
+\newcommand{\msSalflameTemporal}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsflameTemporal}{5}
+\newcommand{\msCleanCAfltrust}{0.556}  % fltrust clean accuracy
+\newcommand{\msCleanFonefltrust}{0.426}  % fltrust clean macro-F1
+\newcommand{\msBSRfltrustFixed}{0.004}
+\newcommand{\msBSRsdfltrustFixed}{0.000}
+\newcommand{\msDRfltrustFixed}{0.00}
+\newcommand{\msDRsdfltrustFixed}{0.00}
+\newcommand{\msFPRfltrustFixed}{0.00}
+\newcommand{\msFPRsdfltrustFixed}{0.00}
+\newcommand{\msCAfltrustFixed}{0.556}
+\newcommand{\msCAsdfltrustFixed}{0.054}
+\newcommand{\msFPRpctfltrustFixed}{0}
+\newcommand{\msBSRminfltrustFixed}{0.004}
+\newcommand{\msBSRmaxfltrustFixed}{0.004}
+\newcommand{\msSalfltrustFixed}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfltrustFixed}{5}
+\newcommand{\msBSRfltrustStatistical}{0.007}
+\newcommand{\msBSRsdfltrustStatistical}{0.010}
+\newcommand{\msDRfltrustStatistical}{0.00}
+\newcommand{\msDRsdfltrustStatistical}{0.00}
+\newcommand{\msFPRfltrustStatistical}{0.00}
+\newcommand{\msFPRsdfltrustStatistical}{0.00}
+\newcommand{\msCAfltrustStatistical}{0.577}
+\newcommand{\msCAsdfltrustStatistical}{0.067}
+\newcommand{\msFPRpctfltrustStatistical}{0}
+\newcommand{\msBSRminfltrustStatistical}{0.000}
+\newcommand{\msBSRmaxfltrustStatistical}{0.022}
+\newcommand{\msSalfltrustStatistical}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfltrustStatistical}{5}
+\newcommand{\msBSRfltrustTemporal}{0.782}
+\newcommand{\msBSRsdfltrustTemporal}{0.147}
+\newcommand{\msDRfltrustTemporal}{0.00}
+\newcommand{\msDRsdfltrustTemporal}{0.00}
+\newcommand{\msFPRfltrustTemporal}{0.00}
+\newcommand{\msFPRsdfltrustTemporal}{0.00}
+\newcommand{\msCAfltrustTemporal}{0.538}
+\newcommand{\msCAsdfltrustTemporal}{0.066}
+\newcommand{\msFPRpctfltrustTemporal}{0}
+\newcommand{\msBSRminfltrustTemporal}{0.562}
+\newcommand{\msBSRmaxfltrustTemporal}{0.892}
+\newcommand{\msSalfltrustTemporal}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfltrustTemporal}{5}
+\newcommand{\msCleanCAfoolsgold}{0.703}  % foolsgold clean accuracy
+\newcommand{\msCleanFonefoolsgold}{0.560}  % foolsgold clean macro-F1
+\newcommand{\msBSRfoolsgoldFixed}{0.369}
+\newcommand{\msBSRsdfoolsgoldFixed}{0.489}
+\newcommand{\msDRfoolsgoldFixed}{0.45}
+\newcommand{\msDRsdfoolsgoldFixed}{0.27}
+\newcommand{\msFPRfoolsgoldFixed}{0.00}
+\newcommand{\msFPRsdfoolsgoldFixed}{0.00}
+\newcommand{\msCAfoolsgoldFixed}{0.701}
+\newcommand{\msCAsdfoolsgoldFixed}{0.016}
+\newcommand{\msFPRpctfoolsgoldFixed}{0}
+\newcommand{\msBSRminfoolsgoldFixed}{0.003}
+\newcommand{\msBSRmaxfoolsgoldFixed}{0.926}
+\newcommand{\msSalfoolsgoldFixed}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfoolsgoldFixed}{5}
+\newcommand{\msBSRfoolsgoldStatistical}{1.000}
+\newcommand{\msBSRsdfoolsgoldStatistical}{0.001}
+\newcommand{\msDRfoolsgoldStatistical}{0.00}
+\newcommand{\msDRsdfoolsgoldStatistical}{0.00}
+\newcommand{\msFPRfoolsgoldStatistical}{0.00}
+\newcommand{\msFPRsdfoolsgoldStatistical}{0.00}
+\newcommand{\msCAfoolsgoldStatistical}{0.713}
+\newcommand{\msCAsdfoolsgoldStatistical}{0.024}
+\newcommand{\msFPRpctfoolsgoldStatistical}{0}
+\newcommand{\msBSRminfoolsgoldStatistical}{0.999}
+\newcommand{\msBSRmaxfoolsgoldStatistical}{1.000}
+\newcommand{\msSalfoolsgoldStatistical}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfoolsgoldStatistical}{5}
+\newcommand{\msBSRfoolsgoldTemporal}{1.000}
+\newcommand{\msBSRsdfoolsgoldTemporal}{0.000}
+\newcommand{\msDRfoolsgoldTemporal}{0.00}
+\newcommand{\msDRsdfoolsgoldTemporal}{0.00}
+\newcommand{\msFPRfoolsgoldTemporal}{0.00}
+\newcommand{\msFPRsdfoolsgoldTemporal}{0.00}
+\newcommand{\msCAfoolsgoldTemporal}{0.699}
+\newcommand{\msCAsdfoolsgoldTemporal}{0.020}
+\newcommand{\msFPRpctfoolsgoldTemporal}{0}
+\newcommand{\msBSRminfoolsgoldTemporal}{1.000}
+\newcommand{\msBSRmaxfoolsgoldTemporal}{1.000}
+\newcommand{\msSalfoolsgoldTemporal}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsfoolsgoldTemporal}{5}
+\newcommand{\msCleanCAgradcos}{0.705}  % gradcos clean accuracy
+\newcommand{\msCleanFonegradcos}{0.562}  % gradcos clean macro-F1
+\newcommand{\msBSRgradcosFixed}{0.004}
+\newcommand{\msBSRsdgradcosFixed}{0.003}
+\newcommand{\msDRgradcosFixed}{0.97}
+\newcommand{\msDRsdgradcosFixed}{0.01}
+\newcommand{\msFPRgradcosFixed}{0.01}
+\newcommand{\msFPRsdgradcosFixed}{0.01}
+\newcommand{\msCAgradcosFixed}{0.700}
+\newcommand{\msCAsdgradcosFixed}{0.017}
+\newcommand{\msFPRpctgradcosFixed}{0}
+\newcommand{\msBSRmingradcosFixed}{0.001}
+\newcommand{\msBSRmaxgradcosFixed}{0.007}
+\newcommand{\msSalgradcosFixed}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsgradcosFixed}{5}
+\newcommand{\msBSRgradcosStatistical}{1.000}
+\newcommand{\msBSRsdgradcosStatistical}{0.000}
+\newcommand{\msDRgradcosStatistical}{0.11}
+\newcommand{\msDRsdgradcosStatistical}{0.05}
+\newcommand{\msFPRgradcosStatistical}{0.12}
+\newcommand{\msFPRsdgradcosStatistical}{0.03}
+\newcommand{\msCAgradcosStatistical}{0.707}
+\newcommand{\msCAsdgradcosStatistical}{0.015}
+\newcommand{\msFPRpctgradcosStatistical}{12}
+\newcommand{\msBSRmingradcosStatistical}{1.000}
+\newcommand{\msBSRmaxgradcosStatistical}{1.000}
+\newcommand{\msSalgradcosStatistical}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsgradcosStatistical}{5}
+\newcommand{\msBSRgradcosTemporal}{1.000}
+\newcommand{\msBSRsdgradcosTemporal}{0.000}
+\newcommand{\msDRgradcosTemporal}{0.14}
+\newcommand{\msDRsdgradcosTemporal}{0.05}
+\newcommand{\msFPRgradcosTemporal}{0.12}
+\newcommand{\msFPRsdgradcosTemporal}{0.03}
+\newcommand{\msCAgradcosTemporal}{0.706}
+\newcommand{\msCAsdgradcosTemporal}{0.022}
+\newcommand{\msFPRpctgradcosTemporal}{12}
+\newcommand{\msBSRmingradcosTemporal}{1.000}
+\newcommand{\msBSRmaxgradcosTemporal}{1.000}
+\newcommand{\msSalgradcosTemporal}{\PENDING{}}  % measured salience gap
+\newcommand{\msNseedsgradcosTemporal}{5}
+\newcommand{\msCAadvGradcos}{0.15}  % gradcos clean CA over fltrust
+\newcommand{\msCAdeficitFlame}{0.20}  % flame clean CA below fedavg
+
+% ---- adaptive attacker: static vs decorrelated vs adaptive -------------
+\newcommand{\adBSRfedavgSimple}{0.968}
+\newcommand{\adDRfedavgSimple}{\PENDING{}}
+\newcommand{\adFPRfedavgSimple}{\PENDING{}}
+\newcommand{\adCAfedavgSimple}{0.700}
+\newcommand{\adMalCosfedavgSimple}{0.999}
+\newcommand{\adHonCosfedavgSimple}{0.999}
+\newcommand{\adNormRatiofedavgSimple}{1.00}
+\newcommand{\adBSRfedavgDecorrelated}{0.957}
+\newcommand{\adDRfedavgDecorrelated}{\PENDING{}}
+\newcommand{\adFPRfedavgDecorrelated}{\PENDING{}}
+\newcommand{\adCAfedavgDecorrelated}{0.690}
+\newcommand{\adMalCosfedavgDecorrelated}{0.428}
+\newcommand{\adHonCosfedavgDecorrelated}{0.999}
+\newcommand{\adNormRatiofedavgDecorrelated}{1.32}
+\newcommand{\adBSRfedavgAdaptive}{0.957}
+\newcommand{\adDRfedavgAdaptive}{\PENDING{}}
+\newcommand{\adFPRfedavgAdaptive}{\PENDING{}}
+\newcommand{\adCAfedavgAdaptive}{0.697}
+\newcommand{\adMalCosfedavgAdaptive}{0.420}
+\newcommand{\adHonCosfedavgAdaptive}{0.999}
+\newcommand{\adNormRatiofedavgAdaptive}{0.99}
+\newcommand{\evBSRfedavgQuarter}{\PENDING{}}
+\newcommand{\evMalCosfedavgQuarter}{\PENDING{}}
+\newcommand{\evBSRfedavgHalf}{\PENDING{}}
+\newcommand{\evMalCosfedavgHalf}{\PENDING{}}
+\newcommand{\evBSRfedavgOne}{0.957}
+\newcommand{\evMalCosfedavgOne}{0.420}
+\newcommand{\evBSRfedavgTwo}{\PENDING{}}
+\newcommand{\evMalCosfedavgTwo}{\PENDING{}}
+\newcommand{\adBSRkrumSimple}{0.948}
+\newcommand{\adDRkrumSimple}{0.18}
+\newcommand{\adFPRkrumSimple}{0.20}
+\newcommand{\adCAkrumSimple}{0.693}
+\newcommand{\adMalCoskrumSimple}{\PENDING{}}
+\newcommand{\adHonCoskrumSimple}{\PENDING{}}
+\newcommand{\adNormRatiokrumSimple}{\PENDING{}}
+\newcommand{\adBSRkrumDecorrelated}{0.001}
+\newcommand{\adDRkrumDecorrelated}{1.00}
+\newcommand{\adFPRkrumDecorrelated}{0.00}
+\newcommand{\adCAkrumDecorrelated}{0.692}
+\newcommand{\adMalCoskrumDecorrelated}{0.428}
+\newcommand{\adHonCoskrumDecorrelated}{0.999}
+\newcommand{\adNormRatiokrumDecorrelated}{1.32}
+\newcommand{\adBSRkrumAdaptive}{0.001}
+\newcommand{\adDRkrumAdaptive}{1.00}
+\newcommand{\adFPRkrumAdaptive}{0.00}
+\newcommand{\adCAkrumAdaptive}{0.692}
+\newcommand{\adMalCoskrumAdaptive}{0.421}
+\newcommand{\adHonCoskrumAdaptive}{0.999}
+\newcommand{\adNormRatiokrumAdaptive}{0.99}
+\newcommand{\evBSRkrumQuarter}{\PENDING{}}
+\newcommand{\evMalCoskrumQuarter}{\PENDING{}}
+\newcommand{\evBSRkrumHalf}{\PENDING{}}
+\newcommand{\evMalCoskrumHalf}{\PENDING{}}
+\newcommand{\evBSRkrumOne}{0.001}
+\newcommand{\evMalCoskrumOne}{0.421}
+\newcommand{\evBSRkrumTwo}{\PENDING{}}
+\newcommand{\evMalCoskrumTwo}{\PENDING{}}
+\newcommand{\adBSRflameSimple}{0.010}
+\newcommand{\adDRflameSimple}{0.64}
+\newcommand{\adFPRflameSimple}{0.40}
+\newcommand{\adCAflameSimple}{0.538}
+\newcommand{\adMalCosflameSimple}{\PENDING{}}
+\newcommand{\adHonCosflameSimple}{\PENDING{}}
+\newcommand{\adNormRatioflameSimple}{\PENDING{}}
+\newcommand{\adBSRflameDecorrelated}{\PENDING{}}
+\newcommand{\adDRflameDecorrelated}{\PENDING{}}
+\newcommand{\adFPRflameDecorrelated}{\PENDING{}}
+\newcommand{\adCAflameDecorrelated}{\PENDING{}}
+\newcommand{\adMalCosflameDecorrelated}{\PENDING{}}
+\newcommand{\adHonCosflameDecorrelated}{\PENDING{}}
+\newcommand{\adNormRatioflameDecorrelated}{\PENDING{}}
+\newcommand{\adBSRflameAdaptive}{\PENDING{}}
+\newcommand{\adDRflameAdaptive}{\PENDING{}}
+\newcommand{\adFPRflameAdaptive}{\PENDING{}}
+\newcommand{\adCAflameAdaptive}{\PENDING{}}
+\newcommand{\adMalCosflameAdaptive}{\PENDING{}}
+\newcommand{\adHonCosflameAdaptive}{\PENDING{}}
+\newcommand{\adNormRatioflameAdaptive}{\PENDING{}}
+\newcommand{\evBSRflameQuarter}{\PENDING{}}
+\newcommand{\evMalCosflameQuarter}{\PENDING{}}
+\newcommand{\evBSRflameHalf}{\PENDING{}}
+\newcommand{\evMalCosflameHalf}{\PENDING{}}
+\newcommand{\evBSRflameOne}{\PENDING{}}
+\newcommand{\evMalCosflameOne}{\PENDING{}}
+\newcommand{\evBSRflameTwo}{\PENDING{}}
+\newcommand{\evMalCosflameTwo}{\PENDING{}}
+\newcommand{\adBSRfltrustSimple}{0.004}
+\newcommand{\adDRfltrustSimple}{0.00}
+\newcommand{\adFPRfltrustSimple}{0.00}
+\newcommand{\adCAfltrustSimple}{0.556}
+\newcommand{\adMalCosfltrustSimple}{\PENDING{}}
+\newcommand{\adHonCosfltrustSimple}{\PENDING{}}
+\newcommand{\adNormRatiofltrustSimple}{\PENDING{}}
+\newcommand{\adBSRfltrustDecorrelated}{\PENDING{}}
+\newcommand{\adDRfltrustDecorrelated}{\PENDING{}}
+\newcommand{\adFPRfltrustDecorrelated}{\PENDING{}}
+\newcommand{\adCAfltrustDecorrelated}{\PENDING{}}
+\newcommand{\adMalCosfltrustDecorrelated}{\PENDING{}}
+\newcommand{\adHonCosfltrustDecorrelated}{\PENDING{}}
+\newcommand{\adNormRatiofltrustDecorrelated}{\PENDING{}}
+\newcommand{\adBSRfltrustAdaptive}{\PENDING{}}
+\newcommand{\adDRfltrustAdaptive}{\PENDING{}}
+\newcommand{\adFPRfltrustAdaptive}{\PENDING{}}
+\newcommand{\adCAfltrustAdaptive}{\PENDING{}}
+\newcommand{\adMalCosfltrustAdaptive}{\PENDING{}}
+\newcommand{\adHonCosfltrustAdaptive}{\PENDING{}}
+\newcommand{\adNormRatiofltrustAdaptive}{\PENDING{}}
+\newcommand{\evBSRfltrustQuarter}{\PENDING{}}
+\newcommand{\evMalCosfltrustQuarter}{\PENDING{}}
+\newcommand{\evBSRfltrustHalf}{\PENDING{}}
+\newcommand{\evMalCosfltrustHalf}{\PENDING{}}
+\newcommand{\evBSRfltrustOne}{\PENDING{}}
+\newcommand{\evMalCosfltrustOne}{\PENDING{}}
+\newcommand{\evBSRfltrustTwo}{\PENDING{}}
+\newcommand{\evMalCosfltrustTwo}{\PENDING{}}
+\newcommand{\adBSRfoolsgoldSimple}{0.369}
+\newcommand{\adDRfoolsgoldSimple}{0.45}
+\newcommand{\adFPRfoolsgoldSimple}{0.00}
+\newcommand{\adCAfoolsgoldSimple}{0.701}
+\newcommand{\adMalCosfoolsgoldSimple}{\PENDING{}}
+\newcommand{\adHonCosfoolsgoldSimple}{\PENDING{}}
+\newcommand{\adNormRatiofoolsgoldSimple}{\PENDING{}}
+\newcommand{\adBSRfoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adDRfoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adFPRfoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adCAfoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adMalCosfoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adHonCosfoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adNormRatiofoolsgoldDecorrelated}{\PENDING{}}
+\newcommand{\adBSRfoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\adDRfoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\adFPRfoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\adCAfoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\adMalCosfoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\adHonCosfoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\adNormRatiofoolsgoldAdaptive}{\PENDING{}}
+\newcommand{\evBSRfoolsgoldQuarter}{\PENDING{}}
+\newcommand{\evMalCosfoolsgoldQuarter}{\PENDING{}}
+\newcommand{\evBSRfoolsgoldHalf}{\PENDING{}}
+\newcommand{\evMalCosfoolsgoldHalf}{\PENDING{}}
+\newcommand{\evBSRfoolsgoldOne}{\PENDING{}}
+\newcommand{\evMalCosfoolsgoldOne}{\PENDING{}}
+\newcommand{\evBSRfoolsgoldTwo}{\PENDING{}}
+\newcommand{\evMalCosfoolsgoldTwo}{\PENDING{}}
+\newcommand{\adBSRgradcosSimple}{0.004}
+\newcommand{\adDRgradcosSimple}{0.97}
+\newcommand{\adFPRgradcosSimple}{0.01}
+\newcommand{\adCAgradcosSimple}{0.700}
+\newcommand{\adMalCosgradcosSimple}{\PENDING{}}
+\newcommand{\adHonCosgradcosSimple}{\PENDING{}}
+\newcommand{\adNormRatiogradcosSimple}{\PENDING{}}
+\newcommand{\adBSRgradcosDecorrelated}{\PENDING{}}
+\newcommand{\adDRgradcosDecorrelated}{\PENDING{}}
+\newcommand{\adFPRgradcosDecorrelated}{\PENDING{}}
+\newcommand{\adCAgradcosDecorrelated}{\PENDING{}}
+\newcommand{\adMalCosgradcosDecorrelated}{\PENDING{}}
+\newcommand{\adHonCosgradcosDecorrelated}{\PENDING{}}
+\newcommand{\adNormRatiogradcosDecorrelated}{\PENDING{}}
+\newcommand{\adBSRgradcosAdaptive}{\PENDING{}}
+\newcommand{\adDRgradcosAdaptive}{\PENDING{}}
+\newcommand{\adFPRgradcosAdaptive}{\PENDING{}}
+\newcommand{\adCAgradcosAdaptive}{\PENDING{}}
+\newcommand{\adMalCosgradcosAdaptive}{\PENDING{}}
+\newcommand{\adHonCosgradcosAdaptive}{\PENDING{}}
+\newcommand{\adNormRatiogradcosAdaptive}{\PENDING{}}
+\newcommand{\evBSRgradcosQuarter}{\PENDING{}}
+\newcommand{\evMalCosgradcosQuarter}{\PENDING{}}
+\newcommand{\evBSRgradcosHalf}{\PENDING{}}
+\newcommand{\evMalCosgradcosHalf}{\PENDING{}}
+\newcommand{\evBSRgradcosOne}{\PENDING{}}
+\newcommand{\evMalCosgradcosOne}{\PENDING{}}
+\newcommand{\evBSRgradcosTwo}{\PENDING{}}
+\newcommand{\evMalCosgradcosTwo}{\PENDING{}}
+
+% ---- GradCos residual variant, static vs adaptive ----------------------
+\newcommand{\resBSRSimpleFixed}{0.003}
+\newcommand{\resBSRsdSimpleFixed}{0.001}
+\newcommand{\resDRSimpleFixed}{0.99}
+\newcommand{\resFPRSimpleFixed}{0.03}
+\newcommand{\resCASimpleFixed}{0.695}
+\newcommand{\resBSRSimpleStatistical}{0.085}
+\newcommand{\resBSRsdSimpleStatistical}{0.131}
+\newcommand{\resDRSimpleStatistical}{0.99}
+\newcommand{\resFPRSimpleStatistical}{0.03}
+\newcommand{\resCASimpleStatistical}{0.704}
+\newcommand{\resBSRSimpleTemporal}{0.367}
+\newcommand{\resBSRsdSimpleTemporal}{0.170}
+\newcommand{\resDRSimpleTemporal}{0.99}
+\newcommand{\resFPRSimpleTemporal}{0.05}
+\newcommand{\resCASimpleTemporal}{0.698}
+\newcommand{\resBSRAdaptiveFixed}{\PENDING{}}
+\newcommand{\resBSRsdAdaptiveFixed}{\PENDING{}}
+\newcommand{\resDRAdaptiveFixed}{\PENDING{}}
+\newcommand{\resFPRAdaptiveFixed}{\PENDING{}}
+\newcommand{\resCAAdaptiveFixed}{\PENDING{}}
+\newcommand{\resBSRAdaptiveStatistical}{\PENDING{}}
+\newcommand{\resBSRsdAdaptiveStatistical}{\PENDING{}}
+\newcommand{\resDRAdaptiveStatistical}{\PENDING{}}
+\newcommand{\resFPRAdaptiveStatistical}{\PENDING{}}
+\newcommand{\resCAAdaptiveStatistical}{\PENDING{}}
+\newcommand{\resBSRAdaptiveTemporal}{\PENDING{}}
+\newcommand{\resBSRsdAdaptiveTemporal}{\PENDING{}}
+\newcommand{\resDRAdaptiveTemporal}{\PENDING{}}
+\newcommand{\resFPRAdaptiveTemporal}{\PENDING{}}
+\newcommand{\resCAAdaptiveTemporal}{\PENDING{}}
+
+% ---- magnitude and order-statistic rules (the non-cosine control family) 
+\newcommand{\mgCleanCAmedian}{\PENDING{}}
+\newcommand{\mgBSRmedianFixed}{\PENDING{}}
+\newcommand{\mgCAmedianFixed}{\PENDING{}}
+\newcommand{\mgSalmedianFixed}{\PENDING{}}
+\newcommand{\mgBSRmedianStatistical}{\PENDING{}}
+\newcommand{\mgCAmedianStatistical}{\PENDING{}}
+\newcommand{\mgSalmedianStatistical}{\PENDING{}}
+\newcommand{\mgBSRmedianTemporal}{\PENDING{}}
+\newcommand{\mgCAmedianTemporal}{\PENDING{}}
+\newcommand{\mgSalmedianTemporal}{\PENDING{}}
+\newcommand{\mgCleanCAtrimmedmean}{\PENDING{}}
+\newcommand{\mgBSRtrimmedmeanFixed}{\PENDING{}}
+\newcommand{\mgCAtrimmedmeanFixed}{\PENDING{}}
+\newcommand{\mgSaltrimmedmeanFixed}{\PENDING{}}
+\newcommand{\mgBSRtrimmedmeanStatistical}{\PENDING{}}
+\newcommand{\mgCAtrimmedmeanStatistical}{\PENDING{}}
+\newcommand{\mgSaltrimmedmeanStatistical}{\PENDING{}}
+\newcommand{\mgBSRtrimmedmeanTemporal}{\PENDING{}}
+\newcommand{\mgCAtrimmedmeanTemporal}{\PENDING{}}
+\newcommand{\mgSaltrimmedmeanTemporal}{\PENDING{}}
+\newcommand{\mgCleanCArfa}{\PENDING{}}
+\newcommand{\mgBSRrfaFixed}{\PENDING{}}
+\newcommand{\mgCArfaFixed}{\PENDING{}}
+\newcommand{\mgSalrfaFixed}{\PENDING{}}
+\newcommand{\mgBSRrfaStatistical}{\PENDING{}}
+\newcommand{\mgCArfaStatistical}{\PENDING{}}
+\newcommand{\mgSalrfaStatistical}{\PENDING{}}
+\newcommand{\mgBSRrfaTemporal}{\PENDING{}}
+\newcommand{\mgCArfaTemporal}{\PENDING{}}
+\newcommand{\mgSalrfaTemporal}{\PENDING{}}
+\newcommand{\mgCleanCAbulyan}{\PENDING{}}
+\newcommand{\mgBSRbulyanFixed}{\PENDING{}}
+\newcommand{\mgCAbulyanFixed}{\PENDING{}}
+\newcommand{\mgSalbulyanFixed}{\PENDING{}}
+\newcommand{\mgBSRbulyanStatistical}{\PENDING{}}
+\newcommand{\mgCAbulyanStatistical}{\PENDING{}}
+\newcommand{\mgSalbulyanStatistical}{\PENDING{}}
+\newcommand{\mgBSRbulyanTemporal}{\PENDING{}}
+\newcommand{\mgCAbulyanTemporal}{\PENDING{}}
+\newcommand{\mgSalbulyanTemporal}{\PENDING{}}
+\newcommand{\mgCleanCAnormclip}{\PENDING{}}
+\newcommand{\mgBSRnormclipFixed}{\PENDING{}}
+\newcommand{\mgCAnormclipFixed}{\PENDING{}}
+\newcommand{\mgSalnormclipFixed}{\PENDING{}}
+\newcommand{\mgBSRnormclipStatistical}{\PENDING{}}
+\newcommand{\mgCAnormclipStatistical}{\PENDING{}}
+\newcommand{\mgSalnormclipStatistical}{\PENDING{}}
+\newcommand{\mgBSRnormclipTemporal}{\PENDING{}}
+\newcommand{\mgCAnormclipTemporal}{\PENDING{}}
+\newcommand{\mgSalnormclipTemporal}{\PENDING{}}
+
+% ---- trigger realizability audit (CICIoT2023) --------------------------
+\newcommand{\rzSigFixedQtr}{0.50}
+\newcommand{\rzDMFixedQtr}{11.59}
+\newcommand{\rzNNFixedQtr}{1.79}
+\newcommand{\rzSigFixedOne}{2.00}
+\newcommand{\rzDMFixedOne}{29.09}
+\newcommand{\rzNNFixedOne}{3.75}
+\newcommand{\rzSigFixedThree}{6.00}
+\newcommand{\rzDMFixedThree}{76.72}
+\newcommand{\rzNNFixedThree}{10.68}
+\newcommand{\rzSigFixedDonor}{11.12}
+\newcommand{\rzDMFixedDonor}{2.62}
+\newcommand{\rzNNFixedDonor}{6.77}
+\newcommand{\rzPnnFixed}{5.78}  % benign 99th-pctile joint Mahalanobis
+\newcommand{\rzSigStatisticalQtr}{0.50}
+\newcommand{\rzDMStatisticalQtr}{0.75}
+\newcommand{\rzNNStatisticalQtr}{1.01}
+\newcommand{\rzSigStatisticalOne}{2.00}
+\newcommand{\rzDMStatisticalOne}{1.12}
+\newcommand{\rzNNStatisticalOne}{3.01}
+\newcommand{\rzSigStatisticalThree}{6.00}
+\newcommand{\rzDMStatisticalThree}{5.23}
+\newcommand{\rzNNStatisticalThree}{8.50}
+\newcommand{\rzSigStatisticalDonor}{15.83}
+\newcommand{\rzDMStatisticalDonor}{2.95}
+\newcommand{\rzNNStatisticalDonor}{15.25}
+\newcommand{\rzPnnStatistical}{7.16}  % benign 99th-pctile joint Mahalanobis
+\newcommand{\rzSigTemporalQtr}{0.50}
+\newcommand{\rzDMTemporalQtr}{922}
+\newcommand{\rzNNTemporalQtr}{0.52}
+\newcommand{\rzSigTemporalOne}{2.00}
+\newcommand{\rzDMTemporalOne}{1167}
+\newcommand{\rzNNTemporalOne}{2.62}
+\newcommand{\rzSigTemporalThree}{6.00}
+\newcommand{\rzDMTemporalThree}{1826}
+\newcommand{\rzNNTemporalThree}{8.44}
+\newcommand{\rzSigTemporalDonor}{8.71}
+\newcommand{\rzDMTemporalDonor}{2.56}
+\newcommand{\rzNNTemporalDonor}{8.49}
+\newcommand{\rzPnnTemporal}{3.96}  % benign 99th-pctile joint Mahalanobis
+\newcommand{\rzUnstamped}{0.002}  % nearest-real-neighbour distance for a real attack flow
+\newcommand{\rzExceedFixedQtr}{5}  % benign rows further from the benign mean than the 0.25x fixed trigger
+\newcommand{\rzRefRows}{20{,}000}  % benign reference rows in the audit
+\newcommand{\rzPctileFixedQtr}{99.97}  % where the 0.5-sigma fixed trigger sits in benign joint variation
+
+% ---- breadth grid: mean BSR over the 9 attack cells of each trigger ----
+\newcommand{\gridBSRfedavgFixed}{0.959}  % mean of 9 cells
+\newcommand{\gridNfedavgFixed}{9}
+\newcommand{\gridBSRfedavgStatistical}{1.000}  % mean of 9 cells
+\newcommand{\gridNfedavgStatistical}{9}
+\newcommand{\gridBSRfedavgTemporal}{1.000}  % mean of 9 cells
+\newcommand{\gridNfedavgTemporal}{9}
+\newcommand{\gridBSRkrumFixed}{0.559}  % mean of 9 cells
+\newcommand{\gridNkrumFixed}{9}
+\newcommand{\gridBSRkrumStatistical}{0.799}  % mean of 9 cells
+\newcommand{\gridNkrumStatistical}{9}
+\newcommand{\gridBSRkrumTemporal}{0.671}  % mean of 9 cells
+\newcommand{\gridNkrumTemporal}{9}
+\newcommand{\gridBSRflameFixed}{0.048}  % mean of 9 cells
+\newcommand{\gridNflameFixed}{9}
+\newcommand{\gridBSRflameStatistical}{0.906}  % mean of 9 cells
+\newcommand{\gridNflameStatistical}{9}
+\newcommand{\gridBSRflameTemporal}{0.705}  % mean of 9 cells
+\newcommand{\gridNflameTemporal}{9}
+\newcommand{\gridBSRfltrustFixed}{0.004}  % mean of 9 cells
+\newcommand{\gridNfltrustFixed}{9}
+\newcommand{\gridBSRfltrustStatistical}{0.001}  % mean of 9 cells
+\newcommand{\gridNfltrustStatistical}{9}
+\newcommand{\gridBSRfltrustTemporal}{0.568}  % mean of 9 cells
+\newcommand{\gridNfltrustTemporal}{9}
+\newcommand{\gridBSRfoolsgoldFixed}{0.026}  % mean of 1 cells
+\newcommand{\gridNfoolsgoldFixed}{1}
+\newcommand{\gridBSRfoolsgoldStatistical}{1.000}  % mean of 1 cells
+\newcommand{\gridNfoolsgoldStatistical}{1}
+\newcommand{\gridBSRfoolsgoldTemporal}{1.000}  % mean of 1 cells
+\newcommand{\gridNfoolsgoldTemporal}{1}
+\newcommand{\gridBSRgradcosFixed}{0.171}  % mean of 9 cells
+\newcommand{\gridNgradcosFixed}{9}
+\newcommand{\gridBSRgradcosStatistical}{0.893}  % mean of 9 cells
+\newcommand{\gridNgradcosStatistical}{9}
+\newcommand{\gridBSRgradcosTemporal}{0.999}  % mean of 9 cells
+\newcommand{\gridNgradcosTemporal}{9}
+\newcommand{\gridAttackCells}{27}  % undefended attack cells in the breadth grid
+\newcommand{\gridMinBSRfedavg}{0.899}  % weakest undefended cell
+
+% ---- malicious-ratio sweep (fixed trigger, mean over poison rates) -----
+\newcommand{\ratBSRfedavgTen}{0.91}  % mean of 3 poison rates
+\newcommand{\ratDRfedavgTen}{\PENDING{}}
+\newcommand{\ratNfedavgTen}{3}
+\newcommand{\ratBSRfedavgTwenty}{0.98}  % mean of 3 poison rates
+\newcommand{\ratDRfedavgTwenty}{\PENDING{}}
+\newcommand{\ratNfedavgTwenty}{3}
+\newcommand{\ratBSRfedavgThirty}{0.99}  % mean of 3 poison rates
+\newcommand{\ratDRfedavgThirty}{\PENDING{}}
+\newcommand{\ratNfedavgThirty}{3}
+\newcommand{\ratBSRkrumTen}{0.00}  % mean of 3 poison rates
+\newcommand{\ratDRkrumTen}{1.00}
+\newcommand{\ratNkrumTen}{3}
+\newcommand{\ratBSRkrumTwenty}{0.69}  % mean of 3 poison rates
+\newcommand{\ratDRkrumTwenty}{0.30}
+\newcommand{\ratNkrumTwenty}{3}
+\newcommand{\ratBSRkrumThirty}{0.98}  % mean of 3 poison rates
+\newcommand{\ratDRkrumThirty}{0.13}
+\newcommand{\ratNkrumThirty}{3}
+\newcommand{\ratBSRflameTen}{0.01}  % mean of 3 poison rates
+\newcommand{\ratDRflameTen}{0.65}
+\newcommand{\ratNflameTen}{3}
+\newcommand{\ratBSRflameTwenty}{0.02}  % mean of 3 poison rates
+\newcommand{\ratDRflameTwenty}{0.49}
+\newcommand{\ratNflameTwenty}{3}
+\newcommand{\ratBSRflameThirty}{0.12}  % mean of 3 poison rates
+\newcommand{\ratDRflameThirty}{0.43}
+\newcommand{\ratNflameThirty}{3}
+\newcommand{\ratBSRfltrustTen}{0.00}  % mean of 3 poison rates
+\newcommand{\ratDRfltrustTen}{0.00}
+\newcommand{\ratNfltrustTen}{3}
+\newcommand{\ratBSRfltrustTwenty}{0.00}  % mean of 3 poison rates
+\newcommand{\ratDRfltrustTwenty}{0.00}
+\newcommand{\ratNfltrustTwenty}{3}
+\newcommand{\ratBSRfltrustThirty}{0.00}  % mean of 3 poison rates
+\newcommand{\ratDRfltrustThirty}{0.00}
+\newcommand{\ratNfltrustThirty}{3}
+\newcommand{\ratBSRfoolsgoldTen}{\PENDING{}}  % mean of 0 poison rates
+\newcommand{\ratDRfoolsgoldTen}{\PENDING{}}
+\newcommand{\ratNfoolsgoldTen}{\PENDING{}}
+\newcommand{\ratBSRfoolsgoldTwenty}{0.03}  % mean of 1 poison rates
+\newcommand{\ratDRfoolsgoldTwenty}{0.75}
+\newcommand{\ratNfoolsgoldTwenty}{1}
+\newcommand{\ratBSRfoolsgoldThirty}{\PENDING{}}  % mean of 0 poison rates
+\newcommand{\ratDRfoolsgoldThirty}{\PENDING{}}
+\newcommand{\ratNfoolsgoldThirty}{\PENDING{}}
+\newcommand{\ratBSRgradcosTen}{0.00}  % mean of 3 poison rates
+\newcommand{\ratDRgradcosTen}{0.93}
+\newcommand{\ratNgradcosTen}{3}
+\newcommand{\ratBSRgradcosTwenty}{0.16}  % mean of 3 poison rates
+\newcommand{\ratDRgradcosTwenty}{0.85}
+\newcommand{\ratNgradcosTwenty}{3}
+\newcommand{\ratBSRgradcosThirty}{0.34}  % mean of 3 poison rates
+\newcommand{\ratDRgradcosThirty}{0.63}
+\newcommand{\ratNgradcosThirty}{3}
+
+% ---- donor triggers (jointly realizable by construction) ---------------
+\newcommand{\dnBSRfedavgFixed}{\PENDING{}}
+\newcommand{\dnDRfedavgFixed}{\PENDING{}}
+\newcommand{\dnBSRfedavgStatistical}{\PENDING{}}
+\newcommand{\dnDRfedavgStatistical}{\PENDING{}}
+\newcommand{\dnBSRfedavgTemporal}{\PENDING{}}
+\newcommand{\dnDRfedavgTemporal}{\PENDING{}}
+\newcommand{\dnBSRkrumFixed}{\PENDING{}}
+\newcommand{\dnDRkrumFixed}{\PENDING{}}
+\newcommand{\dnBSRkrumStatistical}{\PENDING{}}
+\newcommand{\dnDRkrumStatistical}{\PENDING{}}
+\newcommand{\dnBSRkrumTemporal}{\PENDING{}}
+\newcommand{\dnDRkrumTemporal}{\PENDING{}}
+\newcommand{\dnBSRflameFixed}{\PENDING{}}
+\newcommand{\dnDRflameFixed}{\PENDING{}}
+\newcommand{\dnBSRflameStatistical}{\PENDING{}}
+\newcommand{\dnDRflameStatistical}{\PENDING{}}
+\newcommand{\dnBSRflameTemporal}{\PENDING{}}
+\newcommand{\dnDRflameTemporal}{\PENDING{}}
+\newcommand{\dnBSRfltrustFixed}{\PENDING{}}
+\newcommand{\dnDRfltrustFixed}{\PENDING{}}
+\newcommand{\dnBSRfltrustStatistical}{\PENDING{}}
+\newcommand{\dnDRfltrustStatistical}{\PENDING{}}
+\newcommand{\dnBSRfltrustTemporal}{\PENDING{}}
+\newcommand{\dnDRfltrustTemporal}{\PENDING{}}
+\newcommand{\dnBSRgradcosFixed}{\PENDING{}}
+\newcommand{\dnDRgradcosFixed}{\PENDING{}}
+\newcommand{\dnBSRgradcosStatistical}{\PENDING{}}
+\newcommand{\dnDRgradcosStatistical}{\PENDING{}}
+\newcommand{\dnBSRgradcosTemporal}{\PENDING{}}
+\newcommand{\dnDRgradcosTemporal}{\PENDING{}}
+
+% ---- FLNET2023 (single-seed OAT sweep) ---------------------------------
+\newcommand{\flCleanCAfedavg}{0.9996}
+\newcommand{\flCleanFonefedavg}{0.9995}
+\newcommand{\flBSRfedavgFixed}{0.998}
+\newcommand{\flDRfedavgFixed}{\PENDING{}}
+\newcommand{\flBSRfedavgStatistical}{0.455}
+\newcommand{\flDRfedavgStatistical}{\PENDING{}}
+\newcommand{\flBSRfedavgTemporal}{0.567}
+\newcommand{\flDRfedavgTemporal}{\PENDING{}}
+\newcommand{\flCleanCAkrum}{0.9997}
+\newcommand{\flCleanFonekrum}{0.9992}
+\newcommand{\flBSRkrumFixed}{0.007}
+\newcommand{\flDRkrumFixed}{1.00}
+\newcommand{\flBSRkrumStatistical}{0.000}
+\newcommand{\flDRkrumStatistical}{1.00}
+\newcommand{\flBSRkrumTemporal}{0.007}
+\newcommand{\flDRkrumTemporal}{1.00}
+\newcommand{\flCleanCAflame}{0.8888}
+\newcommand{\flCleanFoneflame}{0.5743}
+\newcommand{\flBSRflameFixed}{0.017}
+\newcommand{\flDRflameFixed}{1.00}
+\newcommand{\flBSRflameStatistical}{0.028}
+\newcommand{\flDRflameStatistical}{1.00}
+\newcommand{\flBSRflameTemporal}{0.019}
+\newcommand{\flDRflameTemporal}{1.00}
+\newcommand{\flCleanCAfltrust}{0.9642}
+\newcommand{\flCleanFonefltrust}{0.5963}
+\newcommand{\flBSRfltrustFixed}{0.016}
+\newcommand{\flDRfltrustFixed}{0.00}
+\newcommand{\flBSRfltrustStatistical}{0.016}
+\newcommand{\flDRfltrustStatistical}{0.00}
+\newcommand{\flBSRfltrustTemporal}{0.016}
+\newcommand{\flDRfltrustTemporal}{0.00}
+\newcommand{\flCleanCAfoolsgold}{\PENDING{}}
+\newcommand{\flCleanFonefoolsgold}{\PENDING{}}
+\newcommand{\flBSRfoolsgoldFixed}{\PENDING{}}
+\newcommand{\flDRfoolsgoldFixed}{\PENDING{}}
+\newcommand{\flBSRfoolsgoldStatistical}{\PENDING{}}
+\newcommand{\flDRfoolsgoldStatistical}{\PENDING{}}
+\newcommand{\flBSRfoolsgoldTemporal}{\PENDING{}}
+\newcommand{\flDRfoolsgoldTemporal}{\PENDING{}}
+\newcommand{\flCleanCAgradcos}{0.9997}
+\newcommand{\flCleanFonegradcos}{0.9996}
+\newcommand{\flBSRgradcosFixed}{0.981}
+\newcommand{\flDRgradcosFixed}{0.07}
+\newcommand{\flBSRgradcosStatistical}{0.001}
+\newcommand{\flDRgradcosStatistical}{0.53}
+\newcommand{\flBSRgradcosTemporal}{0.007}
+\newcommand{\flDRgradcosTemporal}{0.38}
+
+% ---- non-IID (Dirichlet) -----------------------------------------------
+\newcommand{\niCleanCAfedavg}{0.777}
+\newcommand{\niCleanFonefedavg}{0.527}
+\newcommand{\niBSRfedavgFixed}{0.792}
+\newcommand{\niCAfedavgFixed}{0.765}
+\newcommand{\niDRfedavgFixed}{\PENDING{}}
+\newcommand{\niBSRfedavgStatistical}{\PENDING{}}
+\newcommand{\niCAfedavgStatistical}{\PENDING{}}
+\newcommand{\niDRfedavgStatistical}{\PENDING{}}
+\newcommand{\niBSRfedavgTemporal}{\PENDING{}}
+\newcommand{\niCAfedavgTemporal}{\PENDING{}}
+\newcommand{\niDRfedavgTemporal}{\PENDING{}}
+\newcommand{\niCleanCAkrum}{0.670}
+\newcommand{\niCleanFonekrum}{0.524}
+\newcommand{\niBSRkrumFixed}{0.926}
+\newcommand{\niCAkrumFixed}{0.636}
+\newcommand{\niDRkrumFixed}{0.00}
+\newcommand{\niBSRkrumStatistical}{\PENDING{}}
+\newcommand{\niCAkrumStatistical}{\PENDING{}}
+\newcommand{\niDRkrumStatistical}{\PENDING{}}
+\newcommand{\niBSRkrumTemporal}{\PENDING{}}
+\newcommand{\niCAkrumTemporal}{\PENDING{}}
+\newcommand{\niDRkrumTemporal}{\PENDING{}}
+\newcommand{\niCleanCAflame}{0.519}
+\newcommand{\niCleanFoneflame}{0.292}
+\newcommand{\niBSRflameFixed}{0.014}
+\newcommand{\niCAflameFixed}{0.559}
+\newcommand{\niDRflameFixed}{0.57}
+\newcommand{\niBSRflameStatistical}{\PENDING{}}
+\newcommand{\niCAflameStatistical}{\PENDING{}}
+\newcommand{\niDRflameStatistical}{\PENDING{}}
+\newcommand{\niBSRflameTemporal}{\PENDING{}}
+\newcommand{\niCAflameTemporal}{\PENDING{}}
+\newcommand{\niDRflameTemporal}{\PENDING{}}
+\newcommand{\niCleanCAfltrust}{0.508}
+\newcommand{\niCleanFonefltrust}{0.415}
+\newcommand{\niBSRfltrustFixed}{0.070}
+\newcommand{\niCAfltrustFixed}{0.503}
+\newcommand{\niDRfltrustFixed}{0.00}
+\newcommand{\niBSRfltrustStatistical}{\PENDING{}}
+\newcommand{\niCAfltrustStatistical}{\PENDING{}}
+\newcommand{\niDRfltrustStatistical}{\PENDING{}}
+\newcommand{\niBSRfltrustTemporal}{\PENDING{}}
+\newcommand{\niCAfltrustTemporal}{\PENDING{}}
+\newcommand{\niDRfltrustTemporal}{\PENDING{}}
+\newcommand{\niCleanCAfoolsgold}{\PENDING{}}
+\newcommand{\niCleanFonefoolsgold}{\PENDING{}}
+\newcommand{\niBSRfoolsgoldFixed}{\PENDING{}}
+\newcommand{\niCAfoolsgoldFixed}{\PENDING{}}
+\newcommand{\niDRfoolsgoldFixed}{\PENDING{}}
+\newcommand{\niBSRfoolsgoldStatistical}{\PENDING{}}
+\newcommand{\niCAfoolsgoldStatistical}{\PENDING{}}
+\newcommand{\niDRfoolsgoldStatistical}{\PENDING{}}
+\newcommand{\niBSRfoolsgoldTemporal}{\PENDING{}}
+\newcommand{\niCAfoolsgoldTemporal}{\PENDING{}}
+\newcommand{\niDRfoolsgoldTemporal}{\PENDING{}}
+\newcommand{\niCleanCAgradcos}{0.784}
+\newcommand{\niCleanFonegradcos}{0.531}
+\newcommand{\niBSRgradcosFixed}{0.004}
+\newcommand{\niCAgradcosFixed}{0.773}
+\newcommand{\niDRgradcosFixed}{0.47}
+\newcommand{\niBSRgradcosStatistical}{\PENDING{}}
+\newcommand{\niCAgradcosStatistical}{\PENDING{}}
+\newcommand{\niDRgradcosStatistical}{\PENDING{}}
+\newcommand{\niBSRgradcosTemporal}{\PENDING{}}
+\newcommand{\niCAgradcosTemporal}{\PENDING{}}
+\newcommand{\niDRgradcosTemporal}{\PENDING{}}
+
+% ---- cell counts (provenance) ------------------------------------------
+\newcommand{\numCellsSingle}{200}  % single-seed cells in summary.csv
+\newcommand{\numCellsMulti}{28}  % grouped cells in summary_multiseed.csv
+\newcommand{\numSeeds}{5}

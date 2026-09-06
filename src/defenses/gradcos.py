@@ -49,12 +49,30 @@ class GradCos(DefenseStrategy):
         deltas = np.stack([self.flatten(u[1]) - g for u in updates])
         n = len(deltas)
 
-        # Pairwise cosine similarity of update directions.
-        norms = np.linalg.norm(deltas, axis=1, keepdims=True) + 1e-12
-        unit = deltas / norms
+        # Pairwise cosine similarity of update directions, measured on the
+        # trainable parameters only. Over the raw flattened state_dict this
+        # cosine is ~98% one BatchNorm batch counter and every client sits at
+        # 0.998 of every other; see DefenseStrategy.set_signal_mask.
+        sig = self.sig(deltas)
+        norms = np.linalg.norm(sig, axis=1, keepdims=True) + 1e-12
+        unit = sig / norms
         cos = np.clip(unit @ unit.T, -1.0, 1.0)
 
-        if self.method == "clique":
+        if self.method == "residual":
+            # Low-salience triggers (statistical/temporal) barely rotate the full
+            # update, because it is dominated by the shared main-task gradient, so
+            # the plain cosine signal vanishes. Strip that common component
+            # (mean over clients) and re-measure similarity on the residuals,
+            # where the backdoor component the colluders share is exposed. Then
+            # apply the same collusion-clique test on the residual cosine.
+            mu = sig.mean(axis=0, keepdims=True)
+            res = sig - mu
+            rnorms = np.linalg.norm(res, axis=1, keepdims=True) + 1e-12
+            runit = res / rnorms
+            rcos = np.clip(runit @ runit.T, -1.0, 1.0)
+            keep_mask, info = self._clique_keep(rcos, n, server_round)
+            info["gradcos_method"] = "residual"
+        elif self.method == "clique":
             keep_mask, info = self._clique_keep(cos, n, server_round)
         elif self.method == "cluster":
             keep_mask, info = self._cluster_keep(cos, n)
