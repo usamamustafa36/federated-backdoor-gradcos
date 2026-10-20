@@ -53,6 +53,13 @@ def seed_files():
     for entry in sorted(os.listdir(RES)):
         if entry.startswith("_"):
             continue
+        # results/postfix_*/ hold the post-fix A/B campaigns, in which the ONLY
+        # difference between paired runs is defense.signal_subspace -- a field
+        # not in KEYCOLS. Pooling them here would average the defect arm and the
+        # fixed arm into one mean. They have their own analysis
+        # (paper/analyse_postfix.py) and are excluded here deliberately.
+        if entry.startswith("postfix"):
+            continue
         sub = os.path.join(RES, entry)
         if os.path.isdir(sub):
             paths += glob.glob(os.path.join(sub, "*_s*.json"))

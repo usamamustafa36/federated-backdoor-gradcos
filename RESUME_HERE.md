@@ -1,5 +1,25 @@
 # Where this stands and what to do next
 
+## Update, 21 October 2026 (iteration 1 of the improvement chain)
+
+Read `iterations/LEDGER.md` first; it supersedes the section below wherever they differ.
+
+- **CPU only** (user's decision). The GPU is in the CUDA zombie state; do not wait for it.
+- **Pre-fix results archived.** All 321 pre-fix files are now in `results/_pre_counterfix/`
+  (via `scripts/archive_pre_counterfix.sh`); the Sep-5 post-fix pilots (ab*/sd*/scb*/integ*)
+  are in `results/_pilot_postfix_sep5/` (valid, but heterogeneous scale; see its README).
+  The manuscript therefore shows `\PENDING` almost everywhere. That is the honest state.
+- **P1 campaign running**: `experiments/postfix/run_p1.sh` -> `results/postfix_p1/`.
+  Paired full-vs-trainable A/B, 12 defenses x {IID, Dirichlet} x clean/attacked x 10 seeds,
+  CPU, 6 lanes x 2 threads. Resumable (re-run the script). Analyse with
+  `python3 paper/analyse_postfix.py` -> `paper/numbers_postfix.tex` + `results/postfix_p1/summary_pairs.md`.
+- **New per-round diagnostics** in every run: `buffer_norm_share`, `buffer_dist_share`,
+  `pair_cos_full`, `pair_cos_sig` (src/fl/engine.py `_defect_diagnostics`, logging only).
+
+---
+
+## Written 6 September 2026 (historical)
+
 Written 6 September 2026. Read this first; it is the index to everything else.
 
 ## Right now: blocked on the GPU

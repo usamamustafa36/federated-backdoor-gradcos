@@ -1,0 +1,64 @@
+# P1 post-fix CPU campaign (iteration 1, 2026-10-21). Copy of _ab_trainable.yaml with
+# out_dir results/postfix_p1 and krum/bulyan f = 2 = the true malicious count at
+# 10 clients x m=0.2 (the 20-client paper config used f=4 = true count). Bulyan
+# still clamps f down at n=10 (needs n >= 4f+3); stated in the paper.
+# 40k train rows / 10 clients / batch 256 => ~16 batches per local round.
+seed: 42
+seeds:
+- 42
+- 43
+- 44
+- 45
+- 46
+device: auto
+data:
+  dataset: ciciot2023
+  root: data/ciciot2023
+  train_file: train.parquet
+  test_file: test.parquet
+  label_mode: grouped
+  max_train_rows: 40000
+  max_test_rows: 10000
+  min_rows_per_class: 200
+  scaler: standard
+federated:
+  num_clients: 10
+  partition: iid
+  dirichlet_alpha: 0.5
+  rounds: 100
+  local_epochs: 1
+  batch_size: 256
+  clients_per_round: 20
+model:
+  name: cnn_lstm
+  conv_filters: 64
+  lstm_hidden: 128
+  dense_hidden: 64
+  dropout: 0.3
+  lr: 0.001
+attack:
+  enabled: false
+  malicious_ratio: 0.2
+  poison_rate: 0.1
+  trigger_type: fixed
+  target_label: Benign
+  trigger_scale: 1.0
+  donor_quantile: 0.5
+  trigger_mode: sigma
+  evasion_noise: 1.0
+  variant: simple
+defense:
+  name: fedavg
+  signal_subspace: trainable
+  gradcos_threshold: 0.5
+  gradcos_method: clique
+  krum_malicious_estimate: 2
+  gradcos_kappa: 1.5
+  flame_noise_lambda: 0.001
+  trim_beta: 0.2
+  rfa_iters: 8
+logging:
+  out_dir: results/postfix_p1
+  log_every: 1
+training:
+  class_weighting: effective

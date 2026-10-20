@@ -1,0 +1,258 @@
+{
+  "config": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "device": "auto",
+    "data": {
+      "dataset": "ciciot2023",
+      "root": "data/ciciot2023",
+      "train_file": "train.parquet",
+      "test_file": "test.parquet",
+      "label_mode": "grouped",
+      "max_train_rows": 40000,
+      "max_test_rows": 10000,
+      "min_rows_per_class": 200,
+      "scaler": "standard"
+    },
+    "federated": {
+      "num_clients": 10,
+      "partition": "dirichlet",
+      "dirichlet_alpha": 0.5,
+      "rounds": 10,
+      "local_epochs": 1,
+      "batch_size": 256,
+      "clients_per_round": 20
+    },
+    "model": {
+      "name": "cnn_lstm",
+      "conv_filters": 64,
+      "lstm_hidden": 128,
+      "dense_hidden": 64,
+      "dropout": 0.3,
+      "lr": 0.001
+    },
+    "attack": {
+      "enabled": true,
+      "malicious_ratio": 0.2,
+      "poison_rate": 0.1,
+      "trigger_type": "fixed",
+      "target_label": "Benign",
+      "trigger_scale": 1.0,
+      "donor_quantile": 0.5,
+      "trigger_mode": "sigma",
+      "evasion_noise": 1.0,
+      "variant": "simple"
+    },
+    "defense": {
+      "name": "foolsgold",
+      "signal_subspace": "full",
+      "gradcos_threshold": 0.5,
+      "gradcos_method": "clique",
+      "krum_malicious_estimate": 4,
+      "gradcos_kappa": 1.5,
+      "flame_noise_lambda": 0.001,
+      "trim_beta": 0.2,
+      "rfa_iters": 8
+    },
+    "logging": {
+      "out_dir": "results",
+      "log_every": 1
+    },
+    "training": {
+      "class_weighting": "effective"
+    }
+  },
+  "history": {
+    "rounds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "accuracy": [
+      0.030787805614246905,
+      0.033604990441694335,
+      0.11510212294999497,
+      0.11832176275279203,
+      0.11832176275279203,
+      0.110675118221149,
+      0.11158064191568569,
+      0.11117818694033604,
+      0.10896468457591307,
+      0.10966898078277493
+    ],
+    "macro_f1": [
+      0.007467786021085514,
+      0.022399993974737353,
+      0.11212832081783862,
+      0.0770082067126382,
+      0.07686096337622089,
+      0.10370176219342699,
+      0.10840003722924185,
+      0.10798077574745049,
+      0.10613856916556443,
+      0.10625776992436443
+    ],
+    "loss": [
+      2.128634241627836,
+      2.123854437852148,
+      2.1080584362462584,
+      2.086000788894286,
+      2.0678670898339244,
+      2.0510725901632774,
+      2.0369541311374384,
+      2.019355544406819,
+      1.9980946149441279,
+      1.9562453279457819
+    ],
+    "bsr": [
+      0.0,
+      0.0017894736842105263,
+      0.008526315789473684,
+      0.11052631578947368,
+      0.11105263157894738,
+      0.045894736842105266,
+      0.035789473684210524,
+      0.03326315789473684,
+      0.023473684210526317,
+      0.026105263157894736
+    ],
+    "detection_rate": [
+      1.0,
+      0.5,
+      0.5,
+      0.5,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "false_positive_rate": [
+      0.875,
+      0.875,
+      0.875,
+      0.875,
+      0.875,
+      0.875,
+      0.875,
+      0.875,
+      0.875,
+      0.875
+    ],
+    "salience_gap": [
+      -0.01757811982438484,
+      -0.00708407943573941,
+      -0.01938303237915806,
+      -0.010374531748451155,
+      -0.018597204242478238,
+      -0.014042528027188306,
+      -0.01420869298062799,
+      -0.005511312089215181,
+      -0.005664054245598127,
+      -0.013710117967035695
+    ],
+    "mal_pair_cos": [
+      0.9638661457474406,
+      0.9664549767886907,
+      0.9597262773304469,
+      0.9677112989484742,
+      0.9688991685320718,
+      0.9763184008196022,
+      0.9777972882603103,
+      0.9792286897857212,
+      0.9802287403845611,
+      0.9818458327910129
+    ],
+    "honest_pair_cos": [
+      0.9260085251107935,
+      0.9490726281373405,
+      0.9135080190497294,
+      0.9330519283606696,
+      0.9170538554045388,
+      0.9308227787943414,
+      0.9328424936697399,
+      0.957528148299472,
+      0.9587533233328267,
+      0.9436229387623556
+    ],
+    "mal_norm_ratio": [
+      1.5982640204049101,
+      1.6031862646283404,
+      1.657367643364136,
+      1.654098449484597,
+      1.6688028885385018,
+      1.6257291685806219,
+      1.614202031829087,
+      1.605646843838695,
+      1.609380660800672,
+      1.6160319879683116
+    ]
+  },
+  "class_names": [
+    "Benign",
+    "BruteForce",
+    "DDoS",
+    "DoS",
+    "Mirai",
+    "Recon",
+    "Spoofing",
+    "Web-based"
+  ],
+  "trigger": {
+    "type": "fixed",
+    "mode": "sigma",
+    "scale": 1.0,
+    "columns": [
+      "Time_To_Live",
+      "Header_Length",
+      "syn_flag_number",
+      "ack_flag_number",
+      "psh_flag_number"
+    ],
+    "normalized_values": [
+      2.0,
+      -1.5,
+      2.0,
+      -1.0,
+      2.0
+    ],
+    "raw_equivalent": {
+      "Time_To_Live": 103.5920569842099,
+      "Header_Length": -1.2088244080907042,
+      "syn_flag_number": 1.0843172860101515,
+      "ack_flag_number": -0.1517076095903985,
+      "psh_flag_number": 0.1644091553065641
+    },
+    "realizability": {
+      "marginal_abs_sigma_max": 2.0,
+      "marginal_abs_sigma_mean": 1.7,
+      "joint_mahalanobis": 30.257439632589566,
+      "joint_mahalanobis_pctile_vs_benign": 100.0,
+      "benign_mahalanobis_p50": 1.7926446051094436,
+      "benign_mahalanobis_p99": 5.618269631411703,
+      "nn_dist_trigger_block": 3.3612635413391065,
+      "nn_dist_typical_block": 0.12972354888916016,
+      "nn_ratio_block": 25.910974299548062,
+      "nn_dist_stamped_full": 3.804615710886161,
+      "nn_dist_unstamped_full": 0.0018824124638567338,
+      "nn_ratio_full": 2021.138184067285,
+      "n_trigger_features": 5
+    }
+  },
+  "clean_bsr_battery": null,
+  "num_malicious": 2
+}

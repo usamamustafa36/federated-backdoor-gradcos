@@ -1,0 +1,202 @@
+{
+  "config": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "device": "auto",
+    "data": {
+      "dataset": "ciciot2023",
+      "root": "data/ciciot2023",
+      "train_file": "train.parquet",
+      "test_file": "test.parquet",
+      "label_mode": "grouped",
+      "max_train_rows": 40000,
+      "max_test_rows": 10000,
+      "min_rows_per_class": 200,
+      "scaler": "standard"
+    },
+    "federated": {
+      "num_clients": 10,
+      "partition": "iid",
+      "dirichlet_alpha": 0.5,
+      "rounds": 5,
+      "local_epochs": 1,
+      "batch_size": 256,
+      "clients_per_round": 20
+    },
+    "model": {
+      "name": "cnn_lstm",
+      "conv_filters": 64,
+      "lstm_hidden": 128,
+      "dense_hidden": 64,
+      "dropout": 0.3,
+      "lr": 0.001
+    },
+    "attack": {
+      "enabled": true,
+      "malicious_ratio": 0.2,
+      "poison_rate": 0.1,
+      "trigger_type": "fixed",
+      "target_label": "Benign",
+      "trigger_scale": 1.0,
+      "donor_quantile": 0.5,
+      "trigger_mode": "sigma",
+      "evasion_noise": 1.0,
+      "variant": "decorrelated"
+    },
+    "defense": {
+      "name": "normclip",
+      "gradcos_threshold": 0.5,
+      "gradcos_method": "clique",
+      "krum_malicious_estimate": 4,
+      "gradcos_kappa": 1.5,
+      "flame_noise_lambda": 0.001,
+      "trim_beta": 0.2,
+      "rfa_iters": 8
+    },
+    "logging": {
+      "out_dir": "results",
+      "log_every": 1
+    },
+    "training": {
+      "class_weighting": "effective"
+    }
+  },
+  "history": {
+    "rounds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "accuracy": [
+      0.6839722306067009,
+      0.6789415434148305,
+      0.6862863467149612,
+      0.7094275077975651,
+      0.7241171143978268
+    ],
+    "macro_f1": [
+      0.32237615682472576,
+      0.26797997259068146,
+      0.3221394911926973,
+      0.34348041066510315,
+      0.36769538068709906
+    ],
+    "loss": [
+      1.6494370174667032,
+      0.814812138714125,
+      0.7243857022465948,
+      0.673838844072868,
+      0.6418503027157064
+    ],
+    "bsr": [
+      0.03863157894736842,
+      0.10989473684210527,
+      0.04694736842105263,
+      0.04031578947368421,
+      0.0351578947368421
+    ],
+    "detection_rate": [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+    ],
+    "false_positive_rate": [
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN
+    ],
+    "salience_gap": [
+      0.21471691473945154,
+      0.3194622704507677,
+      0.5845320912068781,
+      0.729200784253569,
+      0.7615869183336823
+    ],
+    "mal_pair_cos": [
+      0.2771205493375434,
+      0.2937781871186409,
+      0.2749095237935948,
+      0.27115688489925494,
+      0.27906264740126585
+    ],
+    "honest_pair_cos": [
+      0.9336825868043136,
+      0.9676729905892695,
+      0.8562034990462314,
+      0.7877322694001603,
+      0.6866849215803582
+    ],
+    "mal_norm_ratio": [
+      1.2100762635249527,
+      1.0874664326676717,
+      1.2897641072826322,
+      1.3227421110149524,
+      1.6697585120971208
+    ]
+  },
+  "class_names": [
+    "Benign",
+    "BruteForce",
+    "DDoS",
+    "DoS",
+    "Mirai",
+    "Recon",
+    "Spoofing",
+    "Web-based"
+  ],
+  "trigger": {
+    "type": "fixed",
+    "mode": "sigma",
+    "scale": 1.0,
+    "columns": [
+      "Time_To_Live",
+      "Header_Length",
+      "syn_flag_number",
+      "ack_flag_number",
+      "psh_flag_number"
+    ],
+    "normalized_values": [
+      2.0,
+      -1.5,
+      2.0,
+      -1.0,
+      2.0
+    ],
+    "raw_equivalent": {
+      "Time_To_Live": 103.5920569842099,
+      "Header_Length": -1.2088244080907042,
+      "syn_flag_number": 1.0843172860101515,
+      "ack_flag_number": -0.1517076095903985,
+      "psh_flag_number": 0.1644091553065641
+    },
+    "realizability": {
+      "marginal_abs_sigma_max": 2.0,
+      "marginal_abs_sigma_mean": 1.7,
+      "joint_mahalanobis": 30.257439632589566,
+      "joint_mahalanobis_pctile_vs_benign": 100.0,
+      "benign_mahalanobis_p50": 1.7926446051094436,
+      "benign_mahalanobis_p99": 5.618269631411703,
+      "nn_dist_trigger_block": 3.3612635413391065,
+      "nn_dist_typical_block": 0.12972354888916016,
+      "nn_ratio_block": 25.910974299548062,
+      "nn_dist_stamped_full": 3.804615710886161,
+      "nn_dist_unstamped_full": 0.0018824124638567338,
+      "nn_ratio_full": 2021.138184067285,
+      "n_trigger_features": 5
+    }
+  },
+  "clean_bsr_battery": null,
+  "num_malicious": 2
+}

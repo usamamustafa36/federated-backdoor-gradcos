@@ -60,6 +60,18 @@ class History:
     mal_pair_cos: list[float] = field(default_factory=list)
     honest_pair_cos: list[float] = field(default_factory=list)
     mal_norm_ratio: list[float] = field(default_factory=list)
+    # Defect diagnostics, logged on EVERY round (clean or attacked) and in both
+    # signal_subspace modes, so each run measures the counter's footprint on the
+    # vector actually transmitted. Pure logging: nothing here feeds a decision.
+    #   buffer_norm_share : median over clients of ||d_buffers||^2 / ||d||^2
+    #   buffer_dist_share : median over client pairs of the buffers' share of
+    #                       the squared pairwise distance ||d_i - d_j||^2
+    #   pair_cos_full     : mean off-diagonal cosine over ALL clients, full vector
+    #   pair_cos_sig      : the same over the trainable parameters only
+    buffer_norm_share: list[float] = field(default_factory=list)
+    buffer_dist_share: list[float] = field(default_factory=list)
+    pair_cos_full: list[float] = field(default_factory=list)
+    pair_cos_sig: list[float] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return self.__dict__
@@ -319,6 +331,11 @@ class FederatedEngine:
         hist.mal_pair_cos.append(geo["mal_pair_cos"])
         hist.honest_pair_cos.append(geo["honest_pair_cos"])
         hist.mal_norm_ratio.append(geo["mal_norm_ratio"])
+        dd = self._defect_diagnostics(pre_agg, pre_global)
+        hist.buffer_norm_share.append(dd["buffer_norm_share"])
+        hist.buffer_dist_share.append(dd["buffer_dist_share"])
+        hist.pair_cos_full.append(dd["pair_cos_full"])
+        hist.pair_cos_sig.append(dd["pair_cos_sig"])
 
         if verbose:
             msg = (f"round {rnd:>3} | acc {ev['accuracy']:.4f} | f1 {ev['macro_f1']:.4f} "
@@ -340,6 +357,52 @@ class FederatedEngine:
         dr = len(flagged & mal) / len(mal) if mal else 0.0
         fpr = len(flagged & honest) / len(honest) if honest else 0.0
         return dr, fpr
+
+    def _defect_diagnostics(self, results, pre_global) -> dict:
+        """How much of the transmitted update the non-trainable buffers carry.
+
+        Computed over all participating clients on every round, independently of
+        signal_subspace, so a `full` run and a `trainable` run report the same
+        quantities about the same kind of vector. Never used by any decision.
+        """
+        nan = {"buffer_norm_share": float("nan"), "buffer_dist_share": float("nan"),
+               "pair_cos_full": float("nan"), "pair_cos_sig": float("nan")}
+        if not results or pre_global is None:
+            return nan
+        g = np.concatenate([w.ravel() for w in pre_global]).astype(np.float64)
+        deltas = np.stack([
+            np.concatenate([w.ravel() for w in parameters_to_ndarrays(fr.parameters)])
+            .astype(np.float64) - g
+            for _, fr in results])
+        if len(deltas) < 2:
+            return nan
+        # Always the TRAINABLE mask (not _signal_mask, which is all-True under
+        # `full`): the point is to measure the buffers in either mode.
+        mask = np.asarray(self._trainable_mask(), dtype=bool)
+        if mask.all():
+            return nan
+        sq_all = (deltas ** 2).sum(axis=1)
+        sq_buf = (deltas[:, ~mask] ** 2).sum(axis=1)
+        norm_share = float(np.median(sq_buf / (sq_all + 1e-30)))
+        n = len(deltas)
+        iu = np.triu_indices(n, 1)
+
+        def pair_sqdist(x):
+            sq = (x ** 2).sum(axis=1)
+            return np.maximum(sq[:, None] + sq[None, :] - 2.0 * (x @ x.T), 0.0)[iu]
+
+        d_all = pair_sqdist(deltas)
+        d_buf = pair_sqdist(deltas[:, ~mask])
+        dist_share = float(np.median(d_buf / (d_all + 1e-30)))
+
+        def mean_offdiag_cos(x):
+            u = x / (np.linalg.norm(x, axis=1, keepdims=True) + 1e-30)
+            c = np.clip(u @ u.T, -1.0, 1.0)
+            return float(c[iu].mean())
+
+        return {"buffer_norm_share": norm_share, "buffer_dist_share": dist_share,
+                "pair_cos_full": mean_offdiag_cos(deltas),
+                "pair_cos_sig": mean_offdiag_cos(deltas[:, mask])}
 
     def _update_geometry(self, results, pre_global) -> dict:
         """Measure the update geometry the defenses actually read.
