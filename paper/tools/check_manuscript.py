@@ -147,8 +147,14 @@ def main():
     # search of the PDF undercounts. Every reference in the body to a macro that
     # numbers.tex leaves unresolved is one marker, plus every literal \PENDING
     # hedge in the prose and captions.
-    pend_macros = set(re.findall(r'\\newcommand\{\\([A-Za-z]+)\}\{\\PENDING',
-                                 open('numbers.tex', encoding='utf-8').read()))
+    pend_macros = set()
+    for nf in ('numbers.tex', 'numbers_postfix.tex', 'numbers_defect.tex'):
+        try:
+            pend_macros |= set(re.findall(
+                r'\\(?:newcommand|providecommand)\{\\([A-Za-z]+)\}\{\\PENDING',
+                open(nf, encoding='utf-8').read()))
+        except FileNotFoundError:
+            check(False, f"{nf} present (run its generator)")
     body = tex[tex.index(r'\begin{document}'):]
     body = re.sub(r'(?m)^\s*%.*$', '', body)
     refs = [m for m in re.findall(r'\\([A-Za-z]+)', body) if m in pend_macros]
@@ -177,7 +183,8 @@ def main():
                       'ms': 'lanes 5a-5c, seeds',
                       'ni': 'lane 6, non-IID breadth',
                       'rat': 'lane 5c, ratio-sweep-seeds',
-                      'fl': 'FLNET lanes'}
+                      'fl': 'FLNET lanes',
+                      'pf': 'P1 paired A/B (experiments/postfix/run_p1.sh)'}
         for k, v in sorted(fam.items(), key=lambda kv: -kv[1]):
             lanes[macro_lane.get(k, k)] = lanes.get(macro_lane.get(k, k), 0) + v
         print("\n      outstanding by lane:")

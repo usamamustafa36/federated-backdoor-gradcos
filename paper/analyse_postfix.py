@@ -205,6 +205,11 @@ def main():
             lines.append(f"\\providecommand{{\\pfDiag{nm}{PNAME[part]}}}{{{v}}}")
             lines.append(f"\\providecommand{{\\pfDiag{nm}{PNAME[part]}Runs}}"
                          f"{{{len(vals) if vals else chr(92) + 'PENDING'}}}")
+            if nm == "BufNormShare":
+                # Corollary 1 of the paper: every pairwise cosine lies within
+                # 2(1-s) of the buffer cosine; evaluated at the median share s.
+                band = 2.0 * (1.0 - float(np.median(vals))) if vals else float("nan")
+                lines.append(f"\\providecommand{{\\pfDiagCosBand{PNAME[part]}}}{{{fmt(band)}}}")
     if not args.no_tex:
         with open(OUT_TEX, "w") as f:
             f.write("\n".join(lines) + "\n")

@@ -1,0 +1,33 @@
+{
+  "model": "CNN+LSTM (paper), 39 features, 8 classes",
+  "n_trainable": 108488,
+  "n_buffer": 129,
+  "n_bn_layers": 1,
+  "inert_momentum_default": {
+    "max_abs_running_mean": 0.0,
+    "max_abs_running_var": 0.0,
+    "max_abs_eval_logit": 0.0
+  },
+  "inert_momentum_none": {
+    "max_abs_running_mean": 0.0050029754638671875,
+    "max_abs_running_var": 0.0043888092041015625,
+    "max_abs_eval_logit": 0.0013207830488681793
+  },
+  "prop1": {
+    "B_i": 16,
+    "B_j": 11,
+    "s_i": 0.9911401380158731,
+    "s_j": 0.9888984331452259,
+    "counter_share_norm_i": 0.8652603325801431,
+    "cos_full": 0.9889005953499161,
+    "cos_trainable": 0.15436148991422774,
+    "cos_pred": 0.9889005953499153,
+    "cos_abs_err": 8.881784197001252e-16,
+    "dist_full": 29.55064134589174,
+    "dist_pred": 29.550641345891737,
+    "dist_rel_err": 1.202245879274094e-16,
+    "counter_dist": 25.0,
+    "counter_dist_pred": 25,
+    "counter_share_dist": 0.8460053271728943
+  }
+}

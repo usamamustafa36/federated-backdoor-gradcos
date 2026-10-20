@@ -134,3 +134,72 @@ the scaling law (refuted), generality across defenses (4/5 <= 0.03), "the field 
    12): plan a small second-architecture run (e.g. MLP-with-BN or ResNet-8 on a CIFAR-10
    subset; check whether the CIFAR download in data/ completed) and a Flower-example
    reproduction of the state_dict wire format; queue it after P1 rather than competing for cores.
+
+## Iteration 2 - 2026-10-21 - Reframe the front matter around the counter; Proposition 1 with proof; generated defect probe; P1 table wired
+
+- **Reviewer score before: 2/10, REJECT** (iteration 1's state: old "Direction Is Not Enough"
+  paper, hand-typed headline literals, no mention of the defect).
+- **Blockers found (ranked):**
+  1. No outcome evidence yet: P1 is ~1% done (7/960 cells at 04:18). Every consequence claim is
+     \PENDING. Still the decisive blocker.
+  2. Body (Secs. 4-9) still follows the pre-reframe structure (salience, evasion, GradCos, FPR on
+     the void grid; 125 `ms` + ~120 other old-lane \PENDING macros from run_remediation lanes that
+     will never be re-run in that form). A reviewer would see two papers stitched together.
+  3. External validity: one model with a single BN layer; no ResNet/CIFAR or real Flower run.
+     Note: torchvision is broken on this box (`operator torchvision::nms does not exist`), so a
+     ResNet probe needs a hand-written ResNet or a torchvision reinstall.
+  4. Survey is 9 implementations read by hand (SURVEY.md); counts are now a table in the paper,
+     but there is no artefact (commit hashes / file:line) a reviewer can check.
+  5. No 2023-26 defense; detector strength vs majority floor (0.652) not reported.
+- **What I changed:**
+  - `paper/main.tex` (backup `paper/main.tex.pre-reframe.bak`): new title ("A Silent Measurement
+    Hazard in PyTorch Federated Learning: When Byzantine-Robust Aggregators Decide on a BatchNorm
+    Counter"), new abstract (247 words, only macros + config parameters), new introduction and
+    contributions, new Related-Work paragraph (BN/FedBN/model state), new Sec. 3 "The Defect"
+    with **Proposition 1** (exact norm/cosine/distance decomposition incl. counter term L B_i^2,
+    L(B_i-B_j)^2, truncation caveat epsilon), **Corollary 1** (|cos d - cos b| <= 2(1-s); trainable
+    cosine weight <= 1-s), **Corollary 2** (distance exposure iff batch counts differ), norm-based /
+    coordinate-wise predictions (median/trimmed mean = negative controls), inertness paragraph,
+    Table `tab:probe`, Sec. 3.1 scope + Table `tab:survey` (9 implementations from SURVEY.md),
+    "the fix" paragraph; new Sec. 8.1 `sec:p1` (A/B design, CPU reductions stated) with Table
+    `tab:p1` (12 rules x {Dir, IID}: CA clean, CA attacked, BSR attacked; Def/Fix/Delta/p_Holm),
+    all cells \pf macros; new Conclusion. Old hand-typed "0.99 to below 0.35" and "0.40+/-0.04"
+    are gone from abstract/intro (they survive in old body Sec. 8.x, allowlisted, to be cut when
+    the body is rewritten). `\input{numbers_postfix}` and `\input{numbers_defect}` wired in.
+  - `paper/highlights.tex`: rewritten, no numbers.
+  - `paper/refs.bib`: + ioffe2015batchnorm (PMLR 37:448-456, verified), li2021fedbn (ICLR 2021,
+    verified).
+  - `experiments/counter_defect/probe_defect.py` (new, CPU, 26 s, deterministic) ->
+    `results/defect_probe.json` + `paper/numbers_defect.tex` (\df macros).
+  - `paper/analyse_postfix.py`: + `\pfDiagCosBand{Dir,Iid}` = 2(1 - median buffer share).
+  - `paper/tools/check_manuscript.py`: pending-macro count now includes numbers_postfix.tex and
+    numbers_defect.tex (\providecommand); `pf` lane label. `paper/Makefile`: new deps.
+- **Evidence (all generated):** probe (`results/defect_probe.json`): 108,488 trainable / 129 buffer
+  coords, 1 BN layer; counter +1e5 under momentum=0.1 -> running mean/var/logit max|diff| = 0
+  exactly; under momentum=None -> 5.0e-3 / 1.3e-3; Prop. 1 holds on real local updates (B=16 vs 11)
+  to 8.9e-16 (cos) and 1.2e-16 rel. (dist); full cos 0.989 vs trainable 0.154; counter 86.5% of
+  ||d_i||^2, 84.6% of ||d_i-d_j||^2. P1 diagnostics (6 Dirichlet runs so far, will update
+  automatically): buffer norm share 0.974, dist share 0.964, cos full 0.906 vs trainable 0.161,
+  cosine band 0.053.
+- **Build/check:** `latexmk` clean (rc 0, 21 pp); check_manuscript: all PASS except the gate
+  (548 unresolved: 288 pf from P1, 244 old-lane macros, 16 literal) -- expected.
+- **Running jobs left for the next agent:** P1 untouched. Launcher shell PID **448486**
+  (`bash experiments/postfix/run_p1.sh`; iteration 1 recorded 448482/448483 for its parents),
+  log `results/postfix_p1/campaign.log`, 7/960 cells at 04:18; ETA ~48 h (seeds 42-46 ~24 h).
+  Harvest: `python3 paper/analyse_postfix.py && cd paper && make`.
+- **Score after: 3/10, REJECT** (framing, title, abstract and analytic core are now right and
+  reviewer-checkable; still no outcome evidence and the body is the old paper).
+- **Top 3 priorities for the next iteration:**
+  1. **Rewrite the body (Secs. 4-9)** around the new structure: move threat model/setup to the
+     P1 scale as the main setup; cut or demote GradCos (Sec. 5.3), salience (8.4), evasion (8.5),
+     residual (8.7), ratio/FLNET/non-IID subsections that depend on void run_remediation lanes
+     (move superseded text to `paper/_superseded_body.tex`, keep the .bak); write mechanism case
+     studies (FoolsGold collapse in closed form, FLTrust B_0/B_i rescaling, Krum under unequal
+     shards) as analytic+probe subsections that need no long runs. Remove the old allowlisted
+     literals (0.99, 0.35, 0.16, 0.33, ...) with the text that carries them.
+  2. **Harvest P1** as it lands (seeds 42-46 first): fill the Results sentence of Sec. 8.1 and the
+     abstract/conclusion \PENDING from `\pf` macros only; report nulls as nulls.
+  3. **Second architecture on CPU** after or beside P1 if cores allow: extend probe_defect.py to a
+     hand-written ResNet-18 (torchvision broken) for the L=20 share/Prop-1 check, and a small real
+     FL run (MLP+BN or ResNet-8 on a CIFAR-10 subset; check data/ for CIFAR). Also put survey
+     evidence (repo, commit, file:line) in the replication package.

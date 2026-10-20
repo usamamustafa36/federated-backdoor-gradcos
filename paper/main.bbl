@@ -46,6 +46,28 @@ C.~Fung, C.~J.~M. Yoon, I.~Beschastnikh, The limitations of federated learning
   in sybil settings, in: Proceedings of the 23rd International Symposium on
   Research in Attacks, Intrusions and Defenses (RAID), 2020, pp. 301--316.
 
+\bibitem{ioffe2015batchnorm}
+S.~Ioffe, C.~Szegedy, Batch normalization: Accelerating deep network training
+  by reducing internal covariate shift, in: Proceedings of the 32nd
+  International Conference on Machine Learning (ICML), Vol.~37 of Proceedings
+  of Machine Learning Research, 2015, pp. 448--456.
+
+\bibitem{beutel2020flower}
+D.~J. Beutel, T.~Topal, A.~Mathur, X.~Qiu, J.~Fernandez-Marques, Y.~Gao,
+  L.~Sani, K.~H. Li, T.~Parcollet, P.~P.~B. de~Gusm{\~a}o, N.~D. Lane, Flower:
+  A friendly federated learning research framework, arXiv preprint
+  arXiv:2007.14390 (2020).
+
+\bibitem{li2021fedbn}
+X.~Li, M.~Jiang, X.~Zhang, M.~Kamp, Q.~Dou, {FedBN}: Federated learning on
+  non-{IID} features via local batch normalization, in: International
+  Conference on Learning Representations (ICLR), 2021.
+
+\bibitem{yin2018}
+D.~Yin, Y.~Chen, K.~Ramchandran, P.~Bartlett, {B}yzantine-robust distributed
+  learning: Towards optimal statistical rates, in: Proceedings of the 35th
+  International Conference on Machine Learning (ICML), 2018, pp. 5650--5659.
+
 \bibitem{wang2020tails}
 H.~Wang, K.~Sreenivasan, S.~Rajput, H.~Vishwakarma, S.~Agarwal, J.-y. Sohn,
   K.~Lee, D.~Papailiopoulos, Attack of the tails: Yes, you really can backdoor
@@ -55,11 +77,6 @@ H.~Wang, K.~Sreenivasan, S.~Rajput, H.~Vishwakarma, S.~Agarwal, J.-y. Sohn,
 \bibitem{sun2019}
 Z.~Sun, P.~Kairouz, A.~T. Suresh, H.~B. McMahan, Can you really backdoor
   federated learning?, arXiv preprint arXiv:1911.07963 (2019).
-
-\bibitem{yin2018}
-D.~Yin, Y.~Chen, K.~Ramchandran, P.~Bartlett, {B}yzantine-robust distributed
-  learning: Towards optimal statistical rates, in: Proceedings of the 35th
-  International Conference on Machine Learning (ICML), 2018, pp. 5650--5659.
 
 \bibitem{mhamdi2018bulyan}
 E.~M. El~Mhamdi, R.~Guerraoui, S.~Rouault, The hidden vulnerability of
@@ -146,12 +163,6 @@ K.~M. Sameera, P.~Vinod, A.~Rocha, K.~A. Rafidha~Rehiman, M.~Conti,
   {WeiDetect}: {W}eibull distribution-based defense against poisoning attacks
   in federated learning for network intrusion detection systems, arXiv preprint
   arXiv:2504.04367 (2025).
-
-\bibitem{beutel2020flower}
-D.~J. Beutel, T.~Topal, A.~Mathur, X.~Qiu, J.~Fernandez-Marques, Y.~Gao,
-  L.~Sani, K.~H. Li, T.~Parcollet, P.~P.~B. de~Gusm{\~a}o, N.~D. Lane, Flower:
-  A friendly federated learning research framework, arXiv preprint
-  arXiv:2007.14390 (2020).
 
 \bibitem{zhang2022neurotoxin}
 Z.~Zhang, A.~Panda, L.~Song, Y.~Yang, M.~W. Mahoney, P.~Mittal, R.~Kannan,

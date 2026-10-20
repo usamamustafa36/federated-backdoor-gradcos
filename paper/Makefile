@@ -16,7 +16,7 @@ ROOT    = ..
 
 all: main.pdf
 
-main.pdf: main.tex refs.bib declarations.tex numbers.tex $(wildcard figs/*)
+main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_defect.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
