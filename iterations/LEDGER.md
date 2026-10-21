@@ -361,6 +361,7 @@ the scaling law (refuted), generality across defenses (4/5 <= 0.03), "the field 
   command. Count: `ls results/postfix_p1/*atk0*.json | wc -l` (target 480) and
   `ls results/postfix_p2/*.json | wc -l` (target 480). Harvest:
   `cd paper && make numbers`. No other jobs of this chain are running (pilot finished).
+- **P2 sanity check (08:52):** first P2 cell `results/postfix_p2/p2full_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me5_s42.json` gives CA 0.730 / final-round BSR 0.934, identical to the pilot's E_m=5 cell, so the run_sweep path and the pilot subclass agree. 1260 s/cell/lane for attacked cells.
 - **Score after: 4/10, REJECT** (the fatal design flaw is fixed and documented with a
   generated calibration table, but no outcome is measured yet under the working attack).
 - **Top 3 priorities for the next iteration:**
