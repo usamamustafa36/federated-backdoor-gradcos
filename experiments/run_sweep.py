@@ -65,6 +65,14 @@ def parse_args():
                          "Omit to keep the original single-seed behaviour.")
     ap.add_argument("--quick", action="store_true",
                     help="tiny data + few rounds to validate the matrix fast")
+    ap.add_argument("--boost", type=float, default=1.0,
+                    help="scale the trainable part of each malicious delta (1 = off)")
+    ap.add_argument("--mal-local-epochs", type=int, default=0,
+                    help="local epochs on malicious clients only (0 = same as honest)")
+    ap.add_argument("--skip-clean", action="store_true",
+                    help="run only the attacked cells")
+    ap.add_argument("--skip-attacked", action="store_true",
+                    help="run only the clean cells")
     ap.add_argument("--tag", default="sweep")
     ap.add_argument("--force", action="store_true",
                     help="recompute cells even if their result JSON already exists "
@@ -86,6 +94,14 @@ def cell_name(cfg, tag, seed_suffix: str = "") -> str:
     ssuffix = "" if scale == 1.0 else f"_x{scale:g}"
     mode = getattr(cfg.attack, "trigger_mode", "sigma")
     msuffix = "" if mode == "sigma" else f"_{mode}"
+    # Attack-strength knobs (iteration 4); suffix only when non-default, so all
+    # existing filenames and the resume check are unchanged.
+    boost = float(getattr(cfg.attack, "boost", 1.0) or 1.0)
+    mal_ep = int(getattr(cfg.attack, "mal_local_epochs", 0) or 0)
+    if cfg.attack.enabled and boost != 1.0:
+        msuffix += f"_b{boost:g}"
+    if cfg.attack.enabled and mal_ep > 0:
+        msuffix += f"_me{mal_ep}"
     # GradCos's detection method is part of the cell's identity: a `residual` run
     # and a `clique` run are different defenses, and without this they collide on
     # one filename and the resume check silently skips the second.
@@ -189,6 +205,10 @@ def main():
         base.device = args.device
     if args.partition is not None:
         base.federated.partition = args.partition
+    base.attack.boost = float(args.boost)
+    base.attack.mal_local_epochs = int(args.mal_local_epochs)
+    base._raw["attack"]["boost"] = float(args.boost)
+    base._raw["attack"]["mal_local_epochs"] = int(args.mal_local_epochs)
     if args.quick:
         base.data.max_train_rows = 8000
         base.data.max_test_rows = 4000
@@ -256,6 +276,10 @@ def main():
             seen.add(k)
             uniq.append(c)
     cells = uniq
+    if args.skip_clean:
+        cells = [c for c in cells if c["enabled"]]
+    if args.skip_attacked:
+        cells = [c for c in cells if not c["enabled"]]
 
     # Seeds: legacy single-seed (no suffix) unless --seeds is given.
     seeds = args.seeds if args.seeds else [base.seed]

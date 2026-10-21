@@ -149,9 +149,16 @@ class FederatedEngine:
         """Load global weights, train locally, return a Flower FitRes."""
         tu.set_weights(self.model, self.global_weights)
         x, y = client.training_data()
+        # attack.mal_local_epochs (default 0 = off): malicious clients train for
+        # this many local epochs instead of federated.local_epochs. Iteration-4
+        # pilot: one epoch's backdoor is diluted away by parameter averaging.
+        epochs = self.cfg.federated.local_epochs
+        mal_ep = int(getattr(self.cfg.attack, "mal_local_epochs", 0) or 0)
+        if client.malicious and mal_ep > 0:
+            epochs = mal_ep
         n = tu.local_train(
             self.model, x, y,
-            epochs=self.cfg.federated.local_epochs,
+            epochs=epochs,
             lr=self.cfg.model.lr,
             batch_size=self.cfg.federated.batch_size,
             device=self.device,
@@ -247,6 +254,32 @@ class FederatedEngine:
             out.append((None, fr))
         return out
 
+    def _boost_malicious(self, results):
+        """attack.boost (default 1.0 = off): multiply the TRAINABLE part of each
+        malicious delta by this factor (model-replacement-style scaling, Bagdasaryan
+        et al. 2020). BatchNorm buffers are left as trained. Applied after the
+        variant transform."""
+        boost = float(getattr(self.cfg.attack, "boost", 1.0) or 1.0)
+        if boost == 1.0:
+            return results
+        g = np.concatenate([w.ravel() for w in self.global_weights])
+        tmask = self._trainable_mask()
+        out = []
+        for cp, fr in results:
+            if fr.metrics.get("malicious", 0):
+                nds = parameters_to_ndarrays(fr.parameters)
+                d = np.concatenate([w.ravel() for w in nds]) - g
+                d[tmask] *= boost
+                flat = g + d
+                new, off = [], 0
+                for w in nds:
+                    new.append(flat[off:off + w.size].reshape(w.shape).astype(w.dtype))
+                    off += w.size
+                fr = FitRes(status=fr.status, parameters=ndarrays_to_parameters(new),
+                            num_examples=fr.num_examples, metrics=fr.metrics)
+            out.append((cp, fr))
+        return out
+
     def _signal_mask(self) -> np.ndarray:
         """The subspace decisions and logged geometry are measured on.
 
@@ -287,6 +320,7 @@ class FederatedEngine:
             # them; `simple` passes straight through. See attacks/evasion.py.
             if getattr(self.cfg.attack, "enabled", False):
                 results = self._transform_malicious(results, rnd)
+                results = self._boost_malicious(results)
 
             # Let defense strategies see the pre-aggregation global model (needed
             # to compute per-client update deltas, FLTrust root direction, etc.).

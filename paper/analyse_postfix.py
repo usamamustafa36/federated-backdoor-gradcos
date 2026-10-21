@@ -111,9 +111,19 @@ def main():
                     help="paired seeds required before a cell's statistics are reported")
     ap.add_argument("--res", default=RES, help="results directory (default results/postfix_p1)")
     ap.add_argument("--no-tex", action="store_true", help="do not write numbers_postfix.tex")
+    ap.add_argument("--atk-res", default=None,
+                    help="take the ATTACKED cells from this directory instead (e.g. "
+                         "results/postfix_p2: the iteration-4 attack that implants), "
+                         "keeping the clean cells from --res")
     args = ap.parse_args()
     RES = args.res
     runs = load(RES)
+    if args.atk_res:
+        for k in [k for k in runs if k[2]]:
+            del runs[k]
+        for k, v in load(args.atk_res).items():
+            if k[2]:
+                runs[k] = v
     rows = []
     for d in DEFENSES:
         for part in ("dirichlet", "iid"):

@@ -282,3 +282,96 @@ the scaling law (refuted), generality across defenses (4/5 <= 0.03), "the field 
      (replay HDBSCAN on synthetic or saved updates under the affine map of Eq. 2, CPU seconds);
      survey artefact with repo URLs + commit hashes + file:line in the replication package;
      a small federated ResNet/CNN-with-BN outcome run only once cores free up.
+
+## Iteration 4 - 2026-10-21 - Attack calibration: P1's backdoor does not implant; P1 stopped, replaced by P1-clean + P2 (calibrated attack)
+
+- **Reviewer score before: 4/10, REJECT.** Top blocker (iteration 3's #1): P1's attacked BSR
+  equalled the clean floor for every finished rule, so P1 could not support any backdoor claim.
+- **Blockers found (ranked):**
+  1. **Confirmed: the P1 attack does not implant under plain FedAvg** (pilot below). Every P1
+     BSR column was uninformative by construction. Fixed in design this iteration (P2).
+  2. All outcome evidence still pending (P1 clean arms 45/480 cells, P2 attacked 0/480).
+  3. **New code defect found (not fixed, deliberately):** `FederatedEngine.__init__` stores
+     `self.global_weights = tu.get_weights(self.model)`, and `get_weights` returns
+     `.numpy()` views that alias the model's parameter memory. In ROUND 1 ONLY, local
+     training mutates `global_weights` in place, so round-1 clients train sequentially (each
+     starts from the previous client's weights) and round-1 defense deltas / logged
+     geometry use the last client's weights as "global". From round 2 on, global_weights
+     come from `parameters_to_ndarrays` (fresh arrays) and the bug is gone. Verified with a
+     2-line test (aliased after in-place update: True). It affects both arms and every
+     campaign identically (P1, P2, pilot), metrics are last-5-round means, so it is not a
+     confound of the A/B, but it is a correctness bug a reviewer of the code would flag.
+     NOT fixed now so that P1-clean, P2 and the pilot share one code path; fix
+     (`[w.copy() for w in ...]`) only together with a re-run plan, or document it in the
+     replication notes.
+  4. The calibrated attack is norm-visible (malicious/honest trainable norm ~2x), calibrated
+     on one seed; one architecture for outcomes; survey artefact still missing.
+- **What I changed:**
+  - `experiments/attack_pilot/pilot.py` (new): FedAvg-only pilot at the exact P1 scale
+    (configs/p1_trainable.yaml, 40k/10k rows, 10 clients, 15 rounds, seed 42), with boost and
+    malicious-local-epochs knobs (subclass; no change to the running code path at the time).
+    Results: `results/pilot_attack_iter4/pilot_fedavg_{dirichlet,iid}_<cell>_s42.json`, lane
+    logs `results/pilot_attack_iter4/lane{A..F}.log`. Scratch check that a poisoned client
+    learns the backdoor locally (BSR 0.92 after 1 epoch from a pretrained model) but
+    parameter interpolation at its FedAvg weight (0.26) leaves BSR 0.085: the backdoor is
+    averaged away, not unlearnable.
+  - `src/fl/engine.py`: default-off `attack.mal_local_epochs` (malicious clients train this
+    many local epochs) and `attack.boost` (`_boost_malicious`, scales the trainable part of
+    malicious deltas). Defaults reproduce the old behaviour exactly.
+  - `experiments/run_sweep.py`: `--mal-local-epochs`, `--boost`, `--skip-clean`,
+    `--skip-attacked`; filename suffixes `_me<k>` / `_b<x>` only when non-default (verified:
+    P1 cell names unchanged, so resume works).
+  - **P1 stopped** (process group 448486, SIGTERM; 3 lanes had been SIGSTOPped ~1 h for the
+    pilot), 89 completed cells kept in `results/postfix_p1/` (45 clean, 44 attacked-1-epoch;
+    the latter are kept but no longer used by the paper). Note appended to its campaign.log.
+  - `experiments/postfix/run_p2.sh` + `configs/p2_{full,trainable}.yaml` (= p1 configs except
+    out_dir): ONE resumable 6x2-thread queue that (a) finishes P1's CLEAN cells into
+    results/postfix_p1/ with the unchanged P1 command + `--skip-attacked` (completed cells are
+    skipped by filename), and (b) runs all ATTACKED cells with `--mal-local-epochs 5` into
+    results/postfix_p2/. FedAvg first (calibration across seeds), seeds 42-46 Dirichlet, then
+    IID, then seeds 47-51.
+  - `paper/analyse_postfix.py`: `--atk-res DIR` takes attacked cells from DIR, clean from
+    --res. Makefile `numbers` now runs `analyse_postfix.py --atk-res results/postfix_p2` and
+    the new `paper/make_numbers_pilot.py` -> `paper/numbers_pilot.tex` (\ap... macros).
+  - `paper/main.tex` (backup `paper/main.tex.pre-iter4.bak`): Adversary paragraph now
+    states E_m=5 local epochs for malicious clients; new "Attack calibration" paragraph and
+    Table `tab:calib` (14 pilot rows, all macros); Reductions paragraph, Sec. 6.2 design
+    sentence and "What the BSR columns can and cannot say" rewritten (floor + FedAvg ceiling
+    logic; the 1-epoch attacked cells are declared withdrawn); Limitations "Scale and attack
+    strength" rewritten. check_manuscript reads numbers_pilot.tex.
+- **Evidence (generated, `paper/numbers_pilot.tex`; CA/BSR = last-5-round means, seed 42):**
+  Dirichlet FedAvg: clean BSR 0.052 (CA 0.724); P1 attack (m0.2 p0.1, 1 epoch) 0.045;
+  p0.3 / p0.5 (4,842 poisoned rows) / m0.3p0.3 / trigger x2: all 0.04-0.05; boost x5:
+  BSR oscillates (round max 0.99, last-5 mean low) and CA drops to ~0.6; E_m=2: 0.046;
+  **E_m=3: 0.785, implants at round 10; E_m=5: 0.907, implants at round 5, CA 0.731**,
+  norm ratio 2.02 (vs 1.31 for 1 epoch). IID: clean 0.012, P1 attack 0.038, E_m=3 0.744
+  (round 11), **E_m=5 0.942 (round 5), CA 0.738**, norm ratio 2.19. Clean-model BSR is the
+  same with the trigger at x1 and x2 (0.052): the clean model does not read the trigger as
+  benign, i.e. no free OOD artefact; the realizability audit (joint Mahalanobis ~29-30,
+  100th pctile vs benign) is unchanged since the trigger is P1's. Side finding: P1 Krum
+  defect arm s42 reached BSR 0.70 with the 1-epoch attack where FedAvg cannot (Krum under
+  the defect selected a poisoned update in late rounds) -- watch for this in P2 Krum.
+- **Build/check:** latexmk rc 0, 17 pp; check_manuscript: only the gate fails (441 = 434 pf
+  macro refs + 7 literal), all P1-clean / P2 pending as expected.
+- **Running jobs left for the next agent:** **P1c+P2 queue**, launcher bash PID **497076**
+  (process group 497076; `MAL_EPOCHS=5 nohup setsid bash experiments/postfix/run_p2.sh`),
+  log `results/postfix_p2/campaign.log`, per-job logs `results/postfix_p2/log_p2*` and
+  `results/postfix_p1/log_p1*`. Started 08:30. ~435 clean + 480 attacked cells left; at
+  ~15-20 min/cell/lane, 6 lanes: ETA ~45 h (seeds 42-46 ~22 h). Resume: rerun the same
+  command. Count: `ls results/postfix_p1/*atk0*.json | wc -l` (target 480) and
+  `ls results/postfix_p2/*.json | wc -l` (target 480). Harvest:
+  `cd paper && make numbers`. No other jobs of this chain are running (pilot finished).
+- **Score after: 4/10, REJECT** (the fatal design flaw is fixed and documented with a
+  generated calibration table, but no outcome is measured yet under the working attack).
+- **Top 3 priorities for the next iteration:**
+  1. **Verify P2's FedAvg cells** as soon as they land (first jobs in the queue; ~30-40 min
+     after 08:30): attacked BSR must be >> clean floor in both arms for seeds 42-46. If any
+     seed fails to implant, report it; if most fail, raise MAL_EPOCHS and relaunch P2 only
+     (clean P1 arm is unaffected). Then harvest P1-clean (FoolsGold/FLTrust/FLAME done) and
+     fill Sec. 6.2/6.3 with the new attacked numbers; retire RE-CHECK comments.
+  2. Decide on the round-1 aliasing bug (blocker 3): at least document it in the replication
+     notes / threats to validity with its exact scope; optionally a 2-seed FedAvg+FoolsGold
+     check with the copy fix to show it does not move last-5-round metrics.
+  3. Cheap offline work while the queue runs: FLAME ordering hypothesis replay; survey
+     artefact (repo, commit, file:line); multi-seed calibration robustness can be read from
+     P2 FedAvg rather than re-run.
