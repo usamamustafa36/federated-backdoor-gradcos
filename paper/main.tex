@@ -980,10 +980,11 @@ non-IID seed within $15$ rounds (Table~\ref{tab:seedcal}), so attacked BSR is re
 only where undefended FedAvg implants: backdoor results concern one calibrated,
 norm-visible attack on a subset of seeds. Exclusions and clean-accuracy effects do
 not depend on the attack succeeding.
-\emph{One architecture for outcomes} ($L=1$). On a ResNet-18 with $L=\drNBN$ the
-decomposition holds and the buffers dominate more (Sec.~\ref{sec:defect}), but on
-synthetic inputs and one optimiser setting; how the outcomes transfer is not
-measured.
+\emph{One architecture for outcomes} ($L=1$). In federated ResNet-20 rounds on
+CIFAR-10 ($L=\gcNBN$, non-IID) the counter carries a median $\gcCntShareDir\%$ of
+the squared update norm, and FLTrust gives two label flippers $\gcAtkWFullDir\%$ of
+its trust on the full vector against $\gcAtkWTrDir\%$ on the trainable one
+(Table~\ref{tab:gen}, interim); accuracy outcomes there are not yet measured.
 \emph{Feature-space trigger.} The fixed trigger at $0.25\times$ deviates at most
 $\rzSigFixedQtr\sigma$ per feature yet has joint Mahalanobis distance
 $\rzDMFixedQtr$ against a benign $99$th percentile of $\rzPnnFixed$

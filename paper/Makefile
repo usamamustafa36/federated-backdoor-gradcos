@@ -53,6 +53,7 @@ numbers:
 	cd $(ROOT) && $(PY) paper/make_numbers_calib6.py
 	cd $(ROOT) && CUDA_VISIBLE_DEVICES= $(PY) experiments/counter_defect/fltrust_falsify.py
 	cd $(ROOT) && $(PY) paper/make_fig_p1.py --res results/postfix_p3
+	cd $(ROOT) && $(PY) paper/make_numbers_generality.py
 	$(LATEXMK) main.tex
 	$(LATEXMK) supplement.tex
 	$(LATEXMK) -g main.tex

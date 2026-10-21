@@ -1,0 +1,7 @@
+[fedavg_dirichlet_s1] r1 acc=nan cshare=0.804 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=2/7 420.4s
+[fedavg_dirichlet_s1] r2 acc=nan cshare=0.867 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 394.4s
+[fedavg_dirichlet_s1] r3 acc=nan cshare=0.974 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 363.2s
+[fedavg_dirichlet_s1] r4 acc=nan cshare=0.988 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 421.3s
+[fedavg_dirichlet_s1] r5 acc=0.231 cshare=0.985 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 617.9s
+[fedavg_dirichlet_s1] r6 acc=nan cshare=0.989 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 471.7s
+[fedavg_dirichlet_s1] r7 acc=nan cshare=0.991 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 437.1s

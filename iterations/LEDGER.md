@@ -1277,3 +1277,54 @@ finished here.)
   2. Budget: ~0.65 pp headroom for P3 text; the two big outcome tables (0.59 pp) may need merging into one.
   3. Consider whether Fig. 2 (per-round diagnostics) can move to the supplement now that Fig. 1 carries the story
      (saves ~0.18 pp) -- supplement is full, so only if something there moves to an artifact file.
+
+## Iteration 19 - 2026-10-21 - Generality probe on a standard BatchNorm image model (ResNet-20 / CIFAR-10, real federated rounds, CPU); P3 harvest (S1 now n=5); supplement trimmed to make room
+
+- **State at start (22:49):** P3 219 JSONs; coordinator had started experiments/postfix/run_p3_prereg.sh at 22:46
+  (2 more GPU lanes, 36 FLTrust/NormClip/FLAME jobs of the registered families; log results/postfix_p3/campaign_prereg.log;
+  committed here with results/postfix_p3/jobs_prereg.txt, as asked). GPU 8 lanes ~5.1/8 GB; I added no GPU job.
+- **Reviewer score before: 4/10, REJECT.** Ranked: (1) outcomes still missing (P2/P4/S2/S4 n=0); (2) **generality**:
+  every outcome and every real-data diagnostic is one CNN+LSTM (L=1) on tabular IDS data; the only second
+  architecture was a synthetic-input ResNet-18 geometry probe, so "does it reach decisions elsewhere?" was unanswered;
+  (3) supplement full (5.95/6) so any new evidence had to displace text.
+- **Generality experiment (new, CPU, mine):** `experiments/generality/cifar_resnet20.py` + `run_generality.sh`.
+  ResNet-20 (option A, 19 BN layers, 269,722 trainable / 1,395 buffer coords, default momentum), CIFAR-10 (local copy
+  in data/cifar10, sha256 recorded per run), 10,000 training images, 10 clients, 2 label flippers (y->y+1), 1 local
+  epoch SGD lr 0.05 mom 0.9 wd 5e-4 batch 32, FLTrust root set 100 images (B_0=4), IID or label-Dirichlet(0.5),
+  20 rounds, seeds 0-2. Every round the SAME client updates are scored by Krum, Multi-Krum, FLTrust on (full
+  state_dict / state_dict without the counter / parameters()) -- a decision-level counterfactual; closed-loop arms
+  (fltrust_full/trainable, mkrum_full/trainable, Dirichlet) are queued for outcomes. Resumable (per-round checkpoints
+  in results/generality_cifar/_ckpt, not committed). Generator `paper/make_numbers_generality.py` ->
+  `paper/numbers_generality.tex` (\gc... macros; unfinished FedAvg runs contribute their completed rounds to the
+  decision statistics, closed-loop accuracy only from finished runs). Added to `make numbers` and preamble.
+- **Evidence (interim, rounds 1-7 of 20, 3 seeds x 2 partitions; results/generality_cifar/_ckpt via the generator):**
+  counter share of ||d_i||^2 median 98.0% (Dir) / ~99% (IID); FLTrust honest cosine to root 0.969 full vs 0.124
+  trainable (Dir); label flippers get 20.0% of FLTrust trust (= head count, never zeroed) on the full vector vs 5.1%
+  (zeroed 69% of attacker-rounds; honest zeroed 11.3%) on the trainable one; IID 20.0% vs 1.3%. Krum's pick differs
+  full vs trainable in 100% of Dir rounds and in 100% full vs counter-free (counter alone); under IID (equal B_i)
+  full vs counter-free differ in 0% of rounds, as Cor. 2 predicts, and the remaining full-vs-trainable differences
+  (~62%) come from running statistics. Multi-Krum keeps 1.67 vs 1.29 attackers (Dir). Test accuracy at round 5:
+  0.17-0.33 (early training; the decision statistics are early-round statistics -- say so if they shift by round 20).
+- **Paper:** supplement S-II gains "Real images, real federated rounds" + Table S-I (tab:gen); main Limitations
+  "One architecture for outcomes" now quotes the CIFAR result in one sentence (macros) and says accuracy outcomes
+  there are not yet measured. To fit, supplement compressed without dropping claims: seed-46 poisoned-data
+  enumeration, realizability intro/"pull against each other", withdrawn-findings preamble + FoolsGold/colluder
+  items, round-one section, "Reductions, stated". Backups main.tex.pre-iter19.bak, supplement.tex.pre-iter19.bak.
+- **P3 harvest (`make numbers`, rc 0):** 219 runs. PREREG: S1 (NormClip Dir CA) now n=5, 4+/1-, diff +0.008,
+  p=0.0625, Holm 0.25, not supported (interim); P1/P3/S3 n=5 unchanged; P2/P4/S2/S4 n=0. 0/4 primary, 0/4 secondary
+  supported. results/fltrust_falsify.json float-noise rewrite reverted again.
+- **Build/check:** latexmk rc 0, 0 undefined refs/cites, no overfull in supplement. **IEEEtran pages: main 10 (ends at
+  9.38, was 9.35) / supplement 6 (5.96).** check_manuscript: all PASS except the gate (368 unresolved, all P3).
+- **Running jobs:** MINE: generality campaign, systemd-inhibit PID 54368 (bash 54370, xargs 54374; 6 lanes x 2
+  threads), log results/generality_cifar/campaign.log, per-run logs results/generality_cifar/logs/. ~7 min/round
+  under current load: wave 1 (6 FedAvg runs) ends ~01:30, wave 2 (FLTrust closed loop, Dir) ~04:00, wave 3
+  (Multi-Krum closed loop) ~06:30 on 22 Oct. Resumable: re-run `experiments/generality/run_generality.sh` after any
+  crash. NOT mine: P3 PIDs (run_p3, gap-filler, run_p3_prereg).
+- **Score after: 4/10, REJECT.** Generality objection now has a real-data, real-federation answer at the decision
+  level (interim); outcomes are still missing both here and in P3.
+- **Top 3 priorities:**
+  1. Harvest P3 (`cd paper && make numbers`); write the confirmatory paragraph when P2/P4/S2/S4 land.
+  2. Harvest the generality campaign (make numbers runs the generator): replace "interim" in the supplement/main
+     sentence once all 6 FedAvg runs reach round 20, check the statistics still say the same at rounds 8-20, and
+     write the closed-loop FLTrust/Multi-Krum accuracy sentence (n=3, exploratory, no p-value claims).
+  3. Keep main <= ~9.5 pp: the P3 confirmatory paragraph must be paid for by cuts.

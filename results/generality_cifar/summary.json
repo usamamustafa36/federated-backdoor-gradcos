@@ -1,0 +1,16 @@
+{
+  "dirichlet": {
+    "n_runs": 3,
+    "round_records": 21,
+    "counter_share_median": 0.9796981845570514,
+    "krum_pick_differs": 1.0,
+    "mkrum_set_differs": 0.9523809523809523
+  },
+  "iid": {
+    "n_runs": 3,
+    "round_records": 21,
+    "counter_share_median": 0.9931182373219438,
+    "krum_pick_differs": 0.6190476190476191,
+    "mkrum_set_differs": 0.38095238095238093
+  }
+}
