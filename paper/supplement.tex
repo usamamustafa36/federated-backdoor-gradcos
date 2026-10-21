@@ -348,8 +348,12 @@ A $40$-round re-run tests the censoring reading. Seed $44$ at $E_m=5$, which nev
 implants within $15$ rounds, implants at round $\csHzImplantFortyFourEfive$ of
 $\csHzRoundsFortyFourEfive$ (BSR last at or below $0.5$ at round
 $\csHzLastLowFortyFourEfive$, last-five mean $\csHzBSRFortyFourEfive$): on that one
-cell the $15$-round failure was a matter of time. Seed $46$ at $E_m=15$ has not
-finished (\PENDING).
+cell the $15$-round failure was a matter of time. So was seed $46$'s at $E_m=15$:
+its BSR first exceeds $0.5$ at round $\csHzImplantFortySixEfifteen$ of
+$\csHzRoundsFortySixEfifteen$, falls back, and stays above it after round
+$\csHzLastLowFortySixEfifteen$ (last-five mean $\csHzBSRFortySixEfifteen$). Two cells, one each, support the threshold reading;
+they do not change the $15$-round campaign, whose implant set is decided by its own
+FedAvg cells (Sec.~\ref{sec:p1}).
 
 The rule for the re-run was fixed before the ten calibration cells finished: use
 $E_m=15$ if FedAvg implants (last-five-round BSR above $0.5$) on at least eight of

@@ -1170,3 +1170,72 @@ finished here.)
      to S-III; compress Related Work and intro; consider merging Tables III/IV into one compact outcome table).
   3. Draft (commented out) the 8-row confirmatory table from the \pfPre macros so it can be switched on when
      P2/P4/S1/S2/S4 land, and budget its space now.
+
+## Iteration 17 - 2026-10-21 - Novelty check (closest prior: a Flower DP-clipping issue, Oct 2026, and BNGuard); confirmatory-hypothesis table wired to the \pfPre macros; third cut (main 9.88 -> 9.28 pp incl. the new table); horizon s46 harvested
+
+- **State at start (~20:20, resumed ~22:20 after a usage-limit pause):** P3 111 -> 192/1,040 JSONs (PIDs 5901,
+  15185, gap-filler 7091; 3 logs with ERROR = the known pre-fix OOM ones). Horizon probe finished 21:19
+  (s46 E_m=15 done, HORIZON COMPLETE). I started no job; the coordinator's edit to AGENT_BRIEF.md is not mine
+  and is left uncommitted.
+- **Reviewer score before: 4/10, REJECT.** Blockers: (1) P3 outcomes missing for most rules (18%; no new
+  confirmatory cell); (2) no positioning against prior work on BatchNorm buffers / the counter in FL
+  aggregation, which a hostile reviewer will search; (3) main at 9.88 pp leaves no room for the P3 outcome
+  text; (4) confirmatory result only in prose.
+- **Novelty search (WebSearch, 2026-10-21).** Queries: "num_batches_tracked federated learning aggregation
+  robust"; "BatchNorm buffers Byzantine-robust aggregation federated learning state_dict cosine similarity
+  defense"; "\"non-trainable parameters\" federated learning poisoning defense batch normalization statistics
+  attack"; "\"num_batches_tracked\" FedAvg averaging bug flower OR fedml OR github issue"; "backdoor attack
+  federated learning manipulating BatchNorm running statistics malicious client"; "Krum FLTrust robust
+  aggregation should exclude batch normalization layers flattened model update evaluation pitfall";
+  "federated learning integer buffer counter dominates update norm clipping cosine similarity BatchNorm
+  state_dict pitfall paper"; "Byzantine attack batch normalization statistics federated learning vulnerability
+  robust aggregation ignores running mean variance"; "\"num_batches_tracked\" arxiv federated learning paper";
+  "BNGuard ... MobiHoc 2025". Findings (each verified by fetching the page):
+  - **Closest: Flower issue flwrlabs/flower #8298** (opened 6 Oct 2026 by a third party, open; fix PR #8381,
+    17 Oct 2026, open): Flower's DP clipping helpers include the 0-d int `num_batches_tracked` in get_norm but
+    cannot rescale it, so the clip factor ~C/B shrinks every real update. This is exactly the norm term of our
+    Eq. (norm) for one clipping routine (cf. our NormClip/FLAME). It postdates our survey (Sep 2026) and covers
+    neither cosine/distance rules, nor trust scores/histories, nor an exact decomposition, nor outcomes. Cited
+    as concurrent (`flower2026issue8298`, @misc).
+  - **BNGuard** (Xu, Zhang, Hu, arXiv:2509.13219, "to appear in MobiHoc 2025" per arXiv; same authors as
+    AlignIns): reads BN *running statistics* deliberately as a detection signal for OOD backdoors. Opposite
+    use; does not concern the counter. Cited (`xu2025oba`).
+  - FBN (Guerraoui et al., already cited) makes the statistics' aggregation Byzantine-robust; now said so.
+  - No paper found that analyses `num_batches_tracked` (or any non-trainable buffer) as a coordinate of the
+    vector Byzantine-robust rules decide on, nor a decomposition of cosine/distance into trainable + buffer
+    parts. A third-party GitHub PR (SathishKumarAI/federated-yolov8..., #64) mentions the counter differing by
+    the epoch's batch count in a personal project; not citable, not about robust rules.
+  - Related Work "Model state" paragraph rewritten accordingly: the claim is now "we found no work on what
+    the counter does to the client-level decisions of Byzantine-robust rules"; the counter-in-norm effect for
+    one DP clipping routine is credited to the Flower issue.
+- **Confirmatory table (Table III, tab:prereg)**, live, single column: P1-P4, S1-S4 with n, sign counts, diff,
+  one-sided p, Holm p, supported (yes/no). New macro `\pfPre<Id>Sup` in analyse_postfix.py (yes/no/\PENDING);
+  inside the table \PENDING renders as a red dash (gate still counts it). Fills automatically on `make numbers`.
+  Text notes that Holm over four can reach 0.05 only from n=7. Statistics paragraph shortened (points to it).
+- **Third cut (backups main.tex.pre-iter17.bak, supplement.tex.pre-iter17.bak), no claim removed:** intro
+  first paragraphs, contributions + roadmap, Related Work (backdoors, robust aggregation, evaluation, FL-IDS),
+  Cor. 1 discussion, Statistics, Design, BSR paragraph, "counter is attacker-controlled", FLTrust real-data
+  paragraph (first-campaign numbers now parenthetical), the "three consequences" + falsify check merged into
+  one paragraph, Lemma 1 discussion, "earlier version" paragraph, recommendations, two limitations,
+  Conclusion; "Results so far" became "Exploratory cells so far" (FLTrust (iv) points to P1).
+- **Horizon probe (harvested, n=1 per cell):** s46 E_m=15 over 40 rounds: BSR first > 0.5 at round 14, falls
+  back, stays > 0.5 after round 17, last-five 0.989. Supplement S-IV PENDING sentence replaced
+  (`\csHz...FortySixEfifteen`); main mentions it in Attack calibration. Both horizon cells support the
+  "near a threshold / censored at 15 rounds" reading; the campaign's implant set is unchanged (P3 FedAvg
+  excludes seed 46: \pfImplantExclDir=46).
+- **P3 harvest** (`make numbers`; 192 cells at analysis): 73 exploratory tests, 0 survive family or global
+  Holm. PREREG unchanged: P1/P3/S3 n=5, P2/P4/S1/S2/S4 n=0; 0/4 primary, 0/4 secondary supported (interim).
+  results/fltrust_falsify.json float-noise rewrite reverted again. `make numbers` stopped at LaTeX once
+  (\path in a caption; fixed), the generators all ran.
+- **Build/check:** latexmk rc 0, 0 undefined refs/cites, 0 "??". **IEEEtran pages: main 10 (ends at 9.28,
+  was 9.88; includes the new table) / supplement 6 (~5.95).** check_manuscript: all PASS except the gate
+  (386 unresolved, all P3).
+- **Running jobs (none mine):** P3 PIDs 5901, 15185, gap-filler 7091 (192/1,040 at 22:30).
+- **Score after: 4/10, REJECT.** Positioning is now defensible and verified; length has ~0.7 pp headroom for
+  P3 text; outcomes still missing.
+- **Top 3 priorities:**
+  1. Harvest P3 (`cd paper && make numbers`). When FLTrust IID / NormClip cells land, Table III fills itself;
+     then write the one-paragraph confirmatory result and retire the PENDING sentence in the abstract.
+  2. Supplement is at ~5.95/6 pp: anything added there must displace something (seedcal table -> artifact).
+  3. Consider a short "Concurrent report" sentence in Sec. V (scope) if the Flower PR #8381 merges, and
+     re-check Flower's quickstart (survey row) against the current release before submission.

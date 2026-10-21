@@ -1,0 +1,14 @@
+[2026-10-21 14:56:37] horizon probe waiting for calib6 processes
+[2026-10-21 15:50:40] starting on cpu
+[2026-10-21 17:50:25] relaunch after 17:45 reboot, on cuda under systemd-inhibit
+[2026-10-21 17:50:25] horizon probe waiting for calib6 processes
+[2026-10-21 17:50:27] starting on cuda
+[2026-10-21 17:51:15] done(rc=0) seed 44 E_m=5
+[2026-10-21 17:51:28] done(rc=0) seed 46 E_m=15
+[2026-10-21 17:51:28] HORIZON COMPLETE
+[2026-10-21 17:52:11] cuda attempt OOMed (GPU full with P3); relaunch on cpu
+[2026-10-21 17:52:11] horizon probe waiting for calib6 processes
+[2026-10-21 17:52:11] starting on cpu
+[2026-10-21 19:49:42] done(rc=0) seed 44 E_m=5
+[2026-10-21 21:19:33] done(rc=0) seed 46 E_m=15
+[2026-10-21 21:19:33] HORIZON COMPLETE

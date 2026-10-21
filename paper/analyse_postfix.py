@@ -474,7 +474,10 @@ def main():
                     "Diff": ("\\PENDING" if not ok else
                              ("0.000" if round(h["diff"], 3) == 0 else f"{h['diff']:+.3f}")),
                     "P": fmt(h["p1"], 4), "Ph": fmt(h.get("ph", float("nan")), 4),
-                    "Verdict": verdict}
+                    "Verdict": verdict,
+                    # short form for the table (iteration 17): yes / no / \PENDING
+                    "Sup": ("\\PENDING" if not ok else
+                            ("yes" if h["ph"] <= 0.05 else "no"))}
             for k, v in vals.items():
                 lines.append(f"\\providecommand{{\\{stem}{k}}}{{{v}}}")
         with open(os.path.join(RES, "prereg_results.md"), "w") as f:
