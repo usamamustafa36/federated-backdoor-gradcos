@@ -1113,3 +1113,60 @@ finished here.)
   2. Continue the cut: S-III proofs (keep statements + one-sentence sketches) and S-VI rule details, then
      prose trimming; decide the supplement overflow (seedcal table compression vs. realizability out).
   3. When primary cells P2/P4 (FLTrust IID) land, add the 8-row confirmatory table in place of prose.
+
+## Iteration 16 - 2026-10-21 - Second cut: proofs, rule details, falsify check and FoolsGold diagnostic to the supplement; prose tightened throughout (main 12.75 -> 9.88 pp, 10 pages); realizability per-row table replaced by a generated artifact file to keep the supplement under 6 pp
+
+- **State at start (~19:58):** P3 96/1,040 JSONs (PIDs 5901, 15185, gap-filler 7091); 111 at the end. Horizon
+  probe PID 6108 (CPU): s46 E_m=15 still running, no new JSON. The only ERROR lines in P3 logs are the three
+  known pre-fix OOM logs. I started no job.
+- **Reviewer score before: 4/10, REJECT.** Blockers: (1) outcomes missing for most rules (P3 ~9%); (2) main text
+  12.75 pp vs hard 10; (3) supplement could not absorb the remaining moves (4.7 + ~1.4 > 6).
+  Found this iteration: (4) Sec. VI-C said "the only FoolsGold cells run with the copy are one clean and one
+  attacked replay" although P3 (which runs with the copy) already has FoolsGold Dir clean cells; rewritten.
+- **What I changed** (backups main.tex.pre-iter16.bak, supplement.tex.pre-iter16.bak):
+  - **Moved verbatim to the supplement** (new S-III "Proofs and checks of the mechanism results"): proofs of
+    Prop. 1, Cor. 1, Cor. 3, Cor. 4, Lemma 1 (main keeps statements + one-sentence `proof[Proof sketch]`), the
+    probe numbers for Cor. 3, the falsified-counter check (S-III-A, label sup:falsify; main keeps a 5-line
+    summary with \ffMaxRelErr and \ffAmpNeg) and the FoolsGold diagnostic (S-III-B, sup:fgdiag; main keeps the
+    label-skew conclusion with \csFgBaseNMajorDDoS, \csFgBaseCA). S-VI: the six rule-family paragraphs +
+    hyperparameters (sentences duplicated in main removed); main keeps Table II + a new "Implementation"
+    paragraph (negative controls, distance-rule exposure in attacked runs, NormClip/FLAME inflation
+    \pfDiagNormInflDir, FLAME trainable-only noise, exclusion thresholds, GradCos status, AlignIns split
+    prediction, Bulyan f clamp, untuned hyperparameters). Both \TOMOVE placeholders are gone.
+  - **Supplement overflow:** the 12-row realizability table (tab:realize) is replaced by
+    `results/artifact/realizability_ciciot2023.md`, all 21 rows x 13 statistics, written by make_numbers.py
+    from results/realizability_ciciot2023.json (new macro \rzNrowsArtifact; numbers.tex otherwise unchanged);
+    the supplement defines the columns in prose and cites the file; README lists results/artifact/. The
+    seed-46 investigation prose in S-IV was condensed (same claims, same macros).
+  - **Main-text tightening (no claim removed):** contributions list and roadmap (0.69 -> ~0.4 pp), threat model,
+    "counter is attacker-controlled", Statistics method sentence, Cor. 1 discussion + Eq. bufcos (now the
+    inequality only), Cor. 2 discussion, norm/coordinate-wise rules, inertness + verification merged, scope
+    subsection, geometry subsection, A/B Design (absorbs the "first campaign" paragraph), Results-so-far
+    (i)-(iv), FLTrust real-data paragraph, FoolsGold/FLAME mechanism paragraphs, distance rules + negative
+    controls merged, retro paragraph, "Why the hazard survives review", Limitations (run-in list), Conclusion
+    (half; the trigger-premise sentence now only in contributions/abstract), Related Work (minor).
+  - **P3 harvest** (`make numbers`, rc 0, 3 min): 107 cells at analysis. New: Krum Dir attacked n=5 (DR 1.000
+    both arms; CA fixed-defect -0.002, 0/5 seeds positive, two-sided p 0.062, exploratory, not significant);
+    FLTrust Cor. 3 log unchanged (300 rounds, 24 with q_i+q_0<=1, 0 non-positive cosines, 10 defect runs, max
+    exclusion 0.000). PREREG: no new confirmatory cell (P1/P3/S3 n=5; P2/P4/S1/S2/S4 n=0); 0/4 primary,
+    0/4 secondary supported (interim). Exploratory: 38 tests, 0 survive family or global Holm.
+    results/fltrust_falsify.json float-noise rewrite reverted again.
+- **Build/check:** latexmk rc 0, 0 undefined refs/cites, 0 "??". **IEEEtran pages: main 10 (ends at 9.88) /
+  supplement 6 (ends at ~5.91).** check_manuscript: all PASS except the gate (439 unresolved P3 results).
+- **Page arithmetic for the next agent:** P3 needs ~1-1.5 pp (outcome table + confirmatory result), so main must
+  reach ~8.5-9 before they land: ~1 pp more. Largest remaining blocks (page_budget.py): bibliography 0.95,
+  Tables III/IV 0.59 (merge/compact into one outcome table when P3 lands), Cor. 3 block ~0.4, Cor. 4 + "three
+  consequences" ~0.35, Lemma + FoolsGold ~0.4, Related Work ~0.7, intro ~0.55. The supplement is full (5.91):
+  anything more moved there must displace something; candidates for generated artifact files are the seedcal
+  table (Table S-III, 0.22 pp) and the first-campaign retro section (0.5 pp).
+- **Running jobs (none mine):** P3 PIDs 5901, 15185, gap-filler 7091 (111/1,040 at 20:19); horizon PID 6108
+  (s46 E_m=15).
+- **Score after: 4/10, REJECT.** Length is now inside the cap with no claim dropped, but outcomes are still
+  missing and the P3 table will push the main text back over 10 unless ~1 pp more is cut.
+- **Top 3 priorities:**
+  1. Harvest P3 + s46 horizon (`cd paper && make numbers`; replace the \PENDING sentence in S-IV and revisit
+     "near a threshold" if s46 implants).
+  2. Cut ~1 pp more from main (FLTrust/falsify block: move "three consequences" and the real-data q-log details
+     to S-III; compress Related Work and intro; consider merging Tables III/IV into one compact outcome table).
+  3. Draft (commented out) the 8-row confirmatory table from the \pfPre macros so it can be switched on when
+     P2/P4/S1/S2/S4 land, and budget its space now.

@@ -9,9 +9,11 @@
 %  Skeleton set up in iteration 12 (see iterations/LEDGER.md, "page budget").
 %  Iteration 15 moved the P3-independent blocks (probe details, calibration,
 %  round-one aliasing, first campaign + withdrawn findings, realizability)
-%  unchanged from main.tex (backup main.tex.pre-iter15.bak). The proofs (S-III)
-%  and rule details (S-VI) still wait: \TOMOVE marks them, and the gate
-%  (tools/check_manuscript.py) fails while any remains.
+%  unchanged from main.tex (backup main.tex.pre-iter15.bak). Iteration 16 moved
+%  the proofs (S-III, with the falsified-counter check and the FoolsGold
+%  diagnostic) and the rule details (S-VI), and replaced the per-row
+%  realizability table by a generated file (results/artifact/, make_numbers.py)
+%  to stay under the 6-page cap (backup supplement.tex.pre-iter16.bak).
 %
 %  When moving a block: cut it from main.tex together with its \label{...}s and
 %  paste it here unchanged. Labels resolve in both directions through
@@ -40,8 +42,9 @@ Counter''}
 \section{Overview}
 \label{sup:overview}
 This supplement holds the details the paper summarises: the defect probe, the
-calibration of the attack, the engine's second defect, the first campaign and the
-findings it withdraws, and the realizability audit of the triggers. Section,
+proofs and checks of the mechanism results, the calibration of the attack, the
+engine's second defect, the thirteen rules, the first campaign and the findings it
+withdraws, and the realizability audit of the triggers. Section,
 table and equation numbers prefixed with S refer to this document; all others
 refer to the paper, and citation numbers to the paper's reference list. Every number is generated from the released result files by
 the same generators as the paper's.
@@ -108,13 +111,122 @@ relative error of Eq.~\eqref{eq:dist} & $\dfPropDistErr$ & $\drPropDistErr$ \\
 \end{tabular}
 \end{table}
 
-\section{Proofs of the FLTrust and FoolsGold results}
+\section{Proofs and checks of the mechanism results}
 \label{sup:proofs}
-\TOMOVE{from Sec.~\ref{sec:mech}: the proofs of
-Corollary~\ref{cor:fltrust}, Corollary~\ref{cor:falsify} and
-Lemma~\ref{lem:history}, and the full real-data check of the condition of
-Corollary~\ref{cor:fltrust}; the paper keeps the statements and one-sentence
-proof sketches.}
+The paper states each result with a one-sentence sketch; the full proofs follow.
+
+\begin{proof}[Proof of Proposition~\ref{prop:decomp}]
+The blocks $u$, $r$ and $c$ occupy disjoint coordinates, so inner products and
+squared norms add across them: $\langle d_i,d_j\rangle=\langle u_i,u_j\rangle
++\langle b_i,b_j\rangle$ and $\|d_i\|^2=\|u_i\|^2+\|r_i\|^2+\|c_i\|^2$, with
+$\|c_i\|^2=\|B_i\mathbf{1}_L\|^2=LB_i^2$, which is~\eqref{eq:norm}. Dividing the
+inner product by $\|d_i\|\|d_j\|$ and writing
+$\langle u_i,u_j\rangle=\|u_i\|\|u_j\|\cos(u_i,u_j)$,
+$\langle b_i,b_j\rangle=\|b_i\|\|b_j\|\cos(b_i,b_j)$, and
+$\|u_i\|/\|d_i\|=\sqrt{1-s_i}$, $\|b_i\|/\|d_i\|=\sqrt{s_i}$ by~\eqref{eq:share},
+gives~\eqref{eq:cos}. Applying the same additivity to $d_i-d_j$, whose counter
+block is $(B_i-B_j)\mathbf{1}_L$, gives~\eqref{eq:dist}.
+\end{proof}
+
+
+\begin{proof}[Proof of Corollary~\ref{cor:band}]
+By~\eqref{eq:cos}, $\cos(d_i,d_j)-\cos(b_i,b_j)=\sqrt{(1-s_i)(1-s_j)}\cos(u_i,u_j)
+-(1-\sqrt{s_is_j})\cos(b_i,b_j)$. Both cosines lie in $[-1,1]$,
+$\sqrt{(1-s_i)(1-s_j)}\le 1-s$ and $1-\sqrt{s_is_j}\le 1-s$, which gives the
+bound. The coefficient of $\cos(u_i,u_j)$ in~\eqref{eq:cos} is at most $1-s$,
+which gives the second statement.
+\end{proof}
+
+
+\begin{proof}[Proof of Corollary~\ref{cor:fltrust}]
+Split each vector into its counter block and everything else, $d_i=(e_i,c_i)$ with
+$e_i=(u_i,r_i)$, and likewise $g_0=(e_0,c_0)$. These blocks occupy disjoint
+coordinates, so~\eqref{eq:cos} holds with $q$ in place of $s$ and $e$ in place of
+$u$: $\cos(d_i,g_0)=\sqrt{(1-q_i)(1-q_0)}\cos(e_i,e_0)+\sqrt{q_iq_0}\cos(c_i,c_0)$.
+Here $\cos(c_i,c_0)=1$ because $c_i=B_i\mathbf{1}_L$ and $c_0=B_0\mathbf{1}_L$ with
+$B_i,B_0>0$, and $\cos(e_i,e_0)\ge-1$, which gives~\eqref{eq:fltbound} (if $e_i$
+or $e_0$ is zero the first term vanishes and the bound holds trivially). Since both
+square roots are non-negative, $\sqrt{q_iq_0}>\sqrt{(1-q_i)(1-q_0)}$ if and only if
+$q_iq_0>(1-q_i)(1-q_0)$, that is, $q_i+q_0>1$. The rescaling identity follows from
+$\|d_i\|=\sqrt{L}B_i/\sqrt{q_i}$ and $\|g_0\|=\sqrt{L}B_0/\sqrt{q_0}$.
+\end{proof}
+
+
+\textbf{Corollary~\ref{cor:fltrust} on the probe.} The server's share is the
+weaker of the two in our setting, because its root set is only $B_0=\dfFltBzero$
+batches. On the defect probe's synthetic inputs (Table~\ref{tab:probe}), a $\dfFltBzero$-batch server update
+has $q_0=\dfFltQzero\%$, a $\dfPropBi$-batch client update $q_i=\dfPropShareI\%$, so
+the bound~\eqref{eq:fltbound} is $\dfFltBound$; the measured full-vector cosine is
+$\dfFltCosFull$, while the two updates' trainable cosine is $\dfFltCosSig$. On real
+data the trainable norms, and so the shares, differ.
+\par\smallskip
+\begin{proof}[Proof of Corollary~\ref{cor:falsify}]
+The counter blocks are positive multiples of $\mathbf{1}_L$, so
+$\langle d_j,g_0\rangle=\langle e_j,e_0\rangle+\langle c_j,c_0\rangle
+=\|d_j\|\|g_0\|\big(\rho_j\sqrt{(1-q_j)(1-q_0)}+\sqrt{q_jq_0}\big)$, and
+$\|e_j\|=\sqrt{1-q_j}\,\|d_j\|$; multiplying gives~\eqref{eq:mj}. With
+$q_j=\sin^2\theta$, $\theta\in[0,\pi/2)$, Eq.~\eqref{eq:mj} becomes
+$\tfrac12\big(\rho\sqrt{1-q_0}\,(1+\cos2\theta)+\sqrt{q_0}\sin2\theta\big)$, whose
+maximum over $2\theta\in[0,\pi)$ is~\eqref{eq:mstar}, attained where
+$\tan2\theta=\sqrt{q_0}/(\rho\sqrt{1-q_0})$, i.e.\ $2\theta=\pi/2$ when $\rho=0$.
+It is positive because $\sqrt{\rho^2(1-q_0)+q_0}>|\rho|\sqrt{1-q_0}$ for $q_0>0$,
+and a positive $M^*$ means a positive trust score, so the client is admitted.
+\end{proof}
+
+
+\begin{proof}[Proof of Lemma~\ref{lem:history}]
+By the triangle inequality $\|U_i(t)\|\le t\eta$, and the counter block of $H_i(t)$
+has squared norm $L\big(\sum_{\tau\le t}B_i(\tau)\big)^2\ge Lt^2B_{\min}^2$. The
+blocks are disjoint, so $\|H_i(t)\|^2\ge\|U_i(t)\|^2+Lt^2B_{\min}^2$, and since
+$x\mapsto x/(x+a)$ is increasing for $a>0$,
+$1-s_i(t)\le t^2\eta^2/(t^2\eta^2+Lt^2B_{\min}^2)$.
+\end{proof}
+
+
+\subsection{The falsified-counter check}
+\label{sup:falsify}
+We checked the corollary on the defect probe's local updates ($\ffNhonest$ honest
+clients with unequal batch counts, a $\dfFltBzero$-batch server update, synthetic
+inputs as in Table~\ref{tab:probe}) and an attacker block $\ffMalScale$ times the
+median honest norm. Our FLTrust implementation reproduces Eqs.~\eqref{eq:mj}
+and~\eqref{eq:mstar} to a relative error of $\ffMaxRelErr$; scanning the falsified
+counter over a grid of $99$ shares finds no larger step than~\eqref{eq:mstar}
+(grid check passed: \ffGridBelow), and for $\rho=0$ the grid maximum is at $q=\ffQoptZero$. Here
+$q_0=\ffQzero\%$, and the honest clients' shares lie in $\ffQhMin$--$\ffQhMax\%$.
+An attacker with $\rho=-1$ that reports the batches it ran is excluded (its signed
+step is $\ffHonCtrNegM$); with the falsified counter it is admitted with a step of
+$\ffMstarNeg\,\|g_0\|$, against a median honest step of $\ffMhMed\,\|g_0\|$
+($\ffAmpNeg\times$). An orthogonal update reaches $\ffMstarZero$ ($\ffAmpZero\times$).
+The fixed arm excludes every attacker update with $\rho\le0$ (all excluded: \ffFixedFlagsAll).
+The ratios are modest here because on synthetic inputs the honest non-counter
+blocks align closely with the server's ($\rho_j$ in $\ffRhoMin$--$\ffRhoMax$), and
+by~\eqref{eq:mj} that raises $M_j$. On real non-IID clients the trainable updates
+agree far less (mean pairwise trainable cosine $\pfDiagCosSigDir$), which would
+lower $M_j$, but the re-run logs $q_0$ and $q_j$, not $\rho_j$, so the real-data
+ratio is not measured. What the check establishes is the arithmetic of one round:
+under the defect, admission by FLTrust is something a client can buy with a
+number it chooses. We have not trained with a counter-falsifying client
+(\path{experiments/counter_defect/fltrust_falsify.py}).
+
+\subsection{The FoolsGold diagnostic}
+\label{sup:fgdiag}
+A diagnostic run with the round-one copy (trainable arm, clean, non-IID, seed
+$42$; \texttt{experiments/foolsgold\_diag}) shows where that exclusion comes from.
+In this partition $\csFgBaseNMajorDDoS$ of the ten clients have DDoS as their
+majority class, and their trainable histories are alike (median of each client's
+largest history cosine over rounds $2$--$15$: $\csFgBaseMaxCosMed$). FoolsGold
+reads them as sybils. It keeps a median of $\csFgBaseKeptMed$ clients per round;
+in the last round the kept clients hold $\csFgBaseKeptRowShare$ of the training rows
+and include $\csFgBaseKeptMajorDDoS$ of the DDoS-majority clients. Clean accuracy is
+$\csFgBaseCA$. Our port departs from the authors' code in one respect: their
+aggregator returns the weight-scaled \emph{sum} of the round's updates, ours their
+weighted mean. Using the sum gives clean accuracy $\csFgNormOffCA$, so the port is
+not the cause. Using single-round updates instead of the cumulative history gives
+$\csFgHistOffCA$, with a median of $\csFgHistOffKeptMed$ clients kept. FoolsGold
+assumes that honest histories are dissimilar. Under a label skew in which most
+clients share a majority class, that assumption fails whether or not the counter is
+present. Its fixed-arm outcomes in the re-run will therefore measure this failure,
+and only its defect-arm outcomes can add a counter effect on top of it.
 
 \section{Attack calibration and the seed-robust adversary}
 \label{sup:calib}
@@ -206,47 +318,38 @@ $\csSmEfifteenBSRFortyFour$ at $E_m=15$) but not seed $46$ ($\csSmEtenBSRFortySi
 $\csSmEfifteenBSRFortySix$, with single rounds above $0.5$ that the next round
 undoes). No single $E_m$ we tried makes the attack implant on every seed.
 
-What seed $46$ does differently is mostly a matter of timing, as far as we can
-tell. Where the backdoor implants, it does so abruptly: BSR sits at the clean
-floor for several rounds and then jumps past $0.5$ within one round, at round
-$\csOnsetMin$--$\csOnsetMax$ in the $\csOnsetN$ implanting cells of
-Table~\ref{tab:seedcal}. On seed $46$ the jump comes at round
-$\csSmEtenImplantFortySix$ ($E_m=10$) or $\csSmEfifteenImplantFortySix$ ($E_m=15$),
-peaks at $\csSixMaxRoundTen$ and $\csSixMaxRoundFifteen$, and the final round
-reads $\csSixLastRoundTen$ and $\csSixLastRoundFifteen$. With $15$ rounds and a
-last-five-round criterion, a jump at round $14$ or later cannot register as an
-implant even if it holds, because at most two of the five rounds in the window
-can be high. The $E_m=15$ reading on seed $46$ is therefore right-censored. The
-$E_m=10$ reading is not: there the jump came at round $12$ and the next round fell
-back to the floor. More local work also does not bring the jump forward on this
-seed ($E_m=15$ is no better than $E_m=10$). Our reading is that the attack sits
-near a threshold on seed $46$, where round-to-round noise decides the outcome, not
-that the seed is immune. The poisoned
-data do not single the seed out. Recomputing the poisoning exactly
-(\texttt{experiments/calib\_iter6/s46\_probe.py}), the attackers stamp
-$\csPoisRowsMin$--$\csPoisRowsMax$ rows on every seed $42$--$51$. The classes they
-poison cover at least $\csPoisCoverMin$ of the BSR test set, and DDoS is the
-majority source class everywhere (seed $46$: $\csPoisDDoSFortySix$; implanting
-seeds: at least $\csPoisDDoSImplMin$). No training row of any class lies within
-$0.5\sigma$ of the trigger on all $\csTrigNcols$ stamped columns, and
-$\csTrigNoutRange$ of the $\csTrigNcols$ stamped values fall outside the range
-that column takes in the training data. Honest clients therefore never train
-against the trigger directly, and the model has to extrapolate to it. One
-feature did stand out: seed $46$'s attackers hold $\csMalBenignFortySix$ genuine
-benign rows, against $\csMalBenignImplMin$--$\csMalBenignImplMax$ on seeds
-$42$--$44$. We registered seeds $49$ and $51$ as the test of that explanation
-before their cells finished, since their attackers hold only
-$\csMalBenignFortyNine$ and $\csMalBenignFiftyOne$ benign rows. Both implant
-strongly at $E_m=15$ (BSR $\csSmEfifteenBSRFortyNine$ and
-$\csSmEfifteenBSRFiftyOne$, first round above $0.5$ at round
-$\csSmEfifteenImplantFortyNine$ and $\csSmEfifteenImplantFiftyOne$), so benign
-scarcity does not explain seed $46$, and we drop it. A $40$-round re-run of seed
-$46$ at $E_m=15$ and seed $44$ at $E_m=5$ tests the censoring reading. Seed $44$
-at $E_m=5$, which never implants within $15$ rounds, implants at round
-$\csHzImplantFortyFourEfive$ of $\csHzRoundsFortyFourEfive$; BSR last falls to
-$0.5$ or below at round $\csHzLastLowFortyFourEfive$ and the last five rounds
-average $\csHzBSRFortyFourEfive$. On that one cell the $15$-round failure was a
-matter of time, not of immunity. Seed $46$ at $E_m=15$ has not finished (\PENDING).
+What seed $46$ does differently is, as far as we can tell, timing. Where the
+backdoor implants it does so abruptly: BSR sits at the clean floor and then jumps
+past $0.5$ within one round, at round $\csOnsetMin$--$\csOnsetMax$ in the
+$\csOnsetN$ implanting cells of Table~\ref{tab:seedcal}. On seed $46$ the jump
+comes at round $\csSmEtenImplantFortySix$ ($E_m=10$) or
+$\csSmEfifteenImplantFortySix$ ($E_m=15$), peaks at $\csSixMaxRoundTen$ and
+$\csSixMaxRoundFifteen$, and the final round reads $\csSixLastRoundTen$ and
+$\csSixLastRoundFifteen$. A jump at round $14$ or later cannot register under a
+last-five-round criterion, so the $E_m=15$ reading is right-censored; the $E_m=10$
+reading is not (the jump at round $12$ fell back the next round). Our reading is
+that the attack sits near a threshold on seed $46$, not that the seed is immune.
+The poisoned data do not single the seed out
+(\texttt{experiments/calib\_iter6/s46\_probe.py}): the attackers stamp
+$\csPoisRowsMin$--$\csPoisRowsMax$ rows on every seed $42$--$51$, the poisoned
+classes cover at least $\csPoisCoverMin$ of the BSR test set, DDoS is the majority
+source class everywhere (seed $46$: $\csPoisDDoSFortySix$; implanting seeds: at
+least $\csPoisDDoSImplMin$), no training row lies within $0.5\sigma$ of the
+trigger on all $\csTrigNcols$ stamped columns, and $\csTrigNoutRange$ of the
+$\csTrigNcols$ stamped values fall outside the training range, so the model has to
+extrapolate. Seed $46$'s attackers do hold $\csMalBenignFortySix$ genuine benign
+rows, against $\csMalBenignImplMin$--$\csMalBenignImplMax$ on seeds $42$--$44$; we
+registered seeds $49$ and $51$ (only $\csMalBenignFortyNine$ and
+$\csMalBenignFiftyOne$ benign rows) as the test before their cells finished. Both
+implant strongly at $E_m=15$ (BSR $\csSmEfifteenBSRFortyNine$ and
+$\csSmEfifteenBSRFiftyOne$, onset at round $\csSmEfifteenImplantFortyNine$ and
+$\csSmEfifteenImplantFiftyOne$), so benign scarcity does not explain seed $46$.
+A $40$-round re-run tests the censoring reading. Seed $44$ at $E_m=5$, which never
+implants within $15$ rounds, implants at round $\csHzImplantFortyFourEfive$ of
+$\csHzRoundsFortyFourEfive$ (BSR last at or below $0.5$ at round
+$\csHzLastLowFortyFourEfive$, last-five mean $\csHzBSRFortyFourEfive$): on that one
+cell the $15$-round failure was a matter of time. Seed $46$ at $E_m=15$ has not
+finished (\PENDING).
 
 The rule for the re-run was fixed before the ten calibration cells finished: use
 $E_m=15$ if FedAvg implants (last-five-round BSR above $0.5$) on at least eight of
@@ -352,8 +455,77 @@ the re-run uses it.
 
 \section{The thirteen rules in detail}
 \label{sup:rules}
-\TOMOVE{from Sec.~\ref{sec:rules}: the per-family rule descriptions; the paper keeps
-Table~\ref{tab:rules} and one paragraph.}
+This section expands the paragraph ``Implementation'' of Sec.~\ref{sec:rules}.
+
+\textbf{Order-statistic and averaging rules.} FedAvg~\cite{mcmahan2017} is the
+undefended, example-weighted mean. The coordinate-wise median and the
+$\beta$-trimmed mean ($\beta=0.2$)~\cite{yin2018} act on each coordinate
+separately and never compare clients as vectors, so the counter receives its own
+order statistic and cannot displace a trainable coordinate.
+
+\textbf{Distance rules.} Multi-Krum~\cite{blanchard2017} scores each update by
+the sum of squared distances to its $n-f-2$ nearest neighbours and averages the
+best-scoring ones; Bulyan~\cite{mhamdi2018bulyan} iterates Krum selection and
+then takes a coordinate-wise trimmed mean of the selected set; RFA computes the
+geometric median by smoothed Weiszfeld iterations ($8$
+iterations)~\cite{pillutla2022rfa}. Krum and Bulyan are given the true number of
+malicious clients, $f=2$. Bulyan's requirement $n\ge 4f+3$ cannot be met at
+$n=10$, so its $f$ is clamped to what the cohort supports, and we report it as
+run. By Corollary~\ref{cor:dist}, all three read the counter exactly when batch
+counts differ; only clean IID runs leave it out.
+
+\textbf{Norm rules.} NormClip~\cite{sun2019} clips each update to the cohort's
+median norm and adds Gaussian noise proportional to it. By Eq.~\eqref{eq:norm},
+over the full vector $\|d_i\|/\|u_i\|=1/\sqrt{1-s_i}$, which at the median buffer
+share of our non-IID runs is $\pfDiagNormInflDir$: clip bound and noise scale are
+set that many times larger than the trainable update warrants, and the clipping
+factor $\min(1,S/\|d_i\|)$ tracks batch counts rather than update size.
+
+\textbf{Cosine rules.} FLAME~\cite{nguyen2022flame} clusters updates by cosine
+distance (HDBSCAN), keeps the majority cluster, clips the admitted updates to
+their median norm and adds Gaussian noise; its noise is restricted to trainable
+coordinates in both arms (Sec.~\ref{sec:rules}). FLTrust~\cite{cao2021fltrust} trains the global model
+on its root set to obtain a server update $g_0$, weights each client update by
+$\mathrm{ReLU}(\cos(g_i,g_0))$, rescales it to $\|g_0\|$ and averages; a client
+with weight zero is counted as excluded. FoolsGold~\cite{fung2020foolsgold} keeps
+the running sum of each client's updates and down-weights clients whose histories
+are too similar to another's (we implement the history variant without
+feature-importance weighting); a client whose weight falls below $10^{-3}$ is
+counted as excluded. GradCos, a clique test from an earlier version of this study,
+flags clients whose maximum cosine to a peer is a robust outlier above the cohort
+($\kappa=1.5$); we keep it only as one more cosine rule and make no claim for it as
+a defense. By Corollary~\ref{cor:band}, all four read a cosine whose trainable
+part carries weight at most $1-s$.
+
+\textbf{Cross-round rules.} FLDetector~\cite{zhang2022fldetector} predicts each
+client's update from its history with an L-BFGS approximation of the Hessian and
+flags clients whose prediction error is consistently large. Its statistic mixes
+distances across rounds in a way Proposition~\ref{prop:decomp} does not resolve,
+so we make no prediction and report what we measure.
+
+\textbf{A 2025 rule.} The other rules are from 2017--2022.
+AlignIns~\cite{xu2025alignins} (CVPR 2025) is implemented in the same pipeline,
+ported from its authors' code, and is part of the re-run (Sec.~\ref{sec:p1}). It keeps a client only if two robust $z$-scores are below
+one: that of the cosine between the update and the current global model
+$\theta_t$ (TDA), and that of the fraction of the update's largest $30\%$ of
+coordinates whose sign agrees with the coordinate-wise majority sign (MPSA). It
+then clips every update to the median norm of the kept ones. The decomposition
+predicts a split. MPSA counts signs and ignores magnitudes. The counter is one
+coordinate, positive for every client, so it agrees with the majority sign, and it
+can move MPSA by at most one over the number of coordinates inspected. TDA is a
+cosine against $\theta_t$, and the counter coordinate of $\theta_t$ grows by
+about $B$ every round, so under the defect TDA is pushed toward a common value for
+all clients. The $z$-score divides by the spread and undoes that compression, so
+the decision is made on what is left over. That remainder varies with
+$B_i/\|d_i\|$, a property of shard size and not of behaviour. The clip bound is
+a norm and is exposed as NormClip's is. The prediction is that AlignIns' TDA
+filter, under unequal shards, selects clients by batch count, and that its MPSA
+filter is not affected. Its campaign cells are \PENDING.
+% Implementation: src/defenses/alignins.py; synthetic check experiments/alignins/selftest.py.
+
+\textbf{Hyperparameters} (\texttt{configs/p1\_full.yaml}, both arms): FLAME noise
+$\lambda=10^{-3}$, trimmed-mean $\beta=0.2$, Krum and Bulyan $f=2$, GradCos
+$\kappa=1.5$, RFA $8$ iterations; none was tuned.
 
 \section{The first campaign and the withdrawn findings}
 \label{sup:retro}
@@ -456,41 +628,15 @@ the Mahalanobis distance of the stamped sub-vector under the benign covariance
 restricted to the trigger columns, read against the same statistic on real benign
 flows; the distance from the stamped block to its nearest real flow; and the same
 nearest-real-flow distance for fully stamped attack vectors over all $39$ features.
-Table~\ref{tab:realize} reports the result on CICIoT2023, the only dataset we
-audit.
-
-\begin{table}[t]
-\caption{\textbf{Joint plausibility of the triggers} (CICIoT2023, full training
-split). $|\sigma|_{\max}$ is the largest marginal deviation---the number usually
-reported. $d_M$ is the joint Mahalanobis distance of the stamped block under the
-benign covariance; benign flows themselves have $d_M^{p99}$ as shown. $d_{NN}$ is
-the distance from a fully stamped attack vector to the nearest real flow, against
-$\rzUnstamped$ for a real attack flow's nearest real neighbour. Marginal and joint
-plausibility are close to unrelated.}
-\label{tab:realize}
-\centering
-\footnotesize
-\begin{tabular}{@{}llrrrr@{}}
-\toprule
-Trigger & Mode & $|\sigma|_{\max}$ & $d_M$ & $d_M^{p99}$ & $d_{NN}$ \\
-\midrule
-Fixed       & $\sigma$, $0.25\times$ & \rzSigFixedQtr & $\rzDMFixedQtr$ & \rzPnnFixed & \rzNNFixedQtr \\
-Fixed       & $\sigma$, $1\times$    & \rzSigFixedOne & $\rzDMFixedOne$ & \rzPnnFixed & \rzNNFixedOne \\
-Fixed       & $\sigma$, $3\times$    & \rzSigFixedThree & $\rzDMFixedThree$ & \rzPnnFixed & \rzNNFixedThree \\
-Fixed       & donor                  & \rzSigFixedDonor & $\textbf{\rzDMFixedDonor}$ & \rzPnnFixed & \rzNNFixedDonor \\
-\midrule
-Statistical & $\sigma$, $0.25\times$ & \rzSigStatisticalQtr & $\textbf{\rzDMStatisticalQtr}$ & \rzPnnStatistical & \rzNNStatisticalQtr \\
-Statistical & $\sigma$, $1\times$    & \rzSigStatisticalOne & $\textbf{\rzDMStatisticalOne}$ & \rzPnnStatistical & \rzNNStatisticalOne \\
-Statistical & $\sigma$, $3\times$    & \rzSigStatisticalThree & $\textbf{\rzDMStatisticalThree}$ & \rzPnnStatistical & \rzNNStatisticalThree \\
-Statistical & donor                  & \rzSigStatisticalDonor & $\textbf{\rzDMStatisticalDonor}$ & \rzPnnStatistical & \rzNNStatisticalDonor \\
-\midrule
-Temporal    & $\sigma$, $0.25\times$ & \rzSigTemporalQtr & $\rzDMTemporalQtr$ & \rzPnnTemporal & \rzNNTemporalQtr \\
-Temporal    & $\sigma$, $1\times$    & \rzSigTemporalOne & $\rzDMTemporalOne$ & \rzPnnTemporal & \rzNNTemporalOne \\
-Temporal    & $\sigma$, $3\times$    & \rzSigTemporalThree & $\rzDMTemporalThree$ & \rzPnnTemporal & \rzNNTemporalThree \\
-Temporal    & donor                  & \rzSigTemporalDonor & $\textbf{\rzDMTemporalDonor}$ & \rzPnnTemporal & \rzNNTemporalDonor \\
-\bottomrule
-\end{tabular}
-\end{table}
+We audit CICIoT2023 only. Below, $|\sigma|_{\max}$ is the largest marginal
+deviation of a stamped block (the number usually reported), $d_M$ its joint
+Mahalanobis distance under the benign covariance, read against the $99$th
+percentile $d_M^{p99}$ of real benign flows, and $d_{NN}$ the distance from a
+fully stamped attack vector to its nearest real flow, against $\rzUnstamped$ for a
+real attack flow's nearest real neighbour. The complete audit, all
+$\rzNrowsArtifact$ trigger/mode/scale rows with every statistic, is a generated
+table in the repository (\path{results/artifact/realizability_ciciot2023.md},
+written by \path{paper/make_numbers.py}).
 
 Three things follow.
 

@@ -81,6 +81,9 @@ scripts/calibrate_defenses.py   held-out hyperparameter protocol
 scripts/realizability_audit.py  stand-alone trigger audit
 run_remediation.sh        prioritised, resumable reviewer-remediation run plan
 results/                  output JSON + tables + plots
+results/artifact/         generated long tables cited by the supplement (written by
+                          paper/make_numbers.py; e.g. realizability_ciciot2023.md, the
+                          full trigger audit). Do not edit by hand.
 ```
 
 ## Federated learning + Flower
