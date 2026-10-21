@@ -114,12 +114,6 @@ H.~Li, Q.~Ye, H.~Hu, J.~Li, L.~Wang, C.~Fang, J.~Shi, {3DFed}: Adaptive and
   Proceedings of the IEEE Symposium on Security and Privacy (S\&P), 2023, pp.
   1893--1907.
 
-\bibitem{zhang2022fldetector}
-Z.~Zhang, X.~Cao, J.~Jia, N.~Z. Gong, {FLDetector}: Defending federated
-  learning against model poisoning attacks via detecting malicious clients, in:
-  Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data
-  Mining (KDD), 2022, pp. 2545--2555.
-
 \bibitem{yang2024learning}
 Y.~Yang, Q.~Li, C.~Nie, Y.~Hong, M.~Pang, B.~Wang, A learning-based attack
   framework to break {SOTA} poisoning defenses in federated learning, in:
@@ -164,15 +158,10 @@ K.~M. Sameera, P.~Vinod, A.~Rocha, K.~A. Rafidha~Rehiman, M.~Conti,
   in federated learning for network intrusion detection systems, arXiv preprint
   arXiv:2504.04367 (2025).
 
-\bibitem{zhang2022neurotoxin}
-Z.~Zhang, A.~Panda, L.~Song, Y.~Yang, M.~W. Mahoney, P.~Mittal, R.~Kannan,
-  J.~Gonzalez, Neurotoxin: Durable backdoors in federated learning, in:
-  Proceedings of the 39th International Conference on Machine Learning (ICML),
-  Vol. 162, 2022, pp. 26429--26446.
-
-\bibitem{xie2021crfl}
-C.~Xie, M.~Chen, P.-Y. Chen, B.~Li, {CRFL}: Certifiably robust federated
-  learning against backdoor attacks, in: Proceedings of the 38th International
-  Conference on Machine Learning (ICML), Vol. 139, 2021, pp. 11372--11382.
+\bibitem{zhang2022fldetector}
+Z.~Zhang, X.~Cao, J.~Jia, N.~Z. Gong, {FLDetector}: Defending federated
+  learning against model poisoning attacks via detecting malicious clients, in:
+  Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data
+  Mining (KDD), 2022, pp. 2545--2555.
 
 \end{thebibliography}

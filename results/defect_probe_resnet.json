@@ -1,0 +1,28 @@
+{
+  "model": "ResNet-18 (CIFAR-style, hand-written), 3x32x32 synthetic inputs, 10 classes",
+  "optimiser": "SGD lr=0.01 momentum=0.9, batch 32",
+  "n_trainable": 11173962,
+  "n_buffer": 9620,
+  "n_bn_layers": 20,
+  "inert_momentum_default": {
+    "max_abs_running_mean": 0.0,
+    "max_abs_running_var": 0.0,
+    "max_abs_eval_logit": 0.0
+  },
+  "prop1": {
+    "B_i": 16,
+    "B_j": 11,
+    "s_i": 0.9988003901327162,
+    "s_j": 0.9990007764869365,
+    "trainable_norm_i": 2.994640796251196,
+    "counter_share_norm_i": 0.6848895137842286,
+    "cos_full": 0.9929610188703336,
+    "cos_trainable": 0.0007292123357256595,
+    "cos_pred": 0.992961018870337,
+    "cos_abs_err": 3.4416913763379853e-15,
+    "dist_rel_err": 1.3634641348780621e-15,
+    "counter_dist": 500.0,
+    "counter_dist_pred": 500,
+    "counter_share_dist": 0.8566540973451279
+  }
+}

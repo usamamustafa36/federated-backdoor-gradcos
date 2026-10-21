@@ -75,16 +75,11 @@ def main():
         # experiment parameters and thresholds, not measurements
         '0.0', '0.1', '0.2', '0.3', '0.05', '0.25', '0.5', '1.0', '1.5', '2.0',
         '3.0', '0.02',
-        # reduced-scale evasion validation; superseded when lane 1a lands (see
-        # the FULL-SCALE CHECK comments in main.tex)
-        '0.99', '0.35', '0.16', '0.33',
-        # a hypothetical in the limitations, deliberately not a measurement
-        '0.85',
-        # donor clean-model BSR screen; source data not yet routed through the
-        # generator (see QA_FINDINGS.md F9)
-        '0.006', '0.000', '0.008', '0.001', '1.000',
-        # FLNET per-seed spread; same
-        '0.98', '0.18',
+        # ResNet-18 probe optimiser (SGD learning rate, momentum)
+        '0.01', '0.9',
+        # (iteration 3: the evasion, FLNET and donor-screen literals left the paper
+        # with the superseded body; their allowlist entries are removed so any
+        # reappearance fails this check.)
     }
     prose = re.sub(r'\\begin\{tabular\}.*?\\end\{tabular\}', '',
                    tex[tex.index(r'\begin{document}'):], flags=re.S)
@@ -148,7 +143,8 @@ def main():
     # numbers.tex leaves unresolved is one marker, plus every literal \PENDING
     # hedge in the prose and captions.
     pend_macros = set()
-    for nf in ('numbers.tex', 'numbers_postfix.tex', 'numbers_defect.tex'):
+    for nf in ('numbers.tex', 'numbers_postfix.tex', 'numbers_defect.tex',
+               'numbers_defect_resnet.tex'):
         try:
             pend_macros |= set(re.findall(
                 r'\\(?:newcommand|providecommand)\{\\([A-Za-z]+)\}\{\\PENDING',

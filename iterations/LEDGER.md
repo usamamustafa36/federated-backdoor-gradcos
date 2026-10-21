@@ -203,3 +203,82 @@ the scaling law (refuted), generality across defenses (4/5 <= 0.03), "the field 
      hand-written ResNet-18 (torchvision broken) for the L=20 share/Prop-1 check, and a small real
      FL run (MLP+BN or ResNet-8 on a CIFAR-10 subset; check data/ for CIFAR). Also put survey
      evidence (repo, commit, file:line) in the replication package.
+
+## Iteration 3 - 2026-10-21 - Rewrite Secs. 4-9 around the counter hazard; mechanisms + retro section; ResNet-18 geometry probe; harvest P1 (70/960)
+
+- **Reviewer score before: 3/10, REJECT** (iteration 2: right front matter, old body with
+  244 void-lane macros, no outcome evidence).
+- **Blockers found (ranked):**
+  1. **The attack may not implant at P1 scale.** In every completed P1 rule (FLAME, FLTrust,
+     FoolsGold, Dirichlet, seeds 42-46) attacked BSR ~= the rule's own clean-run BSR
+     (0.02-0.03), in both arms. Sep-5 pilot FedAvg at the same scale (5 rounds) had BSR 0.04
+     (`results/_pilot_postfix_sep5/integ_*fedavg*`). If P1's FedAvg confirms it, P1's BSR
+     columns are uninformative by construction and the paper can make NO backdoor-robustness
+     claim. P1 FedAvg Dirichlet is the last rule in the queue's Dirichlet block (~10 h after
+     P1 start). The paper now says this explicitly (Sec. 6.2, Sec. 8 limitations).
+  2. P1 still ~7% done; 9/12 rules and all of IID pending. Interim prose is marked
+     `% RE-CHECK` in main.tex.
+  3. Outcomes measured on one architecture (L=1). Geometry now verified on ResNet-18 (below),
+     outcomes not.
+  4. Survey artefact (commit hashes, file:line) still missing; FLAME hypothesis (ordering
+     preserved by the affine map) unverified; donor clean-model BSR screen not generated.
+- **What I changed:**
+  - `paper/main.tex` (backup `paper/main.tex.pre-body-rewrite.bak`; old body moved verbatim to
+    `paper/_superseded_body.tex`, not \input): new Sec. 4 Experimental Setup at the P1 scale
+    (CPU reductions and their consequences stated), Sec. 5 "Aggregation rules and what the
+    decomposition predicts" with Table `tab:rules` (12 rules x decision statistic x predicted
+    exposure; FedAvg/median/trimmed mean = arms-identical negative controls, verified in code:
+    they never call `self.sig`), Sec. 6 Results: 6.1 transmitted geometry + Fig.
+    `fig:geometry`; 6.2 controlled A/B (Table `tab:p1` + new Table `tab:p1flag` for FPR/DR of
+    the 7 excluding rules; interim results paragraph; explicit BSR-floor paragraph); 6.3
+    Mechanisms: **Corollary 3** (FLTrust excludes no one under the defect, cos >= s*kappa-(1-s);
+    rescaling -> B0/Bi) with proof, FoolsGold history-share bound and residue-amplification
+    argument, FLAME null with a stated (unverified) ordering hypothesis, distance rules and
+    negative controls PENDING; 6.4 "What the counter did to an earlier version of this study"
+    (FLTrust never excludes / FLTrust CA cost / FoolsGold bimodality / colluder cosine ~1 and
+    the evasion = counter artefacts, withdrawn; FLAME FPR survives). Sec. 7 realizability kept,
+    salience/FLNET references removed, hand-typed donor-screen literals removed (\PENDING).
+    Sec. 8 Discussion (why it survives review, recommendations, limitations incl. attack
+    strength). Intro roadmap, a 5th contribution bullet, related-work "Evaluating robust
+    aggregation" paragraph and conclusion rewritten. GradCos demoted to "one more cosine rule".
+    All 244 old-lane macro refs and all old figures (fig_dr_fpr, fig_tradeoff, fig_dose,
+    fig_evasion) are gone.
+  - `paper/analyse_postfix.py`: + `\pfDiagNormInfl{Dir,Iid}` (=1/sqrt(1-s), norm inflation for
+    NormClip/FLAME clip+noise), `\pfCellsDone`, `\pfCellsTarget`.
+  - `paper/make_fig_p1.py` (new) -> `paper/figs/fig_p1_geometry.pdf` (per-round cosine full vs
+    trainable, buffer norm/dist share; *.pdf is gitignored, regenerate with the script or
+    `make numbers`). Makefile `numbers` target runs both scripts.
+  - `experiments/counter_defect/probe_resnet.py` (new; hand-written CIFAR ResNet-18, CPU, 3 min,
+    2 threads) -> `results/defect_probe_resnet.json`, `paper/numbers_defect_resnet.tex`
+    (\dr macros); Table `tab:probe` now has a ResNet-18 column; new paragraph in Sec. 3.
+  - `paper/tools/check_manuscript.py`: reads numbers_defect_resnet.tex; removed the obsolete
+    allowlisted literals (0.99, 0.35, 0.16, 0.33, 0.85, donor screen, FLNET); added SGD 0.01/0.9.
+- **Evidence (generated):** P1 (`results/postfix_p1`, 70 cells, Dirichlet s42-46): FoolsGold
+  clean CA defect 0.584 vs fixed 0.712, diff +0.129 [0.031, 0.226], p_H 0.065 (n=5), clean FPR
+  0.800 vs 0.436; FLTrust defect DR=FPR=0 exactly (Corollary 3), fixed clean FPR 0.592
+  [CI 0.451, 0.733] p_H 0.001, attacked DR 0.46 / FPR 0.52; FLAME no change (clean FPR 0.396 both
+  arms, CA diff -0.000). Diagnostics: buffer norm share 0.972, dist share 0.957, cos full 0.924 vs
+  trainable 0.142, norm inflation 6.0. ResNet-18 probe: L=20, 11,173,962 trainable, buffer share
+  99.9%, counter 68.5% of ||d_i||^2 and 85.7% of ||d_i-d_j||^2 (=500 = 20*(16-11)^2 exactly), cos
+  full 0.993 vs trainable 0.0007, Prop. 1 error 3.4e-15, inert under default momentum.
+- **Build/check:** latexmk rc 0, 16 pp; check_manuscript: all PASS except the gate (397 = 390 pf
+  macro refs + 7 literal \PENDING, all P1 or the donor screen).
+- **Running jobs left for the next agent:** P1 untouched, launcher PID **448486**, log
+  `results/postfix_p1/campaign.log`, 70/960 cells at 06:55 (started ~03:43). ETA ~48 h total.
+  Harvest: `python3 paper/analyse_postfix.py && python3 paper/make_fig_p1.py && cd paper && make`.
+- **Score after: 4/10, REJECT** (one coherent paper now; analytic core extended with a
+  mechanism corollary that the data confirm exactly; still no complete outcome evidence and a
+  possibly null attack).
+- **Top 3 priorities for the next iteration:**
+  1. **Resolve the attack-strength question** as soon as P1's FedAvg cells land
+     (`grep fedavg results/postfix_p1/campaign.log`). If FedAvg BSR ~ clean floor: design a
+     CPU-sized P2 with an attack that implants under FedAvg (raise p to 0.3-0.5 and/or m to 0.3,
+     or more rounds; calibrate on FedAvg alone with 1-2 seeds first), queue it to start when P1
+     frees lanes, and cut BSR claims from P1. Do not exceed ~12 cores.
+  2. **Harvest P1** and re-check every `% RE-CHECK` sentence (Sec. 4 statistics, Sec. 6.2
+     results, Sec. 6.3 FoolsGold/FLTrust, conclusion); retire the \PENDING for Krum/Bulyan/RFA
+     (Corollary 2 test: IID dist share should collapse) and negative controls; then the abstract.
+  3. Cheap analytic/offline work while P1 runs: verify the FLAME ordering hypothesis offline
+     (replay HDBSCAN on synthetic or saved updates under the affine map of Eq. 2, CPU seconds);
+     survey artefact with repo URLs + commit hashes + file:line in the replication package;
+     a small federated ResNet/CNN-with-BN outcome run only once cores free up.

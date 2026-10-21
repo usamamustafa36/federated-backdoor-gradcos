@@ -210,6 +210,16 @@ def main():
                 # 2(1-s) of the buffer cosine; evaluated at the median share s.
                 band = 2.0 * (1.0 - float(np.median(vals))) if vals else float("nan")
                 lines.append(f"\\providecommand{{\\pfDiagCosBand{PNAME[part]}}}{{{fmt(band)}}}")
+                # Eq. (norm): ||d_i|| / ||u_i|| = 1/sqrt(1-s). A rule that clips to, or
+                # adds noise proportional to, a norm statistic over the full vector
+                # sets it this many times larger than the trainable update's norm.
+                infl = 1.0 / math.sqrt(1.0 - float(np.median(vals))) if vals else float("nan")
+                lines.append(f"\\providecommand{{\\pfDiagNormInfl{PNAME[part]}}}"
+                             f"{{{'%.1f' % infl if vals else chr(92) + 'PENDING'}}}")
+    # Campaign progress, so the manuscript can say how much of P1 it rests on.
+    n_cells = sum(len(s) for arms in runs.values() for s in arms.values())
+    lines.append(f"\\providecommand{{\\pfCellsDone}}{{{n_cells}}}")
+    lines.append("\\providecommand{\\pfCellsTarget}{960}")
     if not args.no_tex:
         with open(OUT_TEX, "w") as f:
             f.write("\n".join(lines) + "\n")

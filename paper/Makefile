@@ -16,7 +16,7 @@ ROOT    = ..
 
 all: main.pdf
 
-main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_defect.tex $(wildcard figs/*)
+main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_defect.tex numbers_defect_resnet.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
@@ -29,6 +29,8 @@ numbers:
 	cd $(ROOT) && $(PY) -m experiments.make_tables
 	cd $(ROOT) && $(PY) paper/make_numbers.py
 	cd $(ROOT) && $(PY) paper/make_figs.py
+	cd $(ROOT) && $(PY) paper/analyse_postfix.py
+	cd $(ROOT) && $(PY) paper/make_fig_p1.py
 	$(LATEXMK) main.tex
 
 # The submission gate. Nothing carrying a \PENDING may go to a venue.
