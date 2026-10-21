@@ -26,7 +26,11 @@ R = lambda *p: os.path.join(ROOT, "results", *p)
 OUT = os.path.join(ROOT, "paper", "numbers_calib6.tex")
 TAIL = 5
 SEEDS = {42: "FortyTwo", 43: "FortyThree", 44: "FortyFour", 45: "FortyFive",
-         46: "FortySix"}
+         46: "FortySix", 47: "FortySeven", 48: "FortyEight", 49: "FortyNine",
+         50: "Fifty", 51: "FiftyOne"}
+# The stopped P1/P2 campaigns ran seeds 42-46 only; their reference columns are
+# "not run" (n/r) for later seeds rather than pending.
+P12_SEEDS = {42, 43, 44, 45, 46}
 # run_sweep filename suffix (between "_fixed" and "_s<seed>") -> macro stem
 VARIANTS = {"_me5_sm": "SmEfive", "_me8_sm": "SmEeight", "_me10_sm": "SmEten", "_me15_sm": "SmEfifteen",
             "_ms80_sm": "SmSeighty", "_me5_ms80_sm": "SmSeighty",
@@ -87,6 +91,10 @@ def main():
                 P(f"MatRowsMin{w}", f"{min(r['matched_rows']):,}".replace(",", "{,}"))
     # --- P2 attack (random selection) and clean floor, FedAvg, per seed -------
     for s, w in SEEDS.items():
+        if s not in P12_SEEDS:
+            for k in ("RandBSR", "RandCA", "CleanBSR", "CleanCA"):
+                P(f"{k}{w}", "n/r")
+            continue
         c = cell(R("postfix_p2", f"p2full_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me5_s{s}.json"))
         P(f"RandBSR{w}", f3(c["bsr"] if c else None))
         P(f"RandCA{w}", f3(c["ca"] if c else None))
@@ -108,8 +116,10 @@ def main():
             c = found.get((stem, s))
             if c is None:
                 if stem in REQUIRED or any(k[0] == stem for k in found):
+                    # run_calib.sh queued E_m=5/10 on seeds 42-46 only, E_m=15 on all ten
+                    planned = stem == "SmEfifteen" or s in P12_SEEDS
                     for k in ("CA", "BSR", "Implant", "Share"):
-                        P(f"{stem}{k}{w}", "\\PENDING")
+                        P(f"{stem}{k}{w}", "\\PENDING" if planned else "n/r")
                 continue
             bs.append(c["bsr"])
             P(f"{stem}CA{w}", f3(c["ca"])); P(f"{stem}BSR{w}", f3(c["bsr"]))

@@ -600,3 +600,75 @@ finished here.)
      into make_numbers_calib6.py.
   3. If the GPU is back: P3 on CUDA, ideally at more rounds if the horizon probe says onset is
      late; then FedAvg/FLTrust (Corollary 3 under the copy).
+
+## Iteration 8 - 2026-10-21 - Hostile full read; story made coherent after the withdrawals; FLTrust corollary restated exactly in shares; history lemma; threat model; BN related work
+
+- **Environment:** GPU still zombie (torch "CUDA unknown error" at 15:05). CPU at budget with
+  iteration 6's calibration (9 run_sweep lanes) + iteration 7's horizon waiter; I launched no
+  training. One few-second, 1-thread probe re-run (below).
+- **Reviewer score before: 4/10, REJECT** (hostile top-venue read of the whole main.tex).
+- **Blockers found (ranked):**
+  1. No rule outcome under a working attack (unchanged; blocked on calibration/P3).
+  2. **The story contradicted itself after iterations 5-7.** Discussion said the counter makes
+     FoolsGold "exclude most of the cohort" (iteration 6 showed that is FoolsGold's own
+     assumption failing, in both arms); the retro list kept "FoolsGold bimodality ... fixed-arm
+     spread is a fraction" (withdrawn P1 data); FLTrust/FLAME interim cells were presented as
+     settled although they ran on the round-1-defective engine; the FoolsGold mechanism
+     paragraph called withdrawn numbers "consistent with this reading"; Setup/Limitations/
+     calibration caption still called E_m=5 "the campaign's attack, calibrated on one seed".
+  3. **Corollary 3 (FLTrust) was imprecise:** its hypothesis cos(b_i,b_0) >= kappa was never
+     connected to anything measurable, and "threshold just over one half, far below the shares we
+     measure" compared against the *clients'* shares although the server's root update has only
+     B_0=2 batches. Contribution bullet misquoted Corollary 1 ("twice the trainable share").
+     FoolsGold history bound was loose and unproved inline.
+  4. Threat model scattered across a paragraph that mixed P1/P2 and the re-run; no mention that
+     the counter is a value every (malicious) client sets for itself.
+  5. Related work missed the BatchNorm-in-FL line (Hsieh 2020, FBN 2024, Hybrid BN ICML 2025)
+     and the heterogeneity-robustness line (bucketing, ICLR 2022).
+  6. Page count 19 -> 21 now (JISA has no hard cap; trimming is a later job once results land).
+- **What I changed (backup `paper/main.tex.pre-iter8.bak`):**
+  - **Corollary 3 rewritten:** with q = counter share of the squared norm (client q_i, server
+    q_0), cos(d_i,g_0) >= sqrt(q_i q_0) - sqrt((1-q_i)(1-q_0)), positive **iff q_i+q_0 > 1**;
+    exact rescaling identity ||g_0||/||d_i|| = (B_0/B_i) sqrt(q_i/q_0). Proof via the two-block
+    split (counter vs rest). No data/partition/running-stat assumption.
+  - `experiments/counter_defect/probe_defect.py` now also measures a B_0=2 server update
+    (computed after the existing clients, so all earlier \df numbers are byte-identical):
+    q_0 = 63.7%, q_i = 86.5%, bound 0.521, measured full cosine 0.947 vs trainable 0.127
+    (`results/defect_probe.json` "fltrust"; macros \dfFlt*). Synthetic inputs, stated.
+  - New Eq. (bufcos): buffer cosine >= sqrt(g_i g_j) - sqrt((1-g_i)(1-g_j)) with g = counter share
+    of buffers; paragraph after Corollary 1 on when compression changes a decision (thresholds,
+    varying shares) and when it need not (ordering preserved).
+  - **Lemma 1 (Histories stay compressed):** 1 - s_i(t) <= eta^2/(eta^2 + L B_min^2) for all t,
+    with proof (tighter than the old (eta+rho)^2 form, no running-stat assumption).
+  - Coherence: Discussion, retro list (FoolsGold item replaced by an honest "two defects and one
+    violated assumption" entry; FLTrust/FLAME items marked interim), "Results so far" provenance
+    note, Conclusion, contributions bullets 3-4, Limitations (scale/attack), calibration caption
+    and E_m=5 wording, FoolsGold mechanism paragraph now cites only the copy-ON replay
+    (\raRep... FPR 0.900 defect vs 0.700 fixed) and defers to the diagnostic.
+  - **Threat model** paragraph (goal / capabilities / knowledge / budget) + "The counter is
+    attacker-controlled" (analytic consequences for Krum and FLTrust, explicitly not measured);
+    limitation extended.
+  - Related work: +4 refs, all web-verified today (hsieh2020quagmire PMLR 119; guerraoui2024fbn
+    arXiv:2405.14670; chen2025hybridbn PMLR 267 pp. 9500-9515; karimireddy2022bucketing ICLR).
+  - **Harvest prep:** `paper/make_numbers_calib6.py` now covers seeds 42-51; Table tab:seedcal has
+    rows 47-51 (E_m=15 PENDING; columns never planned print "n/r", caption says why).
+  - **New result picked up from a finished cell:** share-matched s45 at E_m=5 does NOT implant
+    (BSR 0.012; random attackers with 23.5% share had 0.861). Text now says E_m=5 fails on
+    44, 45 and 46.
+- **Build/check:** latexmk rc 0, 21 pp; check_manuscript all PASS except the gate
+  (465 = 452 macro refs {pf 434, cs 18} + 13 literal; +1 literal = FLTrust re-run test; cs rose
+  because the table now shows the s45/s47-51 cells that are still running).
+- **Running jobs (not mine, untouched):** iteration 6 calibration (9 lanes, ETA ~17:30) + P3
+  auto-launcher (`results/calib_iter6/launcher.log`, still waiting at 15:07); iteration 7
+  horizon waiter (`results/calib_iter7/horizon.log`, ETA ~23:00).
+- **Score after: 4/10, REJECT.** The manuscript is now internally consistent, its analytic core
+  (Prop. 1, Cor. 1-3, Lemma 1) is exact and stated in measurable quantities, and the threat model
+  is explicit; but acceptance still hinges on outcome evidence that does not exist yet.
+- **Top 3 priorities for the next iteration:**
+  1. Harvest the calibration (~17:30): `python3 paper/make_numbers_calib6.py` fills tab:seedcal
+     directly; settle the s49/s51 benign-scarcity test and the "reads attacked BSR only on implanting
+     seeds" PENDING; check launcher.log for the >=8/10 rule outcome.
+  2. If P3 launches, verify its first FedAvg/FLTrust cells (Corollary 3 again: DR=FPR=0 in the
+     defect arm; also log the server's q_0 on real data — add it to fltrust.py's metrics, cheap).
+  3. Harvest the horizon probe (~23:00); then, once results land, trim to ~18 pp (candidates:
+     merge tab:calib into an appendix, shorten Sec. 4 "Round-one aliasing").
