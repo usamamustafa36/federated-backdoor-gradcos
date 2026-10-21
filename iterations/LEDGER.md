@@ -540,3 +540,63 @@ finished here.)
      clients undo it). A mechanism here is a reviewer-proof calibration story.
   3. If the GPU is back, move P3 to CUDA; then harvest P3 FedAvg/FLTrust (Corollary 3 under
      the copy) and point `make numbers` at postfix_p3 (`--target 1040`).
+
+## Iteration 7 - 2026-10-21 - Seed 46 explained as a late, unstable onset (censored at E_m=15), not resistance; composition ruled out; horizon probe armed
+
+- **Reviewer score before: 4/10, REJECT.** Blockers unchanged from iteration 6: no rule
+  outcome under a working attack; the calibration rule (>= 8/10 seeds implant) rests on an
+  unexplained seed-46 failure; P3 not launched; all \pf A/B macros PENDING.
+- **Environment:** GPU still zombie at 14:52 (nvidia-smi "Unknown Error", torch "CUDA unknown
+  error"). CPU load ~12 from iteration 6's calibration; I added no training load while it runs.
+- **Blockers found (ranked):** (1) as before, no outcome evidence; (2) "seed 46 resists" was
+  an unexplained claim the whole calibration rule depends on; (3) the 15-round CPU horizon and
+  the last-5-round criterion interact: a jump at round >= 14 cannot register as an implant.
+- **What I did:**
+  - `experiments/calib_iter6/s46_probe.py` -> `results/calib_iter6/s46_probe.json` (data
+    only, no training): recomputes exactly what the share-matched attackers poison on seeds
+    42-51. Poisoned rows 705-812 on every seed; poisoned source classes cover >= 96.8% of the
+    BSR test set; DDoS is the majority poisoned class everywhere (s46 61.7%, implanting seeds
+    >= 67.9%). **Composition does not single s46 out.** Trigger facts: 0 training rows within
+    L_inf 0.5 sigma of the trigger; 3 of 5 stamped values lie outside the column's training range
+    (Header_Length -1.5 < min -1.37; syn 2.0 > max 1.80; ack -1.0 < min -0.32), so honest
+    clients never train against the trigger and the backdoor is an extrapolation. Only outlier:
+    s46 attackers hold 46 genuine benign rows vs 260-501 on s42-44. **Pre-registered test:**
+    s49 (81) and s51 (1) attackers are also benign-poor; if benign scarcity is causal, their
+    E_m=15 cells (running) fail. If they implant, the explanation is refuted.
+  - **Onset dynamics** (from existing calibration histories): implants are abrupt (floor ->
+    >0.5 in one round), onset round 8-12 in the 6 implanting cells. s46: onset round 12
+    (E_m=10, falls back to 0.0 next round, final round 0.504) and 14 (E_m=15, final 0.115).
+    E_m=15 at s46 is right-censored by the 15-round horizon; E_m=10 is a genuine instability.
+    More E_m does not bring the s46 onset forward -> near-threshold, noise-decided.
+  - Paper (backup `paper/main.tex.pre-iter7.bak`): seed-46 paragraph in Sec. setup ("A
+    seed-robust adversary") rewritten with all of the above as \cs macros (new block in
+    `paper/make_numbers_calib6.py`: \csOnset*, \csSix*, \csTrig*, \csPois*, \csMalBenign*);
+    two literal \PENDING for the s49/s51 test and the horizon probe.
+  - **Horizon probe armed** (`experiments/calib_iter7/run_horizon.sh`,
+    `configs/calib7_horizon.yaml` = calib6_full with out_dir results/calib_iter7, separate
+    file name so the P3 launcher's `pgrep calib6_full.yaml` is not blocked). Waits for the
+    calib6 processes to exit, then runs s46 E_m=15 and s44 E_m=5 for 40 rounds (2 lanes, 1
+    thread; CUDA if available). **Pre-registered:** censoring holds for a cell if mean BSR over
+    rounds 36-40 > 0.5. Sanity check on harvest: rounds 1-15 should reproduce the 15-round cells.
+- **Build/check:** latexmk rc 0, 19 pp; check_manuscript all PASS except the gate
+  (456 = 444 macro refs {pf 434, cs 10} + 12 literal PENDING; +2 literal from this iteration).
+- **Running jobs:**
+  - Iteration 6 calibration (unchanged, ~10 lanes, ETA ~17:30) and its P3 auto-launcher
+    (`results/calib_iter6/launcher.log`).
+  - **Horizon probe waiter PID 571764** (log `results/calib_iter7/horizon.log`, per-cell logs
+    `results/calib_iter7/log_h_*`). Starts after the calibration; ETA ~5.5 h after start on CPU
+    (s46 E_m=15 x 40 rounds), so ~23:00. Outputs
+    `results/calib_iter7/calib7h_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me{15,5}_sm_s{46,44}.json`.
+    If P3 launches on CPU (5 lanes) the total is 7 lanes, within budget.
+- **Score after: 4/10, REJECT.** The calibration story is now mechanistic and falsifiable
+  instead of "s46 is unexplained", but no defended outcome exists yet.
+- **Top 3 priorities for the next iteration:**
+  1. Harvest calibration (launcher.log; regenerate numbers_calib6.tex). Check the s49/s51
+     test above and replace its \PENDING with the verdict (add macros for s47-51 to the
+     generator; SEEDS currently stops at 46). If < 8/10 implant and the failures are late
+     onsets, the fix is more rounds (GPU) rather than more E_m: say so and redesign the rule
+     (e.g. implant = BSR > 0.5 over the last 5 of R rounds with R chosen from the horizon probe).
+  2. Harvest the horizon probe (~23:00) and settle the censoring \PENDING; wire its two cells
+     into make_numbers_calib6.py.
+  3. If the GPU is back: P3 on CUDA, ideally at more rounds if the horizon probe says onset is
+     late; then FedAvg/FLTrust (Corollary 3 under the copy).

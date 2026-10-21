@@ -118,6 +118,56 @@ def main():
         if bs:
             P(f"{stem}BSRMin", f3(min(bs))); P(f"{stem}N", str(len(bs)))
 
+    # --- implant dynamics over the calibration cells (iteration 7) ----------------
+    imps, maxr, lastr = [], {}, {}
+    for (stem, s), c in found.items():
+        if c is not None and c["bsr"] > 0.5 and c["imp"] is not None:
+            imps.append(c["imp"])
+    for stem, w in (("SmEten", "Ten"), ("SmEfifteen", "Fifteen")):
+        p = R("calib_iter6", f"calib6_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed"
+                             f"{[k for k, v in VARIANTS.items() if v == stem][0]}_s46.json")
+        if os.path.exists(p):
+            b = json.load(open(p))["history"]["bsr"]
+            P(f"SixMaxRound{w}", f3(max(b))); P(f"SixLastRound{w}", f3(b[-1]))
+            P(f"SixRoundsAbove{w}", str(sum(x > 0.5 for x in b)))
+        else:
+            for k in ("MaxRound", "LastRound", "RoundsAbove"):
+                P(f"Six{k}{w}", "\\PENDING")
+    P("OnsetMin", str(min(imps)) if imps else "\\PENDING")
+    P("OnsetMax", str(max(imps)) if imps else "\\PENDING")
+    P("OnsetN", str(len(imps)))
+
+    # --- data-only probe of what the attackers poison (iteration 7) ------------
+    # results/calib_iter6/s46_probe.json <- experiments/calib_iter6/s46_probe.py
+    pp = R("calib_iter6", "s46_probe.json")
+    if os.path.exists(pp):
+        pr = json.load(open(pp))
+        st = pr["trigger_column_stats"]
+        out_rng = [k for k, v in st.items()
+                   if not (v["min"] <= v["trigger_value"] <= v["max"])]
+        P("TrigNcols", str(len(st))); P("TrigNoutRange", str(len(out_rng)))
+        P("TrigNearRows", str(sum(pr["near_trigger_rows_per_class"])))
+        rows = pr["seeds"]
+        npois = [r["n_poisoned"] for r in rows]
+        P("PoisRowsMin", str(min(npois))); P("PoisRowsMax", str(max(npois)))
+        P("PoisCoverMin", pct(min(r["bsr_test_coverage"] for r in rows)))
+        b = pr["class_names"].index("Benign")
+        mb = {r["seed"]: r["mal_class_counts"][b] for r in rows}
+        P("MalBenignFortySix", str(mb[46]))
+        others = {s: v for s, v in mb.items() if s in (42, 43, 44)}
+        P("MalBenignImplMin", str(min(others.values())))
+        P("MalBenignImplMax", str(max(others.values())))
+        P("MalBenignFortyNine", str(mb[49])); P("MalBenignFiftyOne", str(mb[51]))
+        dd = {r["seed"]: r["poisoned_by_class"][pr["class_names"].index("DDoS")] / r["n_poisoned"]
+              for r in rows}
+        P("PoisDDoSFortySix", pct(dd[46]))
+        P("PoisDDoSImplMin", pct(min(dd[s] for s in (42, 43, 44))))
+    else:
+        for k in ("TrigNcols", "TrigNoutRange", "TrigNearRows", "PoisRowsMin", "PoisRowsMax",
+                  "PoisCoverMin", "MalBenignFortySix", "MalBenignImplMin", "MalBenignImplMax",
+                  "MalBenignFortyNine", "MalBenignFiftyOne", "PoisDDoSFortySix", "PoisDDoSImplMin"):
+            P(k, "\\PENDING")
+
     # --- FoolsGold diagnostic --------------------------------------------------
     for var, vstem in (("base", "Base"), ("norm0", "NormOff"), ("hist0", "HistOff")):
         path = R("foolsgold_diag", f"fgdiag_{var}_trainable_s42.json")

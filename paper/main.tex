@@ -660,8 +660,40 @@ At $E_m=5$ the backdoor still fails to implant on seeds $44$ and $46$. More loca
 work rescues seed $44$ (BSR $\csSmEtenBSRFortyFour$ at $E_m=10$,
 $\csSmEfifteenBSRFortyFour$ at $E_m=15$) but not seed $46$ ($\csSmEtenBSRFortySix$ and
 $\csSmEfifteenBSRFortySix$, with single rounds above $0.5$ that the next round
-undoes). Whether this attack implants therefore depends on the partition beyond the
-attackers' share, and no single $E_m$ we tried makes it implant on every seed. The
+undoes). No single $E_m$ we tried makes the attack implant on every seed.
+
+What seed $46$ does differently is mostly a matter of timing, as far as we can
+tell. Where the backdoor implants, it does so abruptly: BSR sits at the clean
+floor for several rounds and then jumps past $0.5$ within one round, at round
+$\csOnsetMin$--$\csOnsetMax$ in the $\csOnsetN$ implanting cells of
+Table~\ref{tab:seedcal}. On seed $46$ the jump comes at round
+$\csSmEtenImplantFortySix$ ($E_m=10$) or $\csSmEfifteenImplantFortySix$ ($E_m=15$),
+peaks at $\csSixMaxRoundTen$ and $\csSixMaxRoundFifteen$, and the final round
+reads $\csSixLastRoundTen$ and $\csSixLastRoundFifteen$. With $15$ rounds and a
+last-five-round criterion, a jump at round $14$ or later cannot register as an
+implant even if it holds, because at most two of the five rounds in the window
+can be high. The $E_m=15$ reading on seed $46$ is therefore right-censored. The
+$E_m=10$ reading is not: there the jump came at round $12$ and the next round fell
+back to the floor. More local work also does not bring the jump forward on this
+seed ($E_m=15$ is no better than $E_m=10$). Our reading is that the attack sits
+near a threshold on seed $46$, where round-to-round noise decides the outcome, not
+that the seed is immune. The poisoned
+data do not single the seed out. Recomputing the poisoning exactly
+(\texttt{experiments/calib\_iter6/s46\_probe.py}), the attackers stamp
+$\csPoisRowsMin$--$\csPoisRowsMax$ rows on every seed $42$--$51$. The classes they
+poison cover at least $\csPoisCoverMin$ of the BSR test set, and DDoS is the
+majority source class everywhere (seed $46$: $\csPoisDDoSFortySix$; implanting
+seeds: at least $\csPoisDDoSImplMin$). No training row of any class lies within
+$0.5\sigma$ of the trigger on all $\csTrigNcols$ stamped columns, and
+$\csTrigNoutRange$ of the $\csTrigNcols$ stamped values fall outside the range
+that column takes in the training data. Honest clients therefore never train
+against the trigger directly, and the model has to extrapolate to it. One
+feature does stand out: seed $46$'s attackers hold $\csMalBenignFortySix$ genuine
+benign rows, against $\csMalBenignImplMin$--$\csMalBenignImplMax$ on seeds
+$42$--$44$. Seeds $49$ and $51$ are the test of that explanation, since their
+attackers hold $\csMalBenignFortyNine$ and $\csMalBenignFiftyOne$ (their $E_m=15$
+cells are \PENDING). A $40$-round re-run of seed $46$ at $E_m=15$ and seed $44$ at
+$E_m=5$ tests the censoring reading (\PENDING). The
 re-run fixes $E_m$ from a ten-seed calibration at $E_m=15$ before any defended cell
 runs, and reads a rule's attacked BSR only on seeds where FedAvg implants
 (last-five-round BSR above $0.5$), reporting the excluded seeds (\PENDING).
