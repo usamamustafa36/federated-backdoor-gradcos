@@ -797,16 +797,26 @@ on which it is positive and negative, and the exact two-sided $p$ of the paired
 sign-flip permutation test of the mean difference, which enumerates all $2^n$
 sign assignments and assumes no normality, only that without an effect each
 seed's difference is symmetric about zero~\cite{ernst2004permutation}.
-The 95\% interval inverts the same test: it is the set of shifts in $[-1,1]$ the test
-does not reject, so it stays inside the feasible range of a rate difference and
-excludes zero exactly when $p\le 0.05$. (A $t$-interval does neither: at $n=5$ it
-put an exclusion-rate difference above one.) $p$-values are Holm-corrected~\cite{holm1979}
-across the thirteen rules sharing a partition, attack setting and metric ($p_H$);
-of the $\pfTestsRun$ tests run so far, $\pfSigFamily$ survive that correction and
-$\pfSigGlobal$ survive Holm over all of them. The test's resolution is the seed count:
-the smallest attainable $p$ is $2^{1-n}$, which is $\pfTestableTen$ at ten seeds and
-above $0.05$ at five or fewer, so a cell is read for significance only at $n\ge 6$
-(\texttt{paper/analyse\_postfix.py}). Every number in
+The 95\% interval inverts the same test (the shifts in $[-1,1]$ it does not reject),
+so it stays inside the feasible range of a rate difference and excludes zero exactly
+when $p\le 0.05$. The smallest attainable $p$ is $2^{1-n}$ ($\pfTestableTen$ at ten
+seeds, above $0.05$ at five or fewer), so a cell is read for significance only at
+$n\ge 6$.
+\emph{Confirmatory and exploratory analyses are separate.} Before most cells ran we
+registered (\path{iterations/PREREG_P3.md}, with a hash manifest of the
+$\pfPreManifestN$ result files then on disk) the comparisons the theory signs: primary,
+FLTrust's FPR (clean) and DR (attacked) in both partitions, lower in the defect arm
+(Corollary~\ref{cor:fltrust}); secondary, the clean accuracy of NormClip and FLAME,
+lower in the defect arm because~\eqref{eq:norm} inflates their noise scale. Each is
+tested one-sided, Holm within its family ($\pfPrePrimaryTotal$ and $\pfPreSecondaryTotal$; floor $\pfPreFloorTen$ at ten
+seeds). $\pfPrePartialN$ rest partly on seeds $42$--$46$, read before registration;
+the other $\pfPreBlindN$ are blind and are also Holm-corrected alone. So far
+($\pfPreFinal$) $\pfPrePrimarySupported$ primary and $\pfPreSecondarySupported$
+secondary hypotheses are supported. All else is exploratory: two-sided, Holm across
+the thirteen rules sharing a partition, attack setting and metric ($p_H$)~\cite{holm1979};
+of its $\pfTestsRun$ tests, $\pfSigFamily$ survive that and
+$\pfSigGlobal$ survive Holm over all of them (\texttt{paper/analyse\_postfix.py}).
+Every number in
 Secs.~\ref{sec:setup}--\ref{sec:retro} is a macro written by that script from the
 result files; a cell that has not run prints as \PENDING. At the time of writing
 $\pfCellsDone$ of the $\pfCellsTarget$ cells have completed.
@@ -910,7 +920,9 @@ iterations)~\cite{pillutla2022rfa}. Krum and Bulyan are given the true number of
 malicious clients, $f=2$. Bulyan's requirement $n\ge 4f+3$ cannot be met at
 $n=10$, so its $f$ is clamped to what the cohort supports, and we report it as
 run. By Corollary~\ref{cor:dist}, all three read the counter exactly when batch
-counts differ: under Dirichlet partitions, not under our equal IID shards.
+counts differ: under Dirichlet partitions, and in every attacked run, since a
+malicious client that trains $E_m=15$ epochs reports about $15$ times an honest
+client's count; only clean IID runs leave it out.
 
 \textbf{Norm rules.} NormClip~\cite{sun2019} clips each update to the cohort's
 median norm and adds Gaussian noise proportional to it. By Eq.~\eqref{eq:norm},
@@ -1425,12 +1437,17 @@ negative: an exposed input does not imply an affected decision, which is why the
 outcome has to be measured rule by rule.
 
 \textbf{Distance rules under unequal shards.} Corollary~\ref{cor:dist} predicts
-that Krum, Bulyan and RFA are untouched by the counter in our IID runs, where all
+that Krum, Bulyan and RFA are untouched by the counter in our clean IID runs, where all
 clients run the same number of batches, and exposed under Dirichlet partitions,
 where each Krum score acquires $L\sum_j(B_i-B_j)^2$ over the client's neighbours
-and so favours clients whose shard size is typical. The paired comparison tests
-both halves of the prediction, IID as the null and Dirichlet as the exposed case
-(Tables~\ref{tab:p1} and~\ref{tab:p1flag}). \PENDING
+and so favours clients whose shard size is typical. In attacked runs the attackers'
+$E_m$-fold counter is a batch-count outlier in both partitions, so the defect arm
+hands these rules a detector that a falsified counter would remove; their trainable
+updates are outliers too (in the calibration runs their median trainable norm is
+$\csMalNormRatioMin$--$\csMalNormRatioMax$ times the honest one), so we predict no
+sign for the attacked difference and treat it as exploratory. Clean IID cells are the
+null, clean Dirichlet cells the exposed case (Tables~\ref{tab:p1}
+and~\ref{tab:p1flag}). \PENDING
 % RETIRES WITH: P3 campaign, Krum/Bulyan/RFA cells (results/postfix_p3)
 
 \textbf{Negative controls.} FedAvg, the median and the trimmed mean run the same

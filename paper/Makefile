@@ -39,7 +39,7 @@ numbers:
 	cd $(ROOT) && $(PY) paper/make_figs.py
 	# P3 is the campaign of record (iteration 10); the stopped P1/P2 campaign is kept
 	# as \pa... macros in numbers_postfix_p1.tex (defective round-one engine).
-	cd $(ROOT) && $(PY) paper/analyse_postfix.py --res results/postfix_p3 --atk-res results/postfix_p3 --target 1040
+	cd $(ROOT) && $(PY) paper/analyse_postfix.py --res results/postfix_p3 --atk-res results/postfix_p3 --target 1040 --prereg iterations/PREREG_P3.md
 	cd $(ROOT) && $(PY) paper/analyse_postfix.py --res results/postfix_p1 --atk-res results/postfix_p2 --prefix pa --out paper/numbers_postfix_p1.tex --implant-bsr 0
 	cd $(ROOT) && $(PY) paper/make_numbers_pilot.py
 	cd $(ROOT) && $(PY) paper/make_numbers_alias.py

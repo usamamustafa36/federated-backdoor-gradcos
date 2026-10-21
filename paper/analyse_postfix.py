@@ -168,6 +168,39 @@ def signflip_ci(d, alpha=0.05, lo=-1.0, hi=1.0, step=0.001):
     return float(acc.min()), float(acc.max())
 
 
+def signflip_p_one(d, direction=1):
+    """Exact ONE-sided paired sign-flip p in the registered direction (+1: the
+    alternative is mean(d) > 0): share of sign vectors whose signed sum is at
+    least the observed one. Used only for the pre-registered hypotheses."""
+    d = direction * np.asarray(d, dtype=float)
+    null = _signs(len(d)) @ d
+    return float(np.mean(null >= d.sum() - 1e-12))
+
+
+def read_prereg(path):
+    """Parse the ```prereg block of iterations/PREREG_P3.md (iteration 14).
+    -> list of dicts: id, family, defense, partition, attack, metric, direction, blind."""
+    out, inside = [], False
+    for line in open(path):
+        t = line.strip()
+        if t.startswith("```prereg"):
+            inside = True
+            continue
+        if inside and t.startswith("```"):
+            break
+        if inside and t:
+            f = [x.strip() for x in t.split("|")]
+            out.append(dict(id=f[0], family=f[1], defense=f[2], partition=f[3],
+                            attack=f[4] == "1", metric=f[5],
+                            direction=1 if f[6] == "+" else -1, blind=f[7], source=f[8]))
+    if not out:
+        raise SystemExit(f"no ```prereg block in {path}")
+    return out
+
+
+PRE_NUM = {"1": "One", "2": "Two", "3": "Three", "4": "Four", "5": "Five", "6": "Six"}
+
+
 def main():
     global RES
     ap = argparse.ArgumentParser()
@@ -191,6 +224,14 @@ def main():
                          "attacked cell of P3 ran): a rule's ATTACKED BSR is read only on "
                          "seeds where FedAvg's attacked cell implants, i.e. last-5-round BSR "
                          "above this value. 0 disables the filter.")
+    ap.add_argument("--prereg", default=None,
+                    help="pre-registration file with a ```prereg block (iteration 14: "
+                         "iterations/PREREG_P3.md). Its hypotheses are tested one-sided in "
+                         "the registered direction with Holm within each family, and "
+                         "reported apart from the exploratory two-sided analysis.")
+    ap.add_argument("--final-n", type=int, default=10,
+                    help="seeds per cell in the finished campaign; a confirmatory result "
+                         "computed with fewer is labelled interim")
     args = ap.parse_args()
     RES = args.res
     runs = load(RES)
@@ -370,6 +411,88 @@ def main():
                  f"{{{sum(r['p_perm'] <= 0.05 for r in tested)}}}")
     lines.append(f"\\providecommand{{\\pfTestableTen}}"
                  f"{{{fmt(2.0 ** (1 - 10), 4)}}}")  # smallest attainable p at 10 seeds
+    # Confirmatory analysis (iteration 14): only the hypotheses registered in
+    # --prereg, one-sided in their registered direction, Holm within each family.
+    # Everything above is the exploratory analysis and is labelled so in the paper.
+    if args.prereg:
+        hyps = read_prereg(args.prereg)
+        byk = {(r["defense"], r["partition"], r["attack"], r["metric"]): r for r in rows}
+        for h in hyps:
+            r = byk[(h["defense"], h["partition"], h["attack"], h["metric"])]
+            h["n"], h["n_pos"], h["n_neg"], h["diff"] = r["n"], r["n_pos"], r["n_neg"], r["diff"]
+            h["p1"] = float("nan")
+            if r["n"] >= args.min_seeds:
+                arms = runs[(h["defense"], h["partition"], h["attack"])]
+                seeds = sorted(set(arms["full"]) & set(arms["trainable"]))
+                dd = np.array([arms["trainable"][sd][h["metric"]] - arms["full"][sd][h["metric"]]
+                               for sd in seeds], dtype=float)
+                dd = dd[~np.isnan(dd)]
+                h["p1"] = signflip_p_one(dd, h["direction"])
+                if h["direction"] < 0:  # sign counts in the registered direction
+                    h["n_pos"], h["n_neg"] = h["n_neg"], h["n_pos"]
+        final = all(h["n"] >= args.final_n for h in hyps)
+        fams = sorted({h["family"] for h in hyps})
+        for fam in fams:
+            hs = [h for h in hyps if h["family"] == fam]
+            # Holm over the REGISTERED family size: an untested hypothesis enters
+            # with p = 1, so an interim result is never corrected for fewer tests
+            # than the final one will be.
+            p1 = lambda hh: 1.0 if math.isnan(hh["p1"]) else hh["p1"]  # noqa: E731
+            for h, ph in zip(hs, holm([p1(h) for h in hs])):
+                h["ph"] = ph
+            blind = [h for h in hs if h["blind"] == "yes"]
+            for h, ph in zip(blind, holm([p1(h) for h in blind])):
+                h["ph_blind"] = ph
+            FN = fam.capitalize()
+            done = [h for h in hs if not math.isnan(h["p1"])]
+            lines.append(f"\\providecommand{{\\pfPre{FN}Total}}{{{len(hs)}}}")
+            lines.append(f"\\providecommand{{\\pfPre{FN}Tested}}{{{len(done)}}}")
+            lines.append(f"\\providecommand{{\\pfPre{FN}Supported}}"
+                         f"{{{sum(h['ph'] <= 0.05 for h in done)}}}")
+            lines.append(f"\\providecommand{{\\pfPre{FN}BlindTotal}}{{{len(blind)}}}")
+            lines.append(f"\\providecommand{{\\pfPre{FN}BlindSupported}}"
+                         f"{{{sum(h.get('ph_blind', 1) <= 0.05 for h in blind if not math.isnan(h['p1']))}}}")
+        lines.append(f"\\providecommand{{\\pfPrePartialN}}"
+                     f"{{{sum(h['blind'] != 'yes' for h in hyps)}}}")
+        lines.append(f"\\providecommand{{\\pfPreBlindN}}"
+                     f"{{{sum(h['blind'] == 'yes' for h in hyps)}}}")
+        man = os.path.splitext(args.prereg)[0] + "_manifest.txt"
+        nman = sum(1 for l in open(man) if l.strip()) if os.path.exists(man) else None
+        lines.append(f"\\providecommand{{\\pfPreManifestN}}"
+                     f"{{{nman if nman is not None else chr(92) + 'PENDING'}}}")
+        lines.append(f"\\providecommand{{\\pfPreFinal}}{{{'final' if final else 'interim'}}}")
+        lines.append(f"\\providecommand{{\\pfPreFloorTen}}{{{fmt(2.0 ** -10, 4)}}}")
+        for h in hyps:
+            stem = "pfPre" + h["id"][0] + PRE_NUM[h["id"][1:]]
+            ok = h["n"] >= args.min_seeds
+            verdict = ("\\PENDING" if not ok else
+                       ("supported" if h["ph"] <= 0.05 else "not supported")
+                       + ("" if final else " (interim)"))
+            vals = {"N": str(h["n"]) if ok else "\\PENDING",
+                    "Pos": str(h["n_pos"]) if ok else "\\PENDING",
+                    "Neg": str(h["n_neg"]) if ok else "\\PENDING",
+                    "Diff": ("\\PENDING" if not ok else
+                             ("0.000" if round(h["diff"], 3) == 0 else f"{h['diff']:+.3f}")),
+                    "P": fmt(h["p1"], 4), "Ph": fmt(h.get("ph", float("nan")), 4),
+                    "Verdict": verdict}
+            for k, v in vals.items():
+                lines.append(f"\\providecommand{{\\{stem}{k}}}{{{v}}}")
+        with open(os.path.join(RES, "prereg_results.md"), "w") as f:
+            f.write(f"# Confirmatory hypotheses ({args.prereg}); "
+                    f"{'final' if final else 'INTERIM'}: one-sided exact sign-flip, Holm per family\n\n")
+            f.write("| id | family | rule | part | atk | metric | dir | blind | n | +/- | diff | p (1-sided) | p_Holm | p_Holm blind-only |\n")
+            f.write("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n")
+            for h in hyps:
+                f.write(f"| {h['id']} | {h['family']} | {h['defense']} | {h['partition']} | "
+                        f"{int(h['attack'])} | {h['metric']} | {'+' if h['direction'] > 0 else '-'} | "
+                        f"{h['blind']} | {h['n']} | {h['n_pos']}/{h['n_neg']} | {h['diff']:+.3f} | "
+                        f"{h['p1']:.4g} | {h.get('ph', float('nan')):.4g} | "
+                        f"{h.get('ph_blind', float('nan')):.4g} |\n")
+        print(f"confirmatory ({'final' if final else 'INTERIM'}):")
+        for h in hyps:
+            print(f"  {h['id']} {h['family']:9s} {h['defense']:8s} {h['partition']:9s} "
+                  f"atk={int(h['attack'])} {h['metric']:3s} blind={h['blind']:7s} n={h['n']:2d} "
+                  f"signs {h['n_pos']}/{h['n_neg']} p1={h['p1']:.4g} holm={h.get('ph', float('nan')):.4g}")
     # Campaign progress, so the manuscript can say how much of P1 it rests on.
     n_cells = sum(len(s) for arms in runs.values() for s in arms.values())
     lines.append(f"\\providecommand{{\\pfCellsDone}}{{{n_cells}}}")

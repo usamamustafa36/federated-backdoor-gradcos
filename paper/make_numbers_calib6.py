@@ -174,6 +174,23 @@ def main():
                 P("RepImplantFortyThree", "--" if c3["imp"] is None else str(c3["imp"]))
     P("RepN", str(rep_n)); P("RepAgree", str(rep_agree))
 
+    # --- attackers' trainable update size (iteration 14) -------------------------
+    # history.mal_norm_ratio = median malicious / median honest norm of the TRAINABLE
+    # update (src/fl/engine.py::_update_geometry); per seed, median over rounds 2..R
+    # (round 1 aliased) of the E_m=15 share-matched FedAvg calibration cells.
+    mr = []
+    for path in glob.glob(R("calib_iter6", "calib6_dirichlet_*fedavg_atk1_m0.2_p0.1_fixed_me15_sm_s*.json")):
+        try:
+            h = json.load(open(path))["history"]
+        except (OSError, json.JSONDecodeError):
+            continue
+        v = [x for x in h.get("mal_norm_ratio", [])[1:] if x is not None and not math.isnan(x)]
+        if v:
+            mr.append(float(np.median(v)))
+    P("MalNormRatioMin", f"{min(mr):.0f}" if mr else "\\PENDING")
+    P("MalNormRatioMax", f"{max(mr):.0f}" if mr else "\\PENDING")
+    P("MalNormRatioN", str(len(mr)))
+
     # --- Corollary 3 on real data: FLTrust counter shares (iteration 9) ---------
     # src/defenses/fltrust.py logs, per round, q0 (server), min qi (clients), the
     # corollary's bound and the min measured full-vector cosine (history.fltrust_counter).

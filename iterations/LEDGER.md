@@ -1003,3 +1003,54 @@ finished here.)
      legitimately, and say so in Sec. IV; the "arms identical" rules are then negative controls, not tests.
   3. Start the cut (budget in iteration 12): the Statistics paragraph itself grew to ~0.45 pp; compress it to the
      method sentence + floor sentence when the cut starts, moving the t-interval remark to the supplement.
+
+## Iteration 14 - 2026-10-21 - Confirmatory hypotheses pre-registered (iterations/PREREG_P3.md) and wired into the analysis; correction: attacked IID runs are NOT the distance rules' null (E_m=15 attackers carry a 15x counter)
+
+- **State at start (19:15):** P3 65/1,040 JSONs (6 CUDA lanes: PIDs 5901 + 15185, gap-filler 7091). The
+  only ERROR lines are the three known pre-fix OOM logs (18:05-18:19). Horizon probe PIDs 6108/6109 (CPU)
+  still running, no calib7h JSON: not harvested. I started no job.
+- **Reviewer score before: 4/10, REJECT.** Blockers: (1) outcomes missing for most rules (P3 ~7%); (2) 16 pp vs
+  hard 10; (3) new, found this iteration: with 13-rule Holm families at n=10 nearly nothing can survive and
+  nothing was registered in advance, so any positive finding would read as a forking-paths result; (4) new:
+  a theory error. Sec. V and VI-C said Krum/Bulyan/RFA are untouched by the counter in IID runs because batch
+  counts are equal. In attacked runs they are not: malicious clients train E_m=15 epochs, the engine counts
+  every forward pass (src/fl/engine.py::_client_fit), so their counter is ~15x an honest client's in every
+  partition (Cor. 2 applies).
+- **What I changed:**
+  - `iterations/PREREG_P3.md` (new): dated pre-registration. Primary family (Cor. 3): FLTrust FPR clean and DR
+    attacked, Dirichlet and IID, fixed > defect. Secondary family (Eq. norm: NormClip/FLAME noise sigma = lambda*S
+    with S the full-vector norm in the defect arm, ~8x inflated): NormClip and FLAME clean CA, both partitions,
+    fixed > defect; registered as weaker (defect arm also clips less; FLAME Dir clean already looked null).
+    One-sided exact sign-flip in the registered direction, Holm within family over the REGISTERED size (untested
+    hypothesis enters at p=1), blind-only Holm as sensitivity, final only at n=10, no re-runs to rescue.
+    Explicitly exploratory and why: Krum/Bulyan/RFA (both arms see the attackers as outliers: their trainable
+    norm is 16-50x honest in calibration), FLAME clustering, FoolsGold, GradCos, AlignIns, FLDetector, every BSR;
+    negative controls are descriptive. Non-blind disclosure: P1, P3 (FLTrust Dir s42-46) and S3 (FLAME Dir clean
+    s42-46) were partly read; P2, P4, S1, S2, S4 blind (no such cell on disk). `iterations/PREREG_P3_manifest.txt`:
+    sha256 of the 70 P3 JSONs on disk at registration (all treated as seen).
+  - `paper/analyse_postfix.py`: `--prereg` parses the ```prereg block, `signflip_p_one` (verified equal to
+    scipy permutation_test alternative='greater' at n=4,6,10), macros \pfPre<Id><N|Pos|Neg|Diff|P|Ph|Verdict>,
+    family counts (Total/Tested/Supported/Blind*), \pfPreFinal (interim/final), \pfPrePartialN, \pfPreBlindN,
+    \pfPreManifestN; writes results/postfix_p3/prereg_results.md. Makefile passes `--prereg`.
+  - `paper/make_numbers_calib6.py`: \csMalNormRatioMin/Max/N (attackers' trainable norm over honest, E_m=15 calib).
+  - `paper/main.tex` (backup main.tex.pre-iter14.bak): Statistics paragraph rewritten (confirmatory vs exploratory,
+    t-interval aside removed); Sec. V distance rules and VI-C "Distance rules" corrected (clean IID is the null;
+    attacked runs expose the counter in both partitions; no sign predicted).
+- **Evidence (generated, INTERIM):** P1 FLTrust Dir clean FPR +0.716, 5/0, one-sided p 0.031, Holm 0.125; P3 FLTrust
+  Dir attacked DR +0.580, 5/0, p 0.031, Holm 0.125; S3 FLAME Dir clean CA -0.006, 3/2, p 0.69. 0/4 primary, 0/4
+  secondary supported so far (cannot be otherwise at n=5 with family size 4).
+- **Note:** `make numbers` fails at make_figs.py (results/summary.csv missing; legacy, pre-existing); I ran the P3
+  lines (analyse_postfix, make_numbers_calib6, fltrust_falsify, make_fig_p1) directly and reverted the
+  legacy numbers.tex side effect.
+- **Build/check:** latexmk rc 0. **IEEEtran pages: main 17 (ends at 16.15, was 15.99) / supplement 1.** check:
+  same 3 expected FAILs (pages, 7 \TOMOVE, gate 465); rest PASS.
+- **Running jobs (none mine):** P3 PIDs 5901, 15185, gap-filler 7091 (83/1,040 at 19:37); horizon PIDs 6108/6109.
+- **Score after: 4/10, REJECT** (outcomes and length unchanged; inference plan now defensible and a wrong
+  null claim removed).
+- **Top 3 priorities:**
+  1. Harvest P3 + horizon; do NOT edit PREREG_P3.md except dated amendments. When P2/P4/S1/S2/S4 cells land,
+     report them through the \pfPre macros (add one sentence/row in Sec. VI-B; consider a 8-row confirmatory
+     table in place of prose).
+  2. Fix `make numbers` (make_figs.py needs results/summary.csv) or drop legacy steps from the target.
+  3. Start the page cut with P3-independent blocks (S-V aliasing, S-VIII realizability, S-II probe), per the
+     iteration-12 budget; main is now 16.15 pp.
