@@ -17,6 +17,38 @@ def assign_malicious(num_clients: int, ratio: float, seed: int) -> set[int]:
     return set(rng.choice(num_clients, size=n_mal, replace=False).tolist())
 
 
+def assign_malicious_share_matched(sizes, ratio: float, seed: int,
+                                   tol: float = 0.01) -> set[int]:
+    """Budget-matched corruption (iteration 6, ``attack.mal_selection:
+    share_matched``). The adversary corrupts round(K*ratio) clients whose
+    COMBINED data share is within ``tol`` of ``ratio`` -- the same share it holds
+    under the IID partition -- chosen uniformly at random among all such subsets
+    (the closest subset if none is within tol); the default random draw is kept
+    when it already meets the budget. Under example-weighted
+    aggregation the attacker's weight is its data share, and with random
+    selection on a Dirichlet(0.5) partition that share ranges 0.10-0.48 across
+    seeds 42-51, so attack strength was a property of the partition draw rather
+    than of the threat model. The partition itself is unchanged, so clean and
+    attacked cells still share every honest shard."""
+    import itertools
+    k = len(sizes)
+    n_mal = int(round(k * ratio))
+    if n_mal == 0:
+        return set()
+    share = np.asarray(sizes, dtype=np.float64) / float(np.sum(sizes))
+    # Keep the default random draw whenever it already meets the budget (every
+    # IID seed, and some Dirichlet seeds), so those cells keep their attackers.
+    first = sorted(assign_malicious(k, ratio, seed))
+    if abs(share[first].sum() - ratio) <= tol:
+        return set(first)
+    subsets = list(itertools.combinations(range(k), n_mal))
+    gap = np.array([abs(share[list(c)].sum() - ratio) for c in subsets])
+    ok = np.where(gap <= tol)[0]
+    rng = np.random.RandomState(seed + 777)
+    pick = subsets[int(rng.choice(ok))] if len(ok) else subsets[int(gap.argmin())]
+    return set(int(c) for c in pick)
+
+
 def build_clients(cfg, dataset: Dataset, attack_factory=None) -> list[ClientState]:
     """Partition the train set and wrap each shard in a ClientState.
 
@@ -33,9 +65,15 @@ def build_clients(cfg, dataset: Dataset, attack_factory=None) -> list[ClientStat
 
     malicious = set()
     if getattr(cfg.attack, "enabled", False):
-        malicious = assign_malicious(
-            cfg.federated.num_clients, cfg.attack.malicious_ratio, cfg.seed
-        )
+        if str(getattr(cfg.attack, "mal_selection", "random")) == "share_matched":
+            malicious = assign_malicious_share_matched(
+                [len(p) for p in parts], cfg.attack.malicious_ratio, cfg.seed,
+                float(getattr(cfg.attack, "share_tol", 0.01)),
+            )
+        else:
+            malicious = assign_malicious(
+                cfg.federated.num_clients, cfg.attack.malicious_ratio, cfg.seed
+            )
 
     clients = []
     for cid, idx in enumerate(parts):

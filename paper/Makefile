@@ -16,7 +16,7 @@ ROOT    = ..
 
 all: main.pdf
 
-main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex $(wildcard figs/*)
+main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
@@ -30,8 +30,10 @@ numbers:
 	cd $(ROOT) && $(PY) paper/make_numbers.py
 	cd $(ROOT) && $(PY) paper/make_figs.py
 	cd $(ROOT) && $(PY) paper/analyse_postfix.py --atk-res results/postfix_p2
+	# When P3 has landed: --res results/postfix_p3 --atk-res results/postfix_p3 --target 1040
 	cd $(ROOT) && $(PY) paper/make_numbers_pilot.py
 	cd $(ROOT) && $(PY) paper/make_numbers_alias.py
+	cd $(ROOT) && $(PY) paper/make_numbers_calib6.py
 	cd $(ROOT) && $(PY) paper/make_fig_p1.py
 	$(LATEXMK) main.tex
 

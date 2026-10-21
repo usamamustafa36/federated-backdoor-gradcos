@@ -1,0 +1,20 @@
+/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py:823: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:109.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[93mWARNING [0m:   No fit_metrics_aggregation_fn provided
+device=cpu dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] fedavg   atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.745 BSR=0.973 | 6725s (cum 6725s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7381 | 0.4530 | 0.7188 | nan | nan | -0.0054 | 0.9976 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7250 | 0.4328 | 0.3372 | nan | nan | -0.0237 | 0.9996 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7082 | 0.3881 | 0.1420 | nan | nan | -0.0166 | 0.9994 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7279 | 0.4071 | 0.6316 | nan | nan | -0.0241 | 0.9941 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4188 | 0.2714 | nan | nan | -0.0029 | 0.9925 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7205 | 0.4081 | 0.0103 | nan | nan | -0.0241 | 0.9990 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7058 | 0.3826 | 0.0100 | nan | nan | -0.0165 | 0.9983 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.3000 | 0.7168 | 0.3930 | 0.0484 | nan | nan | -0.0240 | 0.9988 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.3000 | 0.7029 | 0.3585 | 0.0153 | nan | nan | -0.0167 | 0.9989 |

@@ -463,3 +463,80 @@ the scaling law (refuted), generality across defenses (4/5 <= 0.03), "the field 
      the result: FoolsGold is unusable on heterogeneous honest clients, counter or not.
   3. Harvest P3 FedAvg first (implant check on all seeds). Then FLTrust: does Corollary 3's
      "excludes no one" hold under the copy?
+
+## Iteration 6 - 2026-10-21 - Seed-robust adversary (share-matched attackers) calibrated; FoolsGold collapse diagnosed; P3 auto-launcher armed
+
+(Resumed: the first iteration-6 agent was killed by a laptop suspend ~14:2x before
+recording. Its uncommitted work was reviewed, kept where sound, fixed where not, and
+finished here.)
+
+- **Reviewer score before: 4/10, REJECT.** Blockers: no outcome measured under a working
+  attack on every seed; P1/P2 run on the round-1-defective engine; FoolsGold collapse under
+  the copy unexplained.
+- **Blockers found (ranked):**
+  1. **The attack does not implant on every seed, even with the attacker data share fixed.**
+     Share-matched attackers (combined share 19.1-21.0% on all 10 Dirichlet seeds, vs
+     9.6-47.7% random), FedAvg, copy ON, P3 scale, last-5 BSR: E_m=5: s42 0.859, s43 0.535,
+     s44 0.011, s46 0.010. E_m=10: 0.928 / 0.956 / 0.663 / 0.269. E_m=15: s44 0.872,
+     **s46 0.164** (single rounds >0.5 undone next round). Clean floor 0.003-0.052.
+     Implantability depends on the partition beyond share (s46 attackers [0,4] hold 46 of
+     1295 benign rows; not yet explained). p=0.3 at E_m=5 does nothing on s44/s46.
+  2. P3 not launched (no GPU: zombie CUDA "unknown error" at 14:27 and still at 14:50; CPU is
+     at the 12-core budget with calibration).
+  3. All \pf A/B macros still PENDING (434 refs): P1-clean was never finished and is on the
+     defective engine anyway.
+  4. One-architecture outcomes, norm-visible attack (malicious/honest full-vector norm ratio
+     is large at E_m=15), CPU-scale reductions.
+- **What I changed / kept:**
+  - Kept from the dead agent (reviewed): `src/fl/build.py::assign_malicious_share_matched`
+    (`attack.mal_selection: share_matched`, `share_tol` 0.01; random draw kept when it
+    qualifies, so IID cells, where the share is exactly 20%, keep their attackers);
+    `attack.mal_local_steps` (engine + `torch_utils.local_train(steps=)`, default off, unused);
+    run_sweep `--mal-selection`, `--mal-local-steps`, suffixes `_sm`/`_ms<k>`, and
+    `malicious_cids`/`malicious_data_share` in every result JSON; `configs/p3_*.yaml` now
+    share-matched; `configs/calib6_full.yaml`; `experiments/calib_iter6/{run_calib.sh,shares.py}`;
+    `experiments/foolsgold_diag/diag.py`; AlignIns added to P3 and analyse_postfix.
+  - **Fixed:** `paper/make_numbers_calib6.py` let the p=0.3 side cells overwrite the p=0.1
+    E_m=5 cells (same `_me5_sm` suffix; s44 printed 0.086 instead of 0.011) -> glob restricted
+    to p0.1; E_m=15 stem added; table stems always defined. The dead agent had pointed the
+    Makefile's \pf macros at the empty postfix_p3 and the paper's P1/P2 numbers at a new
+    \pa file that main.tex never uses -> reverted (\pf stays P1/P2 until P3 lands; comment in
+    Makefile; `analyse_postfix.py --target` keeps \pfCellsTarget=960 for P1, 1040 for P3).
+    `run_p3.sh`: `DEVICE` env (cuda/cpu), `MAL_EPOCHS` now required (was a `__CALIB__`
+    placeholder that would have crashed every attacked cell).
+  - **Paper (backup main.tex.pre-iter6.bak):** new paragraph "A seed-robust adversary" +
+    Table `tab:seedcal` (per seed: clean floor, random share + P2 E_m=5 BSR, matched share +
+    E_m=5/10/15 BSR and implant round; all \cs macros), stating that P2's non-IID attacked
+    BSR is uninformative on 3 of 5 seeds and that no E_m tried implants on every seed; the
+    re-run reads attacked BSR only on seeds where FedAvg implants (pre-registered, PENDING).
+    New FoolsGold diagnostic paragraph in Sec. Mechanisms: with the copy, 7/10 clients are
+    DDoS-majority, median max history cosine 0.821, FoolsGold keeps median 3 clients (27.0% of
+    rows, 1 of 7 DDoS-majority), CA 0.332; authors' weighted-SUM aggregation (verified in
+    DistributedML/FoolsGold model_aggregator.py: `np.dot(delta.T, wv)`) gives 0.490; no
+    history gives 0.671. So the collapse is FoolsGold's honest-dissimilarity assumption failing
+    on label skew, not the port and not the counter.
+- **Build/check:** latexmk OK, 19 pp; check_manuscript all PASS except the gate
+  (454 = 444 macro refs {pf 434, cs 10} + 10 literal PENDING).
+- **Running jobs (all CPU, 1 thread each, 12 lanes total):**
+  - `run_calib.sh` drivers: E_m=15 s45,47-51 (6 lanes, log `results/calib_iter6/campaign_e.log`),
+    E_m=15 s42,43 (`campaign_g.log`), E_m=5 then 10 at s45 (`campaign_f.log`). ETA ~17:30
+    (E_m=15 cells take ~2.1 h at 1 thread). Per-cell logs `results/calib_iter6/log_*`.
+  - **P3 auto-launcher** (`experiments/calib_iter6/launch_p3_when_calibrated.sh`, log
+    `results/calib_iter6/launcher.log`): waits for all calib6 processes, then applies the rule
+    fixed before seeing the results: >= 8/10 seeds with E_m=15 FedAvg BSR > 0.5 -> launches
+    `MAL_EPOCHS=15 run_p3.sh` (cuda LANES=4 if a test allocation works, else cpu LANES=5) into
+    `results/postfix_p3/campaign.log`; otherwise does nothing. CPU P3 at E_m=15 is many days;
+    if the GPU comes back, kill the CPU P3 process group and relaunch with DEVICE=cuda
+    (resumable by filename).
+  - GPU: zombie ("CUDA unknown error") at 14:27 and 14:50; needs the user's sudo reload.
+- **Score after: 4/10, REJECT.** The threat model is now sound and documented, and a
+  FoolsGold result became a defensible finding, but no rule outcome exists yet under it.
+- **Top 3 priorities for the next iteration:**
+  1. Read `results/calib_iter6/launcher.log`. If P3 launched, verify the first FedAvg cells
+     (both arms) implant; regenerate `paper/numbers_calib6.tex` and fill Table tab:seedcal
+     (s45 E_m=5/10, s42/43 E_m=15). If the rule failed, redesign (e.g. pick attackers whose
+     data also covers benign/attack classes, or report IID as the attacked setting).
+  2. Explain s46 (attackers hold ~no genuine benign rows; check per-class BSR and which honest
+     clients undo it). A mechanism here is a reviewer-proof calibration story.
+  3. If the GPU is back, move P3 to CUDA; then harvest P3 FedAvg/FLTrust (Corollary 3 under
+     the copy) and point `make numbers` at postfix_p3 (`--target 1040`).

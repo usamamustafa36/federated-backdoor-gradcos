@@ -1,0 +1,13 @@
+[2026-10-21 13:29:05] done(rc=0) seed 46 --mal-selection share_matched --mal-local-epochs 10
+[2026-10-21 14:22:50] done(rc=0) seed 46 --mal-selection share_matched --mal-local-epochs 15
+[2026-10-21 14:22:59] done(rc=0) seed 44 --mal-selection share_matched --mal-local-epochs 10
+[2026-10-21 14:22:59] done(rc=0) seed 43 --mal-selection share_matched --mal-local-epochs 10
+[2026-10-21 14:22:59] done(rc=0) seed 44 --mal-selection share_matched --mal-local-epochs 15
+[2026-10-21 14:23:00] done(rc=0) seed 42 --mal-selection share_matched --mal-local-epochs 10
+[2026-10-21 14:23:02] done(rc=0) seed 46 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 14:23:03] done(rc=0) seed 42 --mal-selection share_matched --mal-local-epochs 15
+[2026-10-21 14:23:03] done(rc=0) seed 43 --mal-selection share_matched --mal-local-epochs 15
+[2026-10-21 14:23:03] done(rc=0) seed 44 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 14:23:05] done(rc=0) seed 43 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 14:23:06] done(rc=0) seed 42 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 14:23:06] CALIB COMPLETE

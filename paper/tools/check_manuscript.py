@@ -144,7 +144,7 @@ def main():
     # hedge in the prose and captions.
     pend_macros = set()
     for nf in ('numbers.tex', 'numbers_postfix.tex', 'numbers_defect.tex',
-               'numbers_defect_resnet.tex', 'numbers_pilot.tex', 'numbers_alias.tex'):
+               'numbers_defect_resnet.tex', 'numbers_pilot.tex', 'numbers_alias.tex', 'numbers_calib6.tex'):
         try:
             pend_macros |= set(re.findall(
                 r'\\(?:newcommand|providecommand)\{\\([A-Za-z]+)\}\{\\PENDING',

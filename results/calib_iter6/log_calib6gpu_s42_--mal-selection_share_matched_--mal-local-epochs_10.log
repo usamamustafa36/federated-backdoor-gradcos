@@ -1,0 +1,28 @@
+[93mWARNING [0m:   No fit_metrics_aggregation_fn provided
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] fedavg   atk=1 m=0.2 p=0.1 fixed       s42 | ERROR: RuntimeError: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/run_sweep.py", line 352, in main
+    res = run_one(cfg, ds, device, out_dir, tag, seed_suffix,
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/run_sweep.py", line 145, in run_one
+    hist = engine.run(verbose=False)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 335, in run
+    results = [(None, self._client_fit(c)) for c in selected]
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 335, in <listcomp>
+    results = [(None, self._client_fit(c)) for c in selected]
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 177, in _client_fit
+    n = tu.local_train(
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/torch_utils.py", line 69, in local_train
+    xb, yb = xb.to(device), yb.to(device)
+RuntimeError: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+FATAL CUDA error — aborting sweep so it can be resumed after the GPU is restored.

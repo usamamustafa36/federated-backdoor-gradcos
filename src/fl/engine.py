@@ -169,6 +169,11 @@ class FederatedEngine:
         mal_ep = int(getattr(self.cfg.attack, "mal_local_epochs", 0) or 0)
         if client.malicious and mal_ep > 0:
             epochs = mal_ep
+        # attack.mal_local_steps (default 0 = off; iteration 6): malicious
+        # clients run exactly this many optimiser steps, whatever their shard
+        # size, so their local work does not depend on the partition draw.
+        mal_steps = int(getattr(self.cfg.attack, "mal_local_steps", 0) or 0)
+        steps = mal_steps if (client.malicious and mal_steps > 0) else None
         n = tu.local_train(
             self.model, x, y,
             epochs=epochs,
@@ -176,6 +181,7 @@ class FederatedEngine:
             batch_size=self.cfg.federated.batch_size,
             device=self.device,
             class_weights=self.class_weights,
+            steps=steps,
         )
         weights = tu.get_weights(self.model)
         return FitRes(

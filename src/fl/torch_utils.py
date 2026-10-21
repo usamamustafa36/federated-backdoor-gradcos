@@ -39,13 +39,31 @@ def local_train(
     batch_size: int,
     device: str,
     class_weights: np.ndarray | None = None,
+    steps: int | None = None,
 ) -> int:
-    """Train ``model`` in place on one client's data. Returns #examples."""
+    """Train ``model`` in place on one client's data. Returns #examples.
+
+    ``steps`` (default None = off): run exactly this many optimiser steps,
+    cycling through reshuffled epochs, instead of ``epochs`` full passes
+    (iteration 6, ``attack.mal_local_steps``)."""
     model.to(device).train()
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     w = None if class_weights is None else torch.tensor(class_weights, dtype=torch.float32, device=device)
     loss_fn = torch.nn.CrossEntropyLoss(weight=w)
     loader = make_loader(x, y, batch_size, shuffle=True)
+    if steps:
+        done = 0
+        while done < steps:
+            for xb, yb in loader:
+                xb, yb = xb.to(device), yb.to(device)
+                opt.zero_grad()
+                loss = loss_fn(model(xb), yb)
+                loss.backward()
+                opt.step()
+                done += 1
+                if done >= steps:
+                    break
+        return len(y)
     for _ in range(epochs):
         for xb, yb in loader:
             xb, yb = xb.to(device), yb.to(device)

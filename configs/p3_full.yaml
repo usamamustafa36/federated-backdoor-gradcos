@@ -1,6 +1,7 @@
-# P3 (iteration 5, prepared, NOT launched): = configs/p1_full.yaml with the round-1 aliasing
-# fix ON (federated.copy_initial_global) and out_dir results/postfix_p3. Clean and attacked
-# cells both go here (attacked with --mal-local-epochs $MAL_EPOCHS, filename suffix _me<k>).
+# P3 (iteration 5 prepared; iteration 6 adversary): = configs/p1_full.yaml with the round-1
+# aliasing fix ON (federated.copy_initial_global), the seed-robust adversary
+# (attack.mal_selection: share_matched, iteration 6) and out_dir results/postfix_p3. Clean
+# and attacked cells both go here (attacked with --mal-local-epochs $MAL_EPOCHS, suffix _me<k>_sm).
 seed: 42
 seeds:
 - 42
@@ -46,6 +47,8 @@ attack:
   trigger_mode: sigma
   evasion_noise: 1.0
   variant: simple
+  mal_selection: share_matched   # iteration 6: attacker data share = m (+-share_tol)
+  share_tol: 0.01
 defense:
   name: fedavg
   signal_subspace: full

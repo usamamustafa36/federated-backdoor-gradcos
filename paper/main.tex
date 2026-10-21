@@ -67,6 +67,7 @@
 \input{numbers_defect_resnet}
 \input{numbers_pilot}
 \input{numbers_alias}
+\input{numbers_calib6}
 
 \journal{Journal of Information Security and Applications}
 
@@ -574,7 +575,9 @@ samples, relabels them benign and trains for $E_m=5$ local epochs where honest
 clients train for one. The attacker is static and
 knows the architecture and the trigger; it controls neither the server nor the
 honest clients, but it does control its own computation, and the extra epochs are
-what make the backdoor survive averaging at this scale (Table~\ref{tab:calib}). The trigger is a perturbation of the standardized feature vector,
+what make the backdoor survive averaging at this scale (Table~\ref{tab:calib}). The
+re-run replaces the random choice of attackers by a share-matched one and
+recalibrates $E_m$ across seeds (``A seed-robust adversary'' below). The trigger is a perturbation of the standardized feature vector,
 a feature-space threat model whose distance from realizable traffic
 Sec.~\ref{sec:realizable} measures.
 
@@ -633,6 +636,57 @@ IID & none (clean) & \apIidCleanNpois & \apIidCleanCA & \apIidCleanBSR & \apIidC
  & $m=0.2$, $p=0.1$, $E_m=1$ & \apIidPoneNpois & \apIidPoneCA & \apIidPoneBSR & \apIidPoneNorm & \apIidPoneImplant \\
  & $E_m=3$ & \apIidEthreeNpois & \apIidEthreeCA & \apIidEthreeBSR & \apIidEthreeNorm & \apIidEthreeImplant \\
  & $E_m=5$ & \apIidEfiveNpois & \apIidEfiveCA & \apIidEfiveBSR & \apIidEfiveNorm & \apIidEfiveImplant \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{A seed-robust adversary.} Calibrating on one seed was a mistake, and the
+campaign exposed it. Under example-weighted aggregation an attacker's weight is its
+data share. With two clients drawn at random from a Dirichlet($0.5$) partition,
+that share ranges from $\csShareRandMin$ to $\csShareRandMax$ over seeds $42$--$51$,
+against $20\%$ on every IID seed. At $E_m=5$, FedAvg implants the backdoor on the
+two seeds among $42$--$46$ where the attackers hold the most data, and on the other
+three the attacked BSR stays at the clean floor (Table~\ref{tab:seedcal}). In the
+campaign reported below, attack strength was therefore a property of the partition
+draw, not of the threat model, and its non-IID attacked BSR columns are
+uninformative on those seeds. The re-run fixes the adversary's budget instead. It
+corrupts two clients whose combined data share is within $\csShareTol$ percentage
+point of $m$ (\texttt{attack.mal\_selection: share\_matched}; the random draw is
+kept when it already qualifies, otherwise a pair is drawn uniformly among those
+that do). The partition and every honest shard are unchanged, and the attackers'
+share becomes $\csShareMatMin$--$\csShareMatMax$ ($\csShareNchanged$ of
+$\csShareNseeds$ non-IID seeds change attackers). Matching the share is not enough.
+At $E_m=5$ the backdoor still fails to implant on seeds $44$ and $46$. More local
+work rescues seed $44$ (BSR $\csSmEtenBSRFortyFour$ at $E_m=10$,
+$\csSmEfifteenBSRFortyFour$ at $E_m=15$) but not seed $46$ ($\csSmEtenBSRFortySix$ and
+$\csSmEfifteenBSRFortySix$, with single rounds above $0.5$ that the next round
+undoes). Whether this attack implants therefore depends on the partition beyond the
+attackers' share, and no single $E_m$ we tried makes it implant on every seed. The
+re-run fixes $E_m$ from a ten-seed calibration at $E_m=15$ before any defended cell
+runs, and reads a rule's attacked BSR only on seeds where FedAvg implants
+(last-five-round BSR above $0.5$), reporting the excluded seeds (\PENDING).
+
+\begin{table}[t]
+\centering
+\caption{Seed-robust calibration under plain FedAvg (non-IID, round-one copy on,
+$15$ rounds). Share: the attackers' fraction of the training rows. Random: the
+campaign's attack (random attackers, $E_m=5$). Matched: share-matched attackers at
+$E_m=5$, $10$, $15$. Entries are last-five-round BSR (first round with BSR $>0.5$
+in parentheses; -- never). Clean: the clean-model BSR floor.}
+\label{tab:seedcal}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}c c cc c ccc@{}}
+\toprule
+ & & \multicolumn{2}{c}{random} & & \multicolumn{3}{c}{matched} \\
+\cmidrule(lr){3-4}\cmidrule(lr){6-8}
+seed & clean & share & $E_m=5$ & share & $E_m=5$ & $E_m=10$ & $E_m=15$ \\
+\midrule
+42 & \csCleanBSRFortyTwo & \csShareRandFortyTwo & \csRandBSRFortyTwo & \csShareMatFortyTwo & \csSmEfiveBSRFortyTwo{} (\csSmEfiveImplantFortyTwo) & \csSmEtenBSRFortyTwo{} (\csSmEtenImplantFortyTwo) & \csSmEfifteenBSRFortyTwo{} (\csSmEfifteenImplantFortyTwo) \\
+43 & \csCleanBSRFortyThree & \csShareRandFortyThree & \csRandBSRFortyThree & \csShareMatFortyThree & \csSmEfiveBSRFortyThree{} (\csSmEfiveImplantFortyThree) & \csSmEtenBSRFortyThree{} (\csSmEtenImplantFortyThree) & \csSmEfifteenBSRFortyThree{} (\csSmEfifteenImplantFortyThree) \\
+44 & \csCleanBSRFortyFour & \csShareRandFortyFour & \csRandBSRFortyFour & \csShareMatFortyFour & \csSmEfiveBSRFortyFour{} (\csSmEfiveImplantFortyFour) & \csSmEtenBSRFortyFour{} (\csSmEtenImplantFortyFour) & \csSmEfifteenBSRFortyFour{} (\csSmEfifteenImplantFortyFour) \\
+45 & \csCleanBSRFortyFive & \csShareRandFortyFive & \csRandBSRFortyFive & \csShareMatFortyFive & \csSmEfiveBSRFortyFive{} (\csSmEfiveImplantFortyFive) & \csSmEtenBSRFortyFive{} (\csSmEtenImplantFortyFive) & \csSmEfifteenBSRFortyFive{} (\csSmEfifteenImplantFortyFive) \\
+46 & \csCleanBSRFortySix & \csShareRandFortySix & \csRandBSRFortySix & \csShareMatFortySix & \csSmEfiveBSRFortySix{} (\csSmEfiveImplantFortySix) & \csSmEtenBSRFortySix{} (\csSmEtenImplantFortySix) & \csSmEfifteenBSRFortySix{} (\csSmEfifteenImplantFortySix) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1079,6 +1133,23 @@ $\pfCAFoolsgoldDirCleanDefSd$ against $\pfCAFoolsgoldDirCleanFixSd$
 (Sec.~\ref{sec:p1}). The fixed arm still excludes a substantial fraction of honest
 clients under non-IID data; that is FoolsGold's own behaviour on heterogeneous
 honest clients, and in the cells completed so far the counter raises it further.
+A diagnostic run with the round-one copy (trainable arm, clean, non-IID, seed
+$42$; \texttt{experiments/foolsgold\_diag}) shows where that exclusion comes from.
+In this partition $\csFgBaseNMajorDDoS$ of the ten clients have DDoS as their
+majority class, and their trainable histories are alike (median of each client's
+largest history cosine over rounds $2$--$15$: $\csFgBaseMaxCosMed$). FoolsGold
+reads them as sybils. It keeps a median of $\csFgBaseKeptMed$ clients per round;
+in the last round the kept clients hold $\csFgBaseKeptRowShare$ of the training rows
+and include $\csFgBaseKeptMajorDDoS$ of the DDoS-majority clients. Clean accuracy is
+$\csFgBaseCA$. Our port departs from the authors' code in one respect: their
+aggregator returns the weight-scaled \emph{sum} of the round's updates, ours their
+weighted mean. Using the sum gives clean accuracy $\csFgNormOffCA$, so the port is
+not the cause. Using single-round updates instead of the cumulative history gives
+$\csFgHistOffCA$, with a median of $\csFgHistOffKeptMed$ clients kept. FoolsGold
+assumes that honest histories are dissimilar. Under a label skew in which most
+clients share a majority class, that assumption fails whether or not the counter is
+present. Its fixed-arm outcomes in the re-run will therefore measure this failure,
+and only its defect-arm outcomes can add a counter effect on top of it.
 
 \textbf{FLAME: a compressed input, an unchanged decision.} FLAME's clustering reads
 exactly the compressed cosine of Corollary~\ref{cor:band}, yet its exclusions and

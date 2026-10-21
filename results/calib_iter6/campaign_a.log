@@ -1,0 +1,5 @@
+[2026-10-21 12:30:46] done(rc=0) seed 46 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 12:35:23] done(rc=0) seed 44 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 12:37:43] done(rc=0) seed 42 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 12:41:26] done(rc=0) seed 43 --mal-selection share_matched --mal-local-epochs 5
+[2026-10-21 12:41:26] CALIB COMPLETE

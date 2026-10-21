@@ -69,6 +69,13 @@ def parse_args():
                     help="scale the trainable part of each malicious delta (1 = off)")
     ap.add_argument("--mal-local-epochs", type=int, default=0,
                     help="local epochs on malicious clients only (0 = same as honest)")
+    ap.add_argument("--mal-local-steps", type=int, default=0,
+                    help="exact optimiser steps on malicious clients (0 = off; "
+                         "overrides --mal-local-epochs for them)")
+    ap.add_argument("--mal-selection", default=None, choices=["random", "share_matched"],
+                    help="how attacker clients are chosen (default: config, else random); "
+                         "share_matched = clients whose combined data share is within "
+                         "attack.share_tol of the malicious ratio (iteration 6)")
     ap.add_argument("--skip-clean", action="store_true",
                     help="run only the attacked cells")
     ap.add_argument("--skip-attacked", action="store_true",
@@ -102,6 +109,11 @@ def cell_name(cfg, tag, seed_suffix: str = "") -> str:
         msuffix += f"_b{boost:g}"
     if cfg.attack.enabled and mal_ep > 0:
         msuffix += f"_me{mal_ep}"
+    mal_st = int(getattr(cfg.attack, "mal_local_steps", 0) or 0)
+    if cfg.attack.enabled and mal_st > 0:
+        msuffix += f"_ms{mal_st}"
+    if cfg.attack.enabled and getattr(cfg.attack, "mal_selection", "random") == "share_matched":
+        msuffix += "_sm"
     # GradCos's detection method is part of the cell's identity: a `residual` run
     # and a `clique` run are different defenses, and without this they collide on
     # one filename and the resume check silently skips the second.
@@ -155,6 +167,9 @@ def run_one(cfg, ds, device, out_dir, tag, seed_suffix: str = "",
         "trigger": trigger_report(cfg, ds),
         "clean_bsr_battery": clean_bsr,
         "num_malicious": sum(c.malicious for c in clients),
+        "malicious_cids": [c.cid for c in clients if c.malicious],
+        "malicious_data_share": (sum(len(c.y) for c in clients if c.malicious)
+                                 / float(sum(len(c.y) for c in clients))),
     }
     # Atomic write: a concurrent reader (parallel lanes refresh tables while
     # cells are still being written) must never see a half-written JSON.
@@ -209,6 +224,12 @@ def main():
     base.attack.mal_local_epochs = int(args.mal_local_epochs)
     base._raw["attack"]["boost"] = float(args.boost)
     base._raw["attack"]["mal_local_epochs"] = int(args.mal_local_epochs)
+    if args.mal_local_steps:
+        base.attack.mal_local_steps = int(args.mal_local_steps)
+    base._raw["attack"]["mal_local_steps"] = int(getattr(base.attack, "mal_local_steps", 0) or 0)
+    if args.mal_selection is not None:
+        base.attack.mal_selection = args.mal_selection
+    base._raw["attack"]["mal_selection"] = str(getattr(base.attack, "mal_selection", "random"))
     if args.quick:
         base.data.max_train_rows = 8000
         base.data.max_test_rows = 4000

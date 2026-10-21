@@ -1,0 +1,39 @@
+[93mWARNING [0m:   No fit_metrics_aggregation_fn provided
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] fedavg   atk=1 m=0.2 p=0.1 fixed       s46 | ERROR: OutOfMemoryError: CUDA out of memory. Tried to allocate 1.66 GiB. GPU 0 has a total capacity of 7.75 GiB of which 1.50 GiB is free. Process 559741 has 2.51 GiB memory in use. Process 559753 has 2.51 GiB memory in use. Process 559747 has 2.06 GiB memory in use. Including non-PyTorch memory, this process has 404.00 MiB memory in use. Of the allocated memory 182.57 MiB is allocated by PyTorch, and 93.43 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/run_sweep.py", line 352, in main
+    res = run_one(cfg, ds, device, out_dir, tag, seed_suffix,
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/run_sweep.py", line 145, in run_one
+    hist = engine.run(verbose=False)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 358, in run
+    self._log_round(rnd, selected, agg_metrics, hist, verbose,
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 374, in _log_round
+    bsr = float(self.backdoor_eval(self.model)) if self.backdoor_eval else float("nan")
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/attacks/__init__.py", line 94, in backdoor_eval
+    preds.append(model(xb).argmax(1).cpu().numpy())
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/models/cnn_lstm.py", line 53, in forward
+    out, (h_n, _) = self.lstm(x)     # h_n: (1, batch, lstm_hidden)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/rnn.py", line 1124, in forward
+    result = _VF.lstm(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.66 GiB. GPU 0 has a total capacity of 7.75 GiB of which 1.50 GiB is free. Process 559741 has 2.51 GiB memory in use. Process 559753 has 2.51 GiB memory in use. Process 559747 has 2.06 GiB memory in use. Including non-PyTorch memory, this process has 404.00 MiB memory in use. Of the allocated memory 182.57 MiB is allocated by PyTorch, and 93.43 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7279 | 0.4071 | 0.6316 | nan | nan | -0.0241 | 0.9941 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4188 | 0.2714 | nan | nan | -0.0029 | 0.9925 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7205 | 0.4081 | 0.0103 | nan | nan | -0.0241 | 0.9990 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7058 | 0.3826 | 0.0100 | nan | nan | -0.0165 | 0.9983 |
