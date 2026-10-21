@@ -180,7 +180,7 @@ def main():
                       'ni': 'lane 6, non-IID breadth',
                       'rat': 'lane 5c, ratio-sweep-seeds',
                       'fl': 'FLNET lanes',
-                      'pf': 'P1 paired A/B (experiments/postfix/run_p1.sh)'}
+                      'pf': 'P3 paired A/B (experiments/postfix/run_p3.sh)'}
         for k, v in sorted(fam.items(), key=lambda kv: -kv[1]):
             lanes[macro_lane.get(k, k)] = lanes.get(macro_lane.get(k, k), 0) + v
         print("\n      outstanding by lane:")

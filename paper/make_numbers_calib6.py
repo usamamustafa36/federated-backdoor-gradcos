@@ -177,7 +177,7 @@ def main():
     # --- Corollary 3 on real data: FLTrust counter shares (iteration 9) ---------
     # src/defenses/fltrust.py logs, per round, q0 (server), min qi (clients), the
     # corollary's bound and the min measured full-vector cosine (history.fltrust_counter).
-    fl = []
+    fl, excl_full = [], []
     for mode in ("full", "trainable"):
         for path in glob.glob(R("postfix_p3", f"p3{mode}_dirichlet_ciciot2023_fltrust_*.json")):
             try:
@@ -185,6 +185,9 @@ def main():
             except (OSError, json.JSONDecodeError):
                 continue
             fl += [(mode, e) for e in h.get("fltrust_counter", [])]
+            if mode == "full":  # defect arm: did FLTrust ever exclude anyone?
+                excl_full.append(max([x for x in h.get("detection_rate", []) + h.get("false_positive_rate", [])
+                                      if x is not None and not math.isnan(x)] or [0.0]))
     rows = [e for _, e in fl if not math.isnan(e["q0"])]
     if rows:
         P("FltQzeroMin", pct(min(e["q0"] for e in rows)))
@@ -194,9 +197,17 @@ def main():
         P("FltBoundMin", f3(min(e["bound_min"] for e in rows)))
         P("FltCosFullMin", f3(min(e["cos_full_min"] for e in rows)))
         P("FltNrounds", str(len(rows)))
+        # Iteration 10: the corollary is sufficient, not necessary. Count the rounds in
+        # which its condition fails (min q_i + q_0 <= 1) and those in which a measured
+        # full-vector cosine is non-positive (a client would be excluded).
+        P("FltNroundsQsumLeOne", str(sum(e["qsum_min"] <= 1 for e in rows)))
+        P("FltNroundsCosNonpos", str(sum(e["cos_full_min"] <= 0 for e in rows)))
+        P("FltNdefectRuns", str(len(excl_full)))
+        P("FltDefectMaxExcl", f3(max(excl_full)) if excl_full else "\\PENDING")
     else:
         for k in ("FltQzeroMin", "FltQzeroMax", "FltQiMin", "FltQsumMin", "FltBoundMin",
-                  "FltCosFullMin", "FltNrounds"):
+                  "FltCosFullMin", "FltNrounds", "FltNroundsQsumLeOne",
+                  "FltNroundsCosNonpos", "FltNdefectRuns", "FltDefectMaxExcl"):
             P(k, "\\PENDING")
 
     # --- data-only probe of what the attackers poison (iteration 7) ------------

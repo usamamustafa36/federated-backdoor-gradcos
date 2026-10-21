@@ -738,3 +738,72 @@ finished here.)
   2. Harvest the horizon probe (~midnight); settle the censoring PENDING.
   3. Once P3 FedAvg attacked cells exist for all seeds (gap-fill), define the implant set
      from P3's own FedAvg and point analyse_postfix/make numbers at postfix_p3.
+
+## Iteration 10 - 2026-10-21 - P3 made the campaign of record in the paper (implant rule coded, AlignIns rows); Corollary 4: a falsified counter buys FLTrust admission; Corollary 3 checked on real data (sufficient, not necessary)
+
+- **Coordinator notes recorded.** (18:08) The coordinator killed P3 PIDs 6606 and 6648
+  (FoolsGold attacked, started before iteration 9's 18:02 OOM fix, so every seed failed).
+  Every P3 process now running started after the fix, except 5921 (FedAvg trainable
+  attacked, had no OOM; it has since finished). The gap-filler will rerun the failed cells.
+  (later) **Venue changed to IEEE TIFS** (zero cost: final main text <= 10 IEEEtran pages incl.
+  references, supplement <= 6 pp; see AGENT_BRIEF). I did no JISA formatting and cut nothing.
+- **OOM check (done):** every ERROR line in results/postfix_p3/log_* names the pre-fix
+  processes (5919/5920/6606/6648); jobs started after 18:02 have ERR=0, including attacked cells
+  (FLAME trainable s42/s43, FLTrust full s42, FedAvg trainable s45/s46). GPU at ~2.5-4 GB of 8
+  with 4 lanes. No load reduction needed. 34 of 1,040 cells present at 18:32.
+- **Reviewer score before: 4/10, REJECT** (hostile TIFS read). Blockers, ranked:
+  1. No rule outcome under a working attack yet (P3 needs ~20 h more).
+  2. The results section still read the *first* campaign (defective round-one engine) through
+     the \pf macros, the tables were labelled P1, AlignIns was missing from them, and the
+     pre-registered implant rule ("attacked BSR only on seeds where FedAvg implants") was
+     stated in the paper but **not implemented** in analyse_postfix.py.
+  3. "The counter is attacker-controlled" was qualitative; for a security venue, an exact
+     statement of what a falsified counter buys is the natural security result.
+  4. Corollary 3 had no real-data check; once FLTrust cells landed, the real data showed its
+     condition q_i+q_0>1 FAILS in some rounds (text said "predicts no exclusion" unconditionally).
+  5. Length: 22 pp elsarticle; TIFS needs <= 10 IEEEtran pp (not touched: wait for P3).
+- **What I changed (backup paper/main.tex.pre-iter10.bak):**
+  - `paper/analyse_postfix.py`: pre-registered implant rule `--implant-bsr 0.5` (attacked BSR
+    averaged over seeds where every FedAvg attacked cell has last-5 BSR > 0.5; CA/DR/FPR over all
+    paired seeds); macros \pfImplantN/Decided/Excl{Dir,Iid}, \pfBSRFedavgAllSeeds{Dir,Iid}.
+    `paper/Makefile`: \pf now from results/postfix_p3 (target 1040); the first campaign is
+    regenerated as \pa (numbers_postfix_p1.tex, now \input; values byte-identical to before).
+    `make_fig_p1.py --res` (figure now from P3). check_manuscript lane renamed to P3.
+  - Paper: Sec. 6.2 rewritten (design of record = re-run; "Results so far" from P3 cells: FedAvg
+    negative control identical across arms over 4 seeds; FoolsGold clean CA 0.408 defect vs 0.571
+    fixed, CI [-0.286, 0.611], n=3, FPR 0.667 vs 0.567 - both arms exclude most honest clients;
+    first-campaign FLTrust/FLAME quoted as \pa and labelled; implant-set paragraph). AlignIns rows
+    in both A/B tables and in tab:rules; "twelve" -> "thirteen"; stale "CPU", "P1", "interim",
+    "newest rules are from 2022" fixed.
+  - **Corollary 4 (new, exact):** under the defect FLTrust gives client j a non-counter step
+    M_j/||g0|| = rho_j(1-q_j)sqrt(1-q0) + sqrt(q0 q_j(1-q_j)); a client choosing its counter
+    achieves M*/||g0|| = (rho sqrt(1-q0) + sqrt(rho^2(1-q0)+q0))/2 > 0 for every direction
+    (admitted even at rho=-1), independent of its norm, optimum q=1/2 at rho=0. Proof in text.
+    Verified on the implementation (`experiments/counter_defect/fltrust_falsify.py` ->
+    results/fltrust_falsify.json, paper/numbers_falsify.tex \ff*): rel. error 2.1e-8, grid of 99
+    shares never exceeds the closed form, rho=-1 attacker excluded with its true counter (signed
+    step -0.139) but admitted when falsified (0.199 ||g0||); fixed arm excludes all rho<=0.
+    **Honest caveat in text:** on the probe's synthetic updates honest rho_j = 0.91-0.92, so the
+    falsifier gets only 0.5x (rho=-1) / 1.1x (rho=0) the median honest step; real-data ratio not
+    measured (P3 logs q, not rho); no training with a falsifying attacker.
+  - **Corollary 3 on real data** (make_numbers_calib6.py, new macros \csFltNroundsQsumLeOne,
+    \csFltNroundsCosNonpos, \csFltNdefectRuns, \csFltDefectMaxExcl): over 60 logged rounds of 4
+    defect-arm FLTrust runs, q0 ranges 5.8-91.4%; the condition fails in 7 rounds (bound down to
+    -0.267), yet the measured cosine is never <= 0 (min 0.015) and no client is ever excluded.
+    Text now says the condition is sufficient, not necessary.
+- **Build/check:** latexmk rc 0, 22 pp (elsarticle; IEEEtran not yet converted, so no IEEEtran
+  page count / supplement 0). check_manuscript all PASS except the gate (521 = 510 macro refs
+  {pf 505, cs 5} + 11 literal; pf rose because AlignIns rows and P3 FLTrust/FLAME cells are
+  pending, cs fell from 12 to 5).
+- **Running jobs (none started by me remain):** P3 driver PID 5901 (CUDA, 4 lanes; ETA roughly
+  20 h, i.e. ~Oct 22 afternoon/evening, plus gap-fill); gap-filler PID 7091; horizon probe PIDs
+  6099-6109 (CPU, ETA ~midnight).
+- **Score after: 4/10, REJECT** (TIFS). The paper now updates itself from P3 and has a genuine
+  security result (Corollary 4), but outcomes are still missing and the length is ~2x the cap.
+- **Top 3 priorities for the next iteration:**
+  1. Convert to `\documentclass[journal]{IEEEtran}` (keep .bak, macros, IEEE citation style) to get
+     a real page count; do not cut yet.
+  2. Run `make numbers` (or the two analyse_postfix lines + make_numbers_calib6.py) as P3 lands;
+     re-check every RE-CHECK comment (FedAvg identical arms, FoolsGold paragraph, FLTrust counts).
+  3. Consider a small end-to-end test of Corollary 4 (FLTrust defect arm, attacker sets counter to
+     q=1/2, CPU or after P3) and log rho_j in fltrust.py so the real-data ratio can be computed.

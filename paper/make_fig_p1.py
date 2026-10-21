@@ -11,7 +11,9 @@ the transmitted vector, not a rule's decision) and plots, per partition,
 Shaded bands are the inter-quartile range over runs.
 
 Output: paper/figs/fig_p1_geometry.pdf. Generated; nothing typed by hand.
-Usage:  python3 paper/make_fig_p1.py
+Usage:  python3 paper/make_fig_p1.py [--res results/postfix_p3]
+Iteration 10: the campaign of record is P3 (results/postfix_p3), which the
+Makefile passes; the default stays P1 for reproducing the older figure.
 """
 from __future__ import annotations
 
@@ -32,6 +34,8 @@ KEYS = ["pair_cos_full", "pair_cos_sig", "buffer_norm_share", "buffer_dist_share
 
 def load():
     by_part = {}
+    if not os.path.isdir(RES):
+        return by_part
     for path in sorted(glob.glob(os.path.join(RES, "*.json"))):
         try:
             d = json.load(open(path))
@@ -58,6 +62,11 @@ def band(runs, key):
 
 
 def main():
+    global RES
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--res", default=RES)
+    RES = os.path.abspath(ap.parse_args().res)
     data = load()
     if not data:
         raise SystemExit("no P1 runs with diagnostics yet")
@@ -85,7 +94,8 @@ def main():
         ax.grid(alpha=0.3, lw=0.5)
         ax.legend(fontsize=6.5, loc="center right", frameon=False)
     n = ", ".join(f"{pname[p]}: {len(data[p])} runs" for p in parts)
-    fig.suptitle(f"P1 per-round defect diagnostics ({n})", fontsize=8)
+    tag = "P3" if "postfix_p3" in RES else "P1"
+    fig.suptitle(f"{tag} per-round defect diagnostics ({n})", fontsize=8)
     fig.tight_layout()
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     fig.savefig(OUT)

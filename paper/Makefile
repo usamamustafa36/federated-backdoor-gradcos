@@ -16,7 +16,7 @@ ROOT    = ..
 
 all: main.pdf
 
-main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex $(wildcard figs/*)
+main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
@@ -29,12 +29,15 @@ numbers:
 	cd $(ROOT) && $(PY) -m experiments.make_tables
 	cd $(ROOT) && $(PY) paper/make_numbers.py
 	cd $(ROOT) && $(PY) paper/make_figs.py
-	cd $(ROOT) && $(PY) paper/analyse_postfix.py --atk-res results/postfix_p2
-	# When P3 has landed: --res results/postfix_p3 --atk-res results/postfix_p3 --target 1040
+	# P3 is the campaign of record (iteration 10); the stopped P1/P2 campaign is kept
+	# as \pa... macros in numbers_postfix_p1.tex (defective round-one engine).
+	cd $(ROOT) && $(PY) paper/analyse_postfix.py --res results/postfix_p3 --atk-res results/postfix_p3 --target 1040
+	cd $(ROOT) && $(PY) paper/analyse_postfix.py --res results/postfix_p1 --atk-res results/postfix_p2 --prefix pa --out paper/numbers_postfix_p1.tex --implant-bsr 0
 	cd $(ROOT) && $(PY) paper/make_numbers_pilot.py
 	cd $(ROOT) && $(PY) paper/make_numbers_alias.py
 	cd $(ROOT) && $(PY) paper/make_numbers_calib6.py
-	cd $(ROOT) && $(PY) paper/make_fig_p1.py
+	cd $(ROOT) && CUDA_VISIBLE_DEVICES= $(PY) experiments/counter_defect/fltrust_falsify.py
+	cd $(ROOT) && $(PY) paper/make_fig_p1.py --res results/postfix_p3
 	$(LATEXMK) main.tex
 
 # The submission gate. Nothing carrying a \PENDING may go to a venue.

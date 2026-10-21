@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Analyse the post-fix controlled A/B campaign (results/postfix_p1/).
+"""Analyse the post-fix controlled A/B campaign (P1: results/postfix_p1/; the
+campaign of record since iteration 10 is P3: --res results/postfix_p3
+--atk-res results/postfix_p3 --target 1040, with the pre-registered implant rule
+--implant-bsr 0.5 applied to attacked BSR).
 
 Each run in P1 has a twin that is identical in every respect -- config, seed,
 data partition, attacker -- except ``defense.signal_subspace``:
@@ -131,6 +134,11 @@ def main():
     ap.add_argument("--out", default=None, help="output .tex (default numbers_postfix.tex)")
     ap.add_argument("--target", type=int, default=960,
                     help="cells in the campaign (P1: 12 rules x 80 = 960; P3 adds alignins: 1040)")
+    ap.add_argument("--implant-bsr", type=float, default=0.5,
+                    help="pre-registered inclusion rule (iteration 9, before any defended "
+                         "attacked cell of P3 ran): a rule's ATTACKED BSR is read only on "
+                         "seeds where FedAvg's attacked cell implants, i.e. last-5-round BSR "
+                         "above this value. 0 disables the filter.")
     args = ap.parse_args()
     RES = args.res
     runs = load(RES)
@@ -140,14 +148,32 @@ def main():
         for k, v in load(args.atk_res).items():
             if k[2]:
                 runs[k] = v
+    # Pre-registered implant set per partition. FedAvg reads no decision statistic,
+    # so its two arms run the same computation (clean s42: identical CA and BSR in
+    # both); a seed is in the set iff every FedAvg attacked cell present for it
+    # (either arm) implants. Seeds with no FedAvg attacked cell yet are undecided
+    # and are not read.
+    implant, excluded = {}, {}
+    for part in ("dirichlet", "iid"):
+        arms = runs.get(("fedavg", part, True), {})
+        per_seed = defaultdict(list)
+        for mode in arms.values():
+            for sd, s in mode.items():
+                per_seed[sd].append(s["BSR"])
+        implant[part] = sorted(sd for sd, v in per_seed.items()
+                               if all(x > args.implant_bsr for x in v))
+        excluded[part] = sorted(sd for sd in per_seed if sd not in implant[part])
     rows = []
     for d in DEFENSES:
         for part in ("dirichlet", "iid"):
             for atk in (False, True):
                 arms = runs.get((d, part, atk), {})
                 full, fix = arms.get("full", {}), arms.get("trainable", {})
-                seeds = sorted(set(full) & set(fix))
+                seeds_all = sorted(set(full) & set(fix))
                 for m in METRICS + DIAG:
+                    seeds = seeds_all
+                    if atk and m == "BSR" and args.implant_bsr > 0:
+                        seeds = [s for s in seeds_all if s in implant[part]]
                     a = np.array([full[s][m] for s in seeds], dtype=float)
                     b = np.array([fix[s][m] for s in seeds], dtype=float)
                     ok = ~(np.isnan(a) | np.isnan(b))
@@ -243,6 +269,25 @@ def main():
                 infl = 1.0 / math.sqrt(1.0 - float(np.median(vals))) if vals else float("nan")
                 lines.append(f"\\providecommand{{\\pfDiagNormInfl{PNAME[part]}}}"
                              f"{{{'%.1f' % infl if vals else chr(92) + 'PENDING'}}}")
+    # The implant set (pre-registered rule above), so the manuscript can say which
+    # seeds the attacked BSR columns rest on and which were excluded.
+    for part in ("dirichlet", "iid"):
+        inc, exc = implant[part], excluded[part]
+        lines.append(f"\\providecommand{{\\pfImplantN{PNAME[part]}}}"
+                     f"{{{len(inc) if (inc or exc) else chr(92) + 'PENDING'}}}")
+        lines.append(f"\\providecommand{{\\pfImplantDecided{PNAME[part]}}}"
+                     f"{{{len(inc) + len(exc) if (inc or exc) else chr(92) + 'PENDING'}}}")
+        # FedAvg's attacked BSR over EVERY decided seed (unfiltered): the ceiling the
+        # attack reaches undefended, including the seeds the rule excludes.
+        ps = defaultdict(list)
+        for mode in runs.get(("fedavg", part, True), {}).values():
+            for sd, s in mode.items():
+                ps[sd].append(s["BSR"])
+        allv = [float(np.mean(v)) for v in ps.values()]  # one value per seed
+        lines.append(f"\\providecommand{{\\pfBSRFedavgAllSeeds{PNAME[part]}}}"
+                     f"{{{fmt(float(np.mean(allv)) if allv else float('nan'))}}}")
+        lines.append(f"\\providecommand{{\\pfImplantExcl{PNAME[part]}}}"
+                     f"{{{', '.join(map(str, exc)) if exc else ('none' if inc else chr(92) + 'PENDING')}}}")
     # Campaign progress, so the manuscript can say how much of P1 it rests on.
     n_cells = sum(len(s) for arms in runs.values() for s in arms.values())
     lines.append(f"\\providecommand{{\\pfCellsDone}}{{{n_cells}}}")
@@ -255,7 +300,9 @@ def main():
         with open(out_tex, "w") as f:
             f.write("\n".join(lines) + "\n")
     total_runs = sum(len(s) for arms in runs.values() for s in arms.values())
-    print(f"postfix P1: {total_runs} runs loaded; {n_res}/{n_tot} macros resolved"
+    print(f"implant set (FedAvg attacked last-5 BSR > {args.implant_bsr}): "
+          + "; ".join(f"{p}: in {implant[p]} out {excluded[p]}" for p in implant))
+    print(f"postfix: {total_runs} runs loaded; {n_res}/{n_tot} macros resolved"
           + ("" if args.no_tex else f" -> {out_tex}"))
     for r in rows:
         if r["metric"] in ("CA", "BSR") and r["n"] >= args.min_seeds:
