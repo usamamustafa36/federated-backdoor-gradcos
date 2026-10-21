@@ -1,0 +1,66 @@
+%=====================================================================
+%  Shared preamble of main.tex and supplement.tex (iteration 12).
+%  Packages, theorem environments, macros and every generated numbers*.tex
+%  file live here, so text moved from the main paper into the supplement
+%  compiles unchanged. Cross-references: each file loads the other's .aux
+%  through xr-hyper (\externaldocument), without a prefix, so a label keeps
+%  working wherever its text ends up. Labels must therefore be unique across
+%  the two files. Build both with `make` (main -> supplement -> main).
+%=====================================================================
+% --- maths ----------------------------------------------------------
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+
+% --- floats, figures, tables ----------------------------------------
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% --- typography -----------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{url}
+\usepackage{xurl}          % let the long repository URL break across lines
+\usepackage{xr-hyper}       % cross-references between main.tex and supplement.tex
+\usepackage[hidelinks]{hyperref}
+
+\usepackage{cite}          % IEEE numeric citations, compressed ranges
+
+% Uncomment for a review submission if the editor asks for line numbers:
+% \usepackage{lineno}\linenumbers
+
+\graphicspath{{figs/}}
+
+% Marks a result whose experiment is specified and implemented but has not yet
+% been run to completion. NOTHING carrying this may go to a venue.
+\newcommand{\PENDING}{\textcolor{red}{\textbf{[PENDING RUN]}}}
+
+\newcommand{\repourl}{https://github.com/usamamustafa36/federated-backdoor-gradcos}
+\newcommand{\nbt}{\texttt{num\_batches\_tracked}}
+\newcommand{\sd}{\texttt{state\_dict()}}
+
+% Every number quoted in this paper is defined in one of three generated files.
+% Do not type a result into the prose or a table cell: add it to a generator.
+% A cell that has not been run yet expands to \PENDING.
+%   numbers.tex          paper/make_numbers.py         (pre-fix grid, realizability audit)
+%   numbers_postfix.tex  paper/analyse_postfix.py      (\pf: re-run P3, results/postfix_p3/,
+%                        the campaign of record; implant rule applied to attacked BSR)
+%   numbers_postfix_p1.tex  paper/analyse_postfix.py   (\pa: first campaign P1 clean + P2
+%                        attacked, round-one-defective engine; quoted only as such)
+%   numbers_defect.tex   experiments/counter_defect/probe_defect.py (results/defect_probe.json)
+%   numbers_defect_resnet.tex  experiments/counter_defect/probe_resnet.py (results/defect_probe_resnet.json)
+%   numbers_falsify.tex  experiments/counter_defect/fltrust_falsify.py (results/fltrust_falsify.json)
+\input{numbers}
+\input{numbers_postfix}
+\input{numbers_postfix_p1}
+\input{numbers_defect}
+\input{numbers_defect_resnet}
+\input{numbers_pilot}
+\input{numbers_alias}
+\input{numbers_calib6}
+\input{numbers_falsify}

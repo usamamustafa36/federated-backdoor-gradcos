@@ -1,6 +1,6 @@
 # Build the manuscript for IEEE Transactions on Information Forensics and Security (IEEEtran).
 #
-#   make            -> main.pdf
+#   make            -> main.pdf + supplement.pdf (IEEE TIFS: <= 10 pp / <= 6 pp)
 #   make highlights -> highlights.pdf
 #   make numbers    -> regenerate numbers.tex + figures from results/, then rebuild
 #   make gate       -> submission gate; fails while any \PENDING remains
@@ -14,9 +14,17 @@ ROOT    = ..
 
 .PHONY: all highlights numbers gate check package clean cleanall
 
-all: main.pdf
+all: main.pdf supplement.pdf
 
-main.pdf: main.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex $(wildcard figs/*)
+# main.tex and supplement.tex cross-reference each other through xr-hyper, so
+# each is rebuilt after the other's .aux changes (latexmk -g forces the pass).
+NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex
+
+supplement.pdf: supplement.tex preamble.tex main.pdf $(NUMBERS)
+	$(LATEXMK) supplement.tex
+	$(LATEXMK) -g main.tex
+
+main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
@@ -39,6 +47,8 @@ numbers:
 	cd $(ROOT) && CUDA_VISIBLE_DEVICES= $(PY) experiments/counter_defect/fltrust_falsify.py
 	cd $(ROOT) && $(PY) paper/make_fig_p1.py --res results/postfix_p3
 	$(LATEXMK) main.tex
+	$(LATEXMK) supplement.tex
+	$(LATEXMK) -g main.tex
 
 # The submission gate. Nothing carrying a \PENDING may go to a venue.
 gate:

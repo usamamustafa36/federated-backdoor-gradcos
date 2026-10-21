@@ -15,62 +15,10 @@
 %=====================================================================
 \documentclass[journal]{IEEEtran}
 
-% --- maths ----------------------------------------------------------
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{amsthm}
-\newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}
-\newtheorem{lemma}{Lemma}
+% Packages, macros and the generated numbers*.tex files: see preamble.tex.
+\input{preamble}
+\externaldocument{supplement}  % labels defined in the supplement
 
-% --- floats, figures, tables ----------------------------------------
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{multirow}
-
-% --- typography -----------------------------------------------------
-\usepackage[T1]{fontenc}
-\usepackage{textcomp}
-\usepackage{xcolor}
-\usepackage{microtype}
-\usepackage{url}
-\usepackage{xurl}          % let the long repository URL break across lines
-\usepackage[hidelinks]{hyperref}
-
-\usepackage{cite}          % IEEE numeric citations, compressed ranges
-
-% Uncomment for a review submission if the editor asks for line numbers:
-% \usepackage{lineno}\linenumbers
-
-\graphicspath{{figs/}}
-
-% Marks a result whose experiment is specified and implemented but has not yet
-% been run to completion. NOTHING carrying this may go to a venue.
-\newcommand{\PENDING}{\textcolor{red}{\textbf{[PENDING RUN]}}}
-
-\newcommand{\repourl}{https://github.com/usamamustafa36/federated-backdoor-gradcos}
-\newcommand{\nbt}{\texttt{num\_batches\_tracked}}
-\newcommand{\sd}{\texttt{state\_dict()}}
-
-% Every number quoted in this paper is defined in one of three generated files.
-% Do not type a result into the prose or a table cell: add it to a generator.
-% A cell that has not been run yet expands to \PENDING.
-%   numbers.tex          paper/make_numbers.py         (pre-fix grid, realizability audit)
-%   numbers_postfix.tex  paper/analyse_postfix.py      (\pf: re-run P3, results/postfix_p3/,
-%                        the campaign of record; implant rule applied to attacked BSR)
-%   numbers_postfix_p1.tex  paper/analyse_postfix.py   (\pa: first campaign P1 clean + P2
-%                        attacked, round-one-defective engine; quoted only as such)
-%   numbers_defect.tex   experiments/counter_defect/probe_defect.py (results/defect_probe.json)
-%   numbers_defect_resnet.tex  experiments/counter_defect/probe_resnet.py (results/defect_probe_resnet.json)
-%   numbers_falsify.tex  experiments/counter_defect/fltrust_falsify.py (results/fltrust_falsify.json)
-\input{numbers}
-\input{numbers_postfix}
-\input{numbers_postfix_p1}
-\input{numbers_defect}
-\input{numbers_defect_resnet}
-\input{numbers_pilot}
-\input{numbers_alias}
-\input{numbers_calib6}
-\input{numbers_falsify}
 
 
 \begin{document}
@@ -226,7 +174,8 @@ states, for each of thirteen aggregation rules and before any outcome, what the
 decomposition predicts. Sec.~\ref{sec:results} reports the transmitted geometry,
 the controlled comparison, the mechanisms, and the conclusions of our own earlier
 version that do not survive. Sec.~\ref{sec:realizable} is the trigger audit and
-Sec.~\ref{sec:discussion} the recommendations and limitations. Values not yet
+Sec.~\ref{sec:discussion} the recommendations and limitations. The supplementary
+material (Sec.~\ref{sup:overview}) holds proofs and calibration details. Values not yet
 measured on the corrected pipeline are marked as pending rather than carried over
 from the defective one.
 
@@ -1071,7 +1020,7 @@ and say so each time.
 \textbf{Results so far.} \PENDING{} most cells of the re-run, including every
 IID cell and every attacked cell of a defended rule.
 % RETIRES WITH: P3 campaign (results/postfix_p3)
-Three kinds of cell have landed for several seeds. The first two are the ones the design
+Four kinds of cell have landed for several seeds. The first two are the ones the design
 needs before any rule can be read. The first is the negative control. FedAvg
 reads no statistic, and its clean non-IID cells give the same clean accuracy in
 both arms ($\pfCAFedavgDirCleanDef$ and $\pfCAFedavgDirCleanFix$, paired difference
@@ -1098,6 +1047,17 @@ $[\pfCAFlameDirCleanLo,\pfCAFlameDirCleanHi]$). On the engine without the round-
 defect, FLAME's clean-run decisions are again indistinguishable between the arms,
 although its input is exposed (Sec.~\ref{sec:mech}).
 % RE-CHECK the FLAME sentence when its Dir clean cells reach n=10 (P3).
+The fourth is FLTrust's clean non-IID cells ($n=\pfFPRFltrustDirCleanN$ paired
+seeds), where the arms do differ. FLTrust excludes a fraction
+$\pfFPRFltrustDirCleanDef$ of the clients in the defect arm and
+$\pfFPRFltrustDirCleanFix$ in the fixed arm (paired difference
+$\pfFPRFltrustDirCleanDiff$, 95\% CI
+$[\pfFPRFltrustDirCleanLo,\pfFPRFltrustDirCleanHi]$; every client is honest), and
+clean accuracy moves by $\pfCAFltrustDirCleanDiff$ (CI
+$[\pfCAFltrustDirCleanLo,\pfCAFltrustDirCleanHi]$). This is the direction
+Corollary~\ref{cor:fltrust} predicts: the counter makes FLTrust admit everyone
+(Sec.~\ref{sec:mech}).
+% RE-CHECK at n=10; the t-interval upper end can exceed 1 at n=4 (iteration 12).
 
 \textbf{The first campaign, for reference.} Its non-IID cells are where the
 FLTrust and FLAME observations of Sec.~\ref{sec:mech} first came from. Its engine
@@ -1299,8 +1259,8 @@ counter does not make FLTrust a good detector here: in the fixed arm of the firs
 campaign it excluded malicious clients at rate $\paDRFltrustDirAtkFix$ and honest ones
 at $\paFPRFltrustDirAtkFix$ (re-run: $\pfDRFltrustDirAtkFix$ and
 $\pfFPRFltrustDirAtkFix$), so on non-IID clients a $300$-row root direction
-disagrees with honest updates about as often as with poisoned ones. If that holds in
-the re-run, the counter had hidden it, replacing a detector with a poor
+disagrees with honest updates about as often as with poisoned ones. The re-run's
+clean cells so far agree (Sec.~\ref{sec:p1}): the counter had hidden this, replacing a detector with a poor
 true-positive/false-positive balance by one that never fires.
 
 \textbf{What a falsified counter buys under FLTrust.} The counter is a value each

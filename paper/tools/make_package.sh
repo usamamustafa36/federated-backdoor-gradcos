@@ -18,7 +18,7 @@ mkdir -p "$OUT"
 
 # Manuscript item type: .tex, .bbl, .bib. numbers.tex and declarations.tex are
 # \input by main.tex, so they must travel with it.
-cp main.tex numbers.tex declarations.tex refs.bib main.bbl "$OUT"/
+cp main.tex preamble.tex supplement.tex numbers*.tex declarations_ieee.tex refs.bib main.bbl "$OUT"/   # iteration 12: shared preamble, all generated numbers files, supplement
 
 # Figure item type, flattened out of figs/.
 cp figs/*.pdf "$OUT"/

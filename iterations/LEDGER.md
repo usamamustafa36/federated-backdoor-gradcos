@@ -858,3 +858,101 @@ finished here.)
      first moves.
   3. Corollary 4 end-to-end test (FLTrust defect arm, counter-falsifying attacker) on CPU or after P3;
      log rho_j in fltrust.py.
+
+## Iteration 12 - 2026-10-21 - Page budget measured block by block (15.8 -> 9.5 pp plan); supplement skeleton with two-way cross-references; P3 harvest (FLTrust re-run: fixing the counter turns on exclusion of honest clients)
+
+- **Coordinator note recorded.** At 18:51 the coordinator added `experiments/postfix/run_p3_reverse.sh`
+  (PID 15185 under systemd-inhibit 15184): 2 extra CUDA lanes walking results/postfix_p3/jobs.txt in
+  reverse (log results/postfix_p3/campaign_reverse.log), so P3 runs 6 lanes at ~0.65 GB each (GPU 3.8 GB
+  used at 18:54). Committed with this iteration. I added no GPU job.
+- **State at start (18:54):** P3 50/1,040 JSONs (59 at 19:06). The only ERROR lines in P3 logs are the
+  three known pre-fix OOMs (foolsgold full/trainable s46, flame full s46, all before 18:20, written by
+  pre-fix processes; the gap-filler reruns them). Horizon probe (PIDs 6108/6109, CPU, 40 rounds)
+  still running, no calib7h JSON yet: not harvested.
+- **Reviewer score before: 4/10, REJECT** (hostile TIFS). Blockers, ranked:
+  1. No rule outcome under a working attack for most rules (P3 ~6% done).
+  2. 15.8 IEEEtran pages against a hard 10 (aim 9.5); no plan for what goes where, no supplement.
+  3. (new, found this iteration) The paired t-intervals on bounded rates leave [0,1]: FLTrust
+     FPR CI [0.383, 1.049], DR CI [-0.047, 1.097] at n=4-5. A TIFS statistician will flag it.
+- **What I changed:**
+  - **Harvest (P3, 59 cells).** New: FLTrust non-IID clean n=5, attacked n=4. Defect arm excludes no one
+    (FPR 0.000 clean and attacked, DR 0.000); fixed arm excludes honest clients at FPR 0.716 (clean,
+    CI [0.383, 1.049]) and 0.631 (attacked), malicious at DR 0.525; clean CA 0.643 vs 0.573 (diff -0.070,
+    CI [-0.275, 0.135]; the fixed arm's s45 collapses to CA 0.298 with FPR 0.96). This is Corollary 3's
+    prediction (the counter makes FLTrust admit everyone) now on the corrected engine. Added as the
+    fourth "Results so far" item (macros only, RE-CHECK at n=10) and replaced the conditional "If that
+    holds in the re-run" in the FLTrust mechanism paragraph by "The re-run's clean cells so far agree".
+    Corollary 3 real-data counts regenerated: 10 defect-arm runs, 285 rounds, q_0 up to 94.0%,
+    condition fails in 24 rounds, measured cosine never <= 0, max exclusion 0.000: text unchanged, holds.
+    Implant set unchanged (Dirichlet in {43,44,45}, out {46}).
+  - **Supplement skeleton.** `paper/preamble.tex` (new): the shared preamble (packages, theorems,
+    macros, every \input{numbers*}), plus `xr-hyper`. `paper/main.tex` now `\input{preamble}` and
+    `\externaldocument{supplement}`; `paper/supplement.tex` (new, IEEEtran journal, S-numbered sections/
+    tables/figures/equations) does `\externaldocument{main}`. No prefixes, so a label keeps working in
+    both files after its text moves (labels must stay unique across the two). Seven sections, each a
+    `\TOMOVE{...}` placeholder naming the main-text block that will move into it; **nothing was moved
+    or deleted**. One sentence added to the intro roadmap pointing at Sec. S-I (both directions of
+    cross-reference verified in the PDFs: main shows "Sec. S-I", supplement shows "Sec. III", "Table V").
+  - `paper/Makefile`: `make` builds main -> supplement -> main again (xr needs both .aux files);
+    `make numbers` does the same. `paper/tools/make_package.sh`: copies preamble, supplement, all
+    numbers*.tex and declarations_ieee.tex (it still copied the Elsevier set).
+  - `paper/tools/check_manuscript.py`: new checks main.pdf <= 10 pp, supplement.pdf <= 6 pp, no
+    \TOMOVE left in the supplement, no undefined refs/cites in supplement.log.
+  - **`paper/tools/page_budget.py` (new):** measures the IEEEtran page use of every section, bold
+    paragraph head, theorem block and float by inserting \pdfsavepos whatsits (zero layout effect;
+    the script verifies pdftotext output equals an unmarked build: "identical: yes"). ~45 s. Rerun it
+    after every cut. Accidentally ran a `cat >> /dev/null` that hung on stdin; I killed it with
+    `pkill -f -u ubuntu 'cat$'` (my own process; noting it because the pattern was broad).
+- **Page budget (measured 19:05 on the 59-cell build; pages incl. floats; target 9.5 incl. refs).**
+
+  | block (current) | now | target main | goes to supplement |
+  |---|---|---|---|
+  | Title, abstract, keywords | 0.34 | 0.32 | abstract to ~220 words |
+  | I Introduction (0.56) + contributions list (0.67) | 1.23 | 0.85 | - (trim list to 4 short items) |
+  | II Related work (5 paragraphs) | 0.77 | 0.60 | - (fold Federated IDS into one sentence) |
+  | III Defect: setting, Prop. 1, Cor. 1, Cor. 2, norm/coord, inertness | 1.13 | 0.95 | - |
+  | III verification on real updates + second architecture + Table I | 0.41 | 0.06 | S-II (0.38) |
+  | III-A Which pipelines are exposed + Table II + the fix | 0.50 | 0.42 | - (Table II stays: survey is a contribution) |
+  | IV Setup: task, model, federation, threat model, counter attacker-set | 0.64 | 0.55 | - |
+  | IV Attack calibration + Table III, seed-robust adversary + Table IV, reductions | 1.61 | 0.12 | S-IV (1.50) |
+  | IV Server, metrics, statistics | 0.31 | 0.28 | - |
+  | IV Round-one aliasing | 0.43 | 0.06 | S-V (0.37) |
+  | V Rules: Table V + per-family descriptions + 2025 rule + hyperparameters | 1.11 | 0.50 | S-VI (0.55) |
+  | VI-A Transmitted geometry + Fig. 1 | 0.42 | 0.42 | - |
+  | VI-B Design, results so far, BSR rule + Tables VI, VII | 1.20 | 1.40 | - (+0.2 reserved: final P3 text) |
+  | VI-B first campaign, for reference | 0.11 | 0 | S-VII |
+  | VI-C Cor. 3 + proof + real-data check | 0.67 | 0.30 | S-III (0.40) |
+  | VI-C Cor. 4 + proof + probe | 0.59 | 0.25 | S-III (0.35) |
+  | VI-C FoolsGold + Lemma 1 + proof | 0.53 | 0.20 | S-III (0.33) |
+  | VI-C FLAME, distance, controls | 0.28 | 0.25 | - |
+  | VI-D What the counter did to an earlier version | 0.38 | 0.06 | S-VII (0.32) |
+  | VII Trigger design and realizability + Tables VIII, IX | 0.99 | 0.10 | S-VIII (0.90), main keeps one paragraph in VIII |
+  | VIII Discussion (why it survives review, recommendations, limitations) | 0.71 | 0.55 | - |
+  | IX Conclusion | 0.44 | 0.20 | - |
+  | Data availability + references (37) | 0.92 | 0.92 | - |
+  | **Total** | **15.80** | **~9.50** | **~5.1 + overview/refs ~0.5 = ~5.6 of 6** |
+
+  Arithmetic: moving blocks saves ~5.3 pp (15.8 -> ~10.5); prose trimming of intro/related/
+  setup/discussion/conclusion/abstract saves ~1.2 pp; +0.2 is reserved for the final P3 results text.
+  **Both budgets are tight** (main ~9.5, supplement ~5.6/6). Fallbacks, in order: merge Tables VI and
+  VII (A/B outcomes + flags) into one table* (~0.15), move Fig. 1 to the supplement (0.18, but the
+  supplement is near its cap), cut the realizability audit to a separate paper instead of the
+  supplement (frees 0.9 of supplement; it is independent of the counter story).
+- **Build/check:** latexmk rc 0 for both. **IEEEtran pages: main 16 (ends at 15.80) / supplement 1
+  (skeleton).** check_manuscript: FAIL main > 10 pp (expected), FAIL 7 \TOMOVE placeholders (expected),
+  FAIL gate 481 (= 470 macro refs {pf 465, cs 5} + 11 literal; was 512); everything else PASS.
+- **Running jobs (none started by me):** P3 driver PID 5901 (4 lanes) + coordinator reverse runner PID
+  15185 (2 lanes), CUDA; at ~59 cells/75 min of 6-lane operation the ETA is still ~Oct 22 evening; gap-filler
+  PID 7091 waits. Horizon probe PIDs 6108/6109 (CPU, since 17:52), outputs results/calib_iter7/calib7h_*.
+- **Score after: 4/10, REJECT.** FLTrust's re-run result now supports Corollary 3 on the corrected engine
+  (n=5), and the cut is planned and measurable, but outcomes for most rules are missing and the paper is
+  still 16 pp.
+- **Top 3 priorities for the next iteration:**
+  1. Fix the interval method for bounded rates (FPR/DR/BSR CIs leave [0,1]): use a paired bootstrap or
+     clip-and-say in analyse_postfix.py, regenerate, and state the method in Sec. IV "Statistics".
+  2. Harvest P3 (`make numbers` or the analyse_postfix + make_numbers_calib6 lines) and the horizon probe
+     when calib7h_* lands; re-check every RE-CHECK comment (FLTrust fourth item, FLAME, FoolsGold, FedAvg).
+  3. Start executing the budget with blocks whose content is final and independent of P3 (allowed once
+     P3 lands per the brief; if the coordinator agrees earlier, the safest first moves are S-V round-one
+     aliasing, S-VIII realizability, S-II probe details): move text unchanged, replace with the kept
+     summary sentences, rerun `python3 paper/tools/page_budget.py`, record the new page counts.

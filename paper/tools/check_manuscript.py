@@ -57,6 +57,30 @@ def main():
         hits = len(re.findall(pat, log))
         check(hits == 0, label, f"{hits} found" if hits else "")
 
+    # IEEE TIFS (iteration 12): pages 1-10 are free and the cap is HARD, so the
+    # main PDF, references included, must be <= 10 pages; the supplement <= 6.
+    # A supplement section still marked \TOMOVE is an unfinished move.
+    import subprocess
+    for pdf, cap in (('main.pdf', 10), ('supplement.pdf', 6)):
+        try:
+            info = subprocess.run(['pdfinfo', pdf], capture_output=True, text=True).stdout
+            pages = int(re.search(r'Pages:\s+(\d+)', info).group(1))
+            check(pages <= cap, f"{pdf} <= {cap} IEEEtran pages", f"{pages} pages")
+        except (AttributeError, FileNotFoundError):
+            check(False, f"{pdf} present (run make)")
+    try:
+        sup = open('supplement.tex', encoding='utf-8').read()
+        sup_body = re.sub(r'(?m)^\s*%.*$', '', sup[sup.index(r'\begin{document}'):])
+        n_move = len(re.findall(r'\\TOMOVE\{', sup_body))
+        check(n_move == 0, "supplement has no placeholder (\\TOMOVE) sections",
+              f"{n_move} placeholder(s)" if n_move else "")
+        slog = open('supplement.log', encoding='utf-8', errors='replace').read()
+        hits = len(re.findall(r'(Reference|Citation) .* undefined', slog))
+        check(hits == 0, "supplement: no undefined references/citations",
+              f"{hits} found" if hits else "")
+    except (FileNotFoundError, ValueError):
+        check(False, "supplement.tex/.log present (run make)")
+
     # Every float must be referred to in the text. An orphaned table or figure
     # is something a copy-editor will send back, and it is easy to create by
     # deleting the one sentence that pointed at it.
