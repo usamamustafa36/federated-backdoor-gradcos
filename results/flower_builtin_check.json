@@ -1,0 +1,16 @@
+{
+  "flwr_version": "1.30.0",
+  "torch_version": "2.6.0+cu124",
+  "batches": [
+    3,
+    40
+  ],
+  "counter_dtype_on_wire": "int64",
+  "krum_sqdist_full": 1370.2664768548213,
+  "krum_sqdist_without_counter": 1.2664775848388672,
+  "krum_sqdist_excess": 1368.9999992699825,
+  "predicted_excess_L_dB2": 1369,
+  "excess_matches_prediction": true,
+  "dp_get_norm_full": 40.07606201811223,
+  "dp_get_norm_without_counter": 2.4679439067840576
+}

@@ -43,6 +43,14 @@ for the most widely adopted FL framework, and the modern `ArrayRecord` API takes
 `record = ArrayRecord(model.state_dict())`. Verified on flwr 1.30.0 that the round trip
 carries `num_batches_tracked` as an int64 on the wire.
 
+**Iteration 18 (21 Oct 2026):** the quick-start aggregates with FedAvg, which makes no
+client-level decision. But Flower 1.30's built-in `Krum`, `MultiKrum` and `Bulyan`
+(`flwr/serverapp/strategy/multikrum.py::compute_distances`) concatenate every array of the
+received `ArrayRecord`, counter included; `experiments/counter_defect/flower_builtin_check.py`
+shows the squared distance between two such records exceeds its counter-free value by exactly
+(B_i-B_j)^2 (results/flower_builtin_check.json). `flwr.common.differential_privacy.get_norm`
+likewise includes the counter (cf. Flower issue #8298).
+
 ## The refinement that makes this sharp: why nobody noticed
 
 `torch.cat(list(state_dict.values()))` silently promotes the int64 counter to float32 and

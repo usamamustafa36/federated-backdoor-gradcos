@@ -42,23 +42,23 @@ that clients send. Many PyTorch pipelines send each model as a \texttt{state\_di
 which for a network with BatchNorm includes \texttt{num\_batches\_tracked}: an integer
 that counts local mini-batches and, under PyTorch's default momentum, has no effect on the
 model. We show that aggregation rules nonetheless decide on it. An exact decomposition of
-the cosine and the Euclidean distance between two transmitted updates into trainable and
+the cosine and the Euclidean distance between transmitted updates into trainable and
 buffer parts explains which rules are exposed: in every pairwise cosine the trainable
-signal is weighted by at most one minus the buffer share, whatever the data, while distance-based rules are exposed
-only when clients run different numbers of batches, by exactly $L(B_i-B_j)^2$ for $L$
-BatchNorm layers. In a federated CNN\,+\,LSTM intrusion detector on CICIoT2023 with
-non-IID clients, the buffers carry a median $\pfDiagBufNormShareDir$ of the squared
-update norm and $\pfDiagBufDistShareDir$ of the pairwise squared distances, and the mean
-pairwise client cosine is $\pfDiagCosFullDir$ over the transmitted vector against
-$\pfDiagCosSigDir$ over the trainable parameters. A seed-paired A/B campaign that changes
-only which coordinates thirteen aggregation rules read then measures what the counter does
-to clean accuracy, backdoor success and client flagging: \PENDING.
+signal is weighted by at most one minus the buffer share, whatever the data, while
+distance-based rules are exposed only when clients run different numbers of batches, by
+exactly $L(B_i-B_j)^2$ for $L$ BatchNorm layers. In a federated CNN\,+\,LSTM intrusion
+detector on CICIoT2023 with non-IID clients, the buffers carry a median
+$\pfDiagBufNormShareDir$ of the squared update norm, and the mean pairwise client cosine
+is $\pfDiagCosFullDir$ over the transmitted vector against $\pfDiagCosSigDir$ over the
+trainable parameters. A seed-paired A/B campaign that changes only which coordinates
+thirteen aggregation rules read then measures what the counter does to clean accuracy,
+backdoor success and client flagging: \PENDING.
 % RETIRES WITH: P3 campaign (results/postfix_p3), one sentence from \pf... macros
-Four of ten inspected implementations are exposed, including Flower's official PyTorch
-example and a 2025 defense's reference code. Independently of the counter, a joint-distribution audit of
-feature-space backdoor triggers finds that a trigger
-deviating by only $\rzSigFixedQtr\sigma$ on one feature lies further from the benign mean
-than all but $\rzExceedFixedQtr$ of $\rzRefRows$ real benign flows.
+Four of ten inspected implementations put the counter in that vector, including a 2025
+defense's reference code and Flower's official PyTorch example, whose updates Flower's
+own Krum and Bulyan compare counter included. A separate audit shows that a
+feature-space trigger deviating at most $\rzSigFixedQtr\sigma$ per feature lies further
+from the benign mean than all but $\rzExceedFixedQtr$ of $\rzRefRows$ benign flows.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -96,16 +96,59 @@ dictionary into one vector per client, the counter becomes a coordinate of the
 update, and its change over a local round is exactly the number of local
 batches $B$. Under PyTorch's default momentum the framework never reads the
 counter, so it does nothing to the model. But $B$ is large compared with a typical trainable
-update: in the detector studied here it is one coordinate of
+update: in the detector studied here the counter is one coordinate of
 $\dfNTrain$ trainable ones, yet the buffers carry a median $\pfDiagBufNormShareDir$
-of the squared norm of each transmitted update
-(Sec.~\ref{sec:defect}; median over $\pfDiagBufNormShareDirRuns$ non-IID runs).
-
-Nothing errors: the model trains and every defense runs. What changes is what
-the defenses compare. Clients whose
+of each transmitted update's squared norm over $\pfDiagBufNormShareDirRuns$ non-IID runs.
+Nothing errors; what changes is what the defenses compare. Clients whose
 trainable updates have a mean pairwise cosine of $\pfDiagCosSigDir$ appear,
-over the transmitted vectors, to agree at $\pfDiagCosFullDir$ (same runs). A rule that separates clients by angle is then separating
+over the transmitted vectors, to agree at $\pfDiagCosFullDir$
+(Fig.~\ref{fig:schematic}). A rule that separates clients by angle is then separating
 them largely by a bookkeeping counter.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\footnotesize,>=latex,line cap=round]
+\pgfmathsetmacro{\bs}{\pfDiagBufNormShareDir}
+\pgfmathsetmacro{\hu}{acos(\pfDiagCosSigDir)/2}
+\pgfmathsetmacro{\hd}{acos(\pfDiagCosFullDir)/2}
+\colorlet{trn}{blue!45}\colorlet{buf}{orange!85!black}
+\def\xa{1.45}\def\W{4.6}
+% (a) composition of one transmitted update
+\node[anchor=west] at (0,3.55) {(a) one transmitted update $d_i=(u_i,b_i)$};
+\node[anchor=east] at (\xa-0.05,3.0) {coordinates};
+\fill[trn] (\xa,2.85) rectangle (\xa+\W,3.15);
+\fill[buf] (\xa+\W-0.04,2.85) rectangle (\xa+\W,3.15);
+\node[anchor=east] at (\xa-0.05,2.35) {$\|d_i\|^2$};
+\fill[trn] (\xa,2.2) rectangle ({\xa+(1-\bs)*\W},2.5);
+\fill[buf] ({\xa+(1-\bs)*\W},2.2) rectangle (\xa+\W,2.5);
+\node[anchor=west,align=left,inner sep=1pt] at (\xa+\W+0.08,3.0) {trainable $u_i$: $\dfNTrain$\\buffers $b_i$: $\dfNBuf$};
+\node[anchor=west,align=left,inner sep=1pt] at (\xa+\W+0.08,2.35) {buffers: $\pfDiagBufNormShareDir$\\(counter $c_i=B_i$)};
+% (b) angles
+\node[anchor=west] at (0,1.75) {(b) mean pairwise client cosine};
+\begin{scope}[shift={(1.3,0.05)}]
+\draw[->,thick,trn] (0,0) -- (90-\hu:1.25) node[above,black] {$u_i$};
+\draw[->,thick,trn] (0,0) -- (90+\hu:1.25) node[above,black] {$u_j$};
+\draw (90-\hu:0.45) arc (90-\hu:90+\hu:0.45);
+\node[align=center] at (0,-0.22) {trainable: $\pfDiagCosSigDir$};
+\end{scope}
+\node at (3.3,0.65) {$\xrightarrow{\;+\,c_i=B_i\mathbf{1}_L\;}$};
+\begin{scope}[shift={(5.4,0.05)}]
+\draw[->,thick,buf] (0,0) -- (90-\hd:1.45) node[right,black] {$d_i$};
+\draw[->,thick,buf] (0,0) -- (90+\hd:1.45) node[left,black] {$d_j$};
+\draw (90-\hd:0.9) arc (90-\hd:90+\hd:0.9);
+\node[align=center] at (0,-0.22) {transmitted: $\pfDiagCosFullDir$};
+\end{scope}
+\end{tikzpicture}
+\caption{What a robust rule receives when clients send a \sd{}. (a) The
+$\dfNBuf$ buffer coordinates (top bar; sliver widened to be visible) carry most of
+the squared norm (bottom bar, to scale; median over non-IID runs); one of them is
+\nbt{}, whose change is the batch count $B_i$.
+(b) Angles drawn to the measured mean pairwise cosines (same runs; lengths
+schematic): clients whose trainable updates are nearly orthogonal look almost
+aligned once the shared counter direction is appended
+(Proposition~\ref{prop:decomp}, Corollary~\ref{cor:band}).}
+\label{fig:schematic}
+\end{figure}
 
 \paragraph{Contributions}
 \begin{itemize}
@@ -119,7 +162,8 @@ floating-point precision, and verify that the counter is inert under the default
 momentum.
 \item \textbf{Scope, stated narrowly} (Sec.~\ref{sec:scope}). The hazard belongs
 to the transmission convention, not to any rule. Four of ten public
-implementations we inspected are exposed, including Flower's PyTorch quick-start
+implementations we inspected put the counter in the decision vector or hand it to one,
+including Flower's PyTorch quick-start
 and the official code of AlignIns~\cite{xu2025alignins} (CVPR~2025) in two of its
 three benchmarks. We do not claim that published results are wrong.
 \item \textbf{What the counter changes, measured causally} (Sec.~\ref{sec:p1}).
@@ -188,15 +232,12 @@ DCT components of the weights (FreqFed~\cite{fereidooni2024freqfed}), or filter 
 cosine to the global model and sign agreement (AlignIns~\cite{xu2025alignins});
 all decide on a vector formed from the client's model.
 
-\textbf{Evaluating robust aggregation.} Shejwalkar and
-Houmansadr~\cite{shejwalkar2021} and Fang et al.~\cite{fang2020local} showed that
-defenses evaluated only against static attackers routinely fall to attackers
-optimized against them; Baruch et al.~\cite{baruch2019little} showed how little
-perturbation is needed when the attacker stays inside the honest variance;
-3DFed~\cite{li20233dfed} and the learning-based framework of Yang et
-al.~\cite{yang2024learning} adapt the attack to the defense from feedback. Fang
-et al.~\cite{fang2025foundation} argue that the field should harden established
-aggregation rules rather than keep proposing new ones. All of this work concerns
+\textbf{Evaluating robust aggregation.} Defenses evaluated against static attackers fall to optimized
+ones~\cite{shejwalkar2021,fang2020local}, to perturbations inside the honest
+variance~\cite{baruch2019little}, and to attacks adapted from
+feedback~\cite{li20233dfed,yang2024learning}; Fang et
+al.~\cite{fang2025foundation} argue for hardening established rules rather than
+proposing new ones. All of this work concerns
 what the attacker sends; ours is what the honest pipeline puts into the vector
 the rule reads.
 Pierazzi et al.~\cite{pierazzi2020problem} make the problem-space point that
@@ -305,8 +346,8 @@ factor $\|g_0\|/\|g_i\|$ approaches $B_0/B_i$. Coordinate-wise rules (median,
 trimmed mean) give the counter its own order statistic, so the decomposition
 predicts no exposure; they are negative controls in Sec.~\ref{sec:p1}.
 
-\textbf{Inertness and verification.} Under PyTorch's default \texttt{momentum=0.1}
-BatchNorm reads \nbt{} only when \texttt{momentum=None}. On our model, two copies
+\textbf{Inertness and verification.} PyTorch's BatchNorm reads \nbt{} only when
+\texttt{momentum=None} (the default is $0.1$). On our model, two copies
 differing only by $+10^5$ on the counter, fed identical batches, end with maximum
 absolute differences of $\dfInertMean$ (running means), $\dfInertVar$ (running
 variances) and $\dfInertLogit$ (evaluation logits); with \texttt{momentum=None} the
@@ -333,9 +374,14 @@ mean and Fang's attack on ResNet-18, Flower's official PyTorch quick-start, whos
 array, and the official code of AlignIns~\cite{xu2025alignins}, which flattens the
 \sd{} before and after local training; its CIFAR-10 ResNet-9 disables running
 statistics, while its CIFAR-100 VGG-9 and Tiny-ImageNet ResNet-18 carry the counter
-(lines in \texttt{SURVEY.md}). Flower's row matters most, as the documented entry
-point of a widely used framework; AlignIns' shows that the convention is not
-confined to old code.
+(lines in \texttt{SURVEY.md}). Flower's row matters most. The quick-start itself
+aggregates with FedAvg, which makes no client-level decision, but Flower's built-in
+Krum, Multi-Krum and Bulyan (flwr~1.30) score clients by squared distances between
+the concatenated arrays of each record, counter included: on two quick-start-style
+records whose clients ran $B_i\ne B_j$ batches the distance exceeds its
+counter-free value by exactly $(B_i-B_j)^2$
+(\path{experiments/counter_defect/flower_builtin_check.py}). AlignIns' row shows
+that the convention is not confined to old code.
 % Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified;
 % AlignIns JiiahaoXU/AlignIns@49b7d32 read 21 Oct 2026).
 
@@ -343,7 +389,9 @@ confined to old code.
 \centering
 \caption{How public FL robustness implementations form the per-client vector
 (code inspected September and October 2026). ``Exposed'' means BatchNorm buffers, including
-\nbt{}, enter the vector the aggregation rule decides on.}
+\nbt{}, enter the vector the aggregation rule decides on. $^\dagger$The example's
+own rule (FedAvg) makes no client-level decision; Flower's built-in Krum, Multi-Krum
+and Bulyan, given the same records, read the counter (Sec.~\ref{sec:scope}).}
 \label{tab:survey}
 \small
 \begin{tabular}{@{}p{0.38\linewidth}p{0.40\linewidth}l@{}}
@@ -357,7 +405,7 @@ Attack of the Tails, official~\cite{wang2020tails} & \texttt{parameters()} & no 
 DBA, official~\cite{xie2020} & \texttt{named\_parameters()} & no \\
 IBA (\texttt{sail-research/iba}) & \texttt{parameters()} & no \\
 \texttt{yjlee22/byzantineFL} (Krum, trimmed mean, Fang) & flattened \sd{}, ResNet-18 & yes \\
-Flower \texttt{quickstart-pytorch}~\cite{beutel2020flower} & \texttt{ArrayRecord(model.state\_dict())} & yes \\
+Flower \texttt{quickstart-pytorch}~\cite{beutel2020flower} & \texttt{ArrayRecord(model.state\_dict())} & yes$^\dagger$ \\
 AlignIns, official~\cite{xu2025alignins} & flattened \sd{}; ResNet-9 without, VGG-9 and ResNet-18 with running statistics & 2 of 3 \\
 This paper's pipeline, before the fix & flattened \sd{} & yes \\
 \bottomrule
@@ -552,12 +600,9 @@ absolute performance should not be read from our tables.
 \label{sec:geometry}
 
 Fig.~\ref{fig:geometry} shows, per round, what the rules are given in the
-non-IID runs. The buffers carry almost all of the squared update norm and of the
-pairwise squared distances (medians $\pfDiagBufNormShareDir$ and
-$\pfDiagBufDistShareDir$ over $\pfDiagBufNormShareDirRuns$ runs), and the mean
-pairwise cosine over the transmitted vector sits near $\pfDiagCosFullDir$ while
-the trainable updates' is $\pfDiagCosSigDir$. All diagnostics are over rounds
-$2$--$15$; round~$1$ describes the engine's round-one defect instead
+non-IID runs, resolving the medians of Fig.~\ref{fig:schematic} by round; the
+buffers also carry a median $\pfDiagBufDistShareDir$ of the pairwise squared
+distances. All diagnostics are over rounds $2$--$15$; round~$1$ describes the engine's round-one defect instead
 (Sec.~\ref{sec:setup}; median full-vector cosine $\raPoneCosFullRone$ in round~$1$
 against $\raPoneCosFullRtwo$ later, $\raPoneRuns$ clean non-IID runs).
 Corollary~\ref{cor:dist} predicts that in IID runs, where every client runs the
@@ -902,23 +947,18 @@ we predict no sign for the attacked difference and treat it as exploratory. FedA
 the median and the trimmed mean estimate the nondeterminism floor. \PENDING
 % RETIRES WITH: P3 campaign, Krum/Bulyan/RFA and FedAvg/median/trimmed-mean cells (results/postfix_p3)
 
-\textbf{What the counter did to an earlier version of this study.} Four findings
-of our own defective pipeline were statements about the counter or the round-one
-defect, not the rules (FLTrust never excludes and costs accuracy; FoolsGold's
-accuracy cost; colluders' cosine near one; Sec.~\ref{sec:retro}). None of its
-numbers is reused.
+\textbf{An earlier version of this study} reported four findings that were about
+the counter or the round-one defect, not the rules (Sec.~\ref{sec:retro}); none of
+its numbers is reused.
 
 \section{Discussion and Limitations}
 \label{sec:discussion}
 
-\textbf{Why the hazard survives review.} It is inert under the default momentum,
-so no accuracy curve reveals it; it hides from distance rules on equal IID shards,
-where robustness code is usually debugged (Corollary~\ref{cor:dist}); and for
-cosine rules it breaks nothing visibly but moves every pairwise cosine toward the
-same value (Corollary~\ref{cor:band}), with consequences that range from none
-(FLAME) to excluding nobody (FLTrust). A rule can also fail on heterogeneous
-honest clients for reasons unrelated to the counter (FoolsGold); the fixed arm is
-what separates the two.
+\textbf{Why the hazard survives review.} No accuracy curve reveals an inert
+counter; equal IID shards hide it from distance rules (Corollary~\ref{cor:dist});
+and for cosine rules it breaks nothing visibly, with consequences from none (FLAME)
+to excluding nobody (FLTrust). Failures unrelated to the counter (FoolsGold) are
+separated from it only by the fixed arm.
 
 \textbf{What we recommend.} (i) Decide on \texttt{parameters()}, aggregate the
 \sd{}: compute every similarity, distance, norm, clip bound and noise scale on the
@@ -963,14 +1003,11 @@ counter, whose effect under the defect we derive but do not measure.
 \section{Conclusion}
 
 Byzantine-robust rules are defined on model updates but run on whatever vector the
-pipeline transmits. When that is a BatchNorm network's \sd{}, it contains \nbt{},
-inert under the default momentum yet dominant in the update's norm. An exact
-decomposition shows that the trainable signal carries a weight of at most one
-minus the buffer share in every pairwise cosine, and that distance rules are
-exposed exactly when clients run different numbers of batches, the non-IID case
-rather than the equal-shard case in which such code is usually tested. The canonical Flower PyTorch example uses the convention. The
-remedy is one mask: decide on the trainable coordinates, aggregate the full
-state. What the counter changes is rule-specific: it stops FLTrust from excluding
+pipeline transmits. A BatchNorm network's \sd{} contains \nbt{}, inert under the
+default momentum yet dominant in the update's norm; it weakens every pairwise cosine
+and enters distances exactly when batch counts differ, the non-IID case rather than
+the equal-shard one in which such code is usually tested. The remedy is one mask:
+decide on the trainable coordinates, aggregate the full state. What the counter changes is rule-specific: it stops FLTrust from excluding
 anyone, as Corollary~\ref{cor:fltrust} requires, and leaves FLAME's decisions
 unchanged so far. The full controlled campaign is \PENDING.
 % RE-CHECK the interim sentence above against Tables tab:p1/tab:p1flag when P3 completes.

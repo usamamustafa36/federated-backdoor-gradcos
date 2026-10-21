@@ -1239,3 +1239,41 @@ finished here.)
   2. Supplement is at ~5.95/6 pp: anything added there must displace something (seedcal table -> artifact).
   3. Consider a short "Concurrent report" sentence in Sec. V (scope) if the Flower PR #8381 merges, and
      re-check Flower's quickstart (survey row) against the current release before submission.
+
+## Iteration 18 - 2026-10-21 - Explanatory schematic (Fig. 1) drawn from the generated macros; Flower overclaim fixed with a verified check of Flower's built-in Krum/Bulyan; abstract/intro tightened; P3 harvest (200 cells, no new confirmatory cell)
+
+- **State at start:** P3 199 JSONs (PIDs 5901, 15185, gap-filler 7091 running; none mine). I started no job.
+- **Reviewer score before: 4/10, REJECT.** Hostile first read, ranked: (1) outcomes missing (P3 ~19%; P2/P4/S1/S2/S4
+  still n=0); (2) no explanatory figure: the only figure was a per-round diagnostic plot, so the central mechanism
+  (counter dominates norm, compresses cosines) had to be reconstructed from equations; (3) **overclaim:** Flower's
+  quick-start was called "exposed" under a caption defining exposure as "enters the vector the rule decides on", yet
+  the quick-start uses FedAvg, which decides nothing (a reviewer reading our own Table II would catch this);
+  (4) abstract diluted by the trigger-audit sentence and over 250 words once edited; (5) notation is consistent
+  (d=(u,b), b=(r,c), s_i, q_i, B_i, L) -- no change needed.
+- **Fixes:**
+  - **Fig. 1 (fig:schematic, TikZ, one column)**: (a) bars of coordinates vs squared norm of one transmitted
+    update (bottom bar width computed by pgfmath from \pfDiagBufNormShareDir; counts \dfNTrain, \dfNBuf); (b) client
+    angle fans drawn at acos(\pfDiagCosSigDir) and acos(\pfDiagCosFullDir). No hand-typed number; caption says
+    lengths are schematic and the buffer sliver is widened. tikz added to preamble.tex.
+  - **Flower scope, verified:** new `experiments/counter_defect/flower_builtin_check.py` -> results/flower_builtin_check.json
+    (flwr 1.30.0): Flower's built-in Krum/MultiKrum/Bulyan (`multikrum.py::compute_distances`) concatenate every
+    array of the ArrayRecord; squared distance between two quick-start-style records exceeds the counter-free value by
+    exactly (B_i-B_j)^2 (1369 for B=3 vs 40); DP `get_norm` also includes the counter. Sec. III-A, abstract,
+    contributions and Table I (dagger footnote) now say the quick-start itself uses FedAvg and that Flower's own
+    distance strategies read the counter. SURVEY.md updated.
+  - Abstract rewritten to 248 words (check passes; dropped the distance-share number, kept in Sec. VI-A); intro
+    numbers paragraph merged and points to Fig. 1; geometry subsection, conclusion, "Why the hazard survives review",
+    "earlier version" paragraph and the evaluation related-work paragraph compressed (no claim removed).
+- **P3 harvest** (`make numbers`, rc 0): 200 cells. PREREG unchanged: P1/P3/S3 n=5, P2/P4/S1/S2/S4 n=0; 0/4 primary,
+  0/4 secondary supported (interim); no confirmatory paragraph written (no FLTrust IID or NormClip cell yet).
+  Exploratory: 76 tests, 0 survive family or global Holm. results/fltrust_falsify.json float-noise rewrite reverted.
+- **Build/check:** make rc 0, 0 undefined refs, 0 "??". **IEEEtran pages: main 10 (ends at 9.35, was 9.28; includes
+  the new figure) / supplement 6 (unchanged).** check_manuscript: all PASS except the gate (386 unresolved, all P3).
+  Backups main.tex.pre-iter18.bak, supplement.tex.pre-iter18.bak.
+- **Running jobs (none mine):** P3 PIDs 5901, 15185, gap-filler 7091.
+- **Score after: 4/10, REJECT.** Presentation and scope claims are now defensible; outcomes still missing.
+- **Top 3 priorities:**
+  1. Harvest P3; when FLTrust IID / NormClip cells land write the confirmatory paragraph and retire the abstract PENDING.
+  2. Budget: ~0.65 pp headroom for P3 text; the two big outcome tables (0.59 pp) may need merging into one.
+  3. Consider whether Fig. 2 (per-round diagnostics) can move to the supplement now that Fig. 1 carries the story
+     (saves ~0.18 pp) -- supplement is full, so only if something there moves to an artifact file.
