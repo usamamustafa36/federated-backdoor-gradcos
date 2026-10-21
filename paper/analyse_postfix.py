@@ -21,9 +21,23 @@ Outputs (all generated, nothing typed by hand):
 
 Statistics per (defense, partition, attack, metric), over seeds present in BOTH arms:
     mean of each arm, seed s.d. of each arm, paired mean difference (fixed - defect),
-    its 95% t-interval, the paired t-test p and the Wilcoxon signed-rank p.
-A difference is reported as significant only by the paired test at alpha=0.05,
-with Holm correction across the defenses within a (partition, attack, metric).
+    the exact paired sign-flip permutation test of that mean difference (all 2^n
+    sign assignments of the per-seed differences; Fisher/Pitman, see Ernst 2004),
+    and its 95% confidence interval obtained by inverting the same test (the set of
+    shifts delta in [-1, 1] that the test does not reject, resolved on a 0.001 grid).
+Iteration 13: this replaces the paired t-interval, which left [-1, 1] for bounded
+rates at n = 4-5 (FLTrust FPR [0.383, 1.049]). The inverted-test interval can never
+leave the feasible range, needs no normality, and agrees with the reported p by
+construction (it excludes 0 iff p <= 0.05). Its price is honest: with n paired
+seeds whose differences are nonzero the smallest attainable two-sided p is
+2^(1-n), so n <= 5 cannot reach p < 0.05 and its interval is the whole feasible
+range; the generator emits that floor (Pmin) and the sign counts (Pos/Neg: seeds
+on which fixed > defect / fixed < defect) as an effect-consistency measure.
+A difference is reported as significant only by that test at alpha=0.05, with
+Holm correction across the 13 defenses within a (partition, attack, metric); a
+second, global Holm over every tested (defense, partition, attack, metric) is
+emitted as a count for robustness. The paired t-test p and Wilcoxon p stay in the
+CSV for reference only.
 
 Usage:  python3 paper/analyse_postfix.py [--min-seeds 3]
 """
@@ -120,6 +134,40 @@ def holm(ps):
     return adj
 
 
+def _signs(n):
+    """All 2^n sign vectors as an (2^n, n) array (n <= 16 here: ten seeds)."""
+    if n > 16:
+        raise ValueError("exact enumeration limited to 16 paired seeds")
+    idx = np.arange(2 ** n)[:, None]
+    return 1.0 - 2.0 * ((idx >> np.arange(n)[None, :]) & 1)
+
+
+def signflip_p(d, signs=None):
+    """Exact two-sided paired sign-flip permutation p of the mean difference."""
+    d = np.asarray(d, dtype=float)
+    signs = _signs(len(d)) if signs is None else signs
+    null = np.abs(signs @ d)
+    return float(np.mean(null >= abs(d.sum()) - 1e-12))
+
+
+def signflip_ci(d, alpha=0.05, lo=-1.0, hi=1.0, step=0.001):
+    """95% CI for the location shift by inverting the sign-flip test: the shifts
+    delta on a grid over the feasible range [lo, hi] with p(d - delta) > alpha.
+    Returns the outermost accepted grid points (so the interval is inside
+    [lo, hi] by construction). If no shift is rejected (n too small to reach
+    alpha), the interval is the whole feasible range."""
+    d = np.asarray(d, dtype=float)
+    signs = _signs(len(d))
+    grid = np.round(np.arange(lo, hi + step / 2, step), 6)
+    grid = np.union1d(grid, [round(float(d.mean()), 6)])  # the point estimate is always accepted
+    shifted = d[None, :] - grid[:, None]                     # (G, n)
+    obs = np.abs(shifted.sum(axis=1))                        # (G,)
+    null = np.abs(shifted @ signs.T)                         # (G, 2^n)
+    p = np.mean(null >= obs[:, None] - 1e-12, axis=1)
+    acc = grid[p > alpha]
+    return float(acc.min()), float(acc.max())
+
+
 def main():
     global RES
     ap = argparse.ArgumentParser()
@@ -187,51 +235,65 @@ def main():
                              full_mean=float("nan"), full_sd=float("nan"),
                              fix_mean=float("nan"), fix_sd=float("nan"),
                              diff=float("nan"), ci_lo=float("nan"), ci_hi=float("nan"),
-                             p_t=float("nan"), p_w=float("nan"))
+                             p_perm=float("nan"), p_t=float("nan"), p_w=float("nan"),
+                             n_pos=0, n_neg=0, p_min=float("nan"), d_z=float("nan"))
                     if n >= args.min_seeds:
                         dd = b - a
                         r.update(full_mean=a.mean(), full_sd=a.std(ddof=1),
                                  fix_mean=b.mean(), fix_sd=b.std(ddof=1),
-                                 diff=dd.mean())
-                        se = dd.std(ddof=1) / math.sqrt(n)
-                        if se > 0:
-                            tq = stats.t.ppf(0.975, n - 1)
-                            r.update(ci_lo=dd.mean() - tq * se, ci_hi=dd.mean() + tq * se,
-                                     p_t=float(stats.ttest_rel(b, a).pvalue))
+                                 diff=dd.mean(),
+                                 n_pos=int(np.sum(dd > 0)), n_neg=int(np.sum(dd < 0)))
+                        nz = int(np.sum(dd != 0))
+                        r["p_min"] = 2.0 ** (1 - nz) if nz else 1.0
+                        r["p_perm"] = signflip_p(dd)
+                        if m in METRICS:  # rates and accuracies: difference lies in [-1, 1]
+                            r["ci_lo"], r["ci_hi"] = signflip_ci(dd)
+                        sd_d = dd.std(ddof=1)
+                        if sd_d > 0:
+                            r["d_z"] = float(dd.mean() / sd_d)
+                            r["p_t"] = float(stats.ttest_rel(b, a).pvalue)
                             if np.any(dd != 0):
                                 r["p_w"] = float(stats.wilcoxon(b, a).pvalue)
-                        else:
-                            r.update(ci_lo=dd.mean(), ci_hi=dd.mean(), p_t=1.0, p_w=1.0)
+                        elif dd.mean() == 0:
+                            r.update(p_t=1.0, p_w=1.0)  # identical arms on every seed
                     rows.append(r)
-    # Holm across defenses within (partition, attack, metric)
+    # Holm across defenses within (partition, attack, metric), on the exact test
     groups = defaultdict(list)
     for i, r in enumerate(rows):
         groups[(r["partition"], r["attack"], r["metric"])].append(i)
     for idxs in groups.values():
-        adj = holm([rows[i]["p_t"] for i in idxs])
+        adj = holm([rows[i]["p_perm"] for i in idxs])
         for i, p in zip(idxs, adj):
             rows[i]["p_holm"] = p
+    # Global Holm over every tested reported-metric hypothesis (robustness count)
+    gidx = [i for i, r in enumerate(rows) if r["metric"] in METRICS]
+    for i, p in zip(gidx, holm([rows[i]["p_perm"] for i in gidx])):
+        rows[i]["p_holm_global"] = p
 
     os.makedirs(RES, exist_ok=True)
     cols = ["defense", "partition", "attack", "metric", "n", "full_mean", "full_sd",
-            "fix_mean", "fix_sd", "diff", "ci_lo", "ci_hi", "p_t", "p_w", "p_holm"]
+            "fix_mean", "fix_sd", "diff", "ci_lo", "ci_hi", "n_pos", "n_neg", "d_z",
+            "p_perm", "p_min", "p_holm", "p_holm_global", "p_t", "p_w"]
     with open(os.path.join(RES, "summary_pairs.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()
         w.writerows(rows)
     with open(os.path.join(RES, "summary_pairs.md"), "w") as f:
-        f.write("| defense | part | atk | metric | n | defect | fixed | diff [95% CI] | p_t | p_holm |\n")
-        f.write("|---|---|---|---|---|---|---|---|---|---|\n")
+        f.write("| defense | part | atk | metric | n | defect | fixed | diff [95% CI, sign-flip inversion] "
+                "| +/- | p_perm | p_holm |\n")
+        f.write("|---|---|---|---|---|---|---|---|---|---|---|\n")
         for r in rows:
             if r["metric"] in METRICS and r["n"] > 0:
                 f.write(f"| {r['defense']} | {r['partition']} | {int(r['attack'])} | {r['metric']} "
                         f"| {r['n']} | {r['full_mean']:.3f}+/-{r['full_sd']:.3f} "
                         f"| {r['fix_mean']:.3f}+/-{r['fix_sd']:.3f} "
                         f"| {r['diff']:+.3f} [{r['ci_lo']:+.3f},{r['ci_hi']:+.3f}] "
-                        f"| {r['p_t']:.3g} | {r['p_holm']:.3g} |\n")
+                        f"| {r['n_pos']}/{r['n_neg']} | {r['p_perm']:.3g} | {r['p_holm']:.3g} |\n")
 
     # Macros: \pf<Metric><Defense><Part><Atk><Field>, Field in
-    # Def (defect arm mean), Fix (fixed arm mean), DefSd, FixSd, Diff, Lo, Hi, P, Ph, N
+    # Def (defect arm mean), Fix (fixed arm mean), DefSd, FixSd, Diff, Lo, Hi (95% CI by
+    # inverting the exact sign-flip test), P (exact sign-flip p), Ph (Holm within the
+    # 13 rules), Pos/Neg (seeds with fixed > / < defect), Pmin (smallest attainable p), N
     lines = [f"% Generated by paper/analyse_postfix.py from {os.path.relpath(RES, ROOT)}"
              f" (attacked: {args.atk_res or os.path.relpath(RES, ROOT)}). DO NOT EDIT.",
              f"% Paired full-vs-trainable A/B; metric = mean of last {TAIL} of 15 rounds."]
@@ -246,7 +308,10 @@ def main():
                 "Diff": ("\\PENDING" if math.isnan(r["diff"])
                          else ("0.000" if round(r["diff"], 3) == 0 else f"{r['diff']:+.3f}")),
                 "Lo": fmt(r["ci_lo"]), "Hi": fmt(r["ci_hi"]),
-                "P": fmt(r["p_t"]), "Ph": fmt(r.get("p_holm", float("nan"))),
+                "P": fmt(r["p_perm"]), "Ph": fmt(r.get("p_holm", float("nan"))),
+                "Pos": str(r["n_pos"]) if r["n"] >= args.min_seeds else "\\PENDING",
+                "Neg": str(r["n_neg"]) if r["n"] >= args.min_seeds else "\\PENDING",
+                "Pmin": fmt(r["p_min"], 4),
                 "N": str(r["n"]) if r["n"] >= args.min_seeds else "\\PENDING"}
         for k, v in vals.items():
             lines.append(f"\\providecommand{{\\{stem}{k}}}{{{v}}}")
@@ -293,6 +358,18 @@ def main():
                      f"{{{fmt(float(np.mean(allv)) if allv else float('nan'))}}}")
         lines.append(f"\\providecommand{{\\pfImplantExcl{PNAME[part]}}}"
                      f"{{{', '.join(map(str, exc)) if exc else ('none' if inc else chr(92) + 'PENDING')}}}")
+    # Multiple-comparison bookkeeping over the reported metrics: tests run, and how
+    # many survive Holm within their family of rules and Holm over all of them.
+    tested = [r for r in rows if r["metric"] in METRICS and not math.isnan(r["p_perm"])]
+    lines.append(f"\\providecommand{{\\pfTestsRun}}{{{len(tested)}}}")
+    lines.append(f"\\providecommand{{\\pfSigFamily}}"
+                 f"{{{sum(r['p_holm'] <= 0.05 for r in tested)}}}")
+    lines.append(f"\\providecommand{{\\pfSigGlobal}}"
+                 f"{{{sum(r['p_holm_global'] <= 0.05 for r in tested)}}}")
+    lines.append(f"\\providecommand{{\\pfSigRaw}}"
+                 f"{{{sum(r['p_perm'] <= 0.05 for r in tested)}}}")
+    lines.append(f"\\providecommand{{\\pfTestableTen}}"
+                 f"{{{fmt(2.0 ** (1 - 10), 4)}}}")  # smallest attainable p at 10 seeds
     # Campaign progress, so the manuscript can say how much of P1 it rests on.
     n_cells = sum(len(s) for arms in runs.values() for s in arms.values())
     lines.append(f"\\providecommand{{\\pfCellsDone}}{{{n_cells}}}")
@@ -311,11 +388,11 @@ def main():
           + ("" if args.no_tex else f" -> {out_tex}"))
     for r in rows:
         if r["metric"] in ("CA", "BSR") and r["n"] >= args.min_seeds:
-            sig = "*" if r.get("p_holm", 1) < 0.05 else " "
+            sig = "*" if r.get("p_holm", 1) <= 0.05 else " "
             print(f"  {r['defense']:11s} {r['partition']:9s} atk={int(r['attack'])} {r['metric']:3s} "
                   f"n={r['n']:2d} defect {r['full_mean']:.3f} fixed {r['fix_mean']:.3f} "
                   f"diff {r['diff']:+.3f} [{r['ci_lo']:+.3f},{r['ci_hi']:+.3f}] "
-                  f"p={r['p_t']:.3g} holm={r['p_holm']:.3g}{sig}")
+                  f"signs {r['n_pos']}+/{r['n_neg']}- p={r['p_perm']:.3g} holm={r['p_holm']:.3g}{sig}")
 
 
 if __name__ == "__main__":

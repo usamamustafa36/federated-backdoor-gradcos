@@ -139,8 +139,8 @@ other than what they intend, and we give the condition.
 (Sec.~\ref{sec:p1}). Every rule is run twice, identically except for whether its
 decisions read the full transmitted vector or only the trainable coordinates,
 with seeds paired across the two arms, under IID and non-IID partitions, clean
-and under a backdoor attack, with paired differences, confidence intervals and
-Holm-corrected tests across rules, including the rules for which the difference
+and under a backdoor attack, with paired differences, exact permutation tests and
+their inverted intervals, Holm-corrected across rules, including the rules for which the difference
 is null. The design, the attack calibration and the inclusion rule for attacked
 seeds are fixed before any defended cell of the final campaign runs; the
 campaign's outcomes are not yet complete (\PENDING), and the few first-campaign
@@ -792,9 +792,21 @@ second as a measurement of backdoor robustness under one calibrated attack.
 of the malicious clients, the initialisation and the data order, and the two arms
 of the controlled comparison (Sec.~\ref{sec:p1}) share their seeds. For each
 rule, partition, attack setting and metric we report the arm means, the paired
-mean difference fixed$-$defect with its 95\% $t$-interval, and the paired $t$-test
-$p$-value with Holm's correction across the rules sharing that partition, attack
-setting and metric (\texttt{paper/analyse\_postfix.py}). Every number in
+mean difference fixed$-$defect (the effect size, in rate units), the number of seeds
+on which it is positive and negative, and the exact two-sided $p$ of the paired
+sign-flip permutation test of the mean difference, which enumerates all $2^n$
+sign assignments and assumes no normality, only that without an effect each
+seed's difference is symmetric about zero~\cite{ernst2004permutation}.
+The 95\% interval inverts the same test: it is the set of shifts in $[-1,1]$ the test
+does not reject, so it stays inside the feasible range of a rate difference and
+excludes zero exactly when $p\le 0.05$. (A $t$-interval does neither: at $n=5$ it
+put an exclusion-rate difference above one.) $p$-values are Holm-corrected~\cite{holm1979}
+across the thirteen rules sharing a partition, attack setting and metric ($p_H$);
+of the $\pfTestsRun$ tests run so far, $\pfSigFamily$ survive that correction and
+$\pfSigGlobal$ survive Holm over all of them. The test's resolution is the seed count:
+the smallest attainable $p$ is $2^{1-n}$, which is $\pfTestableTen$ at ten seeds and
+above $0.05$ at five or fewer, so a cell is read for significance only at $n\ge 6$
+(\texttt{paper/analyse\_postfix.py}). Every number in
 Secs.~\ref{sec:setup}--\ref{sec:retro} is a macro written by that script from the
 result files; a cell that has not run prints as \PENDING. At the time of writing
 $\pfCellsDone$ of the $\pfCellsTarget$ cells have completed.
@@ -1020,7 +1032,10 @@ and say so each time.
 \textbf{Results so far.} \PENDING{} most cells of the re-run, including every
 IID cell and every attacked cell of a defended rule.
 % RETIRES WITH: P3 campaign (results/postfix_p3)
-Four kinds of cell have landed for several seeds. The first two are the ones the design
+Four kinds of cell have landed for several seeds. At that size no paired
+distribution-free test can reach $p<0.05$ (the smallest attainable exact $p$ is
+$2^{1-n}$, $\pfFPRFltrustDirCleanPmin$ at $n=5$), so what follows reports direction and
+consistency across seeds, not significance. The first two are the ones the design
 needs before any rule can be read. The first is the negative control. FedAvg
 reads no statistic, and its clean non-IID cells give the same clean accuracy in
 both arms ($\pfCAFedavgDirCleanDef$ and $\pfCAFedavgDirCleanFix$, paired difference
@@ -1030,8 +1045,8 @@ run the same computation they reproduce each other.
 The second is FoolsGold's clean non-IID cells, the rule whose earlier result was
 withdrawn. Clean accuracy is $\pfCAFoolsgoldDirCleanDef$ in the defect arm and
 $\pfCAFoolsgoldDirCleanFix$ in the fixed arm (paired difference
-$\pfCAFoolsgoldDirCleanDiff$, 95\% CI
-$[\pfCAFoolsgoldDirCleanLo,\pfCAFoolsgoldDirCleanHi]$, $n=\pfCAFoolsgoldDirCleanN$),
+$\pfCAFoolsgoldDirCleanDiff$, higher in the fixed arm on $\pfCAFoolsgoldDirCleanPos$
+of $\pfCAFoolsgoldDirCleanN$ seeds, exact $p=\pfCAFoolsgoldDirCleanP$),
 and FoolsGold excludes a fraction $\pfFPRFoolsgoldDirCleanDef$ of the clients in
 the defect arm and $\pfFPRFoolsgoldDirCleanFix$ in the fixed arm. Both arms exclude
 most of an honest cohort. That is the failure of FoolsGold's own assumption that
@@ -1041,9 +1056,9 @@ of it is what the remaining seeds decide.
 The third is FLAME's clean non-IID cells ($n=\pfFPRFlameDirCleanN$ paired seeds).
 FLAME excludes a fraction $\pfFPRFlameDirCleanDef$ of the clients in the defect arm
 and $\pfFPRFlameDirCleanFix$ in the fixed arm (paired difference
-$\pfFPRFlameDirCleanDiff$, 95\% CI $[\pfFPRFlameDirCleanLo,\pfFPRFlameDirCleanHi]$),
-and clean accuracy moves by $\pfCAFlameDirCleanDiff$ (CI
-$[\pfCAFlameDirCleanLo,\pfCAFlameDirCleanHi]$). On the engine without the round-one
+$\pfFPRFlameDirCleanDiff$; higher on $\pfFPRFlameDirCleanPos$ seeds, lower on
+$\pfFPRFlameDirCleanNeg$), and clean accuracy moves by $\pfCAFlameDirCleanDiff$
+($\pfCAFlameDirCleanPos$ up, $\pfCAFlameDirCleanNeg$ down). On the engine without the round-one
 defect, FLAME's clean-run decisions are again indistinguishable between the arms,
 although its input is exposed (Sec.~\ref{sec:mech}).
 % RE-CHECK the FLAME sentence when its Dir clean cells reach n=10 (P3).
@@ -1051,13 +1066,13 @@ The fourth is FLTrust's clean non-IID cells ($n=\pfFPRFltrustDirCleanN$ paired
 seeds), where the arms do differ. FLTrust excludes a fraction
 $\pfFPRFltrustDirCleanDef$ of the clients in the defect arm and
 $\pfFPRFltrustDirCleanFix$ in the fixed arm (paired difference
-$\pfFPRFltrustDirCleanDiff$, 95\% CI
-$[\pfFPRFltrustDirCleanLo,\pfFPRFltrustDirCleanHi]$; every client is honest), and
-clean accuracy moves by $\pfCAFltrustDirCleanDiff$ (CI
-$[\pfCAFltrustDirCleanLo,\pfCAFltrustDirCleanHi]$). This is the direction
+$\pfFPRFltrustDirCleanDiff$, higher in the fixed arm on $\pfFPRFltrustDirCleanPos$ of
+$\pfFPRFltrustDirCleanN$ seeds, exact $p=\pfFPRFltrustDirCleanP$, the floor at this $n$;
+every client is honest), and clean accuracy moves by $\pfCAFltrustDirCleanDiff$
+($\pfCAFltrustDirCleanPos$ seeds up, $\pfCAFltrustDirCleanNeg$ down). This is the direction
 Corollary~\ref{cor:fltrust} predicts: the counter makes FLTrust admit everyone
 (Sec.~\ref{sec:mech}).
-% RE-CHECK at n=10; the t-interval upper end can exceed 1 at n=4 (iteration 12).
+% RE-CHECK at n=10 (iteration 13: intervals now invert the exact sign-flip test; at n<=5 they span [-1,1], so the text reports sign counts instead).
 
 \textbf{The first campaign, for reference.} Its non-IID cells are where the
 FLTrust and FLAME observations of Sec.~\ref{sec:mech} first came from. Its engine
@@ -1065,12 +1080,12 @@ had the round-one defect, which FLTrust and FLAME do not carry across rounds but
 which changes their trajectories, so the re-run replaces these numbers. In the
 first campaign FLTrust excluded a fraction $\paFPRFltrustDirCleanDef$ of the
 clients in clean runs of the defect arm and $\paFPRFltrustDirCleanFix$ in the
-fixed arm (paired difference CI $[\paFPRFltrustDirCleanLo,\paFPRFltrustDirCleanHi]$,
-$p_H=\paFPRFltrustDirCleanPh$), while clean accuracy moved by
-$\paCAFltrustDirCleanDiff$ (CI $[\paCAFltrustDirCleanLo,\paCAFltrustDirCleanHi]$).
-FLAME excluded the same fraction in both arms ($\paFPRFlameDirCleanDef$ against
+fixed arm (higher on $\paFPRFltrustDirCleanPos$ of $\paFPRFltrustDirCleanN$ seeds,
+exact $p=\paFPRFltrustDirCleanP$, the floor at five seeds), while clean accuracy moved by
+$\paCAFltrustDirCleanDiff$ (lower on $\paCAFltrustDirCleanNeg$ of $\paCAFltrustDirCleanN$
+seeds). FLAME excluded the same fraction in both arms ($\paFPRFlameDirCleanDef$ against
 $\paFPRFlameDirCleanFix$ in clean runs), and its clean accuracy moved by
-$\paCAFlameDirCleanDiff$ (CI $[\paCAFlameDirCleanLo,\paCAFlameDirCleanHi]$). The
+$\paCAFlameDirCleanDiff$. The
 first campaign's FoolsGold cells depended on the round-one defect and are withdrawn
 (Sec.~\ref{sec:setup}).
 
@@ -1096,7 +1111,7 @@ implant set suppressed the backdoor; one near FedAvg's did not.
 \centering
 \caption{Controlled A/B on CICIoT2023 (re-run). For each rule: mean of the defect arm
 (Def), of the fixed arm (Fix), paired difference Fix$-$Def ($\Delta$), and
-Holm-corrected paired $p$ ($p_H$). Ten paired seeds per cell when complete; a cell
+Holm-corrected exact sign-flip $p$ ($p_H$, Sec.~\ref{sec:setup}). Ten paired seeds per cell when complete; a cell
 prints once three paired seeds exist. CA: clean accuracy; BSR: backdoor success
 rate, whose clean-run value is the floor for the attacked one; attacked BSR is
 averaged over the implant set only (Sec.~\ref{sec:p1}).}

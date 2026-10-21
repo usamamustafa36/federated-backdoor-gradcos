@@ -230,4 +230,12 @@ Z.~Zhang, X.~Cao, J.~Jia, and N.~Z. Gong, ``{FLDetector}: Defending federated
   in \emph{Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery
   and Data Mining (KDD)}, 2022, pp. 2545--2555.
 
+\bibitem{ernst2004permutation}
+M.~D. Ernst, ``Permutation methods: A basis for exact inference,''
+  \emph{Statistical Science}, vol.~19, no.~4, pp. 676--685, 2004.
+
+\bibitem{holm1979}
+S.~Holm, ``A simple sequentially rejective multiple test procedure,''
+  \emph{Scandinavian Journal of Statistics}, vol.~6, no.~2, pp. 65--70, 1979.
+
 \end{thebibliography}

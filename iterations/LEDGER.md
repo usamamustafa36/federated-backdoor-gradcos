@@ -956,3 +956,50 @@ finished here.)
      P3 lands per the brief; if the coordinator agrees earlier, the safest first moves are S-V round-one
      aliasing, S-VIII realizability, S-II probe details): move text unchanged, replace with the kept
      summary sentences, rerun `python3 paper/tools/page_budget.py`, record the new page counts.
+
+## Iteration 13 - 2026-10-21 - Statistics rebuilt for bounded rates at small n: exact paired sign-flip test, interval by test inversion, Holm (family + global), sign counts; the t-based "significance" of the first campaign does not survive
+
+- **State at start (19:08):** P3 61/1,040 JSONs (6 lanes: PIDs 5901 + 15185, gap-filler 7091). Horizon probe
+  (PIDs 6108/6109, CPU) still running, no calib7h JSON: not harvested. I started no job.
+- **Reviewer score before: 4/10, REJECT** (hostile TIFS). Blockers, ranked: (1) no rule outcome under a working
+  attack for most rules (P3 ~6%); (2) 16 pp against a hard 10; (3) statistics: t-intervals on bounded rates left
+  [0,1] (FLTrust FPR [0.383, 1.049]), and, found this iteration, the t-test also *overstated evidence*: the first
+  campaign's FLTrust FPR difference printed p_H = 0.001 at n = 5, which no distribution-free paired test can give.
+- **What I changed:**
+  - `paper/analyse_postfix.py`: primary test is now the **exact two-sided paired sign-flip permutation test** of
+    the mean difference (all 2^n sign vectors; verified equal to `scipy.stats.permutation_test` at n = 4, 5, 6, 8,
+    10). The **95% interval inverts the same test** over shifts in [-1, 1] on a 0.001 grid, so it never leaves the
+    feasible range and excludes 0 iff p <= 0.05 (consistent by construction; percentile bootstrap was rejected
+    because at n = 5 it would exclude 0 while p = 0.0625). Holm across the 13 rules within (partition, attack,
+    metric) now on the exact p; new **global Holm** over all reported-metric tests; new macros per cell `Pos`/`Neg`
+    (sign consistency, the effect-consistency measure) and `Pmin` (= 2^(1-n_nonzero), the test's floor); global
+    `\pfTestsRun`, `\pfSigFamily`, `\pfSigGlobal`, `\pfSigRaw`, `\pfTestableTen` (0.0020). CSV keeps p_t, p_w,
+    d_z for reference only. Regenerated numbers_postfix.tex (P3) and numbers_postfix_p1.tex (first campaign).
+  - `paper/main.tex` (backup main.tex.pre-iter13.bak): Sec. IV "Statistics" rewritten (method, assumption =
+    symmetry of per-seed differences under no effect, inverted interval, Holm family + global counts, the 2^(1-n)
+    floor and "read for significance only at n >= 6"); "Results so far" now says up front that n <= 5 cannot reach
+    p < 0.05 and reports direction + sign counts + exact p instead of CIs (FLTrust FPR: fixed > defect on 5/5 seeds,
+    p = 0.062 = the floor); first-campaign paragraph no longer prints p_H = 0.001 (now: 5/5 seeds, exact p at the
+    floor); Table VI caption and intro sentence name the test. refs.bib: holm1979, ernst2004permutation (both
+    verified by web search: Scand. J. Stat. 6(2):65-70; Stat. Sci. 19(4):676-685, doi 10.1214/088342304000000396).
+- **Evidence (generated):** 23 tests run on P3 so far; 0 survive Holm (family or global), 0 even raw p <= 0.05,
+  as they must at n <= 5. First campaign: 41 tests, 0 survive (was: FLTrust FPR p_H 0.001, CA p_H 0.235 under t).
+  At n = 10 the floor is 0.0020 < 0.05/13 = 0.0038, so a perfectly consistent 10/10 effect survives Holm; a 9/1
+  split generally will not. This is the honest power of a 10-seed design and should be stated in the limitations
+  when P3 lands (or the next agent can argue for 12+ seeds on the cells that matter, e.g. FLTrust/FLAME/FoolsGold).
+- **Build/check:** latexmk rc 0; **IEEEtran pages: main 16 (ends at 15.99, was 15.80: +0.19 from the statistics
+  paragraph and 2 refs) / supplement 1 (skeleton)**. check_manuscript: same 3 expected FAILs (pages, 7 \TOMOVE,
+  gate 481); everything else PASS (abstract 250 words).
+- **Running jobs (none started by me):** P3 driver PID 5901 + reverse runner PID 15185 (CUDA, 6 lanes), gap-filler
+  PID 7091; horizon probe PIDs 6108/6109 (CPU), outputs results/calib_iter7/calib7h_*.
+- **Score after: 4/10, REJECT.** The statistics are now defensible to a TIFS statistician and no longer overstate
+  n = 5 evidence, but outcomes are still missing and the paper is 16 pp.
+- **Top 3 priorities for the next iteration:**
+  1. Harvest P3 (`cd paper && make numbers`) and the horizon probe when calib7h_* lands; at n >= 6 per cell, put
+     the inverted CIs back into "Results so far" (macros `...Lo/Hi` exist) and check every RE-CHECK comment.
+  2. Power/design note for TIFS: with 10 seeds only 10/10-consistent effects survive Holm over 13 rules; decide
+     (pre-register in the ledger before looking) whether the primary hypotheses are restricted to the rules with a
+     predicted exposure (Table V: FLTrust, FLAME, FoolsGold, Krum/Bulyan/RFA...), which shrinks the Holm family
+     legitimately, and say so in Sec. IV; the "arms identical" rules are then negative controls, not tests.
+  3. Start the cut (budget in iteration 12): the Statistics paragraph itself grew to ~0.45 pp; compress it to the
+     method sentence + floor sentence when the cut starts, moving the t-interval remark to the supplement.
