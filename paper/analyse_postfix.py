@@ -100,7 +100,11 @@ def load(res=RES):
 
 
 def fmt(x, nd=3):
-    return "\\PENDING" if x is None or (isinstance(x, float) and math.isnan(x)) else f"{x:.{nd}f}"
+    if x is None or (isinstance(x, float) and math.isnan(x)):
+        return "\\PENDING"
+    out = f"{x:.{nd}f}"
+    # no negative zero ("-0.000") for a value that rounds to zero
+    return out[1:] if out.startswith("-") and float(out) == 0 else out
 
 
 def holm(ps):
@@ -239,7 +243,8 @@ def main():
                 f"{PNAME[r['partition']]}{ANAME[r['attack']]}")
         vals = {"Def": fmt(r["full_mean"]), "Fix": fmt(r["fix_mean"]),
                 "DefSd": fmt(r["full_sd"]), "FixSd": fmt(r["fix_sd"]),
-                "Diff": ("\\PENDING" if math.isnan(r["diff"]) else f"{r['diff']:+.3f}"),
+                "Diff": ("\\PENDING" if math.isnan(r["diff"])
+                         else ("0.000" if round(r["diff"], 3) == 0 else f"{r['diff']:+.3f}")),
                 "Lo": fmt(r["ci_lo"]), "Hi": fmt(r["ci_hi"]),
                 "P": fmt(r["p_t"]), "Ph": fmt(r.get("p_holm", float("nan"))),
                 "N": str(r["n"]) if r["n"] >= args.min_seeds else "\\PENDING"}

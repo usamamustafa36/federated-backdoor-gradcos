@@ -2,20 +2,18 @@
 %  A Silent Measurement Hazard in PyTorch Federated Learning:
 %  When Byzantine-Robust Aggregators Decide on a BatchNorm Counter
 %
-%  Manuscript prepared for the Journal of Information Security and
-%  Applications (Elsevier). Reframed in iteration 2 of the improvement
-%  chain (see iterations/LEDGER.md); the pre-reframe source is kept at
-%  main.tex.pre-reframe.bak.
+%  Manuscript prepared for IEEE Transactions on Information Forensics and
+%  Security (IEEEtran journal class; converted from elsarticle in iteration 11
+%  of the improvement chain, see iterations/LEDGER.md; the elsarticle source
+%  is kept at main.tex.pre-iter11-ieeetran.bak).
 %
 %  Build:  make          (or: latexmk -pdf main.tex)
 %  Gate :  make gate     (refuses to pass while any \PENDING remains)
 %
-%  Layout: [3p] is single column at journal density. For the two-column
-%  look JISA uses in print, swap the class line for
-%      \documentclass[final,5p,times,twocolumn]{elsarticle}
-%  and see README.txt for the float and figure widths that go with it.
+%  Venue rule: <= 10 IEEEtran pages including references (hard limit);
+%  supplement <= 6 pp.
 %=====================================================================
-\documentclass[3p]{elsarticle}
+\documentclass[journal]{IEEEtran}
 
 % --- maths ----------------------------------------------------------
 \usepackage{amsmath,amssymb,amsfonts}
@@ -31,7 +29,6 @@
 
 % --- typography -----------------------------------------------------
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}       % bold small caps for \textsc{GradCos} in bold contexts
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{microtype}
@@ -39,8 +36,7 @@
 \usepackage{xurl}          % let the long repository URL break across lines
 \usepackage[hidelinks]{hyperref}
 
-% NB: no \usepackage{cite} -- elsarticle loads natbib itself, and the two
-% clash silently, renumbering or dropping citations.
+\usepackage{cite}          % IEEE numeric citations, compressed ranges
 
 % Uncomment for a review submission if the editor asks for line numbers:
 % \usepackage{lineno}\linenumbers
@@ -76,33 +72,22 @@
 \input{numbers_calib6}
 \input{numbers_falsify}
 
-\journal{Journal of Information Security and Applications}
 
 \begin{document}
-
-\begin{frontmatter}
 
 \title{A Silent Measurement Hazard in PyTorch Federated Learning: When
 Byzantine-Robust Aggregators Decide on a BatchNorm Counter}
 
-%---------------------------------------------------------------------
-% AUTHOR BLOCK
-%---------------------------------------------------------------------
-\author[mcs]{Usama Mustafa\corref{cor1}}
-\ead{usamamustafa1@gmail.com}
+\author{Usama~Mustafa and Imran~Rashid%
+\thanks{U.~Mustafa (corresponding author, e-mail: usamamustafa1@gmail.com) and
+I.~Rashid (e-mail: irashid@mcs.edu.pk) are with the Department of Information
+Security, Military College of Signals, National University of Sciences and
+Technology, Rawalpindi, Pakistan.}%
+\thanks{This research did not receive any specific grant from funding agencies in
+the public, commercial or not-for-profit sectors.}}
 
-\author[mcs]{Imran Rashid}
-\ead{irashid@mcs.edu.pk}
+\maketitle
 
-\cortext[cor1]{Corresponding author.}
-
-\affiliation[mcs]{organization={Department of Information Security,
-    Military College of Signals, National University of Sciences and
-    Technology},
-    city={Rawalpindi},
-    country={Pakistan}}
-
-%---------------------------------------------------------------------
 \begin{abstract}
 Byzantine-robust aggregation rules protect federated learning by comparing the updates
 that clients send. Many PyTorch pipelines send each model as a \texttt{state\_dict()},
@@ -128,12 +113,10 @@ deviating by only $\rzSigFixedQtr\sigma$ on one feature lies further from the be
 than all but $\rzExceedFixedQtr$ of $\rzRefRows$ real benign flows.
 \end{abstract}
 
-\begin{keyword}
-federated learning \sep Byzantine-robust aggregation \sep batch normalization \sep
-evaluation methodology \sep backdoor attacks \sep intrusion detection \sep IoT security
-\end{keyword}
-
-\end{frontmatter}
+\begin{IEEEkeywords}
+Federated learning, Byzantine-robust aggregation, batch normalization,
+evaluation methodology, backdoor attacks, intrusion detection, IoT security
+\end{IEEEkeywords}
 
 \section{Introduction}
 
@@ -366,7 +349,8 @@ unchanged.
 For any two clients $i,j$ with $u_i,u_j,b_i,b_j\neq 0$,
 \begin{align}
 \|d_i\|^2 &= \|u_i\|^2+\|r_i\|^2+L\,B_i^2, \label{eq:norm}\\
-\cos(d_i,d_j) &= \sqrt{(1-s_i)(1-s_j)}\,\cos(u_i,u_j)+\sqrt{s_is_j}\,\cos(b_i,b_j), \label{eq:cos}\\
+\cos(d_i,d_j) &= \sqrt{(1-s_i)(1-s_j)}\,\cos(u_i,u_j)\nonumber\\
+&\quad+\sqrt{s_is_j}\,\cos(b_i,b_j), \label{eq:cos}\\
 \|d_i-d_j\|^2 &= \|u_i-u_j\|^2+\|r_i-r_j\|^2+L\,(B_i-B_j)^2. \label{eq:dist}
 \end{align}
 \end{proposition}
@@ -417,8 +401,10 @@ Write $\gamma_i=\|c_i\|^2/\|b_i\|^2$ for that share. Applying~\eqref{eq:cos} onc
 more, inside the buffer block $b=(r,c)$, and using $\cos(c_i,c_j)=1$,
 \begin{equation}
 \label{eq:bufcos}
-\cos(b_i,b_j)\;=\;\sqrt{(1-\gamma_i)(1-\gamma_j)}\,\cos(r_i,r_j)+\sqrt{\gamma_i\gamma_j}
-\;\ge\;\sqrt{\gamma_i\gamma_j}-\sqrt{(1-\gamma_i)(1-\gamma_j)}
+\begin{aligned}
+\cos(b_i,b_j)&=\sqrt{(1-\gamma_i)(1-\gamma_j)}\,\cos(r_i,r_j)+\sqrt{\gamma_i\gamma_j}\\
+&\ge\sqrt{\gamma_i\gamma_j}-\sqrt{(1-\gamma_i)(1-\gamma_j)}
+\end{aligned}
 \end{equation}
 whenever $r_i,r_j\ne0$ and $B_i,B_j>0$. With $\gamma_i,\gamma_j\ge\gamma$ the
 right-hand side is at least $2\gamma-1$.
@@ -507,8 +493,9 @@ property of the transmission format and of BatchNorm, not of the data (the share
 also depend on the optimiser and learning rate). Shares on real data come from the
 campaign's runs (Sec.~\ref{sec:geometry}). ---: not measured.}
 \label{tab:probe}
-\small
-\begin{tabular}{@{}lrr@{}}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{0.56\columnwidth}rr@{}}
 \toprule
 quantity & CNN\,+\,LSTM & ResNet-18 \\
 \midrule
@@ -557,7 +544,7 @@ most of them.
 % Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified;
 % AlignIns JiiahaoXU/AlignIns@49b7d32 read 21 Oct 2026).
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{How public FL robustness implementations form the per-client vector
 (code inspected September and October 2026). ``Exposed'' means BatchNorm buffers, including
@@ -580,7 +567,7 @@ AlignIns, official~\cite{xu2025alignins} & flattened \sd{}; ResNet-9 without, VG
 This paper's pipeline, before the fix & flattened \sd{} & yes \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \textbf{The fix.} Every decision a rule makes (similarities, distances, norms,
 clip bounds, noise scales, selection scores) is computed on the trainable
@@ -686,7 +673,7 @@ twice the magnitude ($\apDirCleanXtwoBSR$), so the clean model does not read the
 pattern as benign; Sec.~\ref{sec:realizable} shows it is nonetheless jointly far
 from real benign traffic.
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Attack calibration under plain FedAvg (seed $42$, campaign scale, $15$ rounds).
 CA and BSR: means over the last five rounds. Norm: median over rounds of the
@@ -717,7 +704,7 @@ IID & none (clean) & \apIidCleanNpois & \apIidCleanCA & \apIidCleanBSR & \apIidC
  & $E_m=5$ & \apIidEfiveNpois & \apIidEfiveCA & \apIidEfiveBSR & \apIidEfiveNorm & \apIidEfiveImplant \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \textbf{A seed-robust adversary.} Calibrating on one seed was a mistake, and the
 campaign exposed it. Under example-weighted aggregation an attacker's weight is its
@@ -794,7 +781,7 @@ FedAvg cell implants as the calibration did (BSR $\csRepBSRFortyThree$, first ro
 above $0.5$ at round $\csRepImplantFortyThree$, against $\csSmEfifteenBSRFortyThree$
 at round $\csSmEfifteenImplantFortyThree$).
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Seed-robust calibration under plain FedAvg (non-IID, round-one copy on,
 $15$ rounds). Share: the attackers' fraction of the training rows. Random: the
@@ -824,7 +811,7 @@ seed & clean & share & $E_m=5$ & share & $E_m=5$ & $E_m=10$ & $E_m=15$ \\
 51 & \csCleanBSRFiftyOne & \csShareRandFiftyOne & \csRandBSRFiftyOne & \csShareMatFiftyOne & \csSmEfiveBSRFiftyOne & \csSmEtenBSRFiftyOne & \csSmEfifteenBSRFiftyOne{} (\csSmEfifteenImplantFiftyOne) \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \textbf{Server.} The server sees only the transmitted updates. FLTrust is the one
 exception: it holds a class-balanced clean root set of $300$ training rows, which
@@ -915,7 +902,7 @@ We run thirteen rules. All subclass Flower's FedAvg strategy and differ only in
 decisions read, which is what Proposition~\ref{prop:decomp} is about, and states
 the prediction for each before any outcome is seen.
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{The thirteen rules, the statistic their client-level decisions read, and the
 exposure to the counter that Proposition~\ref{prop:decomp} predicts. ``Arms
@@ -924,7 +911,7 @@ fixed arms of Sec.~\ref{sec:p1} run the same computation and serve as negative
 controls.}
 \label{tab:rules}
 \small
-\begin{tabular}{@{}p{0.17\linewidth}p{0.40\linewidth}p{0.36\linewidth}@{}}
+\begin{tabular}{@{}p{0.21\linewidth}p{0.44\linewidth}p{0.29\linewidth}@{}}
 \toprule
 rule & decision statistic & predicted exposure \\
 \midrule
@@ -942,7 +929,7 @@ FLDetector~\cite{zhang2022fldetector} & error of a cross-round update prediction
 AlignIns~\cite{xu2025alignins} & robust $z$ of cosine to $\theta_t$ (TDA) and of sign agreement (MPSA); median-norm clip & TDA and clip always; MPSA not \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \textbf{Order-statistic and averaging rules.} FedAvg~\cite{mcmahan2017} is the
 undefended, example-weighted mean. The coordinate-wise median and the
@@ -1084,7 +1071,7 @@ and say so each time.
 \textbf{Results so far.} \PENDING{} most cells of the re-run, including every
 IID cell and every attacked cell of a defended rule.
 % RETIRES WITH: P3 campaign (results/postfix_p3)
-Two kinds of cell have landed for several seeds, and they are the two the design
+Three kinds of cell have landed for several seeds. The first two are the ones the design
 needs before any rule can be read. The first is the negative control. FedAvg
 reads no statistic, and its clean non-IID cells give the same clean accuracy in
 both arms ($\pfCAFedavgDirCleanDef$ and $\pfCAFedavgDirCleanFix$, paired difference
@@ -1102,6 +1089,15 @@ most of an honest cohort. That is the failure of FoolsGold's own assumption that
 Sec.~\ref{sec:mech} diagnoses; whether the counter adds a clean-accuracy cost on top
 of it is what the remaining seeds decide.
 % RE-CHECK this paragraph when the FoolsGold Dir clean cells reach n=10.
+The third is FLAME's clean non-IID cells ($n=\pfFPRFlameDirCleanN$ paired seeds).
+FLAME excludes a fraction $\pfFPRFlameDirCleanDef$ of the clients in the defect arm
+and $\pfFPRFlameDirCleanFix$ in the fixed arm (paired difference
+$\pfFPRFlameDirCleanDiff$, 95\% CI $[\pfFPRFlameDirCleanLo,\pfFPRFlameDirCleanHi]$),
+and clean accuracy moves by $\pfCAFlameDirCleanDiff$ (CI
+$[\pfCAFlameDirCleanLo,\pfCAFlameDirCleanHi]$). On the engine without the round-one
+defect, FLAME's clean-run decisions are again indistinguishable between the arms,
+although its input is exposed (Sec.~\ref{sec:mech}).
+% RE-CHECK the FLAME sentence when its Dir clean cells reach n=10 (P3).
 
 \textbf{The first campaign, for reference.} Its non-IID cells are where the
 FLTrust and FLAME observations of Sec.~\ref{sec:mech} first came from. Its engine
@@ -1136,7 +1132,7 @@ columns use every paired seed. A rule whose attacked BSR is near its floor on th
 implant set suppressed the backdoor; one near FedAvg's did not.
 % Implant rule: paper/analyse_postfix.py --implant-bsr 0.5 (iteration 10).
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Controlled A/B on CICIoT2023 (re-run). For each rule: mean of the defect arm
 (Def), of the fixed arm (Fix), paired difference Fix$-$Def ($\Delta$), and
@@ -1183,9 +1179,9 @@ FLDetector & \pfCAFldetectorIidCleanDef & \pfCAFldetectorIidCleanFix & $\pfCAFld
 AlignIns & \pfCAAligninsIidCleanDef & \pfCAAligninsIidCleanFix & $\pfCAAligninsIidCleanDiff$ & \pfCAAligninsIidCleanPh & \pfCAAligninsIidAtkDef & \pfCAAligninsIidAtkFix & $\pfCAAligninsIidAtkDiff$ & \pfCAAligninsIidAtkPh & \pfBSRAligninsIidAtkDef & \pfBSRAligninsIidAtkFix & $\pfBSRAligninsIidAtkDiff$ & \pfBSRAligninsIidAtkPh \\
 \bottomrule
 \end{tabular}}
-\end{table}
+\end{table*}
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Exclusion decisions in the controlled A/B (re-run), for the eight rules that
 exclude clients. FPR in clean runs is the fraction of all clients excluded; DR and
@@ -1220,7 +1216,7 @@ FLDetector & \pfFPRFldetectorIidCleanDef & \pfFPRFldetectorIidCleanFix & $\pfFPR
 AlignIns & \pfFPRAligninsIidCleanDef & \pfFPRAligninsIidCleanFix & $\pfFPRAligninsIidCleanDiff$ & \pfFPRAligninsIidCleanPh & \pfDRAligninsIidAtkDef & \pfDRAligninsIidAtkFix & $\pfDRAligninsIidAtkDiff$ & \pfDRAligninsIidAtkPh & \pfFPRAligninsIidAtkDef & \pfFPRAligninsIidAtkFix & $\pfFPRAligninsIidAtkDiff$ & \pfFPRAligninsIidAtkPh \\
 \bottomrule
 \end{tabular}}
-\end{table}
+\end{table*}
 
 \subsection{Mechanisms}
 \label{sec:mech}
@@ -1374,7 +1370,7 @@ lower $M_j$, but the re-run logs $q_0$ and $q_j$, not $\rho_j$, so the real-data
 ratio is not measured. What the check establishes is the arithmetic of one round:
 under the defect, admission by FLTrust is something a client can buy with a
 number it chooses. We have not trained with a counter-falsifying client
-(\texttt{experiments/counter\_defect/fltrust\_falsify.py}).
+(\path{experiments/counter_defect/fltrust_falsify.py}).
 
 \textbf{FoolsGold: a history that is mostly counter.} FoolsGold compares the
 running sums $H_i(t)=\sum_{\tau\le t}d_i(\tau)$ rather than single updates. The
@@ -1439,9 +1435,9 @@ and only its defect-arm outcomes can add a counter effect on top of it.
 
 \textbf{FLAME: a compressed input, an unchanged decision.} FLAME's clustering reads
 exactly the compressed cosine of Corollary~\ref{cor:band}, yet in the first
-campaign its exclusions and its clean accuracy were the same in both arms
-(Sec.~\ref{sec:p1}; the re-run repeats the test in Tables~\ref{tab:p1}
-and~\ref{tab:p1flag}). The decomposition
+campaign its exclusions and its clean accuracy were the same in both arms, and so
+far they are in the re-run's clean non-IID cells too (Sec.~\ref{sec:p1},
+Tables~\ref{tab:p1} and~\ref{tab:p1flag}; attacked cells pending). The decomposition
 suggests why this can happen. When the buffer shares $s_i$ are nearly equal across
 clients and the buffer cosine $\cos(b_i,b_j)$ is nearly constant, Eq.~\eqref{eq:cos}
 is approximately an increasing affine map of the trainable cosine, which compresses
@@ -1756,10 +1752,10 @@ with the fix, the per-round defect diagnostics and the audit, and we recommend
 that robustness evaluations state which coordinates their rules decide on.
 
 %---------------------------------------------------------------------
-\input{declarations}
+\input{declarations_ieee}
 
 %---------------------------------------------------------------------
-\bibliographystyle{elsarticle-num}
+\bibliographystyle{IEEEtran}
 \bibliography{refs}
 
 \end{document}

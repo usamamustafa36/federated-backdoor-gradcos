@@ -71,31 +71,35 @@ def main():
     if not data:
         raise SystemExit("no P1 runs with diagnostics yet")
     parts = [p for p in ("dirichlet", "iid") if p in data]
-    fig, axes = plt.subplots(1, 2, figsize=(7.2, 2.7))
+    # Sized for one IEEEtran column (3.5 in) since iteration 11.
+    plt.rcParams.update({"font.size": 7, "axes.labelsize": 7,
+                         "xtick.labelsize": 6, "ytick.labelsize": 6})
+    fig, axes = plt.subplots(1, 2, figsize=(3.5, 2.3))
     styles = {"dirichlet": "-", "iid": "--"}
     pname = {"dirichlet": "Dirichlet(0.5)", "iid": "IID"}
+    short = {"dirichlet": "Dir.", "iid": "IID"}
     for part in parts:
         runs, ls = data[part], styles[part]
         for key, col, lab in (("pair_cos_full", "C3", "full vector"),
                               ("pair_cos_sig", "C0", "trainable only")):
             x, m, lo, hi = band(runs, key)
-            axes[0].plot(x, m, ls, color=col, label=f"{lab}, {pname[part]}")
+            axes[0].plot(x, m, ls, color=col, label=f"{lab}, {short[part]}")
             axes[0].fill_between(x, lo, hi, color=col, alpha=0.15, lw=0)
         for key, col, lab in (("buffer_norm_share", "C2", r"buffer share of $\|d_i\|^2$"),
                               ("buffer_dist_share", "C1", r"buffer share of $\|d_i-d_j\|^2$")):
             x, m, lo, hi = band(runs, key)
-            axes[1].plot(x, m, ls, color=col, label=f"{lab}, {pname[part]}")
+            axes[1].plot(x, m, ls, color=col, label=f"{lab}, {short[part]}")
             axes[1].fill_between(x, lo, hi, color=col, alpha=0.15, lw=0)
-    axes[0].set_ylabel("mean pairwise cosine")
+    axes[0].set_ylabel("mean pairwise cosine", labelpad=1)
     axes[1].set_ylabel("share")
-    for ax in axes:
+    for ax, loc in zip(axes, ("center right", "lower right")):
         ax.set_xlabel("round")
         ax.set_ylim(-0.05, 1.05)
         ax.grid(alpha=0.3, lw=0.5)
-        ax.legend(fontsize=6.5, loc="center right", frameon=False)
+        ax.legend(fontsize=5, loc=loc, frameon=False)
     n = ", ".join(f"{pname[p]}: {len(data[p])} runs" for p in parts)
     tag = "P3" if "postfix_p3" in RES else "P1"
-    fig.suptitle(f"{tag} per-round defect diagnostics ({n})", fontsize=8)
+    fig.suptitle(f"{tag} per-round defect diagnostics ({n})", fontsize=6.5)
     fig.tight_layout()
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     fig.savefig(OUT)

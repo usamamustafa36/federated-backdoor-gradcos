@@ -15,9 +15,8 @@ Branch: counter-defect-and-jisa-reformat (commit here; never push, never touch m
 3. paper/main.tex (+ numbers.tex, refs.bib, make_numbers.py, make_figs.py).
 
 ## What one iteration is
-1. **Review.** Act as the harshest plausible reviewer at the target venue (currently Elsevier
-   JISA, though you may argue for a stronger venue if the evidence supports it; the
-   BatchNorm `num_batches_tracked` finding may be a top-venue result). Score 1-10 with a
+1. **Review.** Act as the harshest plausible reviewer at the target venue (IEEE TIFS; see the
+   venue rule under Hard rules). Score 1-10 with a
    verdict (reject / major / minor / accept). List blockers ranked by how likely each is to
    cause rejection.
 2. **Fix.** Take the highest-leverage blocker(s) you can make real progress on this
@@ -33,6 +32,32 @@ Branch: counter-defect-and-jisa-reformat (commit here; never push, never touch m
    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 
 ## Hard rules
+- **TARGET VENUE: IEEE Transactions on Information Forensics and Security (TIFS), at zero cost
+  (user's decision, 2026-10-21).** It supersedes every JISA mention elsewhere in this brief and
+  in the repo notes. Review as a hostile TIFS reviewer. SPS rules (checked on the SPS
+  "Information for Authors" page, 2026-10-21):
+  - initial submission <= 13 double-column pages at 10 pt, references included; revision <= 16;
+  - **published pages 1-10 are free; every page past 10 is a mandatory $220**, so the final
+    paper must be **<= 10 IEEEtran journal pages including references**;
+  - supplementary material (appendices, proofs, extra tables) does not count, but is limited to
+    6 double-column pages unless the EiC approves more; code/data can be linked;
+  - decline the voluntary $110/page charge and do not choose open access (paid). Then
+    publication is free.
+  Plan:
+  (a) Any iteration may convert the paper to `\documentclass[journal]{IEEEtran}` (keep a .bak;
+      keep numbers.tex/macros working; IEEE citation style). Do it early, so page counts are
+      real.
+  (b) **Do not cut content before the P3 outcome results land.** After that, run dedicated
+      iterations that bring the main text to <= 10 pages and move the rest into
+      `paper/supplement.tex` (<= 6 pp): round-one aliasing details, calibration/seed tables,
+      trigger realizability, withdrawal history, per-defense extras.
+  (c) Every ledger entry reports the IEEEtran page count (main / supplement).
+  (d) **10 pages is a HARD limit (user confirmed: "10 pages not 11").** A main text of 10
+      pages and one line still counts as 11 and fails. VERDICT: READY is impossible while the
+      IEEEtran main text, references included, is over 10 pages. Leave a safety margin, because
+      IEEE copy-editing can lengthen the paper (aim for about 9.5 pages at submission).
+  Measured 2026-10-21: the elsarticle 3p build is 22 pp; the same text in elsarticle 5p
+  twocolumn is 17 pp (IEEEtran should come out similar), so about 40% has to move out.
 - **No fabrication, ever.** Every number in the paper comes from a result file through the
   generator (make_numbers.py / numbers.tex). Never type a result into the paper by hand.
   If a result is not measured yet, leave it \PENDING and say so. Never invent citations:

@@ -807,3 +807,54 @@ finished here.)
      re-check every RE-CHECK comment (FedAvg identical arms, FoolsGold paragraph, FLTrust counts).
   3. Consider a small end-to-end test of Corollary 4 (FLTrust defect arm, attacker sets counter to
      q=1/2, CPU or after P3) and log rho_j in fltrust.py so the real-data ratio can be computed.
+
+## Iteration 11 - 2026-10-21 - Converted to IEEEtran (real page count: 16 pp incl. references); P3 harvest (FLAME clean cells n=5; FLTrust Corollary 3 counts on 8 runs)
+
+- **State at start (18:43):** P3 41/1,040 result files (driver PID 5901, 4 CUDA lanes, ERR-free
+  since the 18:02 fix); gap-filler PID 7091 waiting; horizon probe (PIDs 6108/6109, CPU, s44 E_m=5
+  and s46 E_m=15, 40 rounds) still running, no output yet -> not harvested.
+- **Reviewer score before: 4/10, REJECT** (hostile TIFS). Blockers, ranked:
+  1. No rule outcome under a working attack (P3 needs ~20 h).
+  2. Length unknown in the venue's format (elsarticle 22 pp); every planning decision about cuts
+     needed a real IEEEtran count.
+  3. Two-column layout problems would surface only after conversion (wide tables, a 7.2-in figure).
+- **What I changed (backup paper/main.tex.pre-iter11-ieeetran.bak = the elsarticle source):**
+  - `\documentclass[journal]{IEEEtran}`, `cite` package, IEEEtran.bst, IEEE title/author block
+    (affiliation, e-mails and funding statement in \thanks), IEEEkeywords. lmodern dropped (Times).
+    Every \input{numbers*} unchanged; build and all generators work as before.
+  - Back matter: `paper/declarations_ieee.tex` (Data Availability only; CRediT/competing-interest
+    text kept in declarations.tex for the record, funding moved to the title footnote).
+  - Two-column fixes: Tables survey, calib (attack calibration), seedcal, rules, p1, p1flag -> table*;
+    probe table at column width with a wrapping first column; Eqs. (cos) and (bufcos) split over two
+    lines; a long \texttt path -> \path. Overfull boxes 17 -> 2 (both < 1 pt).
+  - `paper/make_fig_p1.py`: figure resized for one column (3.5 x 2.3 in, 6-7 pt fonts, short legend
+    labels, right legend moved off the curves).
+  - `paper/analyse_postfix.py`: a difference that rounds to zero prints "0.000" (was "-0.000" /
+    "+0.000"). Only sign-of-zero strings changed in numbers_postfix*.tex; no value changed.
+  - **Harvest (P3):** FLAME clean non-IID cells now n=5: FPR 0.384 in both arms (diff 0.000,
+    CI [-0.050, 0.050]); CA 0.712 vs 0.705, diff -0.006, CI [-0.033, 0.020]. Added as the third
+    "Results so far" item and in the FLAME mechanism paragraph ("so far in the re-run too; attacked
+    cells pending"), with a RE-CHECK at n=10. FLTrust Corollary 3 counts regenerated: 8 defect-arm
+    runs, 165 logged rounds, q_0 5.1-91.4%, condition q_i+q_0>1 fails in 21 rounds (bound down to
+    -0.427), measured cosine never <= 0 (min 0.015), no client ever excluded: the "sufficient, not
+    necessary" text still holds unchanged. Implant set so far: Dirichlet in {43,44,45}, out {46}.
+- **Build/check:** latexmk rc 0. **IEEEtran page count: 16 pp total (main text ends on p.15,
+  references p.15-16, about 15.6 pages used) / supplement 0 pp.** The cap is 10 incl. references
+  (aim 9.5): about 6 pages (~40%) must move to a supplement (<= 6 pp) or be cut, and the final P3
+  tables will fill PENDING cells (slightly longer, not shorter). check_manuscript: all PASS except
+  the gate (512 = 501 macro refs {pf 496, cs 5} + 11 literal; was 521). Abstract is exactly 250
+  words (TIFS limit 250).
+- **Running jobs (none started by me):** P3 driver PID 5901 (CUDA 4 lanes, ETA ~Oct 22 afternoon/
+  evening) + gap-filler PID 7091; horizon probe PIDs 6108/6109 (CPU; started 17:52, 40 rounds,
+  outputs results/calib_iter7/calib7h_*; slower than the earlier "midnight" ETA guess is possible).
+- **Score after: 4/10, REJECT.** Venue format now real; science unchanged until P3 lands.
+- **Top 3 priorities for the next iteration:**
+  1. Harvest: `python3 paper/analyse_postfix.py --res results/postfix_p3 --atk-res results/postfix_p3
+     --target 1040` + `make_numbers_calib6.py`; re-check every RE-CHECK comment (FedAvg identical,
+     FoolsGold, FLAME n=10, FLTrust counts). Harvest the horizon probe when calib7h_* JSONs appear.
+  2. Plan the cut without executing it yet: write a section-by-section page budget (target 9.5 pp)
+     and a supplement.tex skeleton (round-one aliasing, calibration/seedcal tables, trigger
+     realizability, withdrawal history, per-defense extras); the six table* floats are the cheapest
+     first moves.
+  3. Corollary 4 end-to-end test (FLTrust defect arm, counter-falsifying attacker) on CPU or after P3;
+     log rho_j in fltrust.py.

@@ -1,4 +1,4 @@
-# Build the manuscript for the Journal of Information Security and Applications.
+# Build the manuscript for IEEE Transactions on Information Forensics and Security (IEEEtran).
 #
 #   make            -> main.pdf
 #   make highlights -> highlights.pdf
@@ -16,7 +16,7 @@ ROOT    = ..
 
 all: main.pdf
 
-main.pdf: main.tex refs.bib declarations.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex $(wildcard figs/*)
+main.pdf: main.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
