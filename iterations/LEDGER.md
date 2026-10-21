@@ -1054,3 +1054,62 @@ finished here.)
   2. Fix `make numbers` (make_figs.py needs results/summary.csv) or drop legacy steps from the target.
   3. Start the page cut with P3-independent blocks (S-V aliasing, S-VIII realizability, S-II probe), per the
      iteration-12 budget; main is now 16.15 pp.
+
+## Iteration 15 - 2026-10-21 - `make numbers` fixed (legacy steps split off); first cut: five P3-independent blocks moved to the supplement (main 16.15 -> 12.75 pp); horizon probe s44 harvested
+
+- **State at start (~19:40):** P3 85/1,040 JSONs (6 CUDA lanes: PIDs 5901 + 15185, gap-filler 7091);
+  95 at the end. Horizon probe (PIDs 6108/6109, CPU): s44 E_m=5 done, s46 E_m=15 still running. I started no job.
+- **Reviewer score before: 4/10, REJECT.** Blockers: (1) outcomes missing for most rules (P3 ~8%); (2) 17 pp
+  (16.15) vs hard 10; (3) `make numbers` broken, so the paper had no one-command rebuild.
+- **What I changed:**
+  - **`make numbers` (paper/Makefile).** Cause: make_figs.py needs results/summary.csv, which
+    `experiments.make_tables` can no longer write because the pre-fix JSONs were archived to
+    results/_pre_counterfix in iteration 1. None of the legacy outputs is used: the only figure in the paper
+    is fig_p1_geometry.pdf, and the only numbers.tex macros used are the 42 `\rz*` realizability ones, which
+    make_numbers.py reads from results/realizability_ciciot2023.json. Worse, aggregate_multiseed.py would pool
+    the calibration campaigns (calib_iter*) into summary_multiseed.csv as if they were a headline campaign
+    (it set \numSeeds=10, \numCellsMulti=4; unused, but wrong). The `numbers` target now runs make_numbers.py
+    without those steps (numbers.tex is byte-identical to the committed one); the three legacy steps live in a
+    separate `make legacy` target with a comment saying why. **`make numbers` now runs end to end, rc 0,
+    5 min 22 s** (fltrust_falsify.py is most of it). It rewrites results/fltrust_falsify.json with
+    last-digit float noise (1e-15); numbers_falsify.tex unchanged; I reverted the JSON.
+  - **Cut (backups main.tex.pre-iter15.bak, supplement.tex.pre-iter15.bak).** Moved unchanged, labels and all,
+    into paper/supplement.tex: S-II probe paragraphs + Table probe; S-IV "Attack calibration", "A seed-robust
+    adversary" (+ Tables calib, seedcal) and "Reductions, stated"; S-V "Round-one aliasing"; S-VII "The first
+    campaign, for reference" + the subsection "What the counter did to an earlier version" (label sec:retro
+    now in S-VII); S-VIII the whole realizability section (Tables trig, realize). Main keeps: a 6-line
+    "Verification" summary; a new 17-line "Attack calibration" paragraph (E_m threshold, share-matched budget,
+    the pre-registered E_m=15 rule, 9/10 implant, seed 46, BSR read on implanting seeds only, attackers'
+    norm 16-50x honest); a 9-line aliasing summary; one sentence on the first campaign; a short paragraph
+    naming the four withdrawn findings; a new "Feature-space trigger" limitation with the d_M numbers.
+    "Reductions" is covered by the existing "Scale and attack strength" limitation. Intro roadmap and two
+    section-range references fixed. The supplement has no bibliography of its own: \cite resolves through
+    xr-hyper to the paper's reference numbers (a second bibliography redefined bagdasaryan2020/pierazzi2020
+    labels; now 0 multiply-defined).
+  - **Horizon probe (partial harvest).** make_numbers_calib6.py: `\csHz{BSR,Implant,Rounds,LastLow}` for
+    the two 40-round cells. s44 at E_m=5 (never implants in 15 rounds): implants at round 22 of 40, last
+    round with BSR <= 0.5 is 27, last-five BSR 0.919. Sentence added in S-IV ("on that one cell the 15-round
+    failure was a matter of time"); s46 E_m=15 still \PENDING. n=1, stated as such.
+  - **P3 harvest** (`make numbers`): 86 runs at analysis time. New: Krum Dirichlet clean n=5, attacked n=3;
+    DR 1.000 in both arms, CA diff +0.018 clean (3/2), no sign either way, consistent with iteration 14's
+    "both arms see the attackers as outliers" (exploratory). PREREG: no new confirmatory cell (P1, P3 n=5;
+    S3 n=5; P2/P4/S1/S2/S4 still 0); no amendment needed.
+- **Build/check:** latexmk rc 0, 0 undefined refs/cites, 0 "??" in either PDF. **IEEEtran pages: main 13
+  (ends at 12.75, was 16.15) / supplement 5 (about 4.7 incl. two placeholders).** check_manuscript: FAIL
+  main > 10 pp, FAIL 2 \TOMOVE (S-III proofs, S-VI rule details), FAIL gate 445; rest PASS.
+- **Page arithmetic for the next agent (page_budget.py, this build):** still 3.25 pp to cut for 9.5. Left in
+  the budget: proofs of Cor. 3/4 + Lemma 1 (1.64 pp now; plan keeps ~0.75 -> -0.9), rule descriptions
+  (0.87 -> ~0.4, -0.45), Limitations 0.51 and Conclusion 0.44 (-0.4), intro/contributions (-0.4), Statistics
+  0.30 (-0.1), merge Tables VI/VII (-0.15). That reaches ~10.0, not 9.5, so further prose trimming is needed.
+  **Supplement is the binding constraint:** 4.7 pp now + proofs (~0.9) + rules (~0.45) = ~6.05 > 6. Options:
+  compress Table seedcal (10 rows x 8 cols, ~0.35 pp) or drop the realizability audit to a separate paper
+  (frees ~0.9 pp of supplement; independent of the counter story).
+- **Running jobs (none mine):** P3 PIDs 5901, 15185, gap-filler 7091; horizon PIDs 6108/6109 (s46 E_m=15).
+- **Score after: 4/10, REJECT.** Rebuild is reproducible and the paper is 3.4 pp shorter, but outcomes are
+  still missing and the main text is 12.75 pp.
+- **Top 3 priorities:**
+  1. Harvest P3 (`cd paper && make numbers`) and the s46 horizon cell (`\csHz...FortySixEfifteen`; then
+     replace the \PENDING sentence in S-IV and revisit "Our reading is that the attack sits near a threshold").
+  2. Continue the cut: S-III proofs (keep statements + one-sentence sketches) and S-VI rule details, then
+     prose trimming; decide the supplement overflow (seedcal table compression vs. realizability out).
+  3. When primary cells P2/P4 (FLTrust IID) land, add the 8-row confirmatory table in place of prose.

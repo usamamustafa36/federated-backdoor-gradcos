@@ -12,7 +12,7 @@ LATEXMK = latexmk -pdf -interaction=nonstopmode -halt-on-error
 PY      = python3
 ROOT    = ..
 
-.PHONY: all highlights numbers gate check package clean cleanall
+.PHONY: all highlights numbers legacy gate check package clean cleanall
 
 all: main.pdf supplement.pdf
 
@@ -32,11 +32,18 @@ highlights: highlights.tex
 
 # Regenerate every number and figure from the committed result files, then
 # rebuild. Run this after each lane of run_remediation.sh completes.
+#
+# Iteration 15: the legacy steps (aggregate_multiseed.py, experiments.make_tables,
+# make_figs.py) belong to the pre-fix campaign voided in iteration 1 (its JSONs are
+# archived in results/_pre_counterfix and no longer produce results/summary.csv).
+# None of their outputs is used by main.tex or supplement.tex (the only figure is
+# fig_p1_geometry.pdf; the only numbers.tex macros used are the realizability \rz*
+# ones, which make_numbers.py reads from results/realizability_ciciot2023.json).
+# aggregate_multiseed.py would also pool the calibration campaigns (calib_iter*)
+# into summary_multiseed.csv as if they were a headline campaign, so it is NOT run
+# here; make_numbers.py then marks those unused macros \PENDING. Kept as `legacy`.
 numbers:
-	cd $(ROOT) && $(PY) paper/aggregate_multiseed.py
-	cd $(ROOT) && $(PY) -m experiments.make_tables
 	cd $(ROOT) && $(PY) paper/make_numbers.py
-	cd $(ROOT) && $(PY) paper/make_figs.py
 	# P3 is the campaign of record (iteration 10); the stopped P1/P2 campaign is kept
 	# as \pa... macros in numbers_postfix_p1.tex (defective round-one engine).
 	cd $(ROOT) && $(PY) paper/analyse_postfix.py --res results/postfix_p3 --atk-res results/postfix_p3 --target 1040 --prereg iterations/PREREG_P3.md
@@ -49,6 +56,13 @@ numbers:
 	$(LATEXMK) main.tex
 	$(LATEXMK) supplement.tex
 	$(LATEXMK) -g main.tex
+
+# Pre-fix campaign figures/tables (void since iteration 1; needs results/summary.csv,
+# which only exists if the archived JSONs are restored). Not part of the paper.
+legacy:
+	cd $(ROOT) && $(PY) paper/aggregate_multiseed.py
+	cd $(ROOT) && $(PY) -m experiments.make_tables
+	cd $(ROOT) && $(PY) paper/make_figs.py
 
 # The submission gate. Nothing carrying a \PENDING may go to a venue.
 gate:

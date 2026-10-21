@@ -283,6 +283,22 @@ def main():
             mc = [x for e in log[1:] for x in e["max_cos"]]
             P("FgBaseMaxCosMed", f3(float(np.median(mc))))
             P("FgBaseRoundOneMaxCosMed", f3(float(np.median(log[0]["max_cos"]))))
+    # --- horizon probe (iteration 7): 40-round FedAvg re-runs testing censoring ----
+    # results/calib_iter7/calib7h_* (experiments/calib_iter7/run_horizon.sh): seed 44 at
+    # E_m=5 and seed 46 at E_m=15, share-matched attackers, 40 rounds.
+    for seed, em, stem in ((44, 5, "FortyFourEfive"), (46, 15, "FortySixEfifteen")):
+        path = R("calib_iter7", f"calib7h_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me{em}_sm_s{seed}.json")
+        c = cell(path) if os.path.exists(path) else None
+        if c is None:
+            for k in ("BSR", "Implant", "Rounds", "LastLow"):
+                P(f"Hz{k}{stem}", "\\PENDING")
+            continue
+        h = json.load(open(path))["history"]
+        P(f"HzBSR{stem}", f3(c["bsr"]))
+        P(f"HzImplant{stem}", str(c["imp"]) if c["imp"] is not None else "--")
+        P(f"HzRounds{stem}", str(len(h["bsr"])))
+        low = [r for r, b in zip(h["rounds"], h["bsr"]) if b <= 0.5]
+        P(f"HzLastLow{stem}", str(low[-1]) if low else "--")
     open(OUT, "w").write("\n".join(L) + "\n")
     print(f"wrote {OUT} ({len(L) - 1} macros)")
 
