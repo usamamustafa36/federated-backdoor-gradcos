@@ -672,3 +672,69 @@ finished here.)
      defect arm; also log the server's q_0 on real data — add it to fltrust.py's metrics, cheap).
   3. Harvest the horizon probe (~23:00); then, once results land, trim to ~18 pp (candidates:
      merge tab:calib into an appendix, shorten Sec. 4 "Round-one aliasing").
+
+## Iteration 9 - 2026-10-21 - Calibration harvested (benign-scarcity explanation refuted); P3 rescued from silent CUDA OOM; FLTrust counter shares now logged on real data
+
+- **State on arrival (coordinator, 18:05):** machine rebooted 17:45 and killed every job.
+  The calibration had finished before that: launcher.log 15:51 "E_m=15 seeds implanting: 9 of
+  10" -> P3 launched (CPU, 5 lanes), then relaunched after the reboot on CUDA, 4 lanes, under
+  systemd-inhibit (PID 5899/5901, log results/postfix_p3/campaign.log). Horizon probe
+  relaunched on CPU (PIDs 6099-6109, results/calib_iter7/horizon.log, ETA ~23:30-midnight).
+- **Reviewer score before: 4/10, REJECT** (unchanged blockers: no rule outcome under a
+  working attack; all \pf A/B macros PENDING).
+- **Blockers found (ranked):**
+  1. **P3 was failing silently.** 4 CUDA lanes do not fit: every attacked cell's BSR eval
+     ran a 4096-row chunk through the LSTM (1.66 GiB cuDNN allocation) and OOMed. run_sweep
+     isolates cell errors, so the driver logged "done(rc=0)" for jobs whose cells all failed
+     (attacked FedAvg full s43-46, FoolsGold both arms, FLAME full: 20 ERROR lines by 18:05).
+     Without a fix P3 would have "completed" with most attacked cells missing.
+  2. **The reboot left two 0-byte result files** (p3full fedavg attacked s42, p3trainable fedavg
+     clean s44: atomic rename without fsync), which the resume logic treated as done forever.
+  3. Calibration not harvested; s49/s51 pre-registered test unsettled; seedcal table PENDING.
+  4. Corollary 3 still had no real-data measurement of the server share q_0.
+- **What I changed:**
+  - `src/attacks/__init__.py`: BSR eval chunk 4096 -> 1024 (eval mode, predictions per sample
+    do not depend on chunk; same chunk as torch_utils.evaluate). `experiments/run_sweep.py`:
+    `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` by default; result JSON fsynced before
+    the atomic rename; a 0-byte JSON no longer counts as done. Live from 18:02: P3 jobs started
+    after that (e.g. PID 7306, 436-636 MiB) use the new code; the three jobs started earlier
+    (5921, 6606, 6648, ~2.1-2.6 GiB each) still run the old code and may lose more cells.
+  - The two 0-byte files moved to `results/postfix_p3/_zero_byte_after_reboot/`.
+  - **Gap-filler** `experiments/postfix/fill_p3_gaps.sh` (PID 7091 under systemd-inhibit, log
+    results/postfix_p3/gapfill.log + campaign.log): waits for run_p3.sh to exit, then re-runs the
+    resumable driver (MAL_EPOCHS=15, cuda, 4 lanes) up to 3 passes until no new cells appear.
+  - **FLTrust logs Corollary 3's quantities** (`src/defenses/fltrust.py` `_counter_diag`,
+    `src/fl/engine.py` History.fltrust_counter): per round q_0 (server counter share), min q_i,
+    min q_i+q_0, min bound sqrt(q_i q_0)-sqrt((1-q_i)(1-q_0)), min measured full-vector cosine.
+    Pure logging. CPU smoke (2 rounds, E_m=1, scratchpad only, NOT a result): q_0 0.65-0.67,
+    q_i >= 0.71, bound 0.36-0.39 <= measured cosine 0.73-0.79, DR=FPR=0 - consistent with the
+    corollary. P3's FLTrust jobs start after the fix, so they carry it.
+  - **Harvest** (`paper/make_numbers_calib6.py` regenerated): E_m=15 implants on 9/10 seeds
+    (new macros \csSmEfifteenNimpl, \csSmEfifteenBSRMinImpl); s45 only just (0.519, onset round 13);
+    s46 fails (0.164). **Benign-scarcity explanation REFUTED:** s49 (81 benign rows) BSR 0.929,
+    s51 (1 benign row) BSR 0.953; paper says so and drops it. Clean column for seeds 47-51 now
+    reads P3's clean FedAvg cells (PENDING until they run; caption says so).
+  - **P3 reproduces the calibration** on the one finished matched pair: s43 trainable FedAvg
+    attacked, CUDA, same attackers [3,8]: last-5 BSR 0.955, onset round 10 vs calibration 0.964,
+    round 8 (\csRep*). The P3 FedAvg clean cells agree across arms exactly (FedAvg reads no
+    decision statistic): s42 CA 0.726/BSR 0.043 in both.
+  - Paper (backup `paper/main.tex.pre-iter9.bak`): s49/s51 verdict; the pre-fixed >=8/10 rule
+    and its outcome (seed 46 excluded, seed 45 marginal); CPU-vs-GPU reproduction stated;
+    AlignIns is in the re-run (1,040 cells), no longer "not part of the campaign"; FLTrust
+    paragraph wired to \csFlt* macros (PENDING until P3 FLTrust cells exist).
+  - AGENT_BRIEF.md: corrected the "4 lanes fit" note.
+- **Build/check:** latexmk rc 0, 21 pp; check_manuscript all PASS except the gate
+  (457 = 446 macro refs {pf 434, cs 12} + 11 literal; was 465).
+- **Running jobs (none killed):** P3 driver PID 5901 (CUDA 4 lanes, ETA ~15-20 h, more with
+  failed cells refilled); gap-filler PID 7091 (after P3); horizon probe PIDs 6099-6109 (CPU,
+  ETA ~23:30-00:00, outputs results/calib_iter7/calib7h_*).
+- **Score after: 4/10, REJECT.** Infrastructure saved and calibration closed honestly, but
+  the outcome evidence still does not exist.
+- **Top 3 priorities for the next iteration:**
+  1. `grep -c ERROR results/postfix_p3/log_*` — confirm cells started after 18:02 no longer OOM.
+     If they still do, the gap-filler's LANES should drop to 3 (edit fill_p3_gaps.sh before it
+     starts). Then harvest FLTrust cells: rerun make_numbers_calib6.py (fills \csFlt*), check
+     DR=FPR=0 in the full arm and bound <= cosine every round.
+  2. Harvest the horizon probe (~midnight); settle the censoring PENDING.
+  3. Once P3 FedAvg attacked cells exist for all seeds (gap-fill), define the implant set
+     from P3's own FedAvg and point analyse_postfix/make numbers at postfix_p3.

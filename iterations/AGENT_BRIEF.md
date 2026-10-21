@@ -41,10 +41,25 @@ Branch: counter-defect-and-jisa-reformat (commit here; never push, never touch m
 - **Shared machine.** Other people's jobs run here (e.g. stage_sensing.py, isf_build.py,
   firefox, claude). Never kill a process you did not start. Keep CPU use to about 12 of the
   20 cores.
-- **CPU only (user's decision, 2026-10-21).** Do not use or wait for the GPU. Run every
-  experiment with `--device cpu`, and size experiments so they finish on CPU (fewer rounds,
-  subsampled data, fewer seeds where that is defensible). State every such reduction
-  honestly in the paper.
+- **GPU available again (user reset CUDA at 13:24, 2026-10-21).** Use `--device cuda` for
+  campaigns. Before launching, check `python3 -c "import torch; torch.ones(1,device='cuda')"`.
+  There is one RTX 4060 (8 GB): run one GPU campaign at a time, with as many parallel lanes
+  as fit in memory. If CUDA errors with "unknown error", it is in the zombie state again, and
+  only the user can fix it with sudo. Note it in the ledger and fall back to CPU (at most ~12
+  cores). Make campaigns resumable so a CUDA death costs only the current cell. With the GPU,
+  prefer full-scale experiments (full rounds, more seeds) over the earlier CPU reductions.
+- **GPU state at 17:50, 2026-10-21 (after a reboot killed all jobs):** P3 relaunched on CUDA,
+  4 lanes, under `systemd-inhibit` (log results/postfix_p3/campaign.log). 4 lanes fill the
+  8 GB card (~2.5 GB peak each), so a 5th GPU process OOMs. Do not add GPU jobs while P3
+  runs; queue them after it, or run small probes on CPU. The horizon probe (iteration 7)
+  OOMed on CUDA and now runs on CPU (`HORIZON_DEVICE=cpu`, results/calib_iter7/horizon.log).
+  Always wrap long jobs in `systemd-inhibit --what=sleep:idle:handle-lid-switch --mode=block`.
+- **Iteration 9 correction:** 4 lanes did NOT fit: attacked cells OOMed in the BSR eval
+  (4096-row chunk = 1.66 GiB cuDNN LSTM allocation) and failed silently (run_sweep isolates
+  errors, rc=0). Fixed at 18:02 (chunk 1024, expandable_segments). Always `grep -c ERROR` the
+  per-job logs before trusting "done(rc=0)". A gap-filler (experiments/postfix/fill_p3_gaps.sh)
+  re-runs the resumable driver after the first pass. run_sweep now fsyncs results and ignores
+  0-byte JSONs (the 17:45 reboot left two).
 - **Long jobs:** launch with nohup into a log under experiments/ or results/, record PID, log
   path and ETA in the ledger, and do not wait hours for them. The next agent harvests them.
   Make jobs resumable (skip completed cells). Before launching, check that no earlier

@@ -20,6 +20,9 @@ class FLTrust(DefenseStrategy):
         self.device = device
         self.dataset = dataset
         self.root_x, self.root_y = self._sample_root(dataset, root_size, cfg.seed)
+        # Iteration 9: pure logging for Corollary 3 (never feeds a decision).
+        self._counter_mask = None
+        self.last_counter_diag: dict | None = None
 
     @staticmethod
     def _sample_root(dataset, root_size, seed):
@@ -54,6 +57,45 @@ class FLTrust(DefenseStrategy):
         g = self.flatten(self.current_global)
         return self.flatten([w.astype(np.float64) for w in get_weights(model)]) - g
 
+    def _get_counter_mask(self, n: int) -> np.ndarray | None:
+        """Flat mask of the num_batches_tracked coordinates (state_dict order)."""
+        if self._counter_mask is None:
+            from ..models.cnn_lstm import build_model
+            model = build_model(self.cfg, self.dataset.num_features,
+                                self.dataset.num_classes)
+            parts = []
+            for k, v in model.state_dict().items():
+                size = int(np.asarray(v.detach().cpu().numpy()).size)
+                parts.append(np.full(size, k.endswith("num_batches_tracked"), dtype=bool))
+            self._counter_mask = np.concatenate(parts)
+        return self._counter_mask if self._counter_mask.size == n else None
+
+    def _counter_diag(self, g0: np.ndarray, deltas: list) -> dict:
+        """Corollary 3's quantities on the real updates of this round:
+        q0 / qi = counter share of the squared norm of the server's / client's
+        FULL update, the corollary's lower bound
+        sqrt(qi q0) - sqrt((1-qi)(1-q0)) and the measured full-vector cosine."""
+        nan = float("nan")
+        m = self._get_counter_mask(g0.size)
+        if m is None or not deltas:
+            return {"q0": nan, "qi_min": nan, "qsum_min": nan,
+                    "bound_min": nan, "cos_full_min": nan}
+        def share(v):
+            t = float(np.dot(v, v))
+            return float(np.dot(v[m], v[m])) / t if t > 0 else nan
+        q0 = share(g0)
+        n0 = float(np.linalg.norm(g0)) + 1e-12
+        qs, bounds, coss = [], [], []
+        for d in deltas:
+            qi = share(d)
+            qs.append(qi)
+            bounds.append(np.sqrt(qi * q0) - np.sqrt(max(0.0, (1 - qi) * (1 - q0))))
+            coss.append(float(np.dot(d, g0)) / ((float(np.linalg.norm(d)) + 1e-12) * n0))
+        return {"q0": q0, "qi_min": float(np.min(qs)),
+                "qsum_min": float(q0 + np.min(qs)),
+                "bound_min": float(np.min(bounds)),
+                "cos_full_min": float(np.min(coss))}
+
     def aggregate_fit(self, server_round, results, failures):
         if not results or self.current_global is None:
             return None, {}
@@ -61,6 +103,8 @@ class FLTrust(DefenseStrategy):
         g = self.flatten(self.current_global)
         g0 = self._server_update()
         g0_norm = np.linalg.norm(g0) + 1e-12
+        self.last_counter_diag = self._counter_diag(g0, [self.flatten(nds) - g
+                                                          for _, nds, _, _ in updates])
 
         # Trust score and the norm rescaling are both measured on the trainable
         # parameters. On the raw vector, ||g0|| and ||gi|| are dominated by

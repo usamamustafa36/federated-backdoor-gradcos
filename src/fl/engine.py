@@ -72,6 +72,9 @@ class History:
     buffer_dist_share: list[float] = field(default_factory=list)
     pair_cos_full: list[float] = field(default_factory=list)
     pair_cos_sig: list[float] = field(default_factory=list)
+    # FLTrust only (iteration 9): Corollary 3's counter shares on real updates,
+    # logged per round; empty for every other defense. Pure logging.
+    fltrust_counter: list[dict] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return self.__dict__
@@ -389,6 +392,9 @@ class FederatedEngine:
         hist.buffer_dist_share.append(dd["buffer_dist_share"])
         hist.pair_cos_full.append(dd["pair_cos_full"])
         hist.pair_cos_sig.append(dd["pair_cos_sig"])
+        _fd = getattr(self.strategy, "last_counter_diag", None)
+        if _fd is not None:
+            hist.fltrust_counter.append(dict(_fd))
 
         if verbose:
             msg = (f"round {rnd:>3} | acc {ev['accuracy']:.4f} | f1 {ev['macro_f1']:.4f} "

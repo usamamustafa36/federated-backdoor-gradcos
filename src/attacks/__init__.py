@@ -89,8 +89,11 @@ def _bsr_evaluator(trigger, dataset, device):
             return float("nan")
         model.eval()
         preds = []
-        for i in range(0, len(x_bd), 4096):
-            xb = torch.from_numpy(x_bd[i:i + 4096]).float().to(device)
+        # Chunk 1024 (was 4096): the 4096 chunk needs a 1.66 GiB cuDNN LSTM
+        # allocation and OOMed 4 CUDA lanes (iteration 9). Eval mode, so the
+        # per-sample predictions do not depend on the chunk size.
+        for i in range(0, len(x_bd), 1024):
+            xb = torch.from_numpy(x_bd[i:i + 1024]).float().to(device)
             preds.append(model(xb).argmax(1).cpu().numpy())
         preds = np.concatenate(preds)
         return float(np.mean(preds == benign_index))

@@ -756,15 +756,29 @@ $0.5\sigma$ of the trigger on all $\csTrigNcols$ stamped columns, and
 $\csTrigNoutRange$ of the $\csTrigNcols$ stamped values fall outside the range
 that column takes in the training data. Honest clients therefore never train
 against the trigger directly, and the model has to extrapolate to it. One
-feature does stand out: seed $46$'s attackers hold $\csMalBenignFortySix$ genuine
+feature did stand out: seed $46$'s attackers hold $\csMalBenignFortySix$ genuine
 benign rows, against $\csMalBenignImplMin$--$\csMalBenignImplMax$ on seeds
-$42$--$44$. Seeds $49$ and $51$ are the test of that explanation, since their
-attackers hold $\csMalBenignFortyNine$ and $\csMalBenignFiftyOne$ (their $E_m=15$
-cells are \PENDING). A $40$-round re-run of seed $46$ at $E_m=15$ and seed $44$ at
-$E_m=5$ tests the censoring reading (\PENDING). The
-re-run fixes $E_m$ from a ten-seed calibration at $E_m=15$ before any defended cell
-runs, and reads a rule's attacked BSR only on seeds where FedAvg implants
-(last-five-round BSR above $0.5$), reporting the excluded seeds (\PENDING).
+$42$--$44$. We registered seeds $49$ and $51$ as the test of that explanation
+before their cells finished, since their attackers hold only
+$\csMalBenignFortyNine$ and $\csMalBenignFiftyOne$ benign rows. Both implant
+strongly at $E_m=15$ (BSR $\csSmEfifteenBSRFortyNine$ and
+$\csSmEfifteenBSRFiftyOne$, first round above $0.5$ at round
+$\csSmEfifteenImplantFortyNine$ and $\csSmEfifteenImplantFiftyOne$), so benign
+scarcity does not explain seed $46$, and we drop it. A $40$-round re-run of seed
+$46$ at $E_m=15$ and seed $44$ at $E_m=5$ tests the censoring reading (\PENDING).
+
+The rule for the re-run was fixed before the ten calibration cells finished: use
+$E_m=15$ if FedAvg implants (last-five-round BSR above $0.5$) on at least eight of
+the ten non-IID seeds. It implants on $\csSmEfifteenNimpl$ of ten; seed $46$ is
+the exception, and seed $45$ only just clears the bar ($\csSmEfifteenBSRFortyFive$,
+first round above $0.5$ at round $\csSmEfifteenImplantFortyFive$). A rule's
+attacked BSR is read only on seeds where the re-run's own FedAvg cell implants,
+and the excluded seeds are reported with the results. The re-run executes on a GPU
+and the calibration ran on a CPU, so the two are reproductions of each other, not
+bit-identical copies. On the first seed both have finished (seed $43$), the re-run's
+FedAvg cell implants as the calibration did (BSR $\csRepBSRFortyThree$, first round
+above $0.5$ at round $\csRepImplantFortyThree$, against $\csSmEfifteenBSRFortyThree$
+at round $\csSmEfifteenImplantFortyThree$).
 
 \begin{table}[t]
 \centering
@@ -772,7 +786,7 @@ runs, and reads a rule's attacked BSR only on seeds where FedAvg implants
 $15$ rounds). Share: the attackers' fraction of the training rows. Random: the
 campaign's attack (random attackers, $E_m=5$). Matched: share-matched attackers at
 $E_m=5$, $10$, $15$. Entries are last-five-round BSR (first round with BSR $>0.5$
-in parentheses; -- never). Clean: the clean-model BSR floor. n/r: not run (the
+in parentheses; -- never). Clean: the clean-model BSR floor (seeds $47$--$51$: the re-run's clean FedAvg cells). n/r: not run (the
 stopped first campaign covered seeds $42$--$46$, and $E_m=5$, $10$ were calibrated
 on those seeds only).}
 \label{tab:seedcal}
@@ -967,8 +981,8 @@ so we make no prediction and report what we measure.
 
 \textbf{A 2025 rule, implemented but not yet run.} The newest rules in the
 campaign are from 2022. AlignIns~\cite{xu2025alignins} (CVPR 2025) is implemented
-in the same pipeline, ported from its authors' code, but is not part of the
-campaign reported here. It keeps a client only if two robust $z$-scores are below
+in the same pipeline, ported from its authors' code. It is not among the interim
+cells reported here, but it is part of the re-run now executing (Sec.~\ref{sec:p1}). It keeps a client only if two robust $z$-scores are below
 one: that of the cosine between the update and the current global model
 $\theta_t$ (TDA), and that of the fraction of the update's largest $30\%$ of
 coordinates whose sign agrees with the coordinate-wise majority sign (MPSA). It
@@ -1041,7 +1055,8 @@ the trainable coordinates (Sec.~\ref{sec:scope}). The arms are identical in ever
 other respect, including the seed, so the per-seed difference fixed$-$defect is
 the causal effect of the counter on that rule. The campaign crosses twelve rules,
 two partitions, clean and attacked runs, and ten seeds ($960$ cells; scale and
-statistics in Sec.~\ref{sec:setup}). The interim attacked cells use the first campaign's attack
+statistics in Sec.~\ref{sec:setup}); the re-run with the round-one copy and the
+seed-robust adversary adds AlignIns ($1{,}040$ cells). The interim attacked cells use the first campaign's attack
 (random attackers, $E_m=5$, Table~\ref{tab:calib}), which implants under FedAvg on
 only two of the five non-IID seeds run (Table~\ref{tab:seedcal}); a first set of attacked cells run with one local
 epoch implanted nothing under FedAvg and is not reported. Table~\ref{tab:p1} reports clean accuracy
@@ -1222,8 +1237,13 @@ probe's synthetic inputs (Table~\ref{tab:probe}), a $\dfFltBzero$-batch server u
 has $q_0=\dfFltQzero\%$, a $\dfPropBi$-batch client update $q_i=\dfPropShareI\%$, so
 the bound~\eqref{eq:fltbound} is $\dfFltBound$; the measured full-vector cosine is
 $\dfFltCosFull$, while the two updates' trainable cosine is $\dfFltCosSig$. On real
-data the trainable norms, and so the shares, differ; the campaign's per-round
-diagnostics measure the clients' shares but not the server's. The corollary
+data the trainable norms, and so the shares, differ. The re-run's FLTrust cells
+therefore log, every round, the server's share $q_0$, the smallest client share,
+the bound and the smallest measured full-vector cosine. Over the
+$\csFltNrounds$ logged rounds, $q_0$ lies in $\csFltQzeroMin$--$\csFltQzeroMax$,
+the smallest $q_i$ is $\csFltQiMin$, the smallest $q_i+q_0$ is $\csFltQsumMin$,
+the smallest bound is $\csFltBoundMin$ and the smallest measured cosine is
+$\csFltCosFullMin$. The corollary
 predicts that in the defect arm no client's trust score reaches zero. The interim
 measurement, taken on the engine with the round-one defect (which FLTrust does not
 carry across rounds, but which changes its trajectory), agrees exactly: DR

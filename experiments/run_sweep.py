@@ -15,6 +15,11 @@ Examples:
 """
 from __future__ import annotations
 
+import os as _os
+# Iteration 9: 4 CUDA lanes share one 8 GB card; expandable segments reduce
+# fragmentation OOMs (set before torch is imported anywhere).
+_os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
+
 import argparse
 import copy
 import json
@@ -177,6 +182,8 @@ def run_one(cfg, ds, device, out_dir, tag, seed_suffix: str = "",
     tmp = out_dir / (name + ".tmp")
     with open(tmp, "w") as f:
         json.dump(payload, f, indent=2, default=str)
+        f.flush()
+        os.fsync(f.fileno())  # survive a reboot (17:45 reboot left 0-byte cells)
     os.replace(tmp, out_dir / name)
     last = -1
     return {
@@ -342,7 +349,9 @@ def main():
             label = (f"[{i:>3}/{total}] {c['defense_name']:8s} "
                      f"atk={int(c['enabled'])} m={c['ratio']} p={c['poison']} "
                      f"{c['trigger']:11s}{vtag}{stag}")
-            if not args.force and (out_dir / cell_name(cfg, tag, seed_suffix)).exists():
+            _done = out_dir / cell_name(cfg, tag, seed_suffix)
+            # A 0-byte file is a write lost in a crash/reboot, not a result.
+            if not args.force and _done.exists() and _done.stat().st_size > 0:
                 print(f"{label} | SKIP (already done)", flush=True)
                 continue
             # Isolate each cell: one failure (e.g. transient OOM) must not abort the

@@ -92,8 +92,13 @@ def main():
     # --- P2 attack (random selection) and clean floor, FedAvg, per seed -------
     for s, w in SEEDS.items():
         if s not in P12_SEEDS:
-            for k in ("RandBSR", "RandCA", "CleanBSR", "CleanCA"):
+            for k in ("RandBSR", "RandCA"):
                 P(f"{k}{w}", "n/r")
+            # Seeds 47-51 had no P1 clean cell; their clean floor comes from the
+            # re-run's (P3, copy on) clean FedAvg cell once it exists (iteration 9).
+            c = cell(R("postfix_p3", f"p3full_dirichlet_ciciot2023_fedavg_atk0_m0.0_p0.0_fixed_s{s}.json"))
+            P(f"CleanBSR{w}", f3(c["bsr"] if c else None))
+            P(f"CleanCA{w}", f3(c["ca"] if c else None))
             continue
         c = cell(R("postfix_p2", f"p2full_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me5_s{s}.json"))
         P(f"RandBSR{w}", f3(c["bsr"] if c else None))
@@ -127,6 +132,11 @@ def main():
             P(f"{stem}Share{w}", pct(c["share"]) if c["share"] is not None else "\\PENDING")
         if bs:
             P(f"{stem}BSRMin", f3(min(bs))); P(f"{stem}N", str(len(bs)))
+            P(f"{stem}Nimpl", str(sum(b > 0.5 for b in bs)))
+            # the implanting cell closest to the threshold
+            ok = [b for b in bs if b > 0.5]
+            if ok:
+                P(f"{stem}BSRMinImpl", f3(min(ok)))
 
     # --- implant dynamics over the calibration cells (iteration 7) ----------------
     imps, maxr, lastr = [], {}, {}
@@ -146,6 +156,48 @@ def main():
     P("OnsetMin", str(min(imps)) if imps else "\\PENDING")
     P("OnsetMax", str(max(imps)) if imps else "\\PENDING")
     P("OnsetN", str(len(imps)))
+
+    # --- P3 reproduces the calibration? (iteration 9) ---------------------------
+    # The re-run's attacked FedAvg cells use the same attackers and E_m=15, on CUDA
+    # (calibration ran on CPU), so they are a reproduction, not a bit-identical copy.
+    rep_n, rep_agree = 0, 0
+    for s, w in SEEDS.items():
+        for mode in ("full", "trainable"):
+            c3 = cell(R("postfix_p3", f"p3{mode}_dirichlet_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me15_sm_s{s}.json"))
+            c6 = found.get(("SmEfifteen", s))
+            if c3 is None or c6 is None:
+                continue
+            rep_n += 1
+            rep_agree += (c3["bsr"] > 0.5) == (c6["bsr"] > 0.5)
+            if s == 43 and mode == "trainable":
+                P("RepBSRFortyThree", f3(c3["bsr"]))
+                P("RepImplantFortyThree", "--" if c3["imp"] is None else str(c3["imp"]))
+    P("RepN", str(rep_n)); P("RepAgree", str(rep_agree))
+
+    # --- Corollary 3 on real data: FLTrust counter shares (iteration 9) ---------
+    # src/defenses/fltrust.py logs, per round, q0 (server), min qi (clients), the
+    # corollary's bound and the min measured full-vector cosine (history.fltrust_counter).
+    fl = []
+    for mode in ("full", "trainable"):
+        for path in glob.glob(R("postfix_p3", f"p3{mode}_dirichlet_ciciot2023_fltrust_*.json")):
+            try:
+                h = json.load(open(path))["history"]
+            except (OSError, json.JSONDecodeError):
+                continue
+            fl += [(mode, e) for e in h.get("fltrust_counter", [])]
+    rows = [e for _, e in fl if not math.isnan(e["q0"])]
+    if rows:
+        P("FltQzeroMin", pct(min(e["q0"] for e in rows)))
+        P("FltQzeroMax", pct(max(e["q0"] for e in rows)))
+        P("FltQiMin", pct(min(e["qi_min"] for e in rows)))
+        P("FltQsumMin", f3(min(e["qsum_min"] for e in rows)))
+        P("FltBoundMin", f3(min(e["bound_min"] for e in rows)))
+        P("FltCosFullMin", f3(min(e["cos_full_min"] for e in rows)))
+        P("FltNrounds", str(len(rows)))
+    else:
+        for k in ("FltQzeroMin", "FltQzeroMax", "FltQiMin", "FltQsumMin", "FltBoundMin",
+                  "FltCosFullMin", "FltNrounds"):
+            P(k, "\\PENDING")
 
     # --- data-only probe of what the attackers poison (iteration 7) ------------
     # results/calib_iter6/s46_probe.json <- experiments/calib_iter6/s46_probe.py
