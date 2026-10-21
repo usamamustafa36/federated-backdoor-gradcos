@@ -66,6 +66,7 @@
 \input{numbers_defect}
 \input{numbers_defect_resnet}
 \input{numbers_pilot}
+\input{numbers_alias}
 
 \journal{Journal of Information Security and Applications}
 
@@ -112,8 +113,8 @@ $\pfDiagCosSigDir$ over the trainable parameters. A seed-paired A/B campaign tha
 only which coordinates twelve aggregation rules read then measures what the counter does
 to clean accuracy, backdoor success and client flagging: \PENDING.
 % RETIRES WITH: P1 campaign (results/postfix_p1), one sentence from \pf... macros
-Three of the nine implementations we inspected are exposed, among them Flower's official
-PyTorch example. Independently of the counter, a joint-distribution audit of
+Four of ten inspected implementations are exposed, including Flower's official PyTorch
+example and a 2025 defense's reference code. Independently of the counter, a joint-distribution audit of
 feature-space backdoor triggers finds that a trigger
 deviating by only $\rzSigFixedQtr\sigma$ on one feature lies further from the benign mean
 than all but $\rzExceedFixedQtr$ of $\rzRefRows$ real benign flows.
@@ -187,8 +188,9 @@ direct perturbation, that the counter is inert under the default momentum.
 \item \textbf{Scope, stated narrowly} (Sec.~\ref{sec:scope}). The hazard is a
 property of the transmission convention, not of any aggregation rule.
 Implementations that vectorise gradients or \texttt{parameters()} are immune.
-We inspected nine public implementations and report which are exposed; three
-are, including Flower's PyTorch quick-start. We do not claim that published
+We inspected ten public implementations and report which are exposed; four
+are, including Flower's PyTorch quick-start and the official code of
+AlignIns~\cite{xu2025alignins}, a CVPR~2025 defense, in two of its three benchmarks. We do not claim that published
 results are wrong; we claim that pipelines with this shape measure something
 other than what they intend, and we give the condition.
 
@@ -259,6 +261,14 @@ direction. FoolsGold~\cite{fung2020foolsgold} targets sybil collusion by
 penalizing clients whose updates are too similar to each other---the opposite
 reading of the same cosine signal we use. FLAME~\cite{nguyen2022flame} and
 DeepSight~\cite{rieger2022deepsight} combine clustering with clipping/filtering.
+More recent rules combine the same kinds of statistic in new ways.
+Multi-Metrics~\cite{huang2023multimetrics} scores updates jointly by cosine,
+Manhattan and Euclidean distance; FreqFed~\cite{fereidooni2024freqfed} clusters the
+low-frequency components of a discrete cosine transform of the client weights; and
+AlignIns~\cite{xu2025alignins} filters updates by their cosine with the current
+global model and by how often the signs of their largest coordinates agree with
+the cohort's majority sign. Each of them decides on statistics of a vector formed
+from the client's model, so what that vector contains matters to all of them.
 We evaluate rules from every family, because Proposition~\ref{prop:decomp}
 separates them by the statistic their decisions read (Sec.~\ref{sec:rules}).
 
@@ -477,18 +487,25 @@ public implementations we inspected by reading how each forms the per-client
 vector. Most research reference implementations use gradients or
 \texttt{parameters()} and are immune. The exposed ones are this project's own
 pipeline before the fix, a public re-implementation of Krum, trimmed mean and
-Fang's attack on ResNet-18, and Flower's official PyTorch quick-start, whose
+Fang's attack on ResNet-18, Flower's official PyTorch quick-start, whose
 \texttt{ArrayRecord(model.state\_dict())} carries \nbt{} as an \texttt{int64}
-array on the wire. The last row matters most because it is the documented
-entry point for the framework our own pipeline, and many others, are built on.
+array on the wire, and the official code of AlignIns~\cite{xu2025alignins}.
+AlignIns forms each update by flattening the \sd{} before and after local
+training and computes its direction statistic against the flattened global \sd{};
+its CIFAR-10 ResNet-9 disables running statistics and is unaffected, while its
+CIFAR-100 VGG-9 and Tiny-ImageNet ResNet-18 use default BatchNorm and carry the
+counter (repository and lines in \texttt{SURVEY.md}). Flower's row matters most because it is the documented
+entry point for the framework our own pipeline, and many others, are built on;
+the AlignIns row shows that the convention is not confined to old code.
 We do not claim that prior results are wrong; the survey says the opposite for
 most of them.
-% Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified).
+% Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified;
+% AlignIns JiiahaoXU/AlignIns@49b7d32 read 21 Oct 2026).
 
 \begin{table}[t]
 \centering
 \caption{How public FL robustness implementations form the per-client vector
-(code inspected September 2026). ``Exposed'' means BatchNorm buffers, including
+(code inspected September and October 2026). ``Exposed'' means BatchNorm buffers, including
 \nbt{}, enter the vector the aggregation rule decides on.}
 \label{tab:survey}
 \small
@@ -504,6 +521,7 @@ DBA, official~\cite{xie2020} & \texttt{named\_parameters()} & no \\
 IBA (\texttt{sail-research/iba}) & \texttt{parameters()} & no \\
 \texttt{yjlee22/byzantineFL} (Krum, trimmed mean, Fang) & flattened \sd{}, ResNet-18 & yes \\
 Flower \texttt{quickstart-pytorch}~\cite{beutel2020flower} & \texttt{ArrayRecord(model.state\_dict())} & yes \\
+AlignIns, official~\cite{xu2025alignins} & flattened \sd{}; ResNet-9 without, VGG-9 and ResNet-18 with running statistics & 2 of 3 \\
 This paper's pipeline, before the fix & flattened \sd{} & yes \\
 \bottomrule
 \end{tabular}
@@ -657,6 +675,48 @@ $\pfCellsDone$ of the $\pfCellsTarget$ cells have completed.
 % RE-CHECK every interpretive sentence in Sec. 6 when P1 completes (960 cells);
 % the macros update themselves, the prose does not.
 
+\textbf{Round-one aliasing.} The engine had a second defect, unrelated to the
+counter, which we found while preparing the code for release. It stored the
+initial global model as NumPy views of the model's own parameter storage, so in
+round~$1$, and only there, each client's local training also overwrote the stored
+global model. The round-$1$ clients therefore trained one after another, each
+starting where the previous one stopped, and the rules received the last
+client's model as the round's reference. In a $\raTraceClients$-client trace the
+last client of round~$1$ starts at trainable distance $\raBugLastStartDist$ from
+the round's initial model (with the copy: $\raFixLastStartDist$), and the
+reference handed to the rule is at distance $\raBugRefToLast$ from the last client's
+model. From round~$2$ on the global model is a fresh array and the defect is
+absent. It leaves an offset in the global batch counter, which is inert and cancels
+in every later update. It is the same in both arms. It reaches the reported
+outcomes only through the training trajectory, because every outcome is a mean
+over rounds $11$--$15$. The diagnostics of Sec.~\ref{sec:geometry} exclude
+round~$1$. FoolsGold is the one rule whose state carries the round-$1$ updates
+forward, since its history is their running sum. We measured the effect directly
+by re-running campaign cells (non-IID, seed $42$) with the stored model copied, and
+compared them with the campaign's own cells. Under FedAvg the copy changes clean
+accuracy by $\raRepFedavgFullCleanCADiff$ and the clean-model BSR by
+$\raRepFedavgFullCleanBSRDiff$. For FoolsGold, the rule that remembers round~$1$,
+the clean-run arm difference (fixed$-$defect) in clean accuracy is
+$\raRepArmFoolsgoldCleanCAFix$ with the copy against $\raRepArmFoolsgoldCleanCABug$
+without, and in FPR $\raRepArmFoolsgoldCleanFPRFix$ against
+$\raRepArmFoolsgoldCleanFPRBug$; under attack the BSR arm difference is
+$\raRepArmFoolsgoldAtkBSRFix$ against $\raRepArmFoolsgoldAtkBSRBug$.
+The copy leaves FedAvg unchanged, but it does not leave FoolsGold unchanged. With
+the copy, FoolsGold's first aggregate is built from ten updates that all start
+from the same initial model. It then excludes most of them and never recovers.
+Clean accuracy is $\raRepFoolsgoldFullCleanCAFix$ in the defect arm and
+$\raRepFoolsgoldTrCleanCAFix$ in the fixed arm, against
+$\raRepFoolsgoldFullCleanCABug$ and $\raRepFoolsgoldTrCleanCABug$ in the campaign.
+Without the copy, the sequential round~$1$ had handed FoolsGold a model already
+trained by all ten clients. Every FoolsGold outcome reported in
+Secs.~\ref{sec:p1}--\ref{sec:mech} is therefore a measurement of the defective
+engine and is withdrawn until the campaign is re-run with the copy (\PENDING).
+For the rules without memory, the FedAvg replay suggests the copy changes nothing
+measurable, but that has not been shown rule by rule. The released code contains
+the copy behind a configuration flag (\texttt{federated.copy\_initial\_global});
+the re-run uses it.
+% Sources: results/round1_alias/{trace.json,campaign_replay.json}; paper/make_numbers_alias.py.
+
 \section{Aggregation Rules and What the Decomposition Predicts}
 \label{sec:rules}
 
@@ -744,6 +804,27 @@ flags clients whose prediction error is consistently large. Its statistic mixes
 distances across rounds in a way Proposition~\ref{prop:decomp} does not resolve,
 so we make no prediction and report what we measure.
 
+\textbf{A 2025 rule, implemented but not yet run.} The newest rules in the
+campaign are from 2022. AlignIns~\cite{xu2025alignins} (CVPR 2025) is implemented
+in the same pipeline, ported from its authors' code, but is not part of the
+campaign reported here. It keeps a client only if two robust $z$-scores are below
+one: that of the cosine between the update and the current global model
+$\theta_t$ (TDA), and that of the fraction of the update's largest $30\%$ of
+coordinates whose sign agrees with the coordinate-wise majority sign (MPSA). It
+then clips every update to the median norm of the kept ones. The decomposition
+predicts a split. MPSA counts signs and ignores magnitudes. The counter is one
+coordinate, positive for every client, so it agrees with the majority sign, and it
+can move MPSA by at most one over the number of coordinates inspected. TDA is a
+cosine against $\theta_t$, and the counter coordinate of $\theta_t$ grows by
+about $B$ every round, so under the defect TDA is pushed toward a common value for
+all clients. The $z$-score divides by the spread and undoes that compression, so
+the decision is made on what is left over. That remainder varies with
+$B_i/\|d_i\|$, a property of shard size and not of behaviour. The clip bound is
+a norm and is exposed as NormClip's is. The prediction is that AlignIns' TDA
+filter, under unequal shards, selects clients by batch count, and that its MPSA
+filter is not affected. Its campaign cells are \PENDING.
+% Implementation: src/defenses/alignins.py; synthetic check experiments/alignins/selftest.py.
+
 \textbf{Hyperparameters} are the defaults recorded in
 \texttt{configs/p1\_full.yaml}, identical in both arms (FLAME noise
 $\lambda=10^{-3}$, trimmed-mean $\beta=0.2$, Krum and Bulyan $f=2$, GradCos
@@ -764,9 +845,13 @@ squared update norm and of the pairwise squared distances (medians
 $\pfDiagBufNormShareDir$ and $\pfDiagBufDistShareDir$ over
 $\pfDiagBufNormShareDirRuns$ runs), and the mean pairwise client cosine over the
 transmitted vector sits near $\pfDiagCosFullDir$ while the same clients' trainable
-updates have mean pairwise cosine $\pfDiagCosSigDir$. The first round differs
-because the running statistics move far from their initial values, so the buffer
-block is not yet dominated by the counter; from then on it is. Corollary~\ref{cor:dist}
+updates have mean pairwise cosine $\pfDiagCosSigDir$. These and all other
+diagnostics are taken over rounds $2$--$15$. Round~$1$ is excluded because of an
+implementation defect of our engine that affects only that round
+(Sec.~\ref{sec:setup}, \emph{Round-one aliasing}): its logged diagnostics
+describe that defect, not the transmitted geometry (median full-vector cosine
+$\raPoneCosFullRone$ in round~$1$ against $\raPoneCosFullRtwo$ over rounds $2$--$15$,
+$\raPoneRuns$ clean non-IID runs). Corollary~\ref{cor:dist}
 makes a testable prediction about the IID runs, in which every client runs the
 same number of batches: the counter drops out of every pairwise distance, so the
 buffer share of the squared distances should fall far below its non-IID value
@@ -776,7 +861,8 @@ $\pfDiagBufDistShareIid$ and $\pfDiagBufNormShareIid$ respectively.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_p1_geometry.pdf}
-\caption{Per-round defect diagnostics in the P1 runs (median over runs, shaded
+\caption{Per-round defect diagnostics in the P1 runs, rounds $2$--$15$ (round~$1$
+is omitted, see \emph{Round-one aliasing} in Sec.~\ref{sec:setup}; median over runs, shaded
 inter-quartile range; logged in both arms and for every rule, because they
 describe the transmitted vector rather than a rule's decision). Left: mean
 pairwise client cosine over the full transmitted vector and over the trainable
@@ -808,7 +894,9 @@ completed rules here and treat every statement as interim.
 % RETIRES WITH: P1 campaign (results/postfix_p1)
 
 Three rules have complete non-IID cells, and they show three different outcomes.
-For FoolsGold the counter costs clean accuracy: $\pfCAFoolsgoldDirCleanDef$ in the
+The FoolsGold numbers below were measured with the round-one aliasing defect and
+do not survive its fix (Sec.~\ref{sec:setup}); we keep them only as a record of
+the defective run. For FoolsGold the counter costs clean accuracy: $\pfCAFoolsgoldDirCleanDef$ in the
 defect arm against $\pfCAFoolsgoldDirCleanFix$ in the fixed arm, a paired
 difference of $\pfCAFoolsgoldDirCleanDiff$ (95\% CI
 $[\pfCAFoolsgoldDirCleanLo,\pfCAFoolsgoldDirCleanHi]$, Holm-corrected
@@ -982,7 +1070,8 @@ through a logit. When all history cosines lie within $2(1-s)$ of a common value,
 the weights are set by residues of that order, and normalisation and logit
 stretch those residues to the full range: which clients end near weight one and
 which near zero is decided by small differences in the counter-dominated
-geometry, not by collusion. The measurement matches this reading. In clean runs,
+geometry, not by collusion. The measurement, taken with the round-one defect present (Sec.~\ref{sec:setup})
+and withdrawn until the re-run, is consistent with this reading. In clean runs,
 with no sybil present, FoolsGold excludes a fraction $\pfFPRFoolsgoldDirCleanDef$
 of the clients in the defect arm against $\pfFPRFoolsgoldDirCleanFix$ in the fixed
 arm, and its clean accuracy varies across seeds with s.d.\
@@ -1232,7 +1321,7 @@ $L=\drNBN$ the decomposition holds and the buffers dominate even more
 setting, and the shares depend on the trainable update's norm. How the
 \emph{outcomes} transfer to such a model is not measured here.
 
-\emph{Scope of the survey.} Nine implementations, read by hand
+\emph{Scope of the survey.} Ten implementations, read by hand
 (Table~\ref{tab:survey}). The survey establishes that the convention exists in
 widely used code, including the reference example of a major framework; it does not
 estimate how many published results are affected, and we make no such claim.
@@ -1246,6 +1335,14 @@ studied here.
 comparison is between arms, which share them, so the paired differences do not
 depend on tuning in the way absolute numbers would; whether they would be larger or
 smaller under tuned settings is open.
+
+\emph{Recency of the rules.} The newest rules in the campaign are from 2022.
+Rules published since then decide on the same kinds of statistic, and the
+decomposition applies to any statistic computed on the transmitted vector.
+Whether a particular newer rule is exposed has to be checked rule by rule, as
+the AlignIns prediction of Sec.~\ref{sec:rules} shows: one of its two filters is
+predicted to be exposed and the other not. That prediction has not yet been
+tested in the campaign.
 
 \emph{Threat model.} Static, feature-space attacker. An adaptive attacker who
 optimizes against a cosine rule in a defective pipeline is optimizing against the
@@ -1270,8 +1367,9 @@ canonical Flower PyTorch example does not. The remedy is one mask: decide on the
 trainable coordinates, aggregate the full state. What the counter changes in the
 outcomes of each rule is measured in a seed-paired controlled comparison
 (Sec.~\ref{sec:p1}), and it is rule-specific: in the cells completed so far the
-counter stops FLTrust from excluding anyone, makes FoolsGold exclude more honest
-clients at a cost in clean accuracy, and leaves FLAME's decisions unchanged. The
+counter stops FLTrust from excluding anyone and leaves FLAME's decisions
+unchanged; the FoolsGold comparison is withdrawn because it depended on a separate
+round-one defect of our engine, and is being re-run. The
 full campaign, and the distance rules whose exposure Corollary~\ref{cor:dist}
 ties to unequal shards, are \PENDING.
 % RE-CHECK the interim sentence above against Tables tab:p1/tab:p1flag when P1 completes.

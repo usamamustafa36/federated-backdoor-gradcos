@@ -1,0 +1,28 @@
+[
+ {
+  "mode": "full",
+  "defense": "foolsgold",
+  "attack": 0,
+  "seed": 42,
+  "fix": false,
+  "sec": 176.5,
+  "CA": 0.3358333333333333,
+  "BSR": 0.004091174751607247,
+  "DR": 0.0,
+  "FPR": 0.74,
+  "CA_r1": 0.3625,
+  "FPR_r1": 0.9,
+  "buffer_norm_share": 0.9101563736176775,
+  "buffer_norm_share_r2on": 0.9053828569519121,
+  "buffer_norm_share_r1": 0.9769856069383938,
+  "buffer_dist_share": 0.6900447178762785,
+  "buffer_dist_share_r2on": 0.6702541624679814,
+  "buffer_dist_share_r1": 0.9671124935924378,
+  "pair_cos_full": 0.9015234959755765,
+  "pair_cos_full_r2on": 0.9093554398153723,
+  "pair_cos_full_r1": 0.7918762822184332,
+  "pair_cos_sig": 0.19392968332438015,
+  "pair_cos_sig_r2on": 0.1664418441507629,
+  "pair_cos_sig_r1": 0.5787594317550219
+ }
+]

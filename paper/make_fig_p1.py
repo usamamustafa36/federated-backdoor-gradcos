@@ -46,10 +46,14 @@ def load():
     return by_part
 
 
+FIRST = 2  # round 1 omitted: its diagnostics record the round-1 aliasing defect
+           # (src/fl/engine.py `copy_initial_global`, iteration 5), not the geometry.
+
+
 def band(runs, key):
     R = min(len(r[key]) for r in runs)
-    M = np.stack([r[key][:R] for r in runs])
-    return (np.arange(1, R + 1), np.nanmedian(M, 0),
+    M = np.stack([r[key][FIRST - 1:R] for r in runs])
+    return (np.arange(FIRST, R + 1), np.nanmedian(M, 0),
             np.nanpercentile(M, 25, 0), np.nanpercentile(M, 75, 0))
 
 

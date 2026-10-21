@@ -14,7 +14,7 @@ from __future__ import annotations
 
 # Defenses whose robustness comes from update DIRECTION (cosine / Euclidean
 # neighbourhood). These are the ones the low-salience blind spot applies to.
-DIRECTION_BASED = ("krum", "fltrust", "flame", "foolsgold", "gradcos")
+DIRECTION_BASED = ("krum", "fltrust", "flame", "foolsgold", "gradcos", "alignins")
 
 # Defenses that never inspect direction -- coordinate order statistics, a
 # multivariate median, or norm clipping.
@@ -78,6 +78,11 @@ def _build(cfg, dataset, device):
     if name == "foolsgold":
         from .foolsgold import FoolsGold
         return FoolsGold()
+    if name == "alignins":  # Xu, Zhang and Hu, CVPR 2025 (iteration 5)
+        from .alignins import AlignIns
+        return AlignIns(sparsity=getattr(cfg.defense, "alignins_sparsity", 0.3),
+                        lambda_s=getattr(cfg.defense, "alignins_lambda_s", 1.0),
+                        lambda_c=getattr(cfg.defense, "alignins_lambda_c", 1.0))
     if name == "fldetector":
         from .fldetector import FLDetector
         return FLDetector(window=getattr(cfg.defense, "fld_window", 10),

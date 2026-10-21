@@ -45,6 +45,7 @@ from src.metrics.aggregate import summarize_history  # noqa: E402
 RES = os.path.join(ROOT, "results", "postfix_p1")
 OUT_TEX = os.path.join(ROOT, "paper", "numbers_postfix.tex")
 TAIL = 5  # report the mean of the last 5 of 15 rounds
+DIAG_FIRST_ROUND = 2  # diagnostics skip round 1 (aliasing defect; see load())
 
 METRICS = ["CA", "macro_f1", "BSR", "DR", "FPR"]
 DIAG = ["buffer_norm_share", "buffer_dist_share", "pair_cos_full", "pair_cos_sig"]
@@ -79,8 +80,15 @@ def load(res=RES):
         mode = str(cfg["defense"].get("signal_subspace", "trainable")).lower()
         s = summarize_history(payload, tail=TAIL)
         h = payload["history"]
-        for k in DIAG:  # every round counts here: it is a property of the pipeline
-            v = [x for x in h.get(k, []) if x is not None and not math.isnan(x)]
+        # Diagnostics are a property of the pipeline, so every round counts --
+        # except round 1. Iteration 5: in round 1 the engine's global weights
+        # alias the model (src/fl/engine.py, `copy_initial_global`), clients
+        # train sequentially and the logged deltas are referenced to the round-1
+        # aggregate, so round 1's diagnostics describe the aliasing defect, not
+        # the transmitted geometry. Rounds 2..R are unaffected.
+        for k in DIAG:
+            v = [x for x in h.get(k, [])[DIAG_FIRST_ROUND - 1:]
+                 if x is not None and not math.isnan(x)]
             s[k] = float(np.mean(v)) if v else float("nan")
         key = (s["defense"], s["partition"], bool(s["attack"]))
         runs[key][mode][int(cfg["seed"])] = s

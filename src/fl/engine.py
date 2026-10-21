@@ -97,6 +97,19 @@ class FederatedEngine:
         # One reused model instance for both client training and global eval.
         self.model = build_model(cfg, dataset.num_features, dataset.num_classes)
         self.global_weights = tu.get_weights(self.model)
+        # KNOWN DEFECT (iteration 4/5, see paper Sec. "Reproducibility notes"):
+        # get_weights returns .numpy() views that ALIAS the model's storage, so
+        # in round 1 only, every client's local training mutates global_weights
+        # in place: round-1 clients train sequentially (client k starts from
+        # client k-1's trained weights, BatchNorm counters accumulate), defenses
+        # get the last client's weights as the "global", and the round-1
+        # diagnostics are referenced to the round-1 aggregate. From round 2 on
+        # global_weights are fresh arrays and the defect is gone. The fix below
+        # is default-OFF so that the P1/P2 campaigns keep one code path;
+        # `federated.copy_initial_global: true` turns it on. Iteration 5's
+        # controlled check: experiments/round1_alias/.
+        if bool(getattr(cfg.federated, "copy_initial_global", False)):
+            self.global_weights = [np.array(w, copy=True) for w in self.global_weights]
 
         # Class weights to counter heavy IDS imbalance (benign is rare).
         self.class_weights = self._compute_class_weights()

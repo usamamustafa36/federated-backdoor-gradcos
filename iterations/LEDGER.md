@@ -376,3 +376,90 @@ the scaling law (refuted), generality across defenses (4/5 <= 0.03), "the field 
   3. Cheap offline work while the queue runs: FLAME ordering hypothesis replay; survey
      artefact (repo, commit, file:line); multi-seed calibration robustness can be read from
      P2 FedAvg rather than re-run.
+
+## Iteration 5 - 2026-10-21 - Round-1 aliasing defect measured: it decides FoolsGold's outcomes; P3 prepared; AlignIns (CVPR 2025) implemented; survey +1 exposed repo
+
+- **Reviewer score before: 4/10, REJECT.** Blockers carried: no complete outcome evidence;
+  round-1 aliasing defect (iteration 4, blocker 3) unquantified; newest rule from 2022 (B2).
+- **Blockers found (ranked):**
+  1. **The round-1 aliasing defect changes FoolsGold's outcomes, so it is not a nuisance.**
+     Campaign-scale replay with the copy ON (Dirichlet s42, `configs/_r1fix_*.yaml`,
+     `results/round1_alias/campaign_replay.json`, generated `\raRep...` macros):
+     FedAvg clean CA 0.724->0.723, BSR 0.052->0.051 (no effect). FoolsGold clean CA
+     0.608->0.288 (defect arm) and 0.709->0.332 (fixed arm); FPR 0.86->0.90 and 0.40->0.70.
+     FoolsGold attacked (E_m=5): CA 0.660->0.278 / 0.735->0.620, BSR 0.017->0.021 /
+     0.962->0.999. Mechanism: with the copy, round-1 updates all start from the same init,
+     FoolsGold excludes most clients from round 1 (CA 0.10 after round 1) and never recovers;
+     the defect's sequential round 1 had handed it a model trained by all 10 clients (round-1
+     CA 0.71). **The P1 FoolsGold A/B headline (CA 0.584 vs 0.712) is a property of the
+     defective engine.** Withdrawn in the paper (Sec. 4 "Round-one aliasing", Sec. 6.2, 6.3,
+     conclusion). FLTrust's Corollary-3 result (DR=FPR=0 under the defect) is analytic and
+     should survive, but must be re-measured.
+  2. **E_m=5 is not a working attack on every seed.** P2 FedAvg Dirichlet s43: BSR 0.007
+     (s42: 0.934). Cause (computed from the partition, `assign_malicious` + `partition_data`):
+     malicious data share under example-weighted FedAvg is 26.1% at s42, 10.6% s43, 11.0% s44,
+     23.5% s45, 9.7% s46. Prediction: s44 and s46 fail too, s45 implants. IID shares are
+     20% on every seed. Iteration 4 calibrated on the most favourable seed.
+  3. Campaign still running on the defective engine (see "Running jobs").
+  4. B2 (recency): now partially addressed (below); no 2023-25 rule measured yet.
+- **What I changed:**
+  - `src/fl/engine.py`: default-OFF fix `federated.copy_initial_global` (copies the initial
+    global weights) with a comment. Default path byte-identical, so the running queue is
+    unaffected. Mechanism trace `experiments/round1_alias/check_alias.py trace` ->
+    `results/round1_alias/trace.json`: under the defect the 10th round-1 client starts at
+    trainable distance 4.26 from the round's init with counter 31; the defense's reference
+    = last client's model (distance 0). With the copy: 0, 0, reference 0.997 from the last client.
+    Tiny-config outcome runs (`outcome_clean_trainable.json`, 4 rows) were stopped as
+    uninformative (CA ~0.35 at 8k rows) in favour of the campaign-scale replay
+    (`results/round1_alias/run_replay.sh`, `collect_replay.py`).
+  - Diagnostics now exclude round 1 (`paper/analyse_postfix.py` DIAG_FIRST_ROUND=2,
+    `make_fig_p1.py` FIRST=2). Campaign round-1 full-vector cosine 0.382 vs 0.955 over rounds
+    2-15 (`\raPone...`); tiny trace with the copy: round-1 cosine 0.95 (= normal). The paper's
+    old sentence blaming round 1 on running statistics was wrong and is removed.
+  - `paper/make_numbers_alias.py` -> `paper/numbers_alias.tex` (\ra macros); wired into the
+    Makefile, main.tex, check_manuscript.
+  - **P3 prepared, NOT launched:** `configs/p3_{full,trainable}.yaml` (= p1 + copy ON,
+    out_dir results/postfix_p3), `experiments/postfix/run_p3.sh` (= run_p2.sh job list,
+    clean + attacked into postfix_p3, needs MAL_EPOCHS).
+  - **B2:** web-verified Multi-Metrics (Huang et al., ICCV 2023, doi
+    10.1109/ICCV51070.2023.00429), FreqFed (Fereidooni et al., NDSS 2024, doi
+    10.14722/ndss.2024.23620), AlignIns (Xu, Zhang, Hu, CVPR 2025, arXiv 2503.07978) -> refs.bib,
+    related work. **AlignIns implemented** (`src/defenses/alignins.py`, registered as
+    `alignins`; ported from JiiahaoXU/AlignIns@49b7d32 `agg_alignins`), synthetic self-test
+    `python3 -m experiments.alignins.selftest` (mask removes buffers exactly; MPSA moves <= 1/k;
+    under `full` TDA residue correlates 1.0 with b_i/||d_i||, kept set chosen by batch count),
+    4-round engine smoke test OK. Prediction paragraph in Sec. 5 ("A 2025 rule, implemented
+    but not yet run"): TDA exposed via shard size, MPSA not, clip exposed. New limitation
+    "Recency of the rules".
+  - **Survey:** AlignIns' official code flattens `state_dict()` for both the update and the
+    global model used by TDA; CIFAR-10 ResNet-9 has `track_running_stats=False` (safe), but
+    CIFAR-100 VGG-9 (`src/vgg.py:41`) and Tiny-ImageNet torchvision ResNet-18 carry
+    `num_batches_tracked` -> exposed in 2 of 3 benchmarks. SURVEY.md row with file:line;
+    Table tab:survey row; counts now "four of ten" (abstract, contributions, Sec. 3.3, limits).
+- **Build/check:** latexmk rc 0, 18 pp; check_manuscript: all PASS except the gate
+  (443 = 434 pf macro refs + 9 literal \PENDING). Abstract exactly 250 words.
+- **Running jobs left:** the **P1c+P2 queue, PID 497076, is still running on the defective
+  engine** (log results/postfix_p2/campaign.log). I tried to stop it (process-group SIGTERM)
+  and the auto-mode permission classifier denied it. **Recommendation: stop it**
+  (`kill -TERM -497076`). Its numbers for FoolsGold (and possibly FLDetector, the other
+  stateful rule) are numbers of the defective engine. The cells it finishes for stateless
+  rules are probably fine (FedAvg replay: no change), but this has not been shown rule by
+  rule, so P3 should re-run everything on one code path. Restart cost now is small (~2 h of P2
+  progress + P1's ~90 clean cells). My replay jobs have all finished; nothing else of mine
+  is running.
+- **Score after: 4/10, REJECT.** This iteration made the paper more honest, not more
+  accepted. A headline result is withdrawn. Counting the defect arm, two of three
+  "mechanism" findings (FoolsGold, and FLTrust pending re-measure) need P3.
+- **Top 3 priorities for the next iteration:**
+  1. **Stop P2 (if still running) and settle the attack before launching P3.** Calibrate on
+     FedAvg with the copy ON (configs/p3_full.yaml), Dirichlet seeds 43/44/46 (the low-share
+     seeds) at E_m in {5, 8, 10}, 1-2 seeds each, 6 lanes. Alternatives if E_m alone fails: fix
+     the malicious data share, or move the attack claims to IID. Then
+     `MAL_EPOCHS=<k> nohup setsid bash experiments/postfix/run_p3.sh > results/postfix_p3/campaign.log 2>&1 &`
+     and add `alignins` to its DEFENSES list (cheap, implemented). Point the Makefile `numbers`
+     target at postfix_p3.
+  2. Re-derive the FoolsGold story from P3. Under the copy, both arms collapse at s42 (FedAvg-
+     style FoolsGold excludes ~70-90% of honest non-IID clients). That collapse may itself be
+     the result: FoolsGold is unusable on heterogeneous honest clients, counter or not.
+  3. Harvest P3 FedAvg first (implant check on all seeds). Then FLTrust: does Corollary 3's
+     "excludes no one" hold under the copy?

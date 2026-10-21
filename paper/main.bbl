@@ -58,6 +58,12 @@ D.~J. Beutel, T.~Topal, A.~Mathur, X.~Qiu, J.~Fernandez-Marques, Y.~Gao,
   A friendly federated learning research framework, arXiv preprint
   arXiv:2007.14390 (2020).
 
+\bibitem{xu2025alignins}
+J.~Xu, Z.~Zhang, R.~Hu, Detecting backdoor attacks in federated learning via
+  direction alignment inspection, in: Proceedings of the IEEE/CVF Conference on
+  Computer Vision and Pattern Recognition (CVPR), 2025, arXiv:2503.07978; code:
+  github.com/JiiahaoXU/AlignIns.
+
 \bibitem{li2021fedbn}
 X.~Li, M.~Jiang, X.~Zhang, M.~Kamp, Q.~Dou, {FedBN}: Federated learning on
   non-{IID} features via local batch normalization, in: International
@@ -92,6 +98,21 @@ P.~Rieger, T.~D. Nguyen, M.~Miettinen, A.-R. Sadeghi, {DeepSight}: Mitigating
   backdoor attacks in federated learning through deep model inspection, in:
   Proceedings of the Network and Distributed System Security Symposium (NDSS),
   2022.
+
+\bibitem{huang2023multimetrics}
+S.~Huang, Y.~Li, C.~Chen, L.~Shi, Y.~Gao, Multi-metrics adaptively identifies
+  backdoors in federated learning, in: Proceedings of the IEEE/CVF
+  International Conference on Computer Vision (ICCV), 2023.
+\newblock \href {https://doi.org/10.1109/ICCV51070.2023.00429}
+  {\path{doi:10.1109/ICCV51070.2023.00429}}.
+
+\bibitem{fereidooni2024freqfed}
+H.~Fereidooni, A.~Pegoraro, P.~Rieger, A.~Dmitrienko, A.-R. Sadeghi, {FreqFed}:
+  A frequency analysis-based approach for mitigating poisoning attacks in
+  federated learning, in: Proceedings of the Network and Distributed System
+  Security Symposium (NDSS), 2024.
+\newblock \href {https://doi.org/10.14722/ndss.2024.23620}
+  {\path{doi:10.14722/ndss.2024.23620}}.
 
 \bibitem{shejwalkar2021}
 V.~Shejwalkar, A.~Houmansadr, Manipulating the {B}yzantine: Optimizing model

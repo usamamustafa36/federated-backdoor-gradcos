@@ -21,8 +21,9 @@ wrong thing", and it is the one the evidence supports.
 | **OOD_Federated_Learning** (Wang et al., *Attack of the Tails*, NeurIPS 2020 -- cited by this paper) | `torch.cat([p.view(-1) for p in net.parameters()])` | **No** |
 | **DBA** (Xie et al., ICLR 2020 -- cited by this paper) | `model.named_parameters()` | **No** |
 | **iba** (`sail-research/iba`) | `net.parameters()` | **No** |
+| **AlignIns** (official, Xu, Zhang & Hu, CVPR 2025; `JiiahaoXU/AlignIns` @ `49b7d32`; repo also ships its Multi-Metrics / FoolsGold / Multi-Krum / RFA / SignGuard baselines on the same vectors) | `parameters_to_vector([global_model.state_dict()[name] for name in global_model.state_dict()])` before/after local training (`src/agent.py:51-52, 107-109`); TDA = cosine of that update with the same flattened global `state_dict` (`src/aggregation.py:35-36, 109`) | **Yes in 2 of 3 benchmarks**: CIFAR-10 ResNet-9 sets `track_running_stats=False` (`src/resnet.py:4-7`, no buffers); CIFAR-100 VGG-9 uses default `nn.BatchNorm2d` (`src/vgg.py:41`) and Tiny-ImageNet uses torchvision ResNet-18 (`src/models.py:13,29`), both of which carry `num_batches_tracked` |
 
-### Running tally: 6 immune, 3 affected
+### Running tally: 6 immune, 4 affected (AlignIns added 2026-10-21, iteration 5)
 
 The `parameters()` convention **dominates published research implementations.** Of nine
 checked, six never place a buffer in the vector. Two of the immune ones -- *Attack of the
