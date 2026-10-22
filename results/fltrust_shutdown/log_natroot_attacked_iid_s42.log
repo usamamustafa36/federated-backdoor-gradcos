@@ -1,0 +1,16 @@
+device=cpu dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 2 seed(s) = 2
+
+[  1/2] fltrust  atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.709 BSR=0.039 | 7807s (cum 7807s)
+[  2/2] fltrust  atk=1 m=0.2 p=0.1 fixed       s43 | CA=0.706 BSR=0.057 | 2411s (cum 10219s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6901 | 0.3219 | 0.0459 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6748 | 0.2621 | 0.1253 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6892 | 0.3076 | 0.0748 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6867 | 0.3110 | 0.0282 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6991 | 0.3105 | 0.0811 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6924 | 0.3281 | 0.0483 | 0.0000 | 0.0000 | 0.5034 | 0.5903 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6595 | 0.2539 | 0.1313 | 0.0000 | 0.0000 | 0.4722 | 0.6708 |

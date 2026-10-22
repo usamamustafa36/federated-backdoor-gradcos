@@ -297,7 +297,10 @@ positive trust (replay: at most $\fsDirMaxFlagged$ of $\fsDirClients$ excluded).
 class-balanced root, which Cao et al.\ do not assume. Closed loop with a
 training-distribution root (fixed arm, IID, exploratory): clean FPR
 $\fsNatCleanFpr$, CA $\fsNatCleanCA$, shutdowns $\fsNatCleanShut$/$\fsNatCleanN$;
-attacked DR $\fsNatAtkDr$, FPR $\fsNatAtkFpr$ ($n=\fsNatAtkN$).
+attacked DR $\fsNatAtkDr$, FPR $\fsNatAtkFpr$, BSR $\fsNatAtkBsr$ ($n=\fsNatAtkN$),
+every flipper admitted as in the defect arm. Dirichlet:
+clean FPR $\fsNatDirCleanFpr$ ($n=\fsNatDirCleanN$); attacked DR $\fsNatDirAtkDr$, FPR $\fsNatDirAtkFpr$
+($n=\fsNatDirAtkN$).
 
 \section{Attack calibration and the seed-robust adversary}
 \label{sup:calib}

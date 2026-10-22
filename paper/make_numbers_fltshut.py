@@ -110,8 +110,10 @@ def main():
         for k in ("DirRounds", "DirFullShutRounds", "DirMaxFlagged", "DirClients"):
             P(k, PEND)
     # closed loop with a natural root (exploratory)
-    for kind, tag in (("atk0", "Clean"), ("atk1", "Atk")):
-        files = sorted(glob.glob(os.path.join(RES, f"natroot_iid_ciciot2023_fltrust_{kind}_*.json")))
+    for part, ptag in (("iid", ""), ("dirichlet", "Dir")):
+      for kind, tag0 in (("atk0", "Clean"), ("atk1", "Atk")):
+        tag = ptag + tag0
+        files = sorted(glob.glob(os.path.join(RES, f"natroot_{part}_ciciot2023_fltrust_{kind}_*.json")))
         hs = []
         for p in files:
             if os.path.getsize(p) == 0:
@@ -130,8 +132,10 @@ def main():
             if kind == "atk1":
                 dr = [float(np.mean(h["detection_rate"][-5:])) for h in hs]
                 P(f"Nat{tag}Dr", f"{np.mean(dr):.3f}")
+                bsr = [float(np.mean(h["bsr"][-5:])) for h in hs]
+                P(f"Nat{tag}Bsr", f"{np.mean(bsr):.3f}")
         else:
-            for k in ("Fpr", "CA", "Shut", "Dr"):
+            for k in ("Fpr", "CA", "Shut", "Dr", "Bsr"):
                 P(f"Nat{tag}{k}", PEND)
     open(OUT, "w").write("\n".join(L) + "\n")
     print(f"wrote {OUT} ({len(L) - 1} macros)")

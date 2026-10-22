@@ -1418,3 +1418,42 @@ finished here.)
      it into P1-P4. If it also shuts down, the root-distribution explanation is incomplete -- say so.
   2. Harvest P3 as seeds 47-51 of FLTrust land (P1-P4 reach n=10); retire PENDING abstract/intro/conclusion sentences.
   3. Main is 9.53 pp; pay for any new text with cuts (aim <= 9.5).
+
+## Iteration 22 - 2026-10-22 - Natural-root FLTrust harvested (shutdown gone, but no detection under IID); P1 and P3 supported at n=10 (interim family); Dirichlet natural-root runs launched
+
+- **State at start (09:47):** natroot IID campaign finished 09:38 (0 ERROR lines). P3 605 -> 616/1040 after two
+  `make numbers` runs (the first read s51 FLTrust-Dir-attacked mid-write and gave P3 n=9; the rerun gives n=10). 8 GPU
+  lanes (not mine); I added none.
+- **Reviewer score before: 4/10, REJECT.** Ranked: (1) confirmatory family interim; (2) FLTrust's fixed arm looked like a
+  root artefact, unresolved whether any root makes it a detector; (3) closed-loop generality has no accuracy separation;
+  (4) main page budget.
+- **Natural-root harvest (exploratory, `make_numbers_fltshut.py`):** IID fixed arm with a training-distribution root:
+  clean 0/5 shutdowns, FPR 0.000, CA 0.704 (balanced fixed 0.549, defect 0.680); attacked n=2 DR 0.000, FPR 0.000, BSR
+  0.066. **So the class-balanced root is confirmed as the cause of the shutdown, and with the natural root the IID fixed
+  arm admits every flipper, exactly as the defect arm does.** Consequence written into main Sec. VI-C: under IID neither
+  root makes FLTrust a detector; P2/P4 therefore measure the root (already the Amendment-1 reading). Supplement S-III-D
+  gives BSR and the Dirichlet line (\fsNatDir*, n=1 clean so far: FPR 0.120 vs ~0.64 balanced-root fixed arm; attacked
+  PENDING). Generator now also emits \fsNat{,Dir}{Clean,Atk}{N,Fpr,CA,Shut,Dr,Bsr}.
+- **Confirmatory (make numbers, interim):** P1 (FLTrust Dir clean FPR) n=10, 10/0, diff +0.638, p=0.0010, p_H=0.0039;
+  P3 (FLTrust Dir DR) n=10, 9/0 (+1 tie, s50 DR 0 vs 0), diff +0.510, p=0.0020, p_H=0.0059 -> **both supported; their
+  cells are complete, and Holm's p_H <= 4p keeps them supported whatever P2/P4 give.** P2/P4 still n=5 (5/0, p_H 0.0625).
+  Secondary: S2 final not supported; S1 n=5, S3 n=10 5/5, S4 n=5; 0/4 supported. Main confirmatory paragraph rewritten
+  from macros (supported count, P1/P3 stats, honest reading: confirms Cor. 3, not useful detection since fixed-arm DR ~ FPR).
+- **Cuts to pay:** confirmatory floor sentence, limitations calibration sentence, sign-flip definition, GradCos sentence,
+  hyperparameter sentence (Implementation). Supplement natroot sentence tightened.
+- **Build/check:** latexmk rc 0, 0 undefined refs. **IEEEtran pages: main 10 (ends at 9.61, was 9.53) / supplement 6
+  (~6.0, PDF 6 pp; page 6 is nearly full -- no room).** check_manuscript all PASS except the gate (51 unresolved, P3).
+  Backups main.tex.pre-iter22.bak, supplement.tex.pre-iter22.bak. fltrust_falsify.json float noise reverted again.
+- **Running jobs:** mine: Dirichlet natural-root FLTrust, `experiments/fltrust_shutdown/run_natroot_dir.sh` under
+  systemd-inhibit, PID 186783 (bash 186785), 2 CPU lanes x 4 threads: clean Dir s42-44 (~25 min/seed; s42 done 10:10),
+  attacked Dir s42-44 (me15, ~1-1.5 h/seed). Logs results/fltrust_shutdown/log_natroot_{clean,attacked}_dirichlet_s42.log,
+  campaign log natroot_dir_campaign.log; ETA ~13:30. Not mine: P3 PIDs 5901, 15185, 52037.
+- **Score after: 4/10, REJECT** (P1/P3 supported is real progress, but they confirm a mechanism prediction, not a defense
+  benefit; FLTrust is now shown to be a weak baseline under both roots in IID; most of P3 still pending).
+- **Top 3 priorities:**
+  1. Harvest Dir natroot (`python3 paper/make_numbers_fltshut.py`): if the natural-root fixed arm separates DR from FPR
+     under Dirichlet, that is the first sign the fix yields *useful* FLTrust detection (exploratory; report beside P1/P3,
+     never swap into them). If DR ~ FPR or DR 0, say FLTrust is not a useful detector here under either root.
+  2. Harvest P3 as P2/P4 (FLTrust IID s47-51) land; when every cell of the eight hypotheses reaches n=10 the family
+     becomes final -- then retire the abstract/contribution PENDING sentences with macro-driven text.
+  3. Main 9.61 pp, supplement full: any addition must be paid for by cuts (aim <= 9.5).

@@ -1,0 +1,1048 @@
+%=====================================================================
+%  A Silent Measurement Hazard in PyTorch Federated Learning:
+%  When Byzantine-Robust Aggregators Decide on a BatchNorm Counter
+%
+%  Manuscript prepared for IEEE Transactions on Information Forensics and
+%  Security (IEEEtran journal class; converted from elsarticle in iteration 11
+%  of the improvement chain, see iterations/LEDGER.md; the elsarticle source
+%  is kept at main.tex.pre-iter11-ieeetran.bak).
+%
+%  Build:  make          (or: latexmk -pdf main.tex)
+%  Gate :  make gate     (refuses to pass while any \PENDING remains)
+%
+%  Venue rule: <= 10 IEEEtran pages including references (hard limit);
+%  supplement <= 6 pp.
+%=====================================================================
+\documentclass[journal]{IEEEtran}
+
+% Packages, macros and the generated numbers*.tex files: see preamble.tex.
+\input{preamble}
+\externaldocument{supplement}  % labels defined in the supplement
+
+
+
+\begin{document}
+
+\title{A Silent Measurement Hazard in PyTorch Federated Learning: When
+Byzantine-Robust Aggregators Decide on a BatchNorm Counter}
+
+\author{Usama~Mustafa and Imran~Rashid%
+\thanks{U.~Mustafa (corresponding author, e-mail: usamamustafa1@gmail.com) and
+I.~Rashid (e-mail: irashid@mcs.edu.pk) are with the Department of Information
+Security, Military College of Signals, National University of Sciences and
+Technology, Rawalpindi, Pakistan.}%
+\thanks{This research did not receive any specific grant from funding agencies in
+the public, commercial or not-for-profit sectors.}}
+
+\maketitle
+
+\begin{abstract}
+Byzantine-robust aggregation rules protect federated learning by comparing the updates
+that clients send. Many PyTorch pipelines send each model as a \texttt{state\_dict()},
+which for a network with BatchNorm includes \texttt{num\_batches\_tracked}: an integer
+that counts local mini-batches and, under PyTorch's default momentum, has no effect on the
+model. We show that aggregation rules nonetheless decide on it. An exact decomposition of
+the cosine and the Euclidean distance between transmitted updates into trainable and
+buffer parts explains which rules are exposed: in every pairwise cosine the trainable
+signal is weighted by at most one minus the buffer share, whatever the data, while
+distance-based rules are exposed only when clients run different numbers of batches, by
+exactly $L(B_i-B_j)^2$ for $L$ BatchNorm layers. In a federated CNN\,+\,LSTM intrusion
+detector on CICIoT2023 with non-IID clients, the buffers carry a median
+$\pfDiagBufNormShareDir$ of the squared update norm, and the mean pairwise client cosine
+is $\pfDiagCosFullDir$ over the transmitted vector against $\pfDiagCosSigDir$ over the
+trainable parameters. A seed-paired A/B campaign that changes only which coordinates
+thirteen aggregation rules read then measures what the counter does to clean accuracy,
+backdoor success and client flagging: \PENDING.
+% RETIRES WITH: P3 campaign (results/postfix_p3), one sentence from \pf... macros
+Four of ten inspected implementations put the counter in that vector, including a 2025
+defense's reference code and Flower's official PyTorch example, whose updates Flower's
+own Krum and Bulyan compare counter included. A separate audit shows that a
+feature-space trigger deviating at most $\rzSigFixedQtr\sigma$ per feature lies further
+from the benign mean than all but $\rzExceedFixedQtr$ of $\rzRefRows$ benign flows.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Federated learning, Byzantine-robust aggregation, batch normalization,
+evaluation methodology, backdoor attacks, intrusion detection, IoT security
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Federated learning (FL)~\cite{mcmahan2017,kairouz2021} lets IoT and edge
+operators train an intrusion detector without centralizing their traffic: each
+participant shares only a model update, which a server aggregates. A compromised
+participant can submit crafted updates, for example to implant a backdoor that
+lets its own traffic pass as benign~\cite{bagdasaryan2020,xie2020}.
+Byzantine-robust aggregation is the standard answer. Krum keeps the update in the densest
+neighbourhood~\cite{blanchard2017}; FLTrust scores each update by its cosine to
+a server-side reference~\cite{cao2021fltrust}; FLAME clusters updates by cosine,
+clips their norms and adds noise~\cite{nguyen2022flame}; FoolsGold down-weights
+clients whose update histories are too similar to one
+another~\cite{fung2020foolsgold}.
+
+All of these rules rest on an assumption that is rarely written down: that the
+vector the server compares \emph{is} the model update, a point in a space where
+angles and distances mean something about what a client learned. This paper is
+about a common way in which that assumption fails silently.
+
+In PyTorch, a model's complete state is its \sd{}. For a network with
+BatchNorm~\cite{ioffe2015batchnorm} that dictionary holds, besides the trainable
+weights, three buffers per BatchNorm layer: the running mean, the running
+variance, and \nbt{}, an integer that is incremented once per training-mode
+forward pass. Transmitting the \sd{} is the natural way to keep BatchNorm
+statistics synchronised, and it is what Flower's official PyTorch example
+does~\cite{beutel2020flower}. When the server then flattens the received
+dictionary into one vector per client, the counter becomes a coordinate of the
+update, and its change over a local round is exactly the number of local
+batches $B$. Under PyTorch's default momentum the framework never reads the
+counter, so it does nothing to the model. But $B$ is large compared with a typical trainable
+update: in the detector studied here the counter is one coordinate of
+$\dfNTrain$ trainable ones, yet the buffers carry a median $\pfDiagBufNormShareDir$
+of each transmitted update's squared norm over $\pfDiagBufNormShareDirRuns$ non-IID runs.
+Nothing errors; what changes is what the defenses compare. Clients whose
+trainable updates have a mean pairwise cosine of $\pfDiagCosSigDir$ appear,
+over the transmitted vectors, to agree at $\pfDiagCosFullDir$
+(Fig.~\ref{fig:schematic}). A rule that separates clients by angle is then separating
+them largely by a bookkeeping counter.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\footnotesize,>=latex,line cap=round]
+\pgfmathsetmacro{\bs}{\pfDiagBufNormShareDir}
+\pgfmathsetmacro{\hu}{acos(\pfDiagCosSigDir)/2}
+\pgfmathsetmacro{\hd}{acos(\pfDiagCosFullDir)/2}
+\colorlet{trn}{blue!45}\colorlet{buf}{orange!85!black}
+\def\xa{1.45}\def\W{4.6}
+% (a) composition of one transmitted update
+\node[anchor=west] at (0,3.55) {(a) one transmitted update $d_i=(u_i,b_i)$};
+\node[anchor=east] at (\xa-0.05,3.0) {coordinates};
+\fill[trn] (\xa,2.85) rectangle (\xa+\W,3.15);
+\fill[buf] (\xa+\W-0.04,2.85) rectangle (\xa+\W,3.15);
+\node[anchor=east] at (\xa-0.05,2.35) {$\|d_i\|^2$};
+\fill[trn] (\xa,2.2) rectangle ({\xa+(1-\bs)*\W},2.5);
+\fill[buf] ({\xa+(1-\bs)*\W},2.2) rectangle (\xa+\W,2.5);
+\node[anchor=west,align=left,inner sep=1pt] at (\xa+\W+0.08,3.0) {trainable $u_i$: $\dfNTrain$\\buffers $b_i$: $\dfNBuf$};
+\node[anchor=west,align=left,inner sep=1pt] at (\xa+\W+0.08,2.35) {buffers: $\pfDiagBufNormShareDir$\\(counter $c_i=B_i$)};
+% (b) angles
+\node[anchor=west] at (0,1.75) {(b) mean pairwise client cosine};
+\begin{scope}[shift={(1.3,0.05)}]
+\draw[->,thick,trn] (0,0) -- (90-\hu:1.25) node[above,black] {$u_i$};
+\draw[->,thick,trn] (0,0) -- (90+\hu:1.25) node[above,black] {$u_j$};
+\draw (90-\hu:0.45) arc (90-\hu:90+\hu:0.45);
+\node[align=center] at (0,-0.22) {trainable: $\pfDiagCosSigDir$};
+\end{scope}
+\node at (3.3,0.65) {$\xrightarrow{\;+\,c_i=B_i\mathbf{1}_L\;}$};
+\begin{scope}[shift={(5.4,0.05)}]
+\draw[->,thick,buf] (0,0) -- (90-\hd:1.45) node[right,black] {$d_i$};
+\draw[->,thick,buf] (0,0) -- (90+\hd:1.45) node[left,black] {$d_j$};
+\draw (90-\hd:0.9) arc (90-\hd:90+\hd:0.9);
+\node[align=center] at (0,-0.22) {transmitted: $\pfDiagCosFullDir$};
+\end{scope}
+\end{tikzpicture}
+\caption{What a robust rule receives when clients send a \sd{}. (a) The
+$\dfNBuf$ buffer coordinates (top bar; sliver widened to be visible) carry most of
+the squared norm (bottom bar, to scale; median over non-IID runs); one of them is
+\nbt{}, whose change is the batch count $B_i$.
+(b) Angles drawn to the measured mean pairwise cosines (same runs; lengths
+schematic): clients whose trainable updates are nearly orthogonal look almost
+aligned once the shared counter direction is appended
+(Proposition~\ref{prop:decomp}, Corollary~\ref{cor:band}).}
+\label{fig:schematic}
+\end{figure}
+
+\paragraph{Contributions}
+\begin{itemize}
+\item \textbf{The hazard and its exact geometry} (Sec.~\ref{sec:defect}). An exact
+decomposition of the cosine and squared distance between transmitted updates
+(Proposition~\ref{prop:decomp}) predicts which rules are exposed: cosine rules
+always, since the trainable cosine enters with weight at most $1-s$
+(Corollary~\ref{cor:band}); distance rules exactly when batch counts differ, by
+$L(B_i-B_j)^2$; coordinate-wise rules not at all. We verify it on real updates to
+floating-point precision, and verify that the counter is inert under the default
+momentum.
+\item \textbf{Scope, stated narrowly} (Sec.~\ref{sec:scope}). The hazard belongs
+to the transmission convention, not to any rule. Four of ten public
+implementations we inspected put the counter in the decision vector or hand it to one,
+including Flower's PyTorch quick-start
+and the official code of AlignIns~\cite{xu2025alignins} (CVPR~2025) in two of its
+three benchmarks. We do not claim that published results are wrong.
+\item \textbf{What the counter changes, measured causally} (Sec.~\ref{sec:p1}).
+Every rule runs twice, identical except whether its decisions read the full vector
+or the trainable coordinates (paired seeds, two partitions, clean and attacked,
+exact tests, hypotheses registered before their cells completed). The campaign is
+not yet complete (\PENDING).
+% RETIRES WITH: P3 campaign (results/postfix_p3)
+\item \textbf{Mechanisms} (Sec.~\ref{sec:mech}). Under the defect FLTrust excludes
+no client once the counter shares satisfy $q_i+q_0>1$ (Corollary~\ref{cor:fltrust});
+a client that falsifies its own counter is admitted with a fixed step whatever its
+direction (Corollary~\ref{cor:falsify}); cumulative histories such as FoolsGold's
+stay compressed (Lemma~\ref{lem:history}). We separate these from a failure that
+is not the counter's (FoolsGold under label skew).
+\item \textbf{A realizability audit of feature-space triggers}
+(Sec.~\ref{sec:realizable}). Independently of the counter, the marginal $\sigma$
+checks used to call a tabular trigger ``in-distribution'' say little about whether
+a stamped flow could exist; a donor-flow construction repairs part of the gap.
+\end{itemize}
+The supplement (Sec.~\ref{sup:overview}) holds proofs, calibration, the
+engine's second defect, withdrawn findings and the trigger audit. Values not yet
+measured are marked pending; code, configurations and per-round diagnostics are
+released so that every table regenerates from the result files.
+
+\section{Related Work}
+
+\textbf{Model state in federated pipelines.} BatchNorm~\cite{ioffe2015batchnorm}
+keeps running statistics and a batch counter as non-trainable buffers. How
+federated pipelines should treat them is an old question for \emph{accuracy}:
+BatchNorm worsens the loss under label skew~\cite{hsieh2020quagmire}, FedBN keeps it
+local~\cite{li2021fedbn}, and FBN~\cite{guerraoui2024fbn} and Hybrid
+BN~\cite{chen2025hybridbn} estimate global statistics without bias; FBN also
+aggregates the statistics robustly against Byzantine clients that falsify them.
+BNGuard~\cite{xu2025oba} goes the other way and reads the running statistics on
+purpose, as a signal that a client trained on out-of-distribution data. All of
+this work treats the running mean and variance as \emph{statistics}. The closest
+report we found of the counter itself is a Flower issue opened in October
+2026~\cite{flower2026issue8298}, after our survey: \nbt{} enters the norm of
+Flower's differential-privacy clipping, so the clip factor shrinks every real
+update. That is the norm term of~\eqref{eq:norm} for one clipping routine. We
+found no work on what the counter does to the client-level decisions of
+Byzantine-robust rules (cosines, distances, trust scores, histories), which are
+analysed as functions of the update
+vector~\cite{blanchard2017,yin2018,cao2021fltrust,nguyen2022flame} and evaluated
+in pipelines that decide, often implicitly, what that vector contains.
+
+\textbf{Backdoors in federated learning.} Bagdasaryan et
+al.~\cite{bagdasaryan2020} showed that model replacement lets a single client
+implant a durable backdoor; Xie et al.~\cite{xie2020} distributed the trigger
+across colluding clients (DBA); Wang et al.~\cite{wang2020tails} target rare
+sub-populations; Sun et al.~\cite{sun2019} found norm clipping and noise blunt many.
+
+\textbf{Byzantine-robust aggregation.} Krum and Multi-Krum~\cite{blanchard2017}
+give distance-based robustness; coordinate-wise median and trimmed
+mean~\cite{yin2018}, Bulyan~\cite{mhamdi2018bulyan} and the geometric median
+(RFA)~\cite{pillutla2022rfa} give order-statistic robustness.
+FLTrust~\cite{cao2021fltrust} adds a trusted root dataset to anchor a reference
+direction. FoolsGold~\cite{fung2020foolsgold} penalizes clients whose updates are
+too similar to each other. FLAME~\cite{nguyen2022flame} and
+DeepSight~\cite{rieger2022deepsight} combine clustering with clipping/filtering.
+Such rules degrade on heterogeneous honest clients~\cite{karimireddy2022bucketing};
+our FoolsGold diagnostic is an instance unrelated to the counter, and
+Corollary~\ref{cor:dist} adds a second route, unequal shard sizes. Newer rules
+combine cosine and distances (Multi-Metrics~\cite{huang2023multimetrics}), cluster
+DCT components of the weights (FreqFed~\cite{fereidooni2024freqfed}), or filter by
+cosine to the global model and sign agreement (AlignIns~\cite{xu2025alignins});
+all decide on a vector formed from the client's model.
+
+\textbf{Evaluating robust aggregation.} Defenses evaluated against static attackers fall to optimized
+ones~\cite{shejwalkar2021,fang2020local}, to perturbations inside the honest
+variance~\cite{baruch2019little}, and to attacks adapted from
+feedback~\cite{li20233dfed,yang2024learning}; Fang et
+al.~\cite{fang2025foundation} argue for hardening established rules rather than
+proposing new ones. All of this work concerns
+what the attacker sends; ours is what the honest pipeline puts into the vector
+the rule reads.
+Pierazzi et al.~\cite{pierazzi2020problem} make the problem-space point that
+motivates our realizability audit: a feature-space perturbation is only an attack
+if some real object realizes it.
+
+\textbf{Federated IDS.} Federated detectors use benchmarks such as
+CICIoT2023~\cite{neto2023ciciot} and FLNET2023~\cite{flnet2023}; their poisoning
+has been studied with model- and data-level defenses~\cite{zhang2022secfednids},
+parameterized attacker budgets~\cite{merzouk2023param} and Weibull-fitted
+validation scores~\cite{sameera2025weidetect}, all against static attackers and
+none reporting the false-positive cost of exclusion. Such work inherits its
+framework's transmission convention, which is why we use a detector as the
+application.
+
+\section{The Defect: What a \texttt{state\_dict()} Update Contains}
+\label{sec:defect}
+
+\textbf{Setting.} Client $i$ starts a round from the global model and returns its
+full \sd{}. The server flattens the returned dictionary and subtracts the global
+model, giving a transmitted update $d_i\in\mathbb{R}^{D}$. We split its
+coordinates into two disjoint blocks, $d_i=(u_i,b_i)$: $u_i$ collects the trainable
+parameters (what \texttt{model.parameters()} returns) and $b_i$ the buffers, that
+is, the running mean, running variance and \nbt{} of each of the $L$ BatchNorm
+layers. We write $b_i=(r_i,c_i)$ with $c_i\in\mathbb{R}^{L}$ the counter
+coordinates, and define the buffer share of client $i$ as
+\begin{equation}
+\label{eq:share}
+s_i \;=\; \frac{\|b_i\|^2}{\|d_i\|^2}\in[0,1].
+\end{equation}
+PyTorch increments \nbt{} by one on every forward pass in training mode. If
+client $i$ performs $B_i$ such passes in its local round (one per mini-batch in
+standard local training), then $c_i=B_i\mathbf{1}_L$ whatever integer value the
+global counter held at the start of the round. If the server's aggregate of the
+counter is not an integer (an average of client counters, say) and loading it
+into the \texttt{int64} buffer truncates it, then $c_i=(B_i-\epsilon)\mathbf{1}_L$
+with the same $\epsilon\in[0,1)$ for every client of that round; in what follows
+$B_i$ is then read as $B_i-\epsilon$ in~\eqref{eq:norm}, and~\eqref{eq:dist} is
+unchanged.
+
+\begin{proposition}[Exact decomposition]
+\label{prop:decomp}
+For any two clients $i,j$ with $u_i,u_j,b_i,b_j\neq 0$,
+\begin{align}
+\|d_i\|^2 &= \|u_i\|^2+\|r_i\|^2+L\,B_i^2, \label{eq:norm}\\
+\cos(d_i,d_j) &= \sqrt{(1-s_i)(1-s_j)}\,\cos(u_i,u_j)\nonumber\\
+&\quad+\sqrt{s_is_j}\,\cos(b_i,b_j), \label{eq:cos}\\
+\|d_i-d_j\|^2 &= \|u_i-u_j\|^2+\|r_i-r_j\|^2+L\,(B_i-B_j)^2. \label{eq:dist}
+\end{align}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+The blocks $u$, $r$ and $c$ occupy disjoint coordinates, so inner products and
+squared norms add across them (full proof in Sec.~\ref{sup:proofs}).
+\end{proof}
+
+The proposition is elementary; its use is that it separates, exactly, what each
+family of aggregation rules reads.
+
+\begin{corollary}[Cosine rules are always exposed]
+\label{cor:band}
+If $s_i,s_j\ge s$, then $|\cos(d_i,d_j)-\cos(b_i,b_j)|\le 2(1-s)$, and a change
+$\Delta$ in the trainable cosine $\cos(u_i,u_j)$, all else fixed, changes
+$\cos(d_i,d_j)$ by at most $(1-s)|\Delta|$.
+\end{corollary}
+\begin{proof}[Proof sketch]
+Subtract $\cos(b_i,b_j)$ from~\eqref{eq:cos}; both remaining coefficients are at
+most $1-s$ (Sec.~\ref{sup:proofs}).
+\end{proof}
+
+This does not say the trainable signal is lost: with nearly constant shares and
+buffer cosines, \eqref{eq:cos} is close to an increasing affine map, so the
+\emph{ordering} of cosines can survive (FLAME, Sec.~\ref{sec:mech}). A rule is
+affected when it uses a fixed cosine threshold, or when shares and buffer cosines
+vary across clients by more than the compressed trainable term. The buffer cosine is in turn pulled toward one
+by the counter: with $\gamma_i=\|c_i\|^2/\|b_i\|^2$ and $\cos(c_i,c_j)=1$,
+applying~\eqref{eq:cos} inside $b=(r,c)$ gives
+\begin{equation}
+\label{eq:bufcos}
+\cos(b_i,b_j)\ge\sqrt{\gamma_i\gamma_j}-\sqrt{(1-\gamma_i)(1-\gamma_j)}\ge 2\gamma-1
+\end{equation}
+for $\gamma_i,\gamma_j\ge\gamma$, $r_i,r_j\ne0$, $B_i,B_j>0$. So as the counter
+comes to dominate, every pairwise cosine is pulled toward $1$, whatever the
+partition. In our non-IID runs (median buffer share $\pfDiagBufNormShareDir$) every
+pairwise cosine lies within $\pfDiagCosBandDir$ of the buffer cosine whatever the
+trainable updates are.
+
+\begin{corollary}[Distance rules are exposed exactly when batch counts differ]
+\label{cor:dist}
+The counter's contribution to $\|d_i-d_j\|^2$ is $L(B_i-B_j)^2$. It vanishes for
+every pair if and only if all clients run the same number of local batches.
+\end{corollary}
+
+This is immediate from~\eqref{eq:dist}, and it is why the defect is easy to miss:
+Krum, Multi-Krum and Bulyan score clients by sums of pairwise squared distances, so
+on IID shards of equal size, where robustness code is usually debugged, the counter
+cancels. Under any Dirichlet partition each score acquires
+$L\sum_j (B_i-B_j)^2$ over the client's neighbours, favouring clients whose shard
+size is typical; in our non-IID runs the buffers carry a median
+$\pfDiagBufDistShareDir$ of the pairwise squared distances.
+
+\textbf{Norm-based and coordinate-wise rules.} By~\eqref{eq:norm}, once the counter
+dominates, $\|d_i\|\approx\sqrt{L}\,B_i$: clip bounds and noise scales computed from
+cohort norms (FLAME, NormClip) are set by batch counts, and FLTrust's rescaling
+factor $\|g_0\|/\|g_i\|$ approaches $B_0/B_i$. Coordinate-wise rules (median,
+trimmed mean) give the counter its own order statistic, so the decomposition
+predicts no exposure; they are negative controls in Sec.~\ref{sec:p1}.
+
+\textbf{Inertness and verification.} PyTorch's BatchNorm reads \nbt{} only when
+\texttt{momentum=None} (the default is $0.1$). On our model, two copies
+differing only by $+10^5$ on the counter, fed identical batches, end with maximum
+absolute differences of $\dfInertMean$ (running means), $\dfInertVar$ (running
+variances) and $\dfInertLogit$ (evaluation logits); with \texttt{momentum=None} the
+same perturbation moves the running mean by $\dfCmaMean$, so the probe would detect
+a read. The decomposition holds on real local updates of our CNN\,+\,LSTM, where
+the counter alone carries $\dfPropShareI\%$ of one client's squared norm and two
+updates have full cosine $\dfPropCosFull$ against a trainable cosine of
+$\dfPropCosSig$, and on a ResNet-18 with $\drNBN$ BatchNorm layers, where the
+buffers carry $\drBufShareI\%$: more BatchNorm layers make the hazard larger
+(Sec.~\ref{sup:probe}, Table~\ref{tab:probe}).
+
+\subsection{Which pipelines are exposed}
+\label{sec:scope}
+
+The hazard needs three things: a model with BatchNorm, transmission of the \sd{}
+(or any vector that includes buffers), and a server that flattens what it receives
+into the vector its rule decides on. Pipelines that vectorise gradients or
+\texttt{parameters()} are immune, as are methods that keep BatchNorm local such as
+FedBN~\cite{li2021fedbn}. Table~\ref{tab:survey} lists the public implementations
+we inspected; most research reference implementations are immune. The exposed ones
+are our own pipeline before the fix, a public re-implementation of Krum, trimmed
+mean and Fang's attack on ResNet-18, Flower's official PyTorch quick-start, whose
+\texttt{ArrayRecord(model.state\_dict())} carries \nbt{} as an \texttt{int64}
+array, and the official code of AlignIns~\cite{xu2025alignins}, which flattens the
+\sd{} before and after local training; its CIFAR-10 ResNet-9 disables running
+statistics, while its CIFAR-100 VGG-9 and Tiny-ImageNet ResNet-18 carry the counter
+(lines in \texttt{SURVEY.md}). Flower's row matters most. The quick-start itself
+aggregates with FedAvg, which makes no client-level decision, but Flower's built-in
+Krum, Multi-Krum and Bulyan (flwr~1.30) score clients by squared distances between
+the concatenated arrays of each record, counter included: on two quick-start-style
+records whose clients ran $B_i\ne B_j$ batches the distance exceeds its
+counter-free value by exactly $(B_i-B_j)^2$
+(\path{experiments/counter_defect/flower_builtin_check.py}). AlignIns' row shows
+that the convention is not confined to old code.
+% Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified;
+% AlignIns JiiahaoXU/AlignIns@49b7d32 read 21 Oct 2026).
+
+\begin{table*}[t]
+\centering
+\caption{How public FL robustness implementations form the per-client vector
+(code inspected September and October 2026). ``Exposed'' means BatchNorm buffers, including
+\nbt{}, enter the vector the aggregation rule decides on. $^\dagger$The example's
+own rule (FedAvg) makes no client-level decision; Flower's built-in Krum, Multi-Krum
+and Bulyan, given the same records, read the counter (Sec.~\ref{sec:scope}).}
+\label{tab:survey}
+\small
+\begin{tabular}{@{}p{0.38\linewidth}p{0.40\linewidth}l@{}}
+\toprule
+implementation & per-client vector & exposed \\
+\midrule
+FLDetector, official~\cite{zhang2022fldetector} & MXNet parameters with gradients only & no \\
+FoolsGold, official~\cite{fung2020foolsgold} & raw gradient vectors & no \\
+RFCL (\texttt{EbtisaamCS/RFCL}) & \texttt{parameters()} & no \\
+Attack of the Tails, official~\cite{wang2020tails} & \texttt{parameters()} & no \\
+DBA, official~\cite{xie2020} & \texttt{named\_parameters()} & no \\
+IBA (\texttt{sail-research/iba}) & \texttt{parameters()} & no \\
+\texttt{yjlee22/byzantineFL} (Krum, trimmed mean, Fang) & flattened \sd{}, ResNet-18 & yes \\
+Flower \texttt{quickstart-pytorch}~\cite{beutel2020flower} & \texttt{ArrayRecord(model.state\_dict())} & yes$^\dagger$ \\
+AlignIns, official~\cite{xu2025alignins} & flattened \sd{}; ResNet-9 without, VGG-9 and ResNet-18 with running statistics & 2 of 3 \\
+This paper's pipeline, before the fix & flattened \sd{} & yes \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\textbf{The fix.} Every decision a rule makes (similarities, distances, norms,
+clip bounds, noise scales, selection scores) is computed on the trainable
+coordinates $u_i$ only, while aggregation still averages the full vector so that
+BatchNorm statistics remain synchronised. The fix is a mask, it changes no
+rule's definition, and it lets the same code run in either mode. That is what
+makes the controlled comparison of Sec.~\ref{sec:p1} possible.
+
+\section{Experimental Setup}
+\label{sec:setup}
+
+The experiments ask one question: holding everything else fixed, what does the
+counter change in what each rule decides and in the model it returns?
+
+\textbf{Task and data.} We use CICIoT2023~\cite{neto2023ciciot} in its grouped
+8-class form ($39$ flow features), standardized with a scaler fit on the training
+split, and stratified-subsampled to $40{,}000$ training and $10{,}000$ test rows
+with at least $200$ rows per class.
+
+\textbf{Model.} The detector treats the $39$-dimensional feature vector as a
+single-channel sequence: a Conv1D layer ($64$ filters, kernel $3$, ReLU,
+BatchNorm), an LSTM ($128$ hidden units) and a dense head ($64$ units, dropout
+$0.3$) with softmax. It has one BatchNorm layer, so $L=1$ and the counter is a
+single coordinate of the $\dfNTrain{}+\dfNBuf$ transmitted ones
+(Table~\ref{tab:probe}).
+
+\textbf{Federation.} $N=10$ clients, all participating in each of $R=15$
+synchronous rounds; one local epoch per round with batch size $256$, Adam,
+learning rate $10^{-3}$, and per-class loss weights from the effective number of
+samples. Clients are partitioned IID, in equal shards of about $4{,}000$ rows (so every
+client runs the same $16$ local batches per round), or by a Dirichlet($\alpha=0.5$)
+label split, under which shard sizes, and hence the batch counts $B_i$, differ
+between clients. Aggregation is performed by Flower~\cite{beutel2020flower}
+\texttt{Strategy} objects driven by an in-process round loop, so each rule
+receives the per-client \sd{} updates that Flower's PyTorch example would put on
+the wire.
+
+\textbf{Threat model.} \emph{Goal:} a targeted backdoor; trigger-carrying attack
+traffic should be classified as benign while clean accuracy is preserved.
+\emph{Capabilities:} in attacked runs a fraction $m=0.2$ of the clients (two of
+ten) is malicious and colludes. Each malicious client stamps the \emph{fixed}
+trigger of Table~\ref{tab:trig} on a fraction $p=0.1$ of its attack samples,
+relabels them benign, and trains $E_m$ local epochs where honest clients train
+one; it controls its own data and computation, not the server or honest clients,
+and sends an update of the usual format. \emph{Knowledge:} architecture,
+hyperparameters and trigger; it does not adapt to the rule's decisions.
+\emph{Budget:} which clients are corrupted and $E_m$ are fixed by calibration under
+FedAvg before any defended cell runs (below). The trigger perturbs standardized
+features, a feature-space threat model whose distance from realizable traffic
+Sec.~\ref{sec:realizable} measures.
+
+\textbf{The counter is attacker-controlled.} Our attacker reports the batches it
+ran, $c_i=B_i\mathbf{1}_L$, but nothing in a \sd{}-based pipeline enforces that,
+and under the default momentum a falsified value costs the client nothing.
+Under the defect, reporting the cohort's typical batch count removes the
+$L(B_i-B_j)^2$ penalty of Corollary~\ref{cor:dist}, and against FLTrust a suitable
+counter buys admission (Corollary~\ref{cor:falsify}). Under the fix no rule reads
+the value.
+
+\textbf{Attack calibration.} At this scale the backdoor survives averaging with
+eight honest updates only if the malicious clients train longer than honest ones.
+Under FedAvg with one local epoch the attacked BSR stays at the clean floor
+(non-IID: $\apDirPoneBSR$ against $\apDirCleanBSR$), and it stays there with five times
+as many poisoned rows, a third attacker or a doubled trigger
+(Table~\ref{tab:calib}). Under example-weighted aggregation two attackers drawn at
+random hold $\csShareRandMin$ to $\csShareRandMax$ of the non-IID data depending on
+the seed, which made attack strength a property of the partition draw. The re-run
+therefore fixes the budget: two attackers whose combined share is within
+$\csShareTol$ percentage point of $m$ (\texttt{attack.mal\_selection:
+share\_matched}), training $E_m=15$ local epochs. That setting was chosen by a rule
+fixed before its calibration finished (FedAvg implants, last-five-round BSR above
+$0.5$, on at least eight of ten non-IID seeds); it implants on
+$\csSmEfifteenNimpl$ of ten, seed $46$ being the exception
+(Table~\ref{tab:seedcal}; in a $40$-round re-run it implants after round
+$\csHzLastLowFortySixEfifteen$, Sec.~\ref{sup:calib}). A rule's attacked BSR is read only on seeds where the re-run's own
+FedAvg cell implants. The price is visibility: the attackers' trainable update
+norm is $\csMalNormRatioMin$--$\csMalNormRatioMax$ times an honest client's.
+
+\textbf{Server.} The server sees only the transmitted updates. FLTrust is the one
+exception: it holds a class-balanced clean root set of $300$ training rows, which
+at batch size $256$ is two mini-batches, so its own update has $B_0=2$.
+
+\textbf{Metrics.} Clean accuracy (CA) and macro-F1 on the clean test set;
+backdoor success rate (BSR), the fraction of triggered attack-class test samples
+classified as benign; and, for rules that exclude clients, the detection rate (DR,
+fraction of malicious clients excluded) and the false-positive rate (FPR, fraction
+of honest clients excluded), always reported together. In clean runs every client
+is honest, so FPR is the fraction of all clients a rule excludes, and BSR is the
+clean-model rate at which the trigger alone moves attack traffic to benign: the
+floor against which an attacked BSR must be read. Rules that never single out a
+client report DR and FPR as not applicable. Every metric is the mean over the
+last five rounds.
+
+\textbf{Statistics.} Seeds $42$--$51$ fix the partition, the malicious clients,
+the initialisation and the data order, and the two arms (Sec.~\ref{sec:p1}) share
+them. For each cell we report the arm means, the paired difference
+fixed$-$defect, its sign counts, and the exact paired sign-flip $p$, which
+enumerates all $2^n$ sign assignments and assumes only symmetry under no
+effect~\cite{ernst2004permutation} (two-sided floor $2^{1-n}$, $\pfTestableTen$ at
+ten seeds).
+\emph{Confirmatory and exploratory analyses are separate.} Before most cells ran we
+registered (\path{iterations/PREREG_P3.md}, with a hash manifest of the
+$\pfPreManifestN$ result files then on disk) the comparisons the theory signs: primary,
+FLTrust's FPR (clean) and DR (attacked) in both partitions, lower in the defect arm
+(Corollary~\ref{cor:fltrust}); secondary, the clean accuracy of NormClip and FLAME,
+lower in the defect arm because~\eqref{eq:norm} inflates their noise scale. Each is
+tested one-sided, Holm within its family ($\pfPrePrimaryTotal$ hypotheses each). $\pfPrePartialN$ rest partly on seeds $42$--$46$, read before registration;
+the other $\pfPreBlindN$ are blind and are also Holm-corrected alone
+(Table~\ref{tab:prereg}). All else is exploratory: two-sided, Holm across
+the thirteen rules sharing a partition, attack setting and metric ($p_H$)~\cite{holm1979};
+of its $\pfTestsRun$ tests, $\pfSigFamily$ survive that and
+$\pfSigGlobal$ survive Holm over all of them (\texttt{paper/analyse\_postfix.py}).
+Every outcome number is a macro written by that script from the result files; a
+cell that has not run prints as \PENDING{} ($\pfCellsDone$ of $\pfCellsTarget$
+cells done).
+% RE-CHECK every interpretive sentence in Sec. 6 when P3 completes (1,040 cells);
+% the macros update themselves, the prose does not.
+
+\textbf{Round-one aliasing.} The engine had a second defect, unrelated to the
+counter: it stored the initial global model as views of the model's own parameter
+storage, so in round~$1$, and only there, the clients trained one after another and
+the rules received the last client's model as the round's reference. It is the
+same in both arms and reaches outcomes only through the training trajectory, but
+it does change FoolsGold, whose history carries the round-$1$ updates forward
+(Sec.~\ref{sup:alias}). Every FoolsGold outcome of the first campaign is therefore
+withdrawn. The re-run copies the stored model
+(\texttt{federated.copy\_initial\_global}).
+
+
+\section{Aggregation Rules and What the Decomposition Predicts}
+\label{sec:rules}
+
+We run thirteen rules. All subclass Flower's FedAvg strategy and differ only in
+\texttt{aggregate\_fit}. Table~\ref{tab:rules} groups them by the statistic their
+decisions read, which is what Proposition~\ref{prop:decomp} is about, and states
+the prediction for each before any outcome is seen.
+
+\begin{table*}[t]
+\centering
+\caption{The thirteen rules, the statistic their client-level decisions read, and the
+exposure to the counter that Proposition~\ref{prop:decomp} predicts. ``Arms
+identical'' means the rule reads no client-level statistic, so the defect and
+fixed arms of Sec.~\ref{sec:p1} run the same computation and serve as negative
+controls.}
+\label{tab:rules}
+\small
+\begin{tabular}{@{}p{0.21\linewidth}p{0.44\linewidth}p{0.29\linewidth}@{}}
+\toprule
+rule & decision statistic & predicted exposure \\
+\midrule
+FedAvg~\cite{mcmahan2017} & none (example-weighted mean) & none; arms identical \\
+Median, trimmed mean~\cite{yin2018} & per-coordinate order statistics & none; arms identical \\
+Krum (Multi-Krum)~\cite{blanchard2017} & sum of squared distances to nearest neighbours & iff $B_i$ differ (Cor.~\ref{cor:dist}) \\
+Bulyan~\cite{mhamdi2018bulyan} & iterated Krum selection, then trimmed mean & iff $B_i$ differ (Cor.~\ref{cor:dist}) \\
+RFA~\cite{pillutla2022rfa} & Weiszfeld weights $1/\|d_i-z\|$ & iff $B_i$ differ (Eq.~\eqref{eq:dist}) \\
+NormClip~\cite{sun2019} & clip to median norm, noise $\propto$ that norm & always (Eq.~\eqref{eq:norm}) \\
+FLAME~\cite{nguyen2022flame} & cosine clustering; median-norm clip and noise & always (Cor.~\ref{cor:band}, Eq.~\eqref{eq:norm}) \\
+FLTrust~\cite{cao2021fltrust} & cosine to server update; norm rescaling & always (Cor.~\ref{cor:fltrust}) \\
+FoolsGold~\cite{fung2020foolsgold} & cosine between cumulative histories & always (Cor.~\ref{cor:band}) \\
+GradCos & maximum pairwise cosine (clique test) & always (Cor.~\ref{cor:band}) \\
+FLDetector~\cite{zhang2022fldetector} & error of a cross-round update prediction & not covered; measured only \\
+AlignIns~\cite{xu2025alignins} & robust $z$ of cosine to $\theta_t$ (TDA) and of sign agreement (MPSA); median-norm clip & TDA and clip always; MPSA not \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\textbf{Implementation.} Sec.~\ref{sup:rules} describes each rule. Distance rules read the counter whenever batch counts differ: under
+Dirichlet partitions, and in every attacked run, since an attacker training
+$E_m=15$ epochs reports about $15$ times an honest client's count. For NormClip
+and FLAME, Eq.~\eqref{eq:norm} sets clip bound and noise scale
+$\pfDiagNormInflDir$ times larger (median buffer share, non-IID) than the trainable
+update warrants. FLAME's noise is added to trainable coordinates only, in both arms
+(noise on \texttt{running\_var} makes evaluation-mode BatchNorm return NaN).
+FLTrust counts a client with weight zero as excluded, FoolsGold one with weight
+below $10^{-3}$. GradCos is a clique test from an earlier version of this study,
+kept only as one more cosine rule. AlignIns~\cite{xu2025alignins} (2025) is ported
+from its authors' code; the decomposition predicts that its sign-agreement filter is
+unaffected and its cosine filter and clip are exposed. Krum and Bulyan get $f=2$
+(Bulyan's $f$ clamped, since $n\ge4f+3$ fails at $n=10$). Hyperparameters are the
+untuned defaults of \texttt{configs/p1\_full.yaml}, identical in both arms, so
+absolute performance should not be read from our tables.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{What the counter does to the transmitted geometry}
+\label{sec:geometry}
+
+Fig.~\ref{fig:geometry} shows, per round, what the rules are given in the
+non-IID runs, resolving the medians of Fig.~\ref{fig:schematic} by round; the
+buffers also carry a median $\pfDiagBufDistShareDir$ of the pairwise squared
+distances. All diagnostics are over rounds $2$--$15$; round~$1$ describes the engine's round-one defect instead
+(Sec.~\ref{sec:setup}; median full-vector cosine $\raPoneCosFullRone$ in round~$1$
+against $\raPoneCosFullRtwo$ later, $\raPoneRuns$ clean non-IID runs).
+Corollary~\ref{cor:dist} predicts that in IID runs, where every client runs the
+same number of batches, the buffer share of the squared distances falls far below
+its non-IID value while the share of the squared norm does not. The IID medians
+are $\pfDiagBufDistShareIid$ and $\pfDiagBufNormShareIid$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_p1_geometry.pdf}
+\caption{Per-round defect diagnostics in the re-run's runs, rounds $2$--$15$ (round~$1$
+is omitted, see \emph{Round-one aliasing} in Sec.~\ref{sec:setup}; median over runs, shaded
+inter-quartile range; logged in both arms and for every rule, because they
+describe the transmitted vector rather than a rule's decision). Left: mean
+pairwise client cosine over the full transmitted vector and over the trainable
+coordinates. Right: buffer share of the squared update norm and of the pairwise
+squared distances. Generated by \texttt{paper/make\_fig\_p1.py}.}
+\label{fig:geometry}
+\end{figure}
+
+\subsection{What the counter changes: a controlled A/B}
+\label{sec:p1}
+
+\textbf{Design.} Each rule runs twice, in a \emph{defect} arm whose decisions read
+the full transmitted vector and a \emph{fixed} arm whose decisions read only the
+trainable coordinates (Sec.~\ref{sec:scope}), identical otherwise, seed included,
+so the per-seed difference fixed$-$defect is the causal effect of the counter on
+that rule. The re-run crosses thirteen rules, two partitions, clean and attacked
+runs and ten seeds ($1{,}040$ cells); Tables~\ref{tab:p1} and~\ref{tab:p1flag} fill
+from its result files as cells complete. The first campaign (random attackers,
+$E_m=5$, round-one-defective engine; Sec.~\ref{sup:retro}) is quoted only where it
+bears on a mechanism, and labelled.
+
+\textbf{Confirmatory hypotheses.} Table~\ref{tab:prereg} reports the eight
+registered comparisons (Sec.~\ref{sec:setup}) as they stand ($\pfPreFinal$);
+it is generated by the analysis script and becomes final only when every one of
+its cells has ten seeds. The one-sided floor is $2^{-n}$, so Holm over a family
+of four can reach $0.05$ only from $n=7$ on; below that a hypothesis cannot be
+supported whatever its sign counts. At this interim point $\pfPrePrimarySupported$ of
+$\pfPrePrimaryTotal$ primary hypotheses are supported, both under Dirichlet shards:
+P1 ($n=\pfPrePOneN$, $\pfPrePOnePos$/$\pfPrePOneNeg$, $p_H=\pfPrePOnePh$) and P3
+($n=\pfPrePThreeN$, $\pfPrePThreePos$/$\pfPrePThreeNeg$, $p_H=\pfPrePThreePh$). They
+confirm Corollary~\ref{cor:fltrust}'s prediction that removing the counter restores
+FLTrust's exclusions, not useful detection: the fixed arm excludes honest clients
+about as often as flippers (Sec.~\ref{sec:mech}). The blind IID pair P2/P4
+($n=\pfPrePTwoN$, $p_H=\pfPrePTwoPh$) measures the fixed arm's shutdown and is read
+the same way (amendment, \texttt{PREREG\_P3.md}). S2 is complete
+($n=\pfPreSTwoN$, $\pfPreSTwoPos$/$\pfPreSTwoNeg$, $\Delta=\pfPreSTwoDiff$,
+$p=\pfPreSTwoP$) and not supported: the predicted noise penalty is too small to
+see.
+% RE-CHECK (iter 22): 'both under Dirichlet' holds while P1,P3 are the supported ones;
+% P2/P4 share n and p_H only while both are 5/0.
+
+\begin{table}[t]
+\centering
+\caption{Registered hypotheses (\texttt{PREREG\_P3.md}): paired difference
+fixed$-$defect, predicted positive (FPR and CA in clean runs, DR in attacked runs). $n$: paired seeds; $+/-$: seeds with a
+positive/negative difference; $p$: exact one-sided sign-flip; $p_H$: Holm within
+the family of four, untested hypotheses entering with $p=1$. P1, P3 and S3 are
+partly unblinded (seeds $42$--$46$ read before registration). Sup.: $p_H\le0.05$,
+\pfPreFinal; a red dash marks a cell not yet run.}
+\label{tab:prereg}
+\renewcommand{\PENDING}{\textcolor{red}{\textbf{--}}}%
+\footnotesize\setlength{\tabcolsep}{3pt}%
+\begin{tabular}{@{}lllcrcrrrc@{}}
+\toprule
+& rule & part. & metric & $n$ & $+/-$ & $\Delta$ & $p$ & $p_H$ & sup. \\
+\midrule
+P1 & FLTrust & Dir & FPR & \pfPrePOneN & \pfPrePOnePos/\pfPrePOneNeg & $\pfPrePOneDiff$ & \pfPrePOneP & \pfPrePOnePh & \pfPrePOneSup \\
+P2 & FLTrust & IID & FPR & \pfPrePTwoN & \pfPrePTwoPos/\pfPrePTwoNeg & $\pfPrePTwoDiff$ & \pfPrePTwoP & \pfPrePTwoPh & \pfPrePTwoSup \\
+P3 & FLTrust & Dir & DR & \pfPrePThreeN & \pfPrePThreePos/\pfPrePThreeNeg & $\pfPrePThreeDiff$ & \pfPrePThreeP & \pfPrePThreePh & \pfPrePThreeSup \\
+P4 & FLTrust & IID & DR & \pfPrePFourN & \pfPrePFourPos/\pfPrePFourNeg & $\pfPrePFourDiff$ & \pfPrePFourP & \pfPrePFourPh & \pfPrePFourSup \\
+\midrule
+S1 & NormClip & Dir & CA & \pfPreSOneN & \pfPreSOnePos/\pfPreSOneNeg & $\pfPreSOneDiff$ & \pfPreSOneP & \pfPreSOnePh & \pfPreSOneSup \\
+S2 & NormClip & IID & CA & \pfPreSTwoN & \pfPreSTwoPos/\pfPreSTwoNeg & $\pfPreSTwoDiff$ & \pfPreSTwoP & \pfPreSTwoPh & \pfPreSTwoSup \\
+S3 & FLAME & Dir & CA & \pfPreSThreeN & \pfPreSThreePos/\pfPreSThreeNeg & $\pfPreSThreeDiff$ & \pfPreSThreeP & \pfPreSThreePh & \pfPreSThreeSup \\
+S4 & FLAME & IID & CA & \pfPreSFourN & \pfPreSFourPos/\pfPreSFourNeg & $\pfPreSFourDiff$ & \pfPreSFourP & \pfPreSFourPh & \pfPreSFourSup \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Exploratory cells so far.} \PENDING{} most cells of the re-run.
+% RETIRES WITH: P3 campaign (results/postfix_p3)
+(i) \emph{Negative control.} FedAvg's clean non-IID accuracy is
+$\pfCAFedavgDirCleanDef$ and $\pfCAFedavgDirCleanFix$ in the two arms (difference
+$\pfCAFedavgDirCleanDiff$, $n=\pfCAFedavgDirCleanN$): where the arms run the same
+computation they reproduce each other.
+% RE-CHECK "reproduce" against \pfCAFedavgDirCleanDiff as seeds land.
+(ii) \emph{FoolsGold}, clean non-IID, excludes $\pfFPRFoolsgoldDirCleanDef$
+(defect) and $\pfFPRFoolsgoldDirCleanFix$ (fixed) of an honest cohort, the failure
+of its own assumption diagnosed in Sec.~\ref{sec:mech}; clean accuracy differs by
+$\pfCAFoolsgoldDirCleanDiff$ (fixed higher on $\pfCAFoolsgoldDirCleanPos$ of
+$\pfCAFoolsgoldDirCleanN$ seeds).
+% RE-CHECK when the FoolsGold Dir clean cells reach n=10.
+(iii) \emph{FLAME}, clean non-IID: exclusions differ by $\pfFPRFlameDirCleanDiff$
+($\pfFPRFlameDirCleanPos$ seeds up, $\pfFPRFlameDirCleanNeg$ down; $n=\pfFPRFlameDirCleanN$):
+indistinguishable arms despite an exposed input.
+% RE-CHECK the FLAME sentence when its Dir clean cells reach n=10 (P3).
+(iv) \emph{FLTrust}, clean non-IID: exclusions $\pfFPRFltrustDirCleanDef$
+(defect) and $\pfFPRFltrustDirCleanFix$ (fixed; P1), clean accuracy difference
+$\pfCAFltrustDirCleanDiff$.
+
+\textbf{What the BSR columns can and cannot say.} An attacked BSR is read against
+the rule's clean-model BSR (the floor) and FedAvg's attacked BSR (the undefended
+ceiling), and only on the \emph{implant set}: the seeds on which every re-run
+FedAvg attacked cell implants (last-five-round BSR above $0.5$). So far $\pfImplantDecidedDir$ non-IID seeds have a
+FedAvg attacked cell and $\pfImplantNDir$ of them implant (excluded:
+$\pfImplantExclDir$); for IID, $\pfImplantNIid$ of $\pfImplantDecidedIid$
+(excluded: $\pfImplantExclIid$). Over every decided seed FedAvg's attacked BSR is
+$\pfBSRFedavgAllSeedsDir$ (non-IID) and $\pfBSRFedavgAllSeedsIid$ (IID), against
+clean floors of $\pfBSRFedavgDirCleanFix$ and $\pfBSRFedavgIidCleanFix$. The BSR
+columns of Table~\ref{tab:p1} are means over the implant set; CA, DR and FPR use
+every paired seed.
+% Implant rule: paper/analyse_postfix.py --implant-bsr 0.5 (iteration 10).
+
+\begin{table*}[t]
+\centering
+\caption{Controlled A/B on CICIoT2023 (re-run). For each rule: mean of the defect arm
+(Def), of the fixed arm (Fix), paired difference Fix$-$Def ($\Delta$), and
+Holm-corrected exact sign-flip $p$ ($p_H$, Sec.~\ref{sec:setup}). Ten paired seeds per cell when complete; a cell
+prints once three paired seeds exist. CA: clean accuracy; BSR: backdoor success
+rate, whose clean-run value is the floor for the attacked one; attacked BSR is
+averaged over the implant set only (Sec.~\ref{sec:p1}).}
+\label{tab:p1}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l cccc cccc cccc@{}}
+\toprule
+& \multicolumn{4}{c}{CA, clean} & \multicolumn{4}{c}{CA, attacked} & \multicolumn{4}{c}{BSR, attacked} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(l){10-13}
+rule & Def & Fix & $\Delta$ & $p_H$ & Def & Fix & $\Delta$ & $p_H$ & Def & Fix & $\Delta$ & $p_H$ \\
+\midrule
+\multicolumn{13}{@{}l}{\emph{Dirichlet($\alpha=0.5$)}} \\
+FedAvg & \pfCAFedavgDirCleanDef & \pfCAFedavgDirCleanFix & $\pfCAFedavgDirCleanDiff$ & \pfCAFedavgDirCleanPh & \pfCAFedavgDirAtkDef & \pfCAFedavgDirAtkFix & $\pfCAFedavgDirAtkDiff$ & \pfCAFedavgDirAtkPh & \pfBSRFedavgDirAtkDef & \pfBSRFedavgDirAtkFix & $\pfBSRFedavgDirAtkDiff$ & \pfBSRFedavgDirAtkPh \\
+Median & \pfCAMedianDirCleanDef & \pfCAMedianDirCleanFix & $\pfCAMedianDirCleanDiff$ & \pfCAMedianDirCleanPh & \pfCAMedianDirAtkDef & \pfCAMedianDirAtkFix & $\pfCAMedianDirAtkDiff$ & \pfCAMedianDirAtkPh & \pfBSRMedianDirAtkDef & \pfBSRMedianDirAtkFix & $\pfBSRMedianDirAtkDiff$ & \pfBSRMedianDirAtkPh \\
+Trimmed mean & \pfCATrimmedDirCleanDef & \pfCATrimmedDirCleanFix & $\pfCATrimmedDirCleanDiff$ & \pfCATrimmedDirCleanPh & \pfCATrimmedDirAtkDef & \pfCATrimmedDirAtkFix & $\pfCATrimmedDirAtkDiff$ & \pfCATrimmedDirAtkPh & \pfBSRTrimmedDirAtkDef & \pfBSRTrimmedDirAtkFix & $\pfBSRTrimmedDirAtkDiff$ & \pfBSRTrimmedDirAtkPh \\
+Krum & \pfCAKrumDirCleanDef & \pfCAKrumDirCleanFix & $\pfCAKrumDirCleanDiff$ & \pfCAKrumDirCleanPh & \pfCAKrumDirAtkDef & \pfCAKrumDirAtkFix & $\pfCAKrumDirAtkDiff$ & \pfCAKrumDirAtkPh & \pfBSRKrumDirAtkDef & \pfBSRKrumDirAtkFix & $\pfBSRKrumDirAtkDiff$ & \pfBSRKrumDirAtkPh \\
+Bulyan & \pfCABulyanDirCleanDef & \pfCABulyanDirCleanFix & $\pfCABulyanDirCleanDiff$ & \pfCABulyanDirCleanPh & \pfCABulyanDirAtkDef & \pfCABulyanDirAtkFix & $\pfCABulyanDirAtkDiff$ & \pfCABulyanDirAtkPh & \pfBSRBulyanDirAtkDef & \pfBSRBulyanDirAtkFix & $\pfBSRBulyanDirAtkDiff$ & \pfBSRBulyanDirAtkPh \\
+RFA & \pfCARfaDirCleanDef & \pfCARfaDirCleanFix & $\pfCARfaDirCleanDiff$ & \pfCARfaDirCleanPh & \pfCARfaDirAtkDef & \pfCARfaDirAtkFix & $\pfCARfaDirAtkDiff$ & \pfCARfaDirAtkPh & \pfBSRRfaDirAtkDef & \pfBSRRfaDirAtkFix & $\pfBSRRfaDirAtkDiff$ & \pfBSRRfaDirAtkPh \\
+NormClip & \pfCANormclipDirCleanDef & \pfCANormclipDirCleanFix & $\pfCANormclipDirCleanDiff$ & \pfCANormclipDirCleanPh & \pfCANormclipDirAtkDef & \pfCANormclipDirAtkFix & $\pfCANormclipDirAtkDiff$ & \pfCANormclipDirAtkPh & \pfBSRNormclipDirAtkDef & \pfBSRNormclipDirAtkFix & $\pfBSRNormclipDirAtkDiff$ & \pfBSRNormclipDirAtkPh \\
+FLAME & \pfCAFlameDirCleanDef & \pfCAFlameDirCleanFix & $\pfCAFlameDirCleanDiff$ & \pfCAFlameDirCleanPh & \pfCAFlameDirAtkDef & \pfCAFlameDirAtkFix & $\pfCAFlameDirAtkDiff$ & \pfCAFlameDirAtkPh & \pfBSRFlameDirAtkDef & \pfBSRFlameDirAtkFix & $\pfBSRFlameDirAtkDiff$ & \pfBSRFlameDirAtkPh \\
+FLTrust & \pfCAFltrustDirCleanDef & \pfCAFltrustDirCleanFix & $\pfCAFltrustDirCleanDiff$ & \pfCAFltrustDirCleanPh & \pfCAFltrustDirAtkDef & \pfCAFltrustDirAtkFix & $\pfCAFltrustDirAtkDiff$ & \pfCAFltrustDirAtkPh & \pfBSRFltrustDirAtkDef & \pfBSRFltrustDirAtkFix & $\pfBSRFltrustDirAtkDiff$ & \pfBSRFltrustDirAtkPh \\
+FoolsGold & \pfCAFoolsgoldDirCleanDef & \pfCAFoolsgoldDirCleanFix & $\pfCAFoolsgoldDirCleanDiff$ & \pfCAFoolsgoldDirCleanPh & \pfCAFoolsgoldDirAtkDef & \pfCAFoolsgoldDirAtkFix & $\pfCAFoolsgoldDirAtkDiff$ & \pfCAFoolsgoldDirAtkPh & \pfBSRFoolsgoldDirAtkDef & \pfBSRFoolsgoldDirAtkFix & $\pfBSRFoolsgoldDirAtkDiff$ & \pfBSRFoolsgoldDirAtkPh \\
+GradCos & \pfCAGradcosDirCleanDef & \pfCAGradcosDirCleanFix & $\pfCAGradcosDirCleanDiff$ & \pfCAGradcosDirCleanPh & \pfCAGradcosDirAtkDef & \pfCAGradcosDirAtkFix & $\pfCAGradcosDirAtkDiff$ & \pfCAGradcosDirAtkPh & \pfBSRGradcosDirAtkDef & \pfBSRGradcosDirAtkFix & $\pfBSRGradcosDirAtkDiff$ & \pfBSRGradcosDirAtkPh \\
+FLDetector & \pfCAFldetectorDirCleanDef & \pfCAFldetectorDirCleanFix & $\pfCAFldetectorDirCleanDiff$ & \pfCAFldetectorDirCleanPh & \pfCAFldetectorDirAtkDef & \pfCAFldetectorDirAtkFix & $\pfCAFldetectorDirAtkDiff$ & \pfCAFldetectorDirAtkPh & \pfBSRFldetectorDirAtkDef & \pfBSRFldetectorDirAtkFix & $\pfBSRFldetectorDirAtkDiff$ & \pfBSRFldetectorDirAtkPh \\
+AlignIns & \pfCAAligninsDirCleanDef & \pfCAAligninsDirCleanFix & $\pfCAAligninsDirCleanDiff$ & \pfCAAligninsDirCleanPh & \pfCAAligninsDirAtkDef & \pfCAAligninsDirAtkFix & $\pfCAAligninsDirAtkDiff$ & \pfCAAligninsDirAtkPh & \pfBSRAligninsDirAtkDef & \pfBSRAligninsDirAtkFix & $\pfBSRAligninsDirAtkDiff$ & \pfBSRAligninsDirAtkPh \\
+\midrule
+\multicolumn{13}{@{}l}{\emph{IID}} \\
+FedAvg & \pfCAFedavgIidCleanDef & \pfCAFedavgIidCleanFix & $\pfCAFedavgIidCleanDiff$ & \pfCAFedavgIidCleanPh & \pfCAFedavgIidAtkDef & \pfCAFedavgIidAtkFix & $\pfCAFedavgIidAtkDiff$ & \pfCAFedavgIidAtkPh & \pfBSRFedavgIidAtkDef & \pfBSRFedavgIidAtkFix & $\pfBSRFedavgIidAtkDiff$ & \pfBSRFedavgIidAtkPh \\
+Median & \pfCAMedianIidCleanDef & \pfCAMedianIidCleanFix & $\pfCAMedianIidCleanDiff$ & \pfCAMedianIidCleanPh & \pfCAMedianIidAtkDef & \pfCAMedianIidAtkFix & $\pfCAMedianIidAtkDiff$ & \pfCAMedianIidAtkPh & \pfBSRMedianIidAtkDef & \pfBSRMedianIidAtkFix & $\pfBSRMedianIidAtkDiff$ & \pfBSRMedianIidAtkPh \\
+Trimmed mean & \pfCATrimmedIidCleanDef & \pfCATrimmedIidCleanFix & $\pfCATrimmedIidCleanDiff$ & \pfCATrimmedIidCleanPh & \pfCATrimmedIidAtkDef & \pfCATrimmedIidAtkFix & $\pfCATrimmedIidAtkDiff$ & \pfCATrimmedIidAtkPh & \pfBSRTrimmedIidAtkDef & \pfBSRTrimmedIidAtkFix & $\pfBSRTrimmedIidAtkDiff$ & \pfBSRTrimmedIidAtkPh \\
+Krum & \pfCAKrumIidCleanDef & \pfCAKrumIidCleanFix & $\pfCAKrumIidCleanDiff$ & \pfCAKrumIidCleanPh & \pfCAKrumIidAtkDef & \pfCAKrumIidAtkFix & $\pfCAKrumIidAtkDiff$ & \pfCAKrumIidAtkPh & \pfBSRKrumIidAtkDef & \pfBSRKrumIidAtkFix & $\pfBSRKrumIidAtkDiff$ & \pfBSRKrumIidAtkPh \\
+Bulyan & \pfCABulyanIidCleanDef & \pfCABulyanIidCleanFix & $\pfCABulyanIidCleanDiff$ & \pfCABulyanIidCleanPh & \pfCABulyanIidAtkDef & \pfCABulyanIidAtkFix & $\pfCABulyanIidAtkDiff$ & \pfCABulyanIidAtkPh & \pfBSRBulyanIidAtkDef & \pfBSRBulyanIidAtkFix & $\pfBSRBulyanIidAtkDiff$ & \pfBSRBulyanIidAtkPh \\
+RFA & \pfCARfaIidCleanDef & \pfCARfaIidCleanFix & $\pfCARfaIidCleanDiff$ & \pfCARfaIidCleanPh & \pfCARfaIidAtkDef & \pfCARfaIidAtkFix & $\pfCARfaIidAtkDiff$ & \pfCARfaIidAtkPh & \pfBSRRfaIidAtkDef & \pfBSRRfaIidAtkFix & $\pfBSRRfaIidAtkDiff$ & \pfBSRRfaIidAtkPh \\
+NormClip & \pfCANormclipIidCleanDef & \pfCANormclipIidCleanFix & $\pfCANormclipIidCleanDiff$ & \pfCANormclipIidCleanPh & \pfCANormclipIidAtkDef & \pfCANormclipIidAtkFix & $\pfCANormclipIidAtkDiff$ & \pfCANormclipIidAtkPh & \pfBSRNormclipIidAtkDef & \pfBSRNormclipIidAtkFix & $\pfBSRNormclipIidAtkDiff$ & \pfBSRNormclipIidAtkPh \\
+FLAME & \pfCAFlameIidCleanDef & \pfCAFlameIidCleanFix & $\pfCAFlameIidCleanDiff$ & \pfCAFlameIidCleanPh & \pfCAFlameIidAtkDef & \pfCAFlameIidAtkFix & $\pfCAFlameIidAtkDiff$ & \pfCAFlameIidAtkPh & \pfBSRFlameIidAtkDef & \pfBSRFlameIidAtkFix & $\pfBSRFlameIidAtkDiff$ & \pfBSRFlameIidAtkPh \\
+FLTrust & \pfCAFltrustIidCleanDef & \pfCAFltrustIidCleanFix & $\pfCAFltrustIidCleanDiff$ & \pfCAFltrustIidCleanPh & \pfCAFltrustIidAtkDef & \pfCAFltrustIidAtkFix & $\pfCAFltrustIidAtkDiff$ & \pfCAFltrustIidAtkPh & \pfBSRFltrustIidAtkDef & \pfBSRFltrustIidAtkFix & $\pfBSRFltrustIidAtkDiff$ & \pfBSRFltrustIidAtkPh \\
+FoolsGold & \pfCAFoolsgoldIidCleanDef & \pfCAFoolsgoldIidCleanFix & $\pfCAFoolsgoldIidCleanDiff$ & \pfCAFoolsgoldIidCleanPh & \pfCAFoolsgoldIidAtkDef & \pfCAFoolsgoldIidAtkFix & $\pfCAFoolsgoldIidAtkDiff$ & \pfCAFoolsgoldIidAtkPh & \pfBSRFoolsgoldIidAtkDef & \pfBSRFoolsgoldIidAtkFix & $\pfBSRFoolsgoldIidAtkDiff$ & \pfBSRFoolsgoldIidAtkPh \\
+GradCos & \pfCAGradcosIidCleanDef & \pfCAGradcosIidCleanFix & $\pfCAGradcosIidCleanDiff$ & \pfCAGradcosIidCleanPh & \pfCAGradcosIidAtkDef & \pfCAGradcosIidAtkFix & $\pfCAGradcosIidAtkDiff$ & \pfCAGradcosIidAtkPh & \pfBSRGradcosIidAtkDef & \pfBSRGradcosIidAtkFix & $\pfBSRGradcosIidAtkDiff$ & \pfBSRGradcosIidAtkPh \\
+FLDetector & \pfCAFldetectorIidCleanDef & \pfCAFldetectorIidCleanFix & $\pfCAFldetectorIidCleanDiff$ & \pfCAFldetectorIidCleanPh & \pfCAFldetectorIidAtkDef & \pfCAFldetectorIidAtkFix & $\pfCAFldetectorIidAtkDiff$ & \pfCAFldetectorIidAtkPh & \pfBSRFldetectorIidAtkDef & \pfBSRFldetectorIidAtkFix & $\pfBSRFldetectorIidAtkDiff$ & \pfBSRFldetectorIidAtkPh \\
+AlignIns & \pfCAAligninsIidCleanDef & \pfCAAligninsIidCleanFix & $\pfCAAligninsIidCleanDiff$ & \pfCAAligninsIidCleanPh & \pfCAAligninsIidAtkDef & \pfCAAligninsIidAtkFix & $\pfCAAligninsIidAtkDiff$ & \pfCAAligninsIidAtkPh & \pfBSRAligninsIidAtkDef & \pfBSRAligninsIidAtkFix & $\pfBSRAligninsIidAtkDiff$ & \pfBSRAligninsIidAtkPh \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Exclusion decisions in the controlled A/B (re-run), for the eight rules that
+exclude clients. FPR in clean runs is the fraction of all clients excluded; DR and
+FPR in attacked runs are the fractions of malicious and of honest clients
+excluded. Def / Fix / $\Delta$ / $p_H$ as in Table~\ref{tab:p1}.}
+\label{tab:p1flag}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l cccc cccc cccc@{}}
+\toprule
+& \multicolumn{4}{c}{FPR, clean} & \multicolumn{4}{c}{DR, attacked} & \multicolumn{4}{c}{FPR, attacked} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(l){10-13}
+rule & Def & Fix & $\Delta$ & $p_H$ & Def & Fix & $\Delta$ & $p_H$ & Def & Fix & $\Delta$ & $p_H$ \\
+\midrule
+\multicolumn{13}{@{}l}{\emph{Dirichlet($\alpha=0.5$)}} \\
+Krum & \pfFPRKrumDirCleanDef & \pfFPRKrumDirCleanFix & $\pfFPRKrumDirCleanDiff$ & \pfFPRKrumDirCleanPh & \pfDRKrumDirAtkDef & \pfDRKrumDirAtkFix & $\pfDRKrumDirAtkDiff$ & \pfDRKrumDirAtkPh & \pfFPRKrumDirAtkDef & \pfFPRKrumDirAtkFix & $\pfFPRKrumDirAtkDiff$ & \pfFPRKrumDirAtkPh \\
+Bulyan & \pfFPRBulyanDirCleanDef & \pfFPRBulyanDirCleanFix & $\pfFPRBulyanDirCleanDiff$ & \pfFPRBulyanDirCleanPh & \pfDRBulyanDirAtkDef & \pfDRBulyanDirAtkFix & $\pfDRBulyanDirAtkDiff$ & \pfDRBulyanDirAtkPh & \pfFPRBulyanDirAtkDef & \pfFPRBulyanDirAtkFix & $\pfFPRBulyanDirAtkDiff$ & \pfFPRBulyanDirAtkPh \\
+FLAME & \pfFPRFlameDirCleanDef & \pfFPRFlameDirCleanFix & $\pfFPRFlameDirCleanDiff$ & \pfFPRFlameDirCleanPh & \pfDRFlameDirAtkDef & \pfDRFlameDirAtkFix & $\pfDRFlameDirAtkDiff$ & \pfDRFlameDirAtkPh & \pfFPRFlameDirAtkDef & \pfFPRFlameDirAtkFix & $\pfFPRFlameDirAtkDiff$ & \pfFPRFlameDirAtkPh \\
+FLTrust & \pfFPRFltrustDirCleanDef & \pfFPRFltrustDirCleanFix & $\pfFPRFltrustDirCleanDiff$ & \pfFPRFltrustDirCleanPh & \pfDRFltrustDirAtkDef & \pfDRFltrustDirAtkFix & $\pfDRFltrustDirAtkDiff$ & \pfDRFltrustDirAtkPh & \pfFPRFltrustDirAtkDef & \pfFPRFltrustDirAtkFix & $\pfFPRFltrustDirAtkDiff$ & \pfFPRFltrustDirAtkPh \\
+FoolsGold & \pfFPRFoolsgoldDirCleanDef & \pfFPRFoolsgoldDirCleanFix & $\pfFPRFoolsgoldDirCleanDiff$ & \pfFPRFoolsgoldDirCleanPh & \pfDRFoolsgoldDirAtkDef & \pfDRFoolsgoldDirAtkFix & $\pfDRFoolsgoldDirAtkDiff$ & \pfDRFoolsgoldDirAtkPh & \pfFPRFoolsgoldDirAtkDef & \pfFPRFoolsgoldDirAtkFix & $\pfFPRFoolsgoldDirAtkDiff$ & \pfFPRFoolsgoldDirAtkPh \\
+GradCos & \pfFPRGradcosDirCleanDef & \pfFPRGradcosDirCleanFix & $\pfFPRGradcosDirCleanDiff$ & \pfFPRGradcosDirCleanPh & \pfDRGradcosDirAtkDef & \pfDRGradcosDirAtkFix & $\pfDRGradcosDirAtkDiff$ & \pfDRGradcosDirAtkPh & \pfFPRGradcosDirAtkDef & \pfFPRGradcosDirAtkFix & $\pfFPRGradcosDirAtkDiff$ & \pfFPRGradcosDirAtkPh \\
+FLDetector & \pfFPRFldetectorDirCleanDef & \pfFPRFldetectorDirCleanFix & $\pfFPRFldetectorDirCleanDiff$ & \pfFPRFldetectorDirCleanPh & \pfDRFldetectorDirAtkDef & \pfDRFldetectorDirAtkFix & $\pfDRFldetectorDirAtkDiff$ & \pfDRFldetectorDirAtkPh & \pfFPRFldetectorDirAtkDef & \pfFPRFldetectorDirAtkFix & $\pfFPRFldetectorDirAtkDiff$ & \pfFPRFldetectorDirAtkPh \\
+AlignIns & \pfFPRAligninsDirCleanDef & \pfFPRAligninsDirCleanFix & $\pfFPRAligninsDirCleanDiff$ & \pfFPRAligninsDirCleanPh & \pfDRAligninsDirAtkDef & \pfDRAligninsDirAtkFix & $\pfDRAligninsDirAtkDiff$ & \pfDRAligninsDirAtkPh & \pfFPRAligninsDirAtkDef & \pfFPRAligninsDirAtkFix & $\pfFPRAligninsDirAtkDiff$ & \pfFPRAligninsDirAtkPh \\
+\midrule
+\multicolumn{13}{@{}l}{\emph{IID}} \\
+Krum & \pfFPRKrumIidCleanDef & \pfFPRKrumIidCleanFix & $\pfFPRKrumIidCleanDiff$ & \pfFPRKrumIidCleanPh & \pfDRKrumIidAtkDef & \pfDRKrumIidAtkFix & $\pfDRKrumIidAtkDiff$ & \pfDRKrumIidAtkPh & \pfFPRKrumIidAtkDef & \pfFPRKrumIidAtkFix & $\pfFPRKrumIidAtkDiff$ & \pfFPRKrumIidAtkPh \\
+Bulyan & \pfFPRBulyanIidCleanDef & \pfFPRBulyanIidCleanFix & $\pfFPRBulyanIidCleanDiff$ & \pfFPRBulyanIidCleanPh & \pfDRBulyanIidAtkDef & \pfDRBulyanIidAtkFix & $\pfDRBulyanIidAtkDiff$ & \pfDRBulyanIidAtkPh & \pfFPRBulyanIidAtkDef & \pfFPRBulyanIidAtkFix & $\pfFPRBulyanIidAtkDiff$ & \pfFPRBulyanIidAtkPh \\
+FLAME & \pfFPRFlameIidCleanDef & \pfFPRFlameIidCleanFix & $\pfFPRFlameIidCleanDiff$ & \pfFPRFlameIidCleanPh & \pfDRFlameIidAtkDef & \pfDRFlameIidAtkFix & $\pfDRFlameIidAtkDiff$ & \pfDRFlameIidAtkPh & \pfFPRFlameIidAtkDef & \pfFPRFlameIidAtkFix & $\pfFPRFlameIidAtkDiff$ & \pfFPRFlameIidAtkPh \\
+FLTrust & \pfFPRFltrustIidCleanDef & \pfFPRFltrustIidCleanFix & $\pfFPRFltrustIidCleanDiff$ & \pfFPRFltrustIidCleanPh & \pfDRFltrustIidAtkDef & \pfDRFltrustIidAtkFix & $\pfDRFltrustIidAtkDiff$ & \pfDRFltrustIidAtkPh & \pfFPRFltrustIidAtkDef & \pfFPRFltrustIidAtkFix & $\pfFPRFltrustIidAtkDiff$ & \pfFPRFltrustIidAtkPh \\
+FoolsGold & \pfFPRFoolsgoldIidCleanDef & \pfFPRFoolsgoldIidCleanFix & $\pfFPRFoolsgoldIidCleanDiff$ & \pfFPRFoolsgoldIidCleanPh & \pfDRFoolsgoldIidAtkDef & \pfDRFoolsgoldIidAtkFix & $\pfDRFoolsgoldIidAtkDiff$ & \pfDRFoolsgoldIidAtkPh & \pfFPRFoolsgoldIidAtkDef & \pfFPRFoolsgoldIidAtkFix & $\pfFPRFoolsgoldIidAtkDiff$ & \pfFPRFoolsgoldIidAtkPh \\
+GradCos & \pfFPRGradcosIidCleanDef & \pfFPRGradcosIidCleanFix & $\pfFPRGradcosIidCleanDiff$ & \pfFPRGradcosIidCleanPh & \pfDRGradcosIidAtkDef & \pfDRGradcosIidAtkFix & $\pfDRGradcosIidAtkDiff$ & \pfDRGradcosIidAtkPh & \pfFPRGradcosIidAtkDef & \pfFPRGradcosIidAtkFix & $\pfFPRGradcosIidAtkDiff$ & \pfFPRGradcosIidAtkPh \\
+FLDetector & \pfFPRFldetectorIidCleanDef & \pfFPRFldetectorIidCleanFix & $\pfFPRFldetectorIidCleanDiff$ & \pfFPRFldetectorIidCleanPh & \pfDRFldetectorIidAtkDef & \pfDRFldetectorIidAtkFix & $\pfDRFldetectorIidAtkDiff$ & \pfDRFldetectorIidAtkPh & \pfFPRFldetectorIidAtkDef & \pfFPRFldetectorIidAtkFix & $\pfFPRFldetectorIidAtkDiff$ & \pfFPRFldetectorIidAtkPh \\
+AlignIns & \pfFPRAligninsIidCleanDef & \pfFPRAligninsIidCleanFix & $\pfFPRAligninsIidCleanDiff$ & \pfFPRAligninsIidCleanPh & \pfDRAligninsIidAtkDef & \pfDRAligninsIidAtkFix & $\pfDRAligninsIidAtkDiff$ & \pfDRAligninsIidAtkPh & \pfFPRAligninsIidAtkDef & \pfFPRAligninsIidAtkFix & $\pfFPRAligninsIidAtkDiff$ & \pfFPRAligninsIidAtkPh \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+\subsection{Mechanisms}
+\label{sec:mech}
+
+Proposition~\ref{prop:decomp} says what each rule is given. Whether that changes
+what the rule decides depends on the rule, and the three rules below span the
+possibilities.
+
+\textbf{FLTrust: the counter makes every client trustworthy.} FLTrust excludes a
+client only if its update has non-positive cosine with the server's update $g_0$.
+The server's update is itself a transmitted update with a counter block, $B_0$,
+so Proposition~\ref{prop:decomp} applies to the pair $(d_i,g_0)$.
+
+\begin{corollary}[FLTrust excludes no one under the defect]
+\label{cor:fltrust}
+Let $q_i=\|c_i\|^2/\|d_i\|^2=LB_i^2/\|d_i\|^2$ be the counter's share of the squared
+norm of client $i$'s update and $q_0=LB_0^2/\|g_0\|^2$ that of the server's update,
+with $B_i,B_0>0$. Then
+\begin{equation}
+\label{eq:fltbound}
+\cos(d_i,g_0)\;\ge\;\sqrt{q_iq_0}-\sqrt{(1-q_i)(1-q_0)},
+\end{equation}
+and the right-hand side is positive if and only if $q_i+q_0>1$. Under that
+condition client $i$ receives a positive trust score whatever its trainable update
+$u_i$ is. By~\eqref{eq:norm}, FLTrust's rescaling factor is
+$\|g_0\|/\|d_i\|=\big(\|u_0\|^2+\|r_0\|^2+LB_0^2\big)^{1/2}\big/\big(\|u_i\|^2+\|r_i\|^2+LB_i^2\big)^{1/2}
+=(B_0/B_i)\sqrt{q_i/q_0}$, which tends to $B_0/B_i$ as $q_i,q_0\to1$.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+Apply~\eqref{eq:cos} to the split into the counter block and the rest, with
+$\cos(c_i,c_0)=1$ (Sec.~\ref{sup:proofs}).
+\end{proof}
+
+The condition needs no assumption about the data or the partition: shares above
+one half on both sides suffice. The server's share is the weaker ($B_0=\dfFltBzero$
+batches), so the re-run's FLTrust cells log $q_0$, the smallest $q_i$, the bound
+and the smallest full-vector cosine every round. Over $\csFltNrounds$ logged rounds, $q_0$ lies in
+$\csFltQzeroMin$--$\csFltQzeroMax$, the smallest $q_i$ is $\csFltQiMin$, the
+smallest $q_i+q_0$ is $\csFltQsumMin$ and the smallest bound $\csFltBoundMin$. The
+condition is sufficient, not necessary: in $\csFltNroundsQsumLeOne$ of the
+$\csFltNrounds$ rounds the bound guarantees nothing, yet no measured cosine is
+non-positive in any round ($\csFltNroundsCosNonpos$; smallest $\csFltCosFullMin$),
+and across the $\csFltNdefectRuns$ defect-arm runs logged so far the largest
+per-round fraction excluded is $\csFltDefectMaxExcl$.
+% RE-CHECK the counts above as P3 FLTrust cells land (make_numbers_calib6.py).
+In the re-run the defect arm's DR, attacked FPR and clean FPR are
+$\pfDRFltrustDirAtkDef$, $\pfFPRFltrustDirAtkDef$ and $\pfFPRFltrustDirCleanDef$
+(Table~\ref{tab:p1flag}). The rescaling factor
+$\approx B_0/B_i$ also shrinks the aggregate step about eightfold. Removing the
+counter does not make FLTrust a good detector here: its fixed arm excludes
+malicious clients at $\pfDRFltrustDirAtkFix$ and honest ones at
+$\pfFPRFltrustDirAtkFix$, so a $300$-row root direction disagrees with
+honest updates about as often as with poisoned ones. Under IID shards it is worse:
+in all $\csFltShutNIid$ of $\csFltShutRunsIid$ fixed-arm runs (Dirichlet:
+$\csFltShutNDir$ of $\csFltShutRunsDir$; defect arm: $\csFltShutDefN$ of $\csFltShutDefRuns$) FLTrust gives every
+client zero trust from round $\csFltShutFirstIid$--$\csFltShutLastIid$ on, and the
+model stops moving (clean CA $\pfCAFltrustIidCleanFix$ against
+$\pfCAFltrustIidCleanDef$), so its DR of $\pfDRFltrustIidAtkFix$ is a shutdown, not
+detection. The cause is our class-balanced root set, not the fix
+(Sec.~\ref{sup:fltshut}): in a replay every client's cosine to the root update is
+then $\fsBalCosLo$ to $\fsBalCosHi$, against $\fsNatCosLo$ to $\fsNatCosHi$ for a
+root drawn from the training distribution. Once the model fits the majority
+classes, the balanced root pulls against every IID client, and zero total trust
+leaves the model unchanged, so the state is absorbing. The counter hid this behind a detector that never fires.
+
+\textbf{What a falsified counter buys under FLTrust.} The counter is a value each
+client sets for itself (Sec.~\ref{sec:setup}). Under the defect FLTrust adds
+$\mathrm{ReLU}(\langle d_j,g_0\rangle)\,\|d_j\|^{-2}\,d_j$ for every client and
+divides by the sum of trust scores, so client $j$'s influence on everything but
+the counter is the norm $M_j$ of the non-counter part of that term.
+
+\begin{corollary}[A falsified counter buys admission and a fixed step]
+\label{cor:falsify}
+In the notation of Corollary~\ref{cor:fltrust}, let $e_j$ and $e_0$ be the
+non-counter blocks of $d_j$ and $g_0$, and $\rho_j=\cos(e_j,e_0)$. Whenever
+client $j$ is admitted,
+\begin{equation}
+\label{eq:mj}
+\frac{M_j}{\|g_0\|}=\rho_j(1-q_j)\sqrt{1-q_0}+\sqrt{q_0\,q_j(1-q_j)}.
+\end{equation}
+A client that chooses its counter value chooses $q_j\in[0,1)$ freely, whatever
+$e_j$ is. The largest value it can obtain is
+\begin{equation}
+\label{eq:mstar}
+\frac{M^*}{\|g_0\|}=\tfrac12\Big(\rho\sqrt{1-q_0}+\sqrt{\rho^2(1-q_0)+q_0}\Big),
+\end{equation}
+which does not depend on $\|e_j\|$, is positive for every $\rho\in[-1,1]$ when
+$q_0>0$, and for $\rho=0$ is attained at $q_j=\tfrac12$ whatever $q_0$.
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+Expand $\langle d_j,g_0\rangle$ blockwise and maximise over $q_j=\sin^2\theta$
+(Sec.~\ref{sup:proofs}).
+\end{proof}
+
+So direction does not decide admission: an update pointing straight away from
+the server's ($\rho=-1$), which the fixed arm excludes, is admitted with a step
+of $\tfrac12(1-\sqrt{1-q_0})\|g_0\|$, while honest clients lose ground as the
+counter dominates them ($M_j\to0$ as $q_j\to1$). Our FLTrust implementation
+reproduces Eqs.~\eqref{eq:mj} and~\eqref{eq:mstar} to a relative error of
+$\ffMaxRelErr$, and a $\rho=-1$ attacker, excluded when it reports the batches it
+ran, is admitted with a falsified counter at $\ffAmpNeg\times$ the median honest
+step (Sec.~\ref{sup:falsify}; one round, synthetic inputs; we have not trained
+with a falsifying client).
+
+\textbf{FoolsGold: a history that is mostly counter.} FoolsGold compares the
+running sums $H_i(t)=\sum_{\tau\le t}d_i(\tau)$ rather than single updates. The
+counter block of $H_i(t)$ is $\big(\sum_{\tau\le t}B_i(\tau)\big)\mathbf{1}_L$:
+every round adds to it with the same sign, so its norm grows linearly in $t$,
+whereas the trainable block grows linearly only if the increments $u_i(\tau)$ stay
+aligned across rounds, and more slowly if they do not.
+
+\begin{lemma}[Histories stay compressed]
+\label{lem:history}
+If client $i$ runs at least $B_{\min}>0$ batches in each of rounds $1,\dots,t$ and
+every trainable increment satisfies $\|u_i(\tau)\|\le\eta$, then the trainable share
+of its history obeys
+\[
+1-s_i(t)\;=\;\frac{\|U_i(t)\|^2}{\|H_i(t)\|^2}\;\le\;\frac{\eta^2}{\eta^2+LB_{\min}^2}
+\qquad\text{for every }t,
+\]
+where $U_i(t)=\sum_{\tau\le t}u_i(\tau)$ is the trainable block of $H_i(t)$.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+$\|U_i(t)\|\le t\eta$ while the counter block grows at least as $\sqrt{L}\,tB_{\min}$
+(Sec.~\ref{sup:proofs}).
+\end{proof}
+
+The bound does not depend on $t$, so the compression never wears off.
+FoolsGold's weight is a decreasing function of $\max_j\cos(H_i,H_j)$, normalised
+and passed through a logit, which stretch residues of order $2(1-s)$ to the full
+range: which clients end near weight zero is then decided by small differences in
+a counter-dominated geometry. That is the prediction. In the re-run's clean non-IID cells both
+arms exclude most clients (Sec.~\ref{sec:p1}), and a diagnostic run
+(Sec.~\ref{sup:fgdiag}) traces the fixed arm's exclusions to the label skew:
+$\csFgBaseNMajorDDoS$ of the ten clients have DDoS as their majority class, their
+trainable histories are alike, and FoolsGold reads them as sybils (clean accuracy
+$\csFgBaseCA$); neither our port's weighted mean nor the cumulative history is the
+cause. FoolsGold assumes that honest histories are dissimilar, which fails here
+with or without the counter, so its fixed arm measures this failure, and only its
+defect arm can add a counter effect on top of it.
+
+\textbf{FLAME: a compressed input, an unchanged decision.} FLAME's clustering reads
+the compressed cosine of Corollary~\ref{cor:band}, yet in the first campaign its
+exclusions and clean accuracy were the same in both arms, and so far they are in
+the re-run's clean non-IID cells too (Sec.~\ref{sec:p1}; attacked cells pending).
+When the shares $s_i$ are nearly equal and the buffer cosine nearly constant,
+Eq.~\eqref{eq:cos} is approximately an increasing affine map of the trainable
+cosine, which compresses pairwise cosine distances but preserves their ordering,
+and FLAME's admission step (keep the largest cluster if it holds a majority)
+depends on the cosines mainly through that ordering. We state this as a
+hypothesis, not a verified cause. An exposed input does not imply an affected
+decision, which is why outcomes have to be measured rule by rule.
+
+\textbf{Distance rules and negative controls.} By Corollary~\ref{cor:dist}, clean
+IID cells are the null for Krum, Bulyan and RFA and clean Dirichlet cells the
+exposed case. In attacked runs the attackers' $E_m$-fold counter is a batch-count
+outlier in both partitions, but so is their trainable update (median norm
+$\csMalNormRatioMin$--$\csMalNormRatioMax$ times the honest one in calibration), so
+we predict no sign for the attacked difference and treat it as exploratory. FedAvg,
+the median and the trimmed mean estimate the nondeterminism floor. \PENDING
+% RETIRES WITH: P3 campaign, Krum/Bulyan/RFA and FedAvg/median/trimmed-mean cells (results/postfix_p3)
+
+\textbf{An earlier version of this study} reported four findings that were about
+the counter or the round-one defect, not the rules (Sec.~\ref{sec:retro}); none of
+its numbers is reused.
+
+\section{Discussion and Limitations}
+\label{sec:discussion}
+
+\textbf{Why the hazard survives review.} No accuracy curve reveals an inert
+counter; equal IID shards hide it from distance rules (Corollary~\ref{cor:dist});
+and for cosine rules it breaks nothing visibly, with consequences from none (FLAME)
+to excluding nobody (FLTrust). Failures unrelated to the counter (FoolsGold; FLTrust's
+balanced root) are separated from it only by the fixed arm.
+
+\textbf{What we recommend.} (i) Decide on \texttt{parameters()}, aggregate the
+\sd{}: compute every similarity, distance, norm, clip bound and noise scale on the
+trainable coordinates, and average the full state so that BatchNorm statistics stay
+synchronised. (ii) Log the buffer share $s_i$ of~\eqref{eq:share} each round; a
+share near one means the rule is deciding on buffers. (iii) Test robustness
+code under unequal shard sizes, since equal shards hide the distance exposure.
+(iv) State in the paper which coordinates the rules decide on. The same reasoning
+applies to any non-trainable state a pipeline transmits, including the running
+statistics themselves, whose scale has nothing to do with what a client learned.
+
+\textbf{Limitations,} in the order we expect them to matter.
+\emph{Scale and attack strength.} The campaign is CPU-sized
+(Sec.~\ref{sec:setup}): $10$ clients, $15$ rounds, $40{,}000$ rows, a weak
+detector. A data-poisoning-only backdoor does not survive averaging at this scale
+(Table~\ref{tab:calib}); it implants only because attackers train several local
+epochs, which also makes their updates larger. No $E_m$ we tried implants on every
+non-IID seed within $15$ rounds (Table~\ref{tab:seedcal}), so attacked BSR is read
+only where undefended FedAvg implants: backdoor results concern one calibrated,
+norm-visible attack on a subset of seeds. Exclusions and clean-accuracy effects do
+not depend on the attack succeeding.
+\emph{One architecture for outcomes} ($L=1$). In federated ResNet-20 rounds on
+CIFAR-10 ($L=\gcNBN$, non-IID) the counter carries a median $\gcCntShareDir\%$ of
+the squared update norm, and FLTrust gives two label flippers $\gcAtkWFullDir\%$ of
+its trust on the full vector against $\gcAtkWTrDir\%$ on the trainable one
+over $\gcRounds$ rounds (Table~\ref{tab:gen}). Closed-loop accuracy there does not
+separate the arms at $n=\gcFtN$ (Sec.~\ref{sup:probe}).
+\emph{Feature-space trigger.} The fixed trigger at $0.25\times$ deviates at most
+$\rzSigFixedQtr\sigma$ per feature yet has joint Mahalanobis distance
+$\rzDMFixedQtr$ against a benign $99$th percentile of $\rzPnnFixed$
+(Sec.~\ref{sec:realizable}); our backdoor results are feature-space results only.
+\emph{Survey scope.} Ten hand-read implementations show the convention exists;
+they do not estimate how many published results are affected.
+\emph{Momentum.} With \texttt{momentum=None} PyTorch reads the counter and its
+aggregate changes the model; not studied.
+\emph{Hyperparameters} are untuned defaults shared by both arms; whether tuned
+settings enlarge or shrink the paired differences is open.
+\emph{Recency.} Twelve of the thirteen rules are from 2017--2022; a newer rule's
+exposure must be checked rule by rule, as AlignIns' split prediction shows.
+\emph{Threat model.} Static, feature-space attacker. We have not evaluated adaptive
+attacks on the fixed pipeline, nor trained with an attacker that falsifies its
+counter, whose effect under the defect we derive but do not measure.
+
+\section{Conclusion}
+
+Byzantine-robust rules are defined on model updates but run on whatever vector the
+pipeline transmits. A BatchNorm network's \sd{} contains \nbt{}, inert under the
+default momentum yet dominant in the update's norm; it weakens every pairwise cosine
+and enters distances exactly when batch counts differ, the non-IID case rather than
+the equal-shard one in which such code is usually tested. The remedy is one mask:
+decide on the trainable coordinates, aggregate the full state. What the counter changes is rule-specific: it stops FLTrust from excluding
+anyone, as Corollary~\ref{cor:fltrust} requires, and leaves FLAME's decisions
+unchanged so far. The full controlled campaign is \PENDING.
+% RE-CHECK the interim sentence above against Tables tab:p1/tab:p1flag when P3 completes.
+% RETIRES WITH: P3 campaign (results/postfix_p3)
+We release the pipeline with the fix, the per-round defect diagnostics and the
+trigger audit.
+
+%---------------------------------------------------------------------
+\input{declarations_ieee}
+
+%---------------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}
