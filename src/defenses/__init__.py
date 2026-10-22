@@ -14,7 +14,7 @@ from __future__ import annotations
 
 # Defenses whose robustness comes from update DIRECTION (cosine / Euclidean
 # neighbourhood). These are the ones the low-salience blind spot applies to.
-DIRECTION_BASED = ("krum", "fltrust", "flame", "foolsgold", "gradcos", "alignins")
+DIRECTION_BASED = ("krum", "krum1", "fltrust", "flame", "foolsgold", "gradcos", "alignins")
 
 # Defenses that never inspect direction -- coordinate order statistics, a
 # multivariate median, or norm clipping.
@@ -63,6 +63,9 @@ def _build(cfg, dataset, device):
     if name == "krum":
         from .krum import Krum
         return Krum(num_malicious=cfg.defense.krum_malicious_estimate)
+    if name == "krum1":  # single-winner Krum (R1, iteration 24)
+        from .krum import Krum
+        return Krum(num_malicious=cfg.defense.krum_malicious_estimate, multi=False)
     if name == "fltrust":
         from .fltrust import FLTrust
         return FLTrust(dataset=dataset, cfg=cfg, device=device)

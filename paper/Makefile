@@ -55,6 +55,8 @@ numbers:
 	cd $(ROOT) && $(PY) paper/make_fig_p1.py --res results/postfix_p3
 	cd $(ROOT) && $(PY) paper/make_numbers_generality.py
 	cd $(ROOT) && $(PY) paper/make_numbers_fltshut.py
+	# R1 (iterations/PREREG_R1.md): trained counter-falsifying attacker; paper/numbers_r1.tex
+	cd $(ROOT) && $(PY) paper/analyse_r1.py
 	$(LATEXMK) main.tex
 	$(LATEXMK) supplement.tex
 	$(LATEXMK) -g main.tex

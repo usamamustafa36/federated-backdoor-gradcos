@@ -1,0 +1,67 @@
+# R1 (iteration 24, iterations/PREREG_R1.md): = configs/p3_trainable.yaml with out_dir results/r1_falsify.
+# P3 (iteration 5 prepared; iteration 6 adversary): = configs/p1_trainable.yaml with the round-1
+# aliasing fix ON (federated.copy_initial_global), the seed-robust adversary
+# (attack.mal_selection: share_matched, iteration 6) and out_dir results/postfix_p3. Clean
+# and attacked cells both go here (attacked with --mal-local-epochs $MAL_EPOCHS, suffix _me<k>_sm).
+seed: 42
+seeds:
+- 42
+- 43
+- 44
+- 45
+- 46
+device: auto
+data:
+  dataset: ciciot2023
+  root: data/ciciot2023
+  train_file: train.parquet
+  test_file: test.parquet
+  label_mode: grouped
+  max_train_rows: 40000
+  max_test_rows: 10000
+  min_rows_per_class: 200
+  scaler: standard
+federated:
+  num_clients: 10
+  partition: iid
+  dirichlet_alpha: 0.5
+  rounds: 100
+  local_epochs: 1
+  batch_size: 256
+  clients_per_round: 20
+  copy_initial_global: true
+model:
+  name: cnn_lstm
+  conv_filters: 64
+  lstm_hidden: 128
+  dense_hidden: 64
+  dropout: 0.3
+  lr: 0.001
+attack:
+  enabled: false
+  malicious_ratio: 0.2
+  poison_rate: 0.1
+  trigger_type: fixed
+  target_label: Benign
+  trigger_scale: 1.0
+  donor_quantile: 0.5
+  trigger_mode: sigma
+  evasion_noise: 1.0
+  variant: simple
+  mal_selection: share_matched   # iteration 6: attacker data share = m (+-share_tol)
+  share_tol: 0.01
+defense:
+  name: fedavg
+  signal_subspace: trainable
+  gradcos_threshold: 0.5
+  gradcos_method: clique
+  krum_malicious_estimate: 2
+  gradcos_kappa: 1.5
+  flame_noise_lambda: 0.001
+  trim_beta: 0.2
+  rfa_iters: 8
+logging:
+  out_dir: results/r1_falsify
+  log_every: 1
+training:
+  class_weighting: effective

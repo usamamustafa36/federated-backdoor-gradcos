@@ -1500,3 +1500,65 @@ finished here.)
      abstract (the paper becomes "evaluations silently test a different rule"), and consider strengthening with the
      falsified-counter attack measured closed-loop (Cor. falsify) -- the one place the defect could be an attack surface.
   3. Main 9.63 pp, abstract at exactly 250 words: any addition must be paid for (aim <= 9.5).
+
+## Iteration 24 - 2026-10-23 - R1 (trained counter-falsifying attacker) re-implemented from its pre-registration, unit-tested and launched (CPU pilot + waiter); P3 prereg runner relaunched on CPU; repo paths removed from the main text
+
+- **State at start (02:10):** every runner had died in the 2026-10-22 14:50 reboot (P3 prereg log stops 12:37,
+  run_p3.sh 13:03, reverse 12:36); two more reboots since. P3 **728/1040** cells after `make numbers` (P1 n=10
+  holm 0.0039, P3 n=10 holm 0.0059 supported; P2/P4 n=5 holm 0.0625; S1-S3 complete, not supportable; S4 n=5).
+  Missing prereg cells: IID FLAME (attacked full, both trainable), FLTrust and NormClip (all four) s47-51.
+  **CUDA is in the zombie state** (`torch.ones(1,device='cuda')` -> "CUDA unknown error", nvidia-smi shows 10 MiB
+  and no process): only the user can clear it (sudo; gpu_unwedge_watcher.sh). Everything below runs on CPU.
+- **R1 state found:** PREREG_R1.md, experiments/r1_falsify/{run_r1.sh,wait_and_run.sh,choose_b.py} and
+  configs/r1_*.yaml existed uncommitted, but the code they need (src/attacks/counter.py, engine flag, run_sweep
+  flags, krum1, tests) did not exist anywhere on disk (lost with the earlier agent's uncommitted work). No R1 cell
+  had ever run (results/r1_falsify absent).
+- **Reviewer score before: 4/10, REJECT.** Ranked: (1) no security-relevant outcome that the counter changes
+  (the measured effect is a decision change in FLTrust that buys no CA/BSR difference); (2) family interim (P2/P4
+  n=5) and 32 pf PENDING in the A/B table; (3) repo paths and internal history in the prose (blind review R4);
+  (4) no tests for the engine.
+- **Fix 1 (R1 code, from the prereg spec, no R1 outcome seen):** src/attacks/counter.py (norm bound on the
+  trainable block, never enlarging; counter policies honest/share(q)/median, integer >= 1);
+  FederatedEngine._r1_attack (after variant/boost; bound measured on trainables in both arms; counter written
+  relative to the integer counter the client loaded; per-round `history.counter_attack` record, only present when
+  R1 is active, so P3 JSON schema unchanged); FLTrust logs `mal_step_share`, attackers' trust and honest median
+  trust (logging only; made robust to fltrust_falsify.py's `__new__` construction, which my first version broke);
+  `krum1` = single-winner Krum in the registry; run_sweep `--norm-bound --counter-policy --counter-share`
+  (suffixes `_cp<pol>`, `_nb<b>`; old filenames unchanged). **tests/test_counter_attack.py: 6 tests pass**
+  (share hits q, floor 1, median policy, identity/invalid, norm bound, and Cor. 2 in miniature: a full-vector
+  single Krum selects an off-direction attacker that reports the honest-median counter and rejects it once the
+  counter is masked). 2-round `--quick` plumbing runs (scratch dir) behave as specified. PREREG_R1 **Amendment 1**
+  records the re-implementation, the CPU fallback and the plumbing check.
+- **Fix 2 (R1 analysis):** paper/analyse_r1.py applies the registered tests mechanically (one-sided sign-flip,
+  Holm within primary and mechanism families, FedAvg-reference informativeness gate, A-vs-B exploratory), writes
+  paper/numbers_r1.tex (`\rOne...`, all PENDING now) and results/r1_falsify/summary.json; checked on a synthetic
+  result set in the scratch dir; added to `make numbers`. Not yet \input by main.tex.
+- **Fix 3 (R4 presentation):** every repo path/config key removed from main-text prose (SURVEY.md,
+  flower_builtin_check.py, mal_selection key, PREREG_P3.md x3, analyse_postfix.py, copy_initial_global,
+  p1_full.yaml, make_fig_p1.py); release sentence now mentions unit tests. Supplement keeps its paths (it is the
+  reproducibility appendix). Backups main.tex.pre-iter24.bak, supplement.tex.pre-iter24.bak.
+- **Build/check:** latexmk rc 0, 0 undefined refs. **IEEEtran pages: main 10 (ends at 9.61, was 9.63) /
+  supplement 6.** check_manuscript all PASS except the gate (36 unresolved, was 40; all P3 lane).
+  fltrust_falsify.json float noise from `make numbers` left unstaged.
+- **Jobs left running (all mine, CPU, under systemd-inhibit):**
+  - P3 prereg runner: systemd-inhibit PID 179336 / runner 179337 (3 lanes x 2 threads), log
+    results/postfix_p3/campaign_prereg.log; 11 jobs x 5 cells, ~45-50 min/cell on CPU -> **ETA ~14 h (~16:00
+    2026-10-23)**. Then P2/P4 reach n=10 and the family is final.
+  - R1 pilot: systemd-inhibit PID 181310 / runner 181311 (3 lanes x 2 threads), log results/r1_falsify/pilot.log
+    (+ per-job log_r1pilot*.log); 7 cells, **ETA ~04:30**.
+  - R1 campaign waiter PID 181451 (log results/r1_falsify/campaign.log): waits for 181311, applies choose_b.py,
+    then runs the 160-cell campaign (run_r1.sh campaign) on CUDA (4 lanes) if CUDA works then, else CPU 3 lanes x
+    2 threads (~40 h on CPU). If the GPU is restored while it runs on CPU: kill the run_r1.sh/xargs PIDs it
+    started (not P3's) and relaunch `DEVICE=cuda LANES=4 bash experiments/r1_falsify/run_r1.sh campaign` under
+    systemd-inhibit (resumable).
+  - Not running: the exploratory P3 runners (run_p3.sh / run_p3_reverse.sh, 312 cells missing). Relaunch on GPU
+    after R1 or when CUDA returns: `MAL_EPOCHS=15 DEVICE=cuda LANES=2 bash experiments/postfix/run_p3.sh`.
+- **Score after: 4/10, REJECT** (infrastructure for the one experiment that can change the verdict now exists,
+  is tested and is running; no outcome yet).
+- **Top 3 priorities:**
+  1. Harvest the R1 pilot (choose_b.py output -> b*, record in ledger; pilot outcomes are "seen", not evidence)
+     and check the first campaign cells (`grep -c ERROR results/r1_falsify/log_*.log`, counter_attack records:
+     share policy q_a ~0.5, median policy = honest median, trainable norm ratio <= b*).
+  2. Harvest P3 prereg (P2/P4 n=10) -> mark the family final, re-check abstract/contribution 3 comments.
+  3. When R1 cells land, \input numbers_r1.tex and plan one main-text paragraph + table (pay for it: main is at
+     9.61 pp); report the outcome whatever its sign (a null BSR with a supported mechanism is reported as such).

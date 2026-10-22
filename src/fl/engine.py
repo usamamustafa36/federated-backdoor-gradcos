@@ -302,6 +302,69 @@ class FederatedEngine:
             out.append((cp, fr))
         return out
 
+    def _r1_active(self) -> bool:
+        a = self.cfg.attack
+        return bool(getattr(a, "enabled", False)) and (
+            float(getattr(a, "norm_bound", 0.0) or 0.0) > 0
+            or str(getattr(a, "counter_policy", "honest") or "honest").lower() != "honest")
+
+    def _r1_attack(self, results, rnd: int):
+        """R1 (iterations/PREREG_R1.md; src/attacks/counter.py): norm bound on the
+        trainable block (attack.norm_bound = b, times the median honest trainable
+        norm; measured on the trainable parameters in BOTH arms), then the falsified
+        counter (attack.counter_policy = honest | share | median, attack.counter_share
+        = q). No-op unless one of the two is set."""
+        self._r1_last = None
+        if not self._r1_active():
+            return results
+        from ..attacks import counter as ca
+        b = float(getattr(self.cfg.attack, "norm_bound", 0.0) or 0.0)
+        policy = str(getattr(self.cfg.attack, "counter_policy", "honest") or "honest").lower()
+        q = float(getattr(self.cfg.attack, "counter_share", 0.5) or 0.5)
+        g = np.concatenate([np.asarray(w, dtype=np.float64).ravel() for w in self.global_weights])
+        tmask = self._trainable_mask()
+        if getattr(self, "_cmask", None) is None:
+            self._cmask = ca.counter_flat_mask(self.model)
+        cmask = self._cmask
+        g_floor = g.copy()
+        g_floor[cmask] = np.floor(g[cmask])   # what a loaded integer counter starts from
+        parsed = []
+        for cp, fr in results:
+            nds = parameters_to_ndarrays(fr.parameters)
+            flat = np.concatenate([np.asarray(w, dtype=np.float64).ravel() for w in nds])
+            parsed.append((cp, fr, nds, flat - g_floor, bool(fr.metrics.get("malicious", 0))))
+        honest = [d for (_, _, _, d, mal) in parsed if not mal]
+        if not honest:
+            return results
+        target = float(np.median([np.linalg.norm(d[tmask]) for d in honest]))
+        rec = {"policy": policy, "norm_bound": b, "q": q,
+               "honest_tr_norm_median": target,
+               "honest_counter_inc": [float(x) for x in
+                                      np.median(np.stack([d[cmask] for d in honest]), axis=0)],
+               "mal_counter_inc_trained": [], "mal_counter_inc": [],
+               "mal_norm_factor": [], "mal_tr_norm_ratio": [], "mal_counter_share": []}
+        out = []
+        for cp, fr, nds, d, mal in parsed:
+            if not mal:
+                out.append((cp, fr))
+                continue
+            rec["mal_counter_inc_trained"].append([float(x) for x in d[cmask]])
+            d2, fac = ca.apply_norm_bound(d, tmask, target, b)
+            d2 = ca.falsify_counter(d2, cmask, policy, q=q, honest_deltas=honest)
+            rec["mal_counter_inc"].append([float(x) for x in d2[cmask]])
+            rec["mal_norm_factor"].append(float(fac))
+            rec["mal_tr_norm_ratio"].append(float(np.linalg.norm(d2[tmask]) / (target + 1e-12)))
+            rec["mal_counter_share"].append(ca.counter_share(d2 + (g_floor - g), cmask))
+            flat = g_floor + d2
+            new, off = [], 0
+            for w in nds:
+                new.append(flat[off:off + w.size].reshape(w.shape).astype(w.dtype))
+                off += w.size
+            out.append((cp, FitRes(status=fr.status, parameters=ndarrays_to_parameters(new),
+                                   num_examples=fr.num_examples, metrics=fr.metrics)))
+        self._r1_last = rec
+        return out
+
     def _signal_mask(self) -> np.ndarray:
         """The subspace decisions and logged geometry are measured on.
 
@@ -343,6 +406,7 @@ class FederatedEngine:
             if getattr(self.cfg.attack, "enabled", False):
                 results = self._transform_malicious(results, rnd)
                 results = self._boost_malicious(results)
+                results = self._r1_attack(results, rnd)
 
             # Let defense strategies see the pre-aggregation global model (needed
             # to compute per-client update deltas, FLTrust root direction, etc.).
@@ -395,6 +459,18 @@ class FederatedEngine:
         _fd = getattr(self.strategy, "last_counter_diag", None)
         if _fd is not None:
             hist.fltrust_counter.append(dict(_fd))
+        # R1 (PREREG_R1.md): per-round record of the counter/norm attack and, for
+        # FLTrust, the attackers' share of the trust-weighted trainable step mass.
+        # Only present when the R1 attack is active, so every other cell's JSON
+        # schema is unchanged.
+        if self._r1_active():
+            rec = dict(getattr(self, "_r1_last", {}) or {})
+            _ad = getattr(self.strategy, "last_attack_diag", None)
+            if _ad is not None:
+                rec.update(_ad)
+            if not hasattr(hist, "counter_attack"):
+                hist.counter_attack = []
+            hist.counter_attack.append(rec)
 
         if verbose:
             msg = (f"round {rnd:>3} | acc {ev['accuracy']:.4f} | f1 {ev['macro_f1']:.4f} "

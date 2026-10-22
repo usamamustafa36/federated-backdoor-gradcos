@@ -81,6 +81,14 @@ def parse_args():
                     help="how attacker clients are chosen (default: config, else random); "
                          "share_matched = clients whose combined data share is within "
                          "attack.share_tol of the malicious ratio (iteration 6)")
+    ap.add_argument("--norm-bound", type=float, default=0.0,
+                    help="R1: cap each malicious trainable update at this multiple of "
+                         "the median honest trainable norm (0 = off)")
+    ap.add_argument("--counter-policy", default="honest", choices=["honest", "share", "median"],
+                    help="R1: the num_batches_tracked increment a malicious client reports "
+                         "(src/attacks/counter.py)")
+    ap.add_argument("--counter-share", type=float, default=0.5,
+                    help="R1: target counter share q for --counter-policy share")
     ap.add_argument("--skip-clean", action="store_true",
                     help="run only the attacked cells")
     ap.add_argument("--skip-attacked", action="store_true",
@@ -119,6 +127,15 @@ def cell_name(cfg, tag, seed_suffix: str = "") -> str:
         msuffix += f"_ms{mal_st}"
     if cfg.attack.enabled and getattr(cfg.attack, "mal_selection", "random") == "share_matched":
         msuffix += "_sm"
+    # R1 knobs (iteration 24): suffix only when set, so every older name is unchanged.
+    if cfg.attack.enabled:
+        pol = str(getattr(cfg.attack, "counter_policy", "honest") or "honest")
+        if pol != "honest":
+            q = float(getattr(cfg.attack, "counter_share", 0.5) or 0.5)
+            msuffix += f"_cp{pol}" + (f"{q:g}" if pol == "share" and q != 0.5 else "")
+        nb = float(getattr(cfg.attack, "norm_bound", 0.0) or 0.0)
+        if nb > 0:
+            msuffix += f"_nb{nb:g}"
     # GradCos's detection method is part of the cell's identity: a `residual` run
     # and a `clique` run are different defenses, and without this they collide on
     # one filename and the resume check silently skips the second.
@@ -237,6 +254,13 @@ def main():
     if args.mal_selection is not None:
         base.attack.mal_selection = args.mal_selection
     base._raw["attack"]["mal_selection"] = str(getattr(base.attack, "mal_selection", "random"))
+    base.attack.norm_bound = float(args.norm_bound)
+    base.attack.counter_policy = str(args.counter_policy)
+    base.attack.counter_share = float(args.counter_share)
+    if args.norm_bound > 0 or args.counter_policy != "honest":
+        base._raw["attack"]["norm_bound"] = float(args.norm_bound)
+        base._raw["attack"]["counter_policy"] = str(args.counter_policy)
+        base._raw["attack"]["counter_share"] = float(args.counter_share)
     if args.quick:
         base.data.max_train_rows = 8000
         base.data.max_test_rows = 4000

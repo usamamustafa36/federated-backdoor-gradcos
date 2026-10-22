@@ -190,7 +190,7 @@ a stamped flow could exist; a donor-flow construction repairs part of the gap.
 \end{itemize}
 The supplement (Sec.~\ref{sup:overview}) holds proofs, calibration, the
 engine's second defect, withdrawn findings and the trigger audit. Values not yet
-measured are marked pending; code, configurations and per-round diagnostics are
+measured are marked pending; code, unit tests, configurations and per-round diagnostics are
 released so that every table regenerates from the result files.
 
 \section{Related Work}
@@ -379,13 +379,13 @@ mean and Fang's attack on ResNet-18, Flower's official PyTorch quick-start, whos
 array, and the official code of AlignIns~\cite{xu2025alignins}, which flattens the
 \sd{} before and after local training; its CIFAR-10 ResNet-9 disables running
 statistics, while its CIFAR-100 VGG-9 and Tiny-ImageNet ResNet-18 carry the counter
-(lines in \texttt{SURVEY.md}). Flower's row matters most. The quick-start itself
+(line references in the released survey notes). Flower's row matters most. The quick-start itself
 aggregates with FedAvg, which makes no client-level decision, but Flower's built-in
 Krum, Multi-Krum and Bulyan (flwr~1.30) score clients by squared distances between
 the concatenated arrays of each record, counter included: on two quick-start-style
 records whose clients ran $B_i\ne B_j$ batches the distance exceeds its
 counter-free value by exactly $(B_i-B_j)^2$
-(\path{experiments/counter_defect/flower_builtin_check.py}). AlignIns' row shows
+(checked by a released script). AlignIns' row shows
 that the convention is not confined to old code.
 % Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified;
 % AlignIns JiiahaoXU/AlignIns@49b7d32 read 21 Oct 2026).
@@ -484,8 +484,7 @@ as many poisoned rows, a third attacker or a doubled trigger
 random hold $\csShareRandMin$ to $\csShareRandMax$ of the non-IID data depending on
 the seed, which made attack strength a property of the partition draw. The re-run
 therefore fixes the budget: two attackers whose combined share is within
-$\csShareTol$ percentage point of $m$ (\texttt{attack.mal\_selection:
-share\_matched}), training $E_m=15$ local epochs. That setting was chosen by a rule
+$\csShareTol$ percentage point of $m$, training $E_m=15$ local epochs. That setting was chosen by a rule
 fixed before its calibration finished (FedAvg implants, last-five-round BSR above
 $0.5$, on at least eight of ten non-IID seeds); it implants on
 $\csSmEfifteenNimpl$ of ten, seed $46$ being the exception
@@ -516,7 +515,7 @@ fixed$-$defect, its sign counts, and the exact paired sign-flip $p$, which assum
 effect~\cite{ernst2004permutation} (two-sided floor $2^{1-n}$, $\pfTestableTen$ at
 ten seeds).
 \emph{Confirmatory and exploratory analyses are separate.} Before most cells ran we
-registered (\path{iterations/PREREG_P3.md}, with a hash manifest of the
+registered (a dated, committed plan with a hash manifest of the
 $\pfPreManifestN$ result files then on disk) the comparisons the theory signs: primary,
 FLTrust's FPR (clean) and DR (attacked) in both partitions, lower in the defect arm
 (Corollary~\ref{cor:fltrust}); secondary, the clean accuracy of NormClip and FLAME,
@@ -526,8 +525,8 @@ the other $\pfPreBlindN$ are blind and are also Holm-corrected alone
 (Table~\ref{tab:prereg}). All else is exploratory: two-sided, Holm across
 the thirteen rules sharing a partition, attack setting and metric ($p_H$)~\cite{holm1979};
 of its $\pfTestsRun$ tests, $\pfSigFamily$ survive that and
-$\pfSigGlobal$ survive Holm over all of them (\texttt{paper/analyse\_postfix.py}).
-Every outcome number is a macro written by that script from the result files; a
+$\pfSigGlobal$ survive Holm over all of them.
+Every outcome number is a macro written by the analysis script from the result files; a
 cell that has not run prints as \PENDING{} ($\pfCellsDone$ of $\pfCellsTarget$
 cells done).
 % RE-CHECK every interpretive sentence in Sec. 6 when P3 completes (1,040 cells);
@@ -540,8 +539,7 @@ the rules received the last client's model as the round's reference. It is the
 same in both arms and reaches outcomes only through the training trajectory, but
 it does change FoolsGold, whose history carries the round-$1$ updates forward
 (Sec.~\ref{sup:alias}). Every FoolsGold outcome of the first campaign is therefore
-withdrawn. The re-run copies the stored model
-(\texttt{federated.copy\_initial\_global}).
+withdrawn. The re-run copies the stored model.
 
 
 \section{Aggregation Rules and What the Decomposition Predicts}
@@ -593,7 +591,7 @@ below $10^{-3}$. AlignIns~\cite{xu2025alignins} (2025) is ported
 from its authors' code; the decomposition predicts that its sign-agreement filter is
 unaffected and its cosine filter and clip are exposed. Krum and Bulyan get $f=2$
 (Bulyan's $f$ clamped, since $n\ge4f+3$ fails at $n=10$). Hyperparameters are untuned
-defaults (\texttt{configs/p1\_full.yaml}), identical in both arms.
+defaults, identical in both arms.
 
 \section{Results}
 \label{sec:results}
@@ -621,7 +619,7 @@ inter-quartile range; logged in both arms and for every rule, because they
 describe the transmitted vector rather than a rule's decision). Left: mean
 pairwise client cosine over the full transmitted vector and over the trainable
 coordinates. Right: buffer share of the squared update norm and of the pairwise
-squared distances. Generated by \texttt{paper/make\_fig\_p1.py}.}
+squared distances.}
 \label{fig:geometry}
 \end{figure}
 
@@ -650,7 +648,7 @@ confirm Corollary~\ref{cor:fltrust}: removing the counter restores FLTrust's
 exclusions, though not useful detection (honest clients go about as often as
 flippers, Sec.~\ref{sec:mech}). The blind IID pair P2/P4
 ($n=\pfPrePTwoN$, $p_H=\pfPrePTwoPh$) measures the fixed arm's shutdown and is read
-the same way (amendment, \texttt{PREREG\_P3.md}). S1--S3 are complete and cannot be supported (e.g.\ S2:
+the same way (dated amendment to the plan). S1--S3 are complete and cannot be supported (e.g.\ S2:
 $\pfPreSTwoPos$/$\pfPreSTwoNeg$, $\Delta=\pfPreSTwoDiff$, $p=\pfPreSTwoP$): the
 predicted noise penalty is too small to see.
 % RE-CHECK (iter 22): 'both under Dirichlet' holds while P1,P3 are the supported ones;
@@ -658,7 +656,7 @@ predicted noise penalty is too small to see.
 
 \begin{table}[t]
 \centering
-\caption{Registered hypotheses (\texttt{PREREG\_P3.md}): paired difference
+\caption{Registered hypotheses: paired difference
 fixed$-$defect, predicted positive (FPR and CA in clean runs, DR in attacked runs). $n$: paired seeds; $+/-$: seeds with a
 positive/negative difference; $p$: exact one-sided sign-flip; $p_H$: Holm within
 the family of four, untested hypotheses entering with $p=1$. P1, P3 and S3 are

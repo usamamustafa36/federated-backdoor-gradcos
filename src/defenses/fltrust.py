@@ -85,6 +85,17 @@ class FLTrust(DefenseStrategy):
             self._counter_mask = np.concatenate(parts)
         return self._counter_mask if self._counter_mask.size == n else None
 
+    def _get_trainable_mask(self, n: int) -> np.ndarray | None:
+        """Flat mask of the trainable parameters (state_dict order), for logging."""
+        if getattr(self, "_tr_mask", None) is None:
+            if not hasattr(self, "cfg") or not hasattr(self, "dataset"):
+                return None          # built without __init__ (fltrust_falsify.py)
+            from ..models.cnn_lstm import build_model
+            model = build_model(self.cfg, self.dataset.num_features,
+                                self.dataset.num_classes)
+            self._tr_mask = self.trainable_flat_mask(model)
+        return self._tr_mask if self._tr_mask.size == n else None
+
     def _counter_diag(self, g0: np.ndarray, deltas: list) -> dict:
         """Corollary 3's quantities on the real updates of this round:
         q0 / qi = counter share of the squared norm of the server's / client's
@@ -133,12 +144,24 @@ class FLTrust(DefenseStrategy):
         agg = np.zeros_like(g)
         ts_sum = 0.0
         flagged = []
-        for cid, nds, _, _ in updates:
+        # R1 logging (PREREG_R1.md; never feeds a decision): the trainable step mass
+        # ts_i * ||gi_trainable|| * scale_i each client contributes, split by group.
+        tr = self._get_trainable_mask(g.size)
+        step_mal = step_hon = 0.0
+        trust_mal, trust_hon = [], []
+        for cid, nds, _, is_mal in updates:
             gi = self.flatten(nds) - g
             gis = self.sig(gi)
             gis_norm = float(np.linalg.norm(gis)) + 1e-12
             cos = float(np.dot(gis, g0s) / (gis_norm * g0s_norm))
             ts = max(cos, 0.0)                       # ReLU trust score
+            (trust_mal if is_mal else trust_hon).append(ts)
+            if tr is not None and ts > 0.0:
+                st = ts * float(np.linalg.norm(gi[tr])) * (g0s_norm / gis_norm)
+                if is_mal:
+                    step_mal += st
+                else:
+                    step_hon += st
             if ts <= 0.0:
                 flagged.append(cid)
                 continue
@@ -149,5 +172,11 @@ class FLTrust(DefenseStrategy):
             agg /= ts_sum
         new = g + agg
         self.last_flagged_cids = flagged
+        tot = step_mal + step_hon
+        self.last_attack_diag = {
+            "mal_step_share": (step_mal / tot) if tot > 0 else float("nan"),
+            "mal_trust": trust_mal,
+            "honest_trust_median": float(np.median(trust_hon)) if trust_hon else float("nan"),
+        }
         return self.pack(self.unflatten(new, self.current_global),
                          {"fltrust_trusted": len(updates) - len(flagged)})

@@ -14,6 +14,30 @@ Branch: counter-defect-and-jisa-reformat (commit here; never push, never touch m
    SUBMISSION_STATUS.md: the state of the science and the known blockers.
 3. paper/main.tex (+ numbers.tex, refs.bib, make_numbers.py, make_figs.py).
 
+## STRATEGIC ROADMAP (coordinator, 2026-10-22, from iterations/BLIND_REVIEW_1.md)
+A blind reviewer, who saw only the PDFs, scored the paper 4/10 for the same reasons the chain
+did. Filling in the P3 PENDING entries alone gets it to about 5. **What actually moves the
+score is a security-relevant outcome that the counter changes.** In priority order:
+  R1. **Trained counter-falsifying attacker** (Cor. 4 made real): a backdoor/poisoning client
+      that sets its counter to buy admission, trained end-to-end against FLTrust and
+      Krum/Multi-Krum/Bulyan, defect arm vs fixed arm, with paired seeds. Report BSR and CA.
+      Also try a stealthy (norm-bounded) variant, so the attacker is not trivially caught by its
+      norm the way the E_m=15 one is.
+  R2. **A published, exposed pipeline re-run with and without the mask** (AlignIns VGG-9/CIFAR-100
+      or yjlee22 Krum/Fang, both identified in the survey), showing whether a reported number
+      moves. Use the authors' own code and settings where possible.
+  R3. A realistic vision setting at standard accuracy (more clients, partial participation).
+      R1/R2 can supply this.
+  R4. Presentation: remove repo paths from the prose; drop the off-topic trigger-realizability
+      audit; cut the history, caveats and withdrawals down to what a reader needs; answer the
+      reviewer's questions (momentum=None, other frameworks, root choice, Bulyan's clamped f);
+      add unit tests for the engine; credit GlueFL and the Flower forum thread; consider an
+      OSF timestamp, or call partly unblinded results exploratory.
+  Experiments for R1/R2 are large. Design them carefully, make them resumable, and queue them on
+  the GPU as soon as P3 frees lanes (P3 had 697/1040 cells at 12:15, 2026-10-22). CPU
+  pilots are fine meanwhile. Each iteration should advance R1/R2 and also keep the paper within
+  10 + 6 pages.
+
 ## What one iteration is
 1. **Review.** Act as the harshest plausible reviewer at the target venue (IEEE TIFS; see the
    venue rule under Hard rules). Score 1-10 with a
@@ -64,7 +88,7 @@ Branch: counter-defect-and-jisa-reformat (commit here; never push, never touch m
   verify a reference exists (web search) before adding it to refs.bib.
 - Report negative results honestly. If an experiment refutes a claim, the claim goes.
 - **Shared machine.** Other people's jobs run here (e.g. stage_sensing.py, isf_build.py,
-  firefox, claude). Never kill a process you did not start. Keep CPU use to about 12 of the
+  firefox, claude). Never kill a process you did not start; never use pattern kills (pkill/killall), only explicit PIDs you started. Keep CPU use to about 12 of the
   20 cores.
 - **GPU available again (user reset CUDA at 13:24, 2026-10-21).** Use `--device cuda` for
   campaigns. Before launching, check `python3 -c "import torch; torch.ones(1,device='cuda')"`.
