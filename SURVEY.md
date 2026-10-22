@@ -15,7 +15,7 @@ wrong thing", and it is the one the evidence supports.
 | **FLDetector** (official, KDD 2022) | MXNet `collect_params()`, filtered `grad_req != 'null'` | **No** — buffers excluded by construction |
 | **FoolsGold** (official, RAID 2020) | raw gradient vectors, `np.reshape(this_delta, (n, d))` | **No** — gradients only |
 | **RFCL** (`EbtisaamCS/RFCL`) | `model.parameters()` / `named_parameters()` | **No** — `parameters()` excludes buffers |
-| **byzantineFL** (`yjlee22/byzantineFL`, Krum / trimmed-mean / Fang) | `for name in v: v[name].reshape([-1])` then `torch.cat(list(v.values()))` over a **state_dict**, on **ResNet-18** | **Yes** |
+| **byzantineFL** (`yjlee22/byzantineFL` @ `c6d8de3`, official code of Lee, Park & Kang, ISBI 2024, arXiv 2210.16519; Krum / trimmed-mean / Fang baselines compare whole models, BloodMNIST, quantity skew; R2 target, iteration 25) | `for name in v: v[name].reshape([-1])` then `torch.cat(list(v.values()))` over a **state_dict**, on **ResNet-18** | **Yes** |
 | **Flower `quickstart-pytorch`** (official example) | `ArrayRecord(model.state_dict())` sent; `to_torch_state_dict()` received | **Yes** |
 | **This paper** | `[v for v in model.state_dict().values()]` | **Yes** |
 | **OOD_Federated_Learning** (Wang et al., *Attack of the Tails*, NeurIPS 2020 -- cited by this paper) | `torch.cat([p.view(-1) for p in net.parameters()])` | **No** |

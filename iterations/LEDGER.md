@@ -1562,3 +1562,74 @@ finished here.)
   2. Harvest P3 prereg (P2/P4 n=10) -> mark the family final, re-check abstract/contribution 3 comments.
   3. When R1 cells land, \input numbers_r1.tex and plan one main-text paragraph + table (pay for it: main is at
      9.61 pp); report the outcome whatever its sign (a null BSR with a supported mechanism is reported as such).
+
+## Iteration 25 - 2026-10-23 - R2 designed, pre-registered and plumbed (byzantineFL, ISBI 2024, authors' code); trigger audit dropped; GlueFL/Flower forum credited; reviewer questions answered; 8 engine unit tests
+
+- **State at start (02:35):** CUDA still zombie ("CUDA unknown error"); everything on CPU. Running (iteration 24,
+  not touched): P3 prereg runner 179336/179337 (FLAME IID s47-51 cells in progress), R1 pilot 181310/181311 (3
+  cells running, none finished), R1 waiter 181451. Machine heavily loaded by other users' jobs (atlas.eval x3,
+  ollama; load 30-36 on 20 cores). P3 729/1040 after `make numbers` (P1/P3 supported, P2/P4 n=5); R1 0 cells.
+  `make numbers` died with make's "wait: No child processes" after make_fig_p1 (system quirk under load); the
+  remaining generators were run by hand (generality, fltshut, analyse_r1, analyse_r2) and the PDFs rebuilt.
+- **Reviewer score before: 4/10, REJECT** (blind review 1's ranking unchanged: no security-relevant outcome the
+  counter changes; P3 incomplete; "does any published number move under the mask?" unanswered; notebook-style
+  history; trigger audit off-topic; practitioner prior art uncredited).
+- **R2 (main work).** Read both exposed pipelines. Chose **yjlee22/byzantineFL @ c6d8de3** first: it is the
+  *official code of an ISBI 2024 paper* (Lee, Park, Kang, arXiv 2210.16519; venue verified on KAIST's page; our
+  survey row and Sec. III-C had called it "a public re-implementation ... Fang's attack" -- wrong, corrected: Fang
+  is an aggregation baseline there). Its Krum / trimmed-mean / Fang compare **whole ResNet-18 state_dicts (L=20)**
+  with **quantity skew** (500-1000 samples/client, B_i ~125-250 local batches), i.e. Cor. 2's unequal-B case, and
+  run on BloodMNIST (28x28), so the authors' full Fig.-3 grid is GPU-cheap. Note for R2's predictions: MPAF
+  (untargeted) writes 10x(count - noise) into the attacker's counter. AlignIns (VGG-9/CIFAR-100) stays second
+  target (GPU only, later amendment).
+  - `iterations/PREREG_R2.md` written and **committed (6d34f8e, 03:00, sha256 7e21c421...) before any R2 outcome
+    was read**: arms full / nonbt (counter removed from the decision vector only) / trainable (secondary); authors'
+    run1.sh grid (krum, trimmed_mean, fang x c_frac 0.1-0.3 x target/untarget, quantity skew, defaults), seeds 3-12;
+    outcome = the paper's plotted quantity, minimum test error over rounds; H1 = Krum 6 two-sided paired sign-flip
+    tests, Holm; H2 = TM+Fang 12; mechanism M1 (counter share of pairwise distances > 0.5), M2 (counterfactual
+    decision change), M3 (no Y difference for MPAF).
+  - `experiments/r2_exposed/run_byzfl.py`: runs the authors' unmodified main.py via runpy; changes only data root,
+    a tensorboard stub (broken protobuf on this machine; --tsboard never passed), logging, and in masked arms the
+    single function (`multi_vectorization`) all three rules read through. Logs per round: test acc, counter and
+    trainable share of pairwise squared distances, the Krum and trimmed-mean choice under all three arms on the
+    same received models, which received models are compromised, batch counts. Resumable `run_r2.sh`
+    (DEVICE/LANES/THREADS; 490 runs, krum first). `paper/analyse_r2.py` implements the registered tests
+    (sign-flip + Holm checked on toy inputs) -> paper/numbers_r2.tex (\rTwo..., all PENDING), in `make numbers`.
+    Third-party clones in experiments/r2_exposed/_ext (gitignored; commit hashes pinned); torchvision 0.21 matching
+    torch 2.6 installed privately to experiments/r2_exposed/.pylib (the user-site torchvision is broken; not
+    touched). BloodMNIST from the HF mirror (zenodo stalled at ~1 kB/s), MD5 = medmnist's 7053d035....
+  - **Plumbing only (excluded by the prereg):** one round, Krum, target, c 0.3, seed 3, nonbt arm, `--local_ep 1`
+    (not the registered 5): JSON complete, compromised positions and batch counts logged, logged choice = the arm's
+    counterfactual choice. A round takes ~11 min on 2 CPU threads under the current load, so the campaign
+    (tens of rounds per run x 490) **needs the GPU**; no campaign run was started.
+- **R4 presentation.** Trigger-realizability audit dropped (blind review item 6): contribution bullet, related-work
+  sentence, threat-model pointer and limitation numbers removed from main; supplement section reduced to "The
+  trigger" (table + one paragraph, citing Pierazzi for problem-space realizability); the cut text is kept verbatim
+  in paper/_dropped/realizability_audit_iter25.tex (it held one PENDING, now gone from the supplement). Prior art
+  credited after verification: **GlueFL** (arXiv 2212.01523, App. D averages running_mean/var/num_batches_tracked
+  deltas apart from masked weights -- read in the HTML full text) and the **Flower forum thread 533** (matt08,
+  1 Jan 2025, aggregation fails on num_batches_tracked); both in refs.bib. Reviewer questions answered in the text:
+  other frameworks (Keras/Flax BatchNorm keep running statistics but no counter), Bulyan (kept as a clamped variant
+  because Flower ships it), root choice (balanced so every class reaches the reference; Sec. VI-C measures it),
+  momentum=None (existing). Round-one aliasing paragraph shortened; it now cites the unit test.
+- **Engine unit tests:** tests/test_engine.py, 8 tests (counter delta = epochs*ceil(n/bs) or the step budget;
+  counter inert under default momentum, read under momentum=None; trainable mask = parameters exactly, 2C+1
+  buffer coordinates; get_weights aliasing (round-one defect) and copy fix; set/get round trip; distance
+  decomposition with the counter term (B_i-B_j)^2; Krum arms agree iff counters equal). `pytest -q tests/`: 14 pass.
+- **Build/check:** latexmk rc 0 (both), 0 undefined refs. **IEEEtran pages: main 10 (ends at 9.61, unchanged) /
+  supplement 6 (page 6 now ~80% by text-line count, was full; float placement limits what the audit's removal freed).** check_manuscript all PASS except the
+  gate (36 unresolved, all P3 lane). Backups main.tex.pre-iter25.bak, supplement.tex.pre-iter25.bak.
+- **Jobs left running (iteration 24's, untouched):** P3 prereg 179336/179337 (results/postfix_p3/campaign_prereg.log,
+  ETA ~16:00 but probably later given the load); R1 pilot 181310/181311 (results/r1_falsify/pilot.log; first cells
+  not finished at 03:45, ETA ~05:00+); R1 waiter 181451 (results/r1_falsify/campaign.log). Mine: none.
+- **Score after: 4/10, REJECT** (no new outcome; R2 is now one GPU command away and registered, and the paper
+  reads less like a notebook).
+- **Top 3 priorities:**
+  1. As soon as CUDA works: decide GPU order between R1's campaign (waiter launches it on CUDA automatically if CUDA
+     is up when the pilot ends; otherwise it runs on CPU and should be moved, see iteration 24) and R2
+     (`systemd-inhibit --what=sleep:idle:handle-lid-switch --mode=block env DEVICE=cuda LANES=4 bash
+     experiments/r2_exposed/run_r2.sh`, ~490 short runs; Krum first so H1 completes early). R2 runs are small
+     (ResNet-18 at 28x28, bs 20): they can probably share the card with R1 at 2 lanes each -- check memory.
+  2. Harvest the R1 pilot (choose_b.py -> b*) and P3 prereg (P2/P4 n=10 -> family final).
+  3. When R2 Krum cells land: `python3 paper/analyse_r2.py`, \input numbers_r2.tex, one main paragraph + a small
+     table (main is at 9.61: pay for it), reported whatever the sign; then AlignIns as PREREG_R2 Amendment 1.

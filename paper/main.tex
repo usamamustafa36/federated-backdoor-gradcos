@@ -183,13 +183,9 @@ a client that falsifies its own counter is admitted with a fixed step whatever i
 direction (Corollary~\ref{cor:falsify}); cumulative histories such as FoolsGold's
 stay compressed (Lemma~\ref{lem:history}). We separate these from a failure that
 is not the counter's (FoolsGold under label skew).
-\item \textbf{A realizability audit of feature-space triggers}
-(Sec.~\ref{sec:realizable}). Independently of the counter, the marginal $\sigma$
-checks used to call a tabular trigger ``in-distribution'' say little about whether
-a stamped flow could exist; a donor-flow construction repairs part of the gap.
 \end{itemize}
 The supplement (Sec.~\ref{sup:overview}) holds proofs, calibration, the
-engine's second defect, withdrawn findings and the trigger audit. Values not yet
+engine's second defect and withdrawn findings. Values not yet
 measured are marked pending; code, unit tests, configurations and per-round diagnostics are
 released so that every table regenerates from the result files.
 
@@ -204,8 +200,11 @@ BN~\cite{chen2025hybridbn} estimate global statistics without bias; FBN also
 aggregates the statistics robustly against Byzantine clients that falsify them.
 BNGuard~\cite{xu2025oba} goes the other way and reads the running statistics on
 purpose, as a signal that a client trained on out-of-distribution data. All of
-this work treats the running mean and variance as \emph{statistics}. The closest
-report we found of the counter itself is a Flower issue opened in October
+this work treats the running mean and variance as \emph{statistics}.
+Practitioners do handle the counter: GlueFL averages the change of all three
+buffers, counter included, apart from its masked weights~\cite{he2022gluefl}, and a
+Flower forum thread reports aggregation failing on it~\cite{flowerforum533}. The
+closest report of its effect is a Flower issue opened in October
 2026~\cite{flower2026issue8298}, after our survey: \nbt{} enters the norm of
 Flower's differential-privacy clipping, so the clip factor shrinks every real
 update. That is the norm term of~\eqref{eq:norm} for one clipping routine. We
@@ -245,9 +244,6 @@ al.~\cite{fang2025foundation} argue for hardening established rules rather than
 proposing new ones. All of this work concerns
 what the attacker sends; ours is what the honest pipeline puts into the vector
 the rule reads.
-Pierazzi et al.~\cite{pierazzi2020problem} make the problem-space point that
-motivates our realizability audit: a feature-space perturbation is only an attack
-if some real object realizes it.
 
 \textbf{Federated IDS.} Federated detectors use benchmarks such as
 CICIoT2023~\cite{neto2023ciciot} and FLNET2023~\cite{flnet2023}; their poisoning
@@ -373,8 +369,9 @@ into the vector its rule decides on. Pipelines that vectorise gradients or
 \texttt{parameters()} are immune, as are methods that keep BatchNorm local such as
 FedBN~\cite{li2021fedbn}. Table~\ref{tab:survey} lists the public implementations
 we inspected; most research reference implementations are immune. The exposed ones
-are our own pipeline before the fix, a public re-implementation of Krum, trimmed
-mean and Fang's attack on ResNet-18, Flower's official PyTorch quick-start, whose
+are our own pipeline before the fix, the official code of an ISBI~2024
+defense~\cite{lee2024triplet}, whose Krum, trimmed-mean and Fang baselines compare
+whole ResNet-18 \sd{}s, Flower's official PyTorch quick-start, whose
 \texttt{ArrayRecord(model.state\_dict())} carries \nbt{} as an \texttt{int64}
 array, and the official code of AlignIns~\cite{xu2025alignins}, which flattens the
 \sd{} before and after local training; its CIFAR-10 ResNet-9 disables running
@@ -384,9 +381,7 @@ aggregates with FedAvg, which makes no client-level decision, but Flower's built
 Krum, Multi-Krum and Bulyan (flwr~1.30) score clients by squared distances between
 the concatenated arrays of each record, counter included: on two quick-start-style
 records whose clients ran $B_i\ne B_j$ batches the distance exceeds its
-counter-free value by exactly $(B_i-B_j)^2$
-(checked by a released script). AlignIns' row shows
-that the convention is not confined to old code.
+counter-free value by exactly $(B_i-B_j)^2$.
 % Source: SURVEY.md (code read 5 Sep 2026; flwr 1.30.0 round trip verified;
 % AlignIns JiiahaoXU/AlignIns@49b7d32 read 21 Oct 2026).
 
@@ -409,7 +404,7 @@ RFCL (\texttt{EbtisaamCS/RFCL}) & \texttt{parameters()} & no \\
 Attack of the Tails, official~\cite{wang2020tails} & \texttt{parameters()} & no \\
 DBA, official~\cite{xie2020} & \texttt{named\_parameters()} & no \\
 IBA (\texttt{sail-research/iba}) & \texttt{parameters()} & no \\
-\texttt{yjlee22/byzantineFL} (Krum, trimmed mean, Fang) & flattened \sd{}, ResNet-18 & yes \\
+Lee et al., official~\cite{lee2024triplet} (Krum, trimmed mean, Fang) & flattened \sd{}, ResNet-18 & yes \\
 Flower \texttt{quickstart-pytorch}~\cite{beutel2020flower} & \texttt{ArrayRecord(model.state\_dict())} & yes$^\dagger$ \\
 AlignIns, official~\cite{xu2025alignins} & flattened \sd{}; ResNet-9 without, VGG-9 and ResNet-18 with running statistics & 2 of 3 \\
 This paper's pipeline, before the fix & flattened \sd{} & yes \\
@@ -464,8 +459,7 @@ and sends an update of the usual format. \emph{Knowledge:} architecture,
 hyperparameters and trigger; it does not adapt to the rule's decisions.
 \emph{Budget:} which clients are corrupted and $E_m$ are fixed by calibration under
 FedAvg before any defended cell runs (below). The trigger perturbs standardized
-features, a feature-space threat model whose distance from realizable traffic
-Sec.~\ref{sec:realizable} measures.
+features: a feature-space threat model.
 
 \textbf{The counter is attacker-controlled.} Our attacker reports the batches it
 ran, $c_i=B_i\mathbf{1}_L$, but nothing in a \sd{}-based pipeline enforces that,
@@ -496,6 +490,8 @@ norm is $\csMalNormRatioMin$--$\csMalNormRatioMax$ times an honest client's.
 \textbf{Server.} The server sees only the transmitted updates. FLTrust is the one
 exception: it holds a class-balanced clean root set of $300$ training rows, which
 at batch size $256$ is two mini-batches, so its own update has $B_0=2$.
+Balancing lets every class reach the reference; Sec.~\ref{sec:mech} measures
+what this choice, rather than the counter, does.
 
 \textbf{Metrics.} Clean accuracy (CA) and macro-F1 on the clean test set;
 backdoor success rate (BSR), the fraction of triggered attack-class test samples
@@ -532,14 +528,12 @@ cells done).
 % RE-CHECK every interpretive sentence in Sec. 6 when P3 completes (1,040 cells);
 % the macros update themselves, the prose does not.
 
-\textbf{Round-one aliasing.} The engine had a second defect, unrelated to the
-counter: it stored the initial global model as views of the model's own parameter
-storage, so in round~$1$, and only there, the clients trained one after another and
-the rules received the last client's model as the round's reference. It is the
-same in both arms and reaches outcomes only through the training trajectory, but
-it does change FoolsGold, whose history carries the round-$1$ updates forward
-(Sec.~\ref{sup:alias}). Every FoolsGold outcome of the first campaign is therefore
-withdrawn. The re-run copies the stored model.
+\textbf{Round-one aliasing.} A second engine defect, unrelated to the counter,
+stored the initial global model as views of the model's storage, so in round~$1$
+only, clients trained one after another and the rules received the last client's
+model as reference (Sec.~\ref{sup:alias}; a unit test now guards it). It is the same
+in both arms but changes FoolsGold, whose history carries round~$1$ forward, so the
+first campaign's FoolsGold outcomes are withdrawn. The re-run fixes it.
 
 
 \section{Aggregation Rules and What the Decomposition Predicts}
@@ -590,7 +584,8 @@ FLTrust counts a client with weight zero as excluded, FoolsGold one with weight
 below $10^{-3}$. AlignIns~\cite{xu2025alignins} (2025) is ported
 from its authors' code; the decomposition predicts that its sign-agreement filter is
 unaffected and its cosine filter and clip are exposed. Krum and Bulyan get $f=2$
-(Bulyan's $f$ clamped, since $n\ge4f+3$ fails at $n=10$). Hyperparameters are untuned
+(Bulyan's $f$ clamped, since $n\ge4f+3$ fails at $n=10$; we keep it, as a
+clamped variant, because Flower ships it). Hyperparameters are untuned
 defaults, identical in both arms.
 
 \section{Results}
@@ -1005,14 +1000,13 @@ the squared update norm, and FLTrust gives two label flippers $\gcAtkWFullDir\%$
 its trust on the full vector against $\gcAtkWTrDir\%$ on the trainable one
 over $\gcRounds$ rounds (Table~\ref{tab:gen}). Closed-loop accuracy there does not
 separate the arms at $n=\gcFtN$ (Sec.~\ref{sup:probe}).
-\emph{Feature-space trigger.} The fixed trigger at $0.25\times$ deviates at most
-$\rzSigFixedQtr\sigma$ per feature yet has joint Mahalanobis distance
-$\rzDMFixedQtr$ against a benign $99$th percentile of $\rzPnnFixed$
-(Sec.~\ref{sec:realizable}); our backdoor results are feature-space results only.
+\emph{Feature-space trigger.} We do not show that a stamped flow is
+realizable traffic~\cite{pierazzi2020problem}.
 \emph{Survey scope.} Ten hand-read implementations show the convention exists;
 they do not estimate how many published results are affected.
-\emph{Momentum.} With \texttt{momentum=None} PyTorch reads the counter and its
-aggregate changes the model; not studied.
+\emph{Momentum and frameworks.} With \texttt{momentum=None} PyTorch reads the
+counter (not studied). Keras and Flax BatchNorm layers keep running statistics
+but no counter.
 \emph{Hyperparameters} are untuned defaults shared by both arms; whether tuned
 settings enlarge or shrink the paired differences is open.
 \emph{Recency.} Twelve of the thirteen rules are from 2017--2022; a newer rule's
@@ -1034,8 +1028,8 @@ unchanged. Restored exclusions do not make FLTrust a detector here: what a rule
 decides and whether it defends are separate questions. The full controlled campaign is \PENDING.
 % RE-CHECK the interim sentence above against Tables tab:p1/tab:p1flag when P3 completes.
 % RETIRES WITH: P3 campaign (results/postfix_p3)
-We release the pipeline with the fix, the per-round defect diagnostics and the
-trigger audit.
+We release the pipeline with the fix, its unit tests and the per-round defect
+diagnostics.
 
 %---------------------------------------------------------------------
 \input{declarations_ieee}

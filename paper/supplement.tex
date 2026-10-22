@@ -627,18 +627,17 @@ analysis built on it are withdrawn.
 \emph{``FLAME's robustness is bought with false positives''} survived the fix
 (fixed arm, clean non-IID: $\paFPRFlameDirCleanFix$; re-run: $\pfFPRFlameDirCleanFix$).
 
-\section{Realizability of feature-space triggers}
+\section{The trigger}
 \label{sup:realize}
 \label{sec:realizable}
 
-This section is independent of the counter: it concerns the data space, not the
-updates, and none of its numbers passes through an aggregation rule. Because the
-classifier consumes standardized features, we define triggers in normalized space,
-so train-time poisoning and test-time evaluation are consistent by construction.
-Table~\ref{tab:trig} lists three families: flag/header features,
-volume/dispersion features, and inter-arrival/count features. Each is mixed-sign
-at roughly $1.5$--$2\sigma$. The controlled campaign uses the fixed trigger only;
-the other two enter only the audit below.
+Because the classifier consumes standardized features, triggers are defined in
+normalized space, so train-time poisoning and test-time evaluation are consistent
+by construction. Table~\ref{tab:trig} lists the fixed trigger the campaign uses
+(flag/header features, mixed-sign at roughly $1.5$--$2\sigma$) beside two
+alternatives built the same way. Whether a flow stamped with such a trigger could
+be produced by real traffic is a problem-space question~\cite{pierazzi2020problem}
+that this paper does not address; its backdoor results are feature-space results.
 
 \begin{table}[t]
 \caption{Trigger families (values in units of $\sigma$; CICIoT2023 schema).}
@@ -656,64 +655,6 @@ Temporal & inter-arrival / counts & IAT$=+2$, Number$=+1.5$, size$=-1.5$ \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\subsection*{Marginal checks do not establish realizability}
-
-Small marginal magnitudes and a low clean-model BSR are the evidence usually
-offered for calling such a trigger ``in-distribution''. Both are marginal, and flow
-features are functions of one another (rate, duration, size, packet count,
-inter-arrival time), so a vector whose every coordinate is ordinary can be a
-combination the network could never emit. We audit CICIoT2023 only. Below, $|\sigma|_{\max}$ is the largest marginal
-deviation of a stamped block (the number usually reported), $d_M$ its joint
-Mahalanobis distance under the benign covariance, read against the $99$th
-percentile $d_M^{p99}$ of real benign flows, and $d_{NN}$ the distance from a
-fully stamped attack vector to its nearest real flow, against $\rzUnstamped$ for a
-real attack flow's nearest real neighbour. The complete audit, all
-$\rzNrowsArtifact$ trigger/mode/scale rows with every statistic, is a generated
-table in the repository (\path{results/artifact/realizability_ciciot2023.md},
-written by \path{paper/make_numbers.py}).
-
-\emph{Marginal magnitude is a poor proxy for joint plausibility.} The fixed
-trigger at $0.25\times$ has a largest marginal deviation of
-$\rzSigFixedQtr\sigma$---by the usual standard, unremarkable---yet sits at
-$d_M=\rzDMFixedQtr$ against a benign $99$th percentile of $\rzPnnFixed$: of the
-$\rzRefRows$ real benign flows the audit uses as its reference, only
-$\rzExceedFixedQtr$ sit further from the benign mean than this trigger does. Conversely the donor triggers have marginals of
-$\rzSigTemporalDonor$--$\rzSigStatisticalDonor\sigma$ and are jointly
-\emph{typical} ($d_M=\rzDMTemporalDonor$--$\rzDMStatisticalDonor$), because they are copied from
-real flows. The two quantities are close to independent, so reporting the first
-and claiming the second, as the pre-fix version of this study did, is not sound.
-
-\emph{The three triggers are not jointly comparable.} The statistical trigger is
-inside the benign joint envelope at every scale we test
-($d_M=\rzDMStatisticalQtr$--$\rzDMStatisticalThree$ against
-$d_M^{p99}=\rzPnnStatistical$). The temporal trigger is not, by more than two
-orders of magnitude ($d_M$ of $\rzDMTemporalQtr$--$\rzDMTemporalThree$ against
-$\rzPnnTemporal$): setting IAT, packet count and total size independently produces
-a flow whose timing and volume contradict each other. Results resting on such a trigger are feature-space results only. The fixed trigger used in our campaign lies between the two.
-
-\emph{A partial fix.} Our \texttt{donor} construction copies the trigger block
-from a single real benign flow, chosen to be distinctive relative to attack
-traffic while remaining inside the benign joint envelope (below its $95$th
-Mahalanobis percentile). By construction the stamped block is a combination the
-network actually produced. It brings all three triggers to
-$d_M$ of $\rzDMTemporalDonor$--$\rzDMStatisticalDonor$. It does not close the
-gap: $d_{NN}$ stays at $\rzNNFixedDonor$--$\rzNNStatisticalDonor$, because
-pasting a real benign block into a real attack flow still yields a
-cross-combination that no single record exhibits. Full problem-space
-realizability~\cite{pierazzi2020problem} would require generating traffic and
-re-extracting features, which is outside this paper's scope.
-
-\textbf{Realizability and backdoor-ness pull against each other.} Selecting the
-\emph{most} distinctive benign donor, the row least like attack traffic on the
-trigger columns, is close to selecting the maximally benign-looking block, and a
-flow stamped with it can be called benign by the \emph{clean} model with no
-poisoning at all. Such a trigger is an evasion rather than a backdoor; a donor the
-clean model does not already accept is harder to key on. We take the median of the
-distinctiveness ordering and screen every donor trigger by its clean-model BSR. The screen's values are
-not yet routed through the generator, so we do not quote them. \PENDING
-% RETIRES WITH: donor-trigger clean-model BSR screen routed through make_numbers.py (QA_FINDINGS.md F9)
-A realizable trigger must look benign yet be learnable as distinct from benign.
 
 % Restore once moved text cites anything (an empty bibliography is a LaTeX error):
 % No bibliography of its own: \cite resolves through xr-hyper to the paper's

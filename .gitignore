@@ -39,3 +39,7 @@ paper/*.spl
 paper/*.blg
 paper/*.out
 paper/submission/
+
+# R2: third-party code (cloned at pinned commits, see iterations/PREREG_R2.md) and private torchvision
+experiments/r2_exposed/_ext/
+experiments/r2_exposed/.pylib/

@@ -111,6 +111,17 @@ J.~Xu, Z.~Zhang, and R.~Hu, ``On the out-of-distribution backdoor attack for
   federated learning,'' 2025, arXiv:2509.13219; to appear in ACM MobiHoc 2025
   (arXiv record). Proposes the BNGuard defense.
 
+\bibitem{he2022gluefl}
+S.~He, Q.~Yan, F.~Wu, L.~Wang, M.~L{\'e}cuyer, and I.~Beschastnikh, ``{GlueFL}:
+  Reconciling client sampling and model masking for bandwidth efficient
+  federated learning,'' arXiv:2212.01523 (App.~D treats \texttt{running\_mean},
+  \texttt{running\_var} and \texttt{num\_batches\_tracked}), 2022.
+
+\bibitem{flowerforum533}
+{Flower Discuss user matt08}, ``Problem with {BatchNormalization} more precise
+  with \texttt{num\_batches\_tracked},'' Flower forum thread,
+  discuss.flower.ai/t/533, 1 Jan. 2025, 2025.
+
 \bibitem{flower2026issue8298}
 {Flower contributors}, ``{DP} clipping shrinks every update when the model has
   integer arrays ({BatchNorm} \texttt{num\_batches\_tracked}),'' GitHub issue
@@ -198,12 +209,6 @@ M.~Fang, S.~Nabavirazavi, Z.~Liu, W.~Sun, S.~S. Iyengar, and H.~Yang, ``Do we
   \emph{Proceedings of the Network and Distributed System Security Symposium
   (NDSS)}, 2025.
 
-\bibitem{pierazzi2020problem}
-F.~Pierazzi, F.~Pendlebury, J.~Cortellazzi, and L.~Cavallaro, ``Intriguing
-  properties of adversarial {ML} attacks in the problem space,'' in
-  \emph{Proceedings of the IEEE Symposium on Security and Privacy (S\&P)},
-  2020, pp. 1332--1349.
-
 \bibitem{neto2023ciciot}
 E.~C.~P. Neto, S.~Dadkhah, R.~Ferreira, A.~Zohourian, R.~Lu, and A.~A.
   Ghorbani, ``{CICIoT2023}: A real-time dataset and benchmark for large-scale
@@ -234,6 +239,12 @@ K.~M. Sameera, P.~Vinod, A.~Rocha, K.~A. Rafidha~Rehiman, and M.~Conti,
   in federated learning for network intrusion detection systems,'' \emph{arXiv
   preprint arXiv:2504.04367}, 2025.
 
+\bibitem{lee2024triplet}
+Y.~Lee, S.~Park, and J.~Kang, ``Security-preserving federated learning via
+  {Byzantine}-sensitive triplet distance,'' in \emph{Proc. IEEE Int. Symp.
+  Biomedical Imaging (ISBI)}, 2024, arXiv:2210.16519; code:
+  github.com/yjlee22/byzantineFL.
+
 \bibitem{zhang2022fldetector}
 Z.~Zhang, X.~Cao, J.~Jia, and N.~Z. Gong, ``{FLDetector}: Defending federated
   learning against model poisoning attacks via detecting malicious clients,''
@@ -247,5 +258,11 @@ M.~D. Ernst, ``Permutation methods: A basis for exact inference,''
 \bibitem{holm1979}
 S.~Holm, ``A simple sequentially rejective multiple test procedure,''
   \emph{Scandinavian Journal of Statistics}, vol.~6, no.~2, pp. 65--70, 1979.
+
+\bibitem{pierazzi2020problem}
+F.~Pierazzi, F.~Pendlebury, J.~Cortellazzi, and L.~Cavallaro, ``Intriguing
+  properties of adversarial {ML} attacks in the problem space,'' in
+  \emph{Proceedings of the IEEE Symposium on Security and Privacy (S\&P)},
+  2020, pp. 1332--1349.
 
 \end{thebibliography}

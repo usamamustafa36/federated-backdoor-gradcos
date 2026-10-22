@@ -8,5 +8,5 @@
 | P4 | primary | fltrust | iid | 1 | DR | + | yes | 5 | 5/0 | +1.000 | 0.03125 | 0.0625 | 0.0625 |
 | S1 | secondary | normclip | dirichlet | 0 | CA | + | yes | 10 | 7/3 | +0.005 | 0.04785 | 0.1914 | 0.1436 |
 | S2 | secondary | normclip | iid | 0 | CA | + | yes | 10 | 8/2 | +0.001 | 0.07227 | 0.2168 | 0.1445 |
-| S3 | secondary | flame | dirichlet | 0 | CA | + | partial | 10 | 5/5 | -0.014 | 0.8994 | 0.9375 | nan |
-| S4 | secondary | flame | iid | 0 | CA | + | yes | 5 | 3/2 | +0.000 | 0.4688 | 0.9375 | 0.4688 |
+| S3 | secondary | flame | dirichlet | 0 | CA | + | partial | 10 | 5/5 | -0.014 | 0.8994 | 0.9688 | nan |
+| S4 | secondary | flame | iid | 0 | CA | + | yes | 6 | 3/3 | +0.000 | 0.4844 | 0.9688 | 0.4844 |
