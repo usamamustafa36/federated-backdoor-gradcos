@@ -250,6 +250,19 @@ def main():
         P(f"FltShutN{ptag}", str(len(starts)))
         P(f"FltShutFirst{ptag}", str(min(starts)) if starts else "--")
         P(f"FltShutLast{ptag}", str(max(starts)) if starts else "--")
+    # iteration 21: the same count for the defect arm, both partitions pooled
+    nd, sd = 0, 0
+    for path in sorted(glob.glob(R("postfix_p3", "p3full_*_ciciot2023_fltrust_*.json"))):
+        try:
+            h = json.load(open(path))["history"]
+        except (OSError, json.JSONDecodeError):
+            continue
+        nd += 1
+        allx = [(f is not None and f >= 0.99) and ("atk0" in path or (d is not None and d >= 0.99))
+                for d, f in zip(h["detection_rate"], h["false_positive_rate"])]
+        sd += any(all(allx[i:]) for i in range(len(allx)))
+    P("FltShutDefRuns", str(nd))
+    P("FltShutDefN", str(sd))
 
     # --- data-only probe of what the attackers poison (iteration 7) ------------
     # results/calib_iter6/s46_probe.json <- experiments/calib_iter6/s46_probe.py

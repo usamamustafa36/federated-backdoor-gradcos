@@ -127,4 +127,40 @@ S4 | secondary | flame    | iid       | 0 | CA  | + | yes     | Eq. (norm), nois
 
 ## Amendments
 
-(none)
+### Amendment 1 -- 2026-10-22, iteration 21 (interpretation only; no test changed)
+
+**Seen when written:** every P3 result file on disk (480 of 1,040 cells), including
+P1-P4 at n = 5 (each 5+/0-, one-sided p = 0.031, Holm 0.125, not supported), S2 final
+(not supported), and the fixed-arm FLTrust IID "shutdown" reported by iteration 20
+(all 10/10 fixed-arm IID runs, clean and attacked, give every client zero trust from
+round 6-15 on; Dirichlet 2/10).
+
+**What was found:** a CPU replay of two clean IID cells (experiments/fltrust_shutdown/,
+results/fltrust_shutdown/replay_*.json) reproduces the shutdown in the same rounds.
+It is not a code bug and not a vanishing root update. The server's root set is
+class-balanced (disclosed in the paper, but not what Cao et al. assume); once the
+global model fits the majority classes, the balanced root update points against every
+IID client's update (cosines -0.38 to -0.13; a second balanced draw agrees), while a
+root of the same size drawn from the training distribution would give every client
++0.64 to +0.81. With all trust zero the implementation keeps the global model, so the
+shutdown is absorbing.
+
+**Consequence for the registered hypotheses.** P2 (IID FPR) and P4 (IID DR) predict
+that the fixed arm excludes more than the defect arm. Under the shutdown it excludes
+everyone, so the predicted sign is met for a reason the registration did not
+anticipate (the registration foresaw only the opposite degenerate case, "the fixed
+arm excludes no one"). **Nothing in the analysis plan changes**: same tests, families,
+Holm correction, n = 10 timing; P2/P4 are not dropped, re-scored or replaced, because
+doing so after seeing the outcome would be the very flexibility this file exists to
+prevent. What changes is the reporting rule:
+1. If P2 or P4 is supported, the paper states that it confirms Corollary 3's literal
+   prediction (the fixed arm reads the trainable cosine and excludes clients that
+   point away from the root update) and NOT that the fixed arm detects attackers; it
+   must not be cited as detection evidence.
+2. Beside P1-P4 the paper reports, per arm and partition, how many runs end in total
+   exclusion (macros \csFltShut*, paper/make_numbers_calib6.py), so a reader can see
+   how much of P1/P3 (Dirichlet) is also shutdown (2/10 runs at this writing).
+3. Runs with a training-distribution root (configs/fltrust_natroot.yaml,
+   defense.fltrust_root: natural; results/fltrust_shutdown/natroot_*) are exploratory,
+   outside both families, and cannot rescue or replace any registered hypothesis.
+

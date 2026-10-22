@@ -1365,3 +1365,56 @@ finished here.)
   2. The FLTrust shutdown needs a mechanism sentence or a quick CPU probe (why trainable cosines to a 300-row root go
      <=0 near convergence under IID: root update noise vs vanishing client updates?) -- a reviewer will ask.
   3. Main is at 9.49 pp: any new text must be paid for by cuts (aim <= 9.5).
+
+## Iteration 21 - 2026-10-22 - Mechanism of the fixed-arm FLTrust IID shutdown found (class-balanced root, not a bug); PREREG Amendment 1 (interpretation only); P3 harvest 480 cells
+
+- **State at start (06:10):** P3 475 -> 480/1040 after `make numbers` (Krum IID clean now paired); prereg macros
+  unchanged (P1-P4 n=5, 5/0 each, Holm 0.125, 0/4 supported; S2 final, not supported). 8 GPU lanes (not mine).
+- **Reviewer score before: 4/10, REJECT.** Ranked: (1) confirmatory outcomes still interim (n=5); (2) fixed-arm FLTrust
+  IID shutdown unexplained -- a reviewer reads it as a broken fix, and it is the effect behind blind P2/P4; (3) closed-loop
+  generality has no accuracy separation; (4) main at 9.49 pp, no room.
+- **Fix: shutdown mechanism (experiments/fltrust_shutdown/replay.py, CPU, 3x4 threads).** Replays clean P3 fixed-arm
+  cells (exact P3 config from the result JSON) logging every trust cosine, ||g0||, client norms, per-tensor <g_i,g0>,
+  test prediction histogram, and RNG-neutral counterfactual root updates from the same global model (balanced+class
+  weights, natural root (same 296 rows, uniform over training rows), natural+weights, a second balanced draw).
+  Results (results/fltrust_shutdown/replay_{iid_s42,iid_s43,dirichlet_s42}.json, 12 rounds each):
+  - replay reproduces the P3 shutdown rounds exactly (s42: 6, s43: 7; round-1 CA identical to P3) and it persists to
+    round 12 (absorbing; prediction histogram frozen).
+  - **Not a code bug** (fltrust.py checked: cosine on the trainable mask, ReLU, rescale; correct). **Not a vanishing
+    root update** (||g0|| 0.47-0.61 in shutdown rounds vs 0.51-0.60 before). **Not mini-batch noise** (a second balanced
+    draw agrees, cos >= 0.91, and also gives all clients <= -0.04).
+  - **Cause: the class-balanced root** (37 rows/class; paper discloses it, Cao et al. assume root ~ training dist.). In
+    shutdown rounds every client's cosine to the balanced root is -0.38..-0.07; to a natural root of the same size
+    +0.60..+0.81; natural vs balanced root updates point apart (cos -0.61..-0.43). Training the balanced root with the
+    clients' class weights does not help (<= -0.18). >= 86% of the negative inner product sits in lstm.weight_hh_l0.
+    Once the model fits the majority classes the balanced root pulls toward the minority classes against every IID
+    client; with sum of trust = 0 the implementation keeps the global model (FLTrust's formula is undefined there), so
+    the next round repeats the conflict. Dirichlet replay: max 8/10 excluded, 0 full shutdowns in 12 rounds.
+  - New macros \fs* (paper/make_numbers_fltshut.py -> numbers_fltshut.tex; in Makefile `numbers` and preamble).
+    \csFltShutDef{N,Runs} added to make_numbers_calib6.py: defect arm 0 of 20 runs shut down.
+  - Paper: main Sec. VI-C now gives the cause in 3 sentences + Dir/defect shutdown counts; confirmatory paragraph says
+    P2/P4 can confirm Cor. 3's prediction, not detection (amendment cited); Discussion lists the balanced-root shutdown
+    among non-counter failures. Supplement: new subsection S-III-D (sup:fltshut). Supplement cuts to pay for it
+    (overview sentence, seed-46 timing detail, first-campaign bullets, realizability sentences).
+- **PREREG_P3.md Amendment 1 (dated, interpretation only).** Seen: all 480 cells incl. P1-P4 at n=5 and the shutdown.
+  Tests, families, Holm, n=10 timing unchanged; P2/P4 NOT dropped or re-scored. Reporting rule: a supported P2/P4 is
+  reported as confirming Cor. 3's literal prediction, never as detection; total-exclusion counts per arm/partition are
+  reported beside P1-P4; natural-root runs are exploratory and cannot rescue any hypothesis. Honest note: the
+  registration foresaw only the opposite degenerate case ("fixed arm excludes no one").
+- **Code:** src/defenses/fltrust.py gains `defense.fltrust_root: balanced|natural` (default balanced = every campaign so
+  far; P3 unaffected). configs/fltrust_natroot.yaml (P3 trainable config, fltrust, natural root, out results/fltrust_shutdown).
+- **Build/check:** latexmk rc 0, 0 undefined refs. **IEEEtran pages: main 10 (ends at 9.53, was 9.49) / supplement 6
+  (5.98).** check_manuscript all PASS except the gate (131 unresolved, all P3). Supplement has 9 \fsNat* PENDING macros
+  until the natural-root runs land.
+- **Running jobs:** mine: natural-root closed loop, `experiments/fltrust_shutdown/run_natroot.sh` under systemd-inhibit,
+  PID 101660 (bash 101661), 3 CPU lanes x 4 threads: clean IID s42-44, clean IID s45-46, attacked IID s42-43 (me15);
+  logs results/fltrust_shutdown/log_natroot_*.log, campaign log natroot_campaign.log; resumable (run_sweep skips done
+  cells). ETA clean ~2-3 h, attacked ~4-5 h from 06:50. Not mine: P3 PIDs 5901, 15185, 52037.
+- **Score after: 4/10, REJECT** (unchanged: the shutdown is now explained and honestly scoped, but it also shows that
+  this paper's FLTrust fixed arm is a weak, root-dependent baseline, and the confirmatory family is still n=5).
+- **Top 3 priorities:**
+  1. Harvest natroot (`python3 paper/make_numbers_fltshut.py`): if the natural-root fixed arm neither shuts down nor
+     loses CA, consider (exploratory, labelled) reporting FLTrust's counter effect with a natural root too; do NOT swap
+     it into P1-P4. If it also shuts down, the root-distribution explanation is incomplete -- say so.
+  2. Harvest P3 as seeds 47-51 of FLTrust land (P1-P4 reach n=10); retire PENDING abstract/intro/conclusion sentences.
+  3. Main is 9.53 pp; pay for any new text with cuts (aim <= 9.5).

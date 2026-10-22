@@ -644,7 +644,8 @@ of four can reach $0.05$ only from $n=7$ on; below that a hypothesis cannot be
 supported whatever its sign counts. So far every primary hypothesis has the
 predicted sign on every seed ($n=\pfPrePOneN$ each, $p=\pfPrePOneP$, $p_H=\pfPrePOnePh$),
 the two blind IID ones included, but none is supported yet; the IID effects are the
-fixed arm's shutdown described in Sec.~\ref{sec:mech}. S2 is complete
+fixed arm's shutdown (Sec.~\ref{sec:mech}), so P2 and P4 can confirm Corollary~\ref{cor:fltrust}'s
+prediction, not detection (amendment, \texttt{PREREG\_P3.md}). S2 is complete
 ($n=\pfPreSTwoN$, $\pfPreSTwoPos$/$\pfPreSTwoNeg$, $\Delta=\pfPreSTwoDiff$,
 $p=\pfPreSTwoP$) and not supported: the predicted noise penalty is too small to
 see.
@@ -846,19 +847,23 @@ per-round fraction excluded is $\csFltDefectMaxExcl$.
 % RE-CHECK the counts above as P3 FLTrust cells land (make_numbers_calib6.py).
 In the re-run the defect arm's DR, attacked FPR and clean FPR are
 $\pfDRFltrustDirAtkDef$, $\pfFPRFltrustDirAtkDef$ and $\pfFPRFltrustDirCleanDef$
-(Table~\ref{tab:p1flag}; first campaign: $\paDRFltrustDirAtkDef$,
-$\paFPRFltrustDirAtkDef$, $\paFPRFltrustDirCleanDef$). The rescaling factor
+(Table~\ref{tab:p1flag}). The rescaling factor
 $\approx B_0/B_i$ also shrinks the aggregate step about eightfold. Removing the
 counter does not make FLTrust a good detector here: its fixed arm excludes
 malicious clients at $\pfDRFltrustDirAtkFix$ and honest ones at
-$\pfFPRFltrustDirAtkFix$ (first campaign: $\paDRFltrustDirAtkFix$,
-$\paFPRFltrustDirAtkFix$), so a $300$-row root direction disagrees with
+$\pfFPRFltrustDirAtkFix$, so a $300$-row root direction disagrees with
 honest updates about as often as with poisoned ones. Under IID shards it is worse:
-in all $\csFltShutNIid$ of $\csFltShutRunsIid$ fixed-arm runs FLTrust gives every
+in all $\csFltShutNIid$ of $\csFltShutRunsIid$ fixed-arm runs (Dirichlet:
+$\csFltShutNDir$ of $\csFltShutRunsDir$; defect arm: $\csFltShutDefN$ of $\csFltShutDefRuns$) FLTrust gives every
 client zero trust from round $\csFltShutFirstIid$--$\csFltShutLastIid$ on, and the
 model stops moving (clean CA $\pfCAFltrustIidCleanFix$ against
 $\pfCAFltrustIidCleanDef$), so its DR of $\pfDRFltrustIidAtkFix$ is a shutdown, not
-detection. The counter hid this behind a detector that never fires.
+detection. The cause is our class-balanced root set, not the fix
+(Sec.~\ref{sup:fltshut}): in a replay every client's cosine to the root update is
+then $\fsBalCosLo$ to $\fsBalCosHi$, against $\fsNatCosLo$ to $\fsNatCosHi$ for a
+root drawn from the training distribution. Once the model fits the majority
+classes, the balanced root pulls against every IID client, and zero total trust
+leaves the model unchanged, so the state is absorbing. The counter hid this behind a detector that never fires.
 
 \textbf{What a falsified counter buys under FLTrust.} The counter is a value each
 client sets for itself (Sec.~\ref{sec:setup}). Under the defect FLTrust adds
@@ -969,8 +974,8 @@ its numbers is reused.
 \textbf{Why the hazard survives review.} No accuracy curve reveals an inert
 counter; equal IID shards hide it from distance rules (Corollary~\ref{cor:dist});
 and for cosine rules it breaks nothing visibly, with consequences from none (FLAME)
-to excluding nobody (FLTrust). Failures unrelated to the counter (FoolsGold) are
-separated from it only by the fixed arm.
+to excluding nobody (FLTrust). Failures unrelated to the counter (FoolsGold; FLTrust's
+balanced root) are separated from it only by the fixed arm.
 
 \textbf{What we recommend.} (i) Decide on \texttt{parameters()}, aggregate the
 \sd{}: compute every similarity, distance, norm, clip bound and noise scale on the

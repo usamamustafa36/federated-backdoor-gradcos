@@ -19,7 +19,14 @@ class FLTrust(DefenseStrategy):
         self.cfg = cfg
         self.device = device
         self.dataset = dataset
-        self.root_x, self.root_y = self._sample_root(dataset, root_size, cfg.seed)
+        # Iteration 21: `defense.fltrust_root` = balanced (default, every campaign so far)
+        # | natural (same number of rows, drawn uniformly from the training rows, i.e.
+        # the root ~ training distribution that Cao et al. assume). Exploratory only.
+        mode = str(getattr(cfg.defense, "fltrust_root", "balanced")).lower()
+        if mode == "natural":
+            self.root_x, self.root_y = self._sample_root_natural(dataset, root_size, cfg.seed)
+        else:
+            self.root_x, self.root_y = self._sample_root(dataset, root_size, cfg.seed)
         # Iteration 9: pure logging for Corollary 3 (never feeds a decision).
         self._counter_mask = None
         self.last_counter_diag: dict | None = None
@@ -38,6 +45,14 @@ class FLTrust(DefenseStrategy):
             idx.append(rng.choice(c_idx, size=take, replace=False))
         idx = np.concatenate(idx)
         rng.shuffle(idx)
+        return dataset.x_train[idx], dataset.y_train[idx]
+
+    @staticmethod
+    def _sample_root_natural(dataset, root_size, seed):
+        """Root set of the balanced sampler's size, uniform over the training rows."""
+        rng = np.random.RandomState(seed + 999)
+        n = max(1, root_size // len(np.unique(dataset.y_train))) * len(np.unique(dataset.y_train))
+        idx = rng.choice(len(dataset.y_train), size=n, replace=False)
         return dataset.x_train[idx], dataset.y_train[idx]
 
     def _server_update(self) -> np.ndarray:

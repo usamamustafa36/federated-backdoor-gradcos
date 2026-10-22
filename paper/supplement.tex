@@ -41,10 +41,7 @@ Counter''}
 
 \section{Overview}
 \label{sup:overview}
-This supplement holds the details the paper summarises: the defect probe, the
-proofs and checks of the mechanism results, the calibration of the attack, the
-engine's second defect, the thirteen rules, the first campaign and the findings it
-withdraws, and the realizability audit of the triggers. Section,
+Section,
 table and equation numbers prefixed with S refer to this document; all others
 refer to the paper, and citation numbers to the paper's reference list. Every number is generated from the released result files by
 the same generators as the paper's.
@@ -278,6 +275,30 @@ clients share a majority class, that assumption fails whether or not the counter
 present. Its fixed-arm outcomes in the re-run will therefore measure this failure,
 and only its defect-arm outcomes can add a counter effect on top of it.
 
+\subsection{Why fixed-arm FLTrust shuts down under IID shards}
+\label{sup:fltshut}
+A CPU replay of the clean IID fixed-arm cells, seeds $\fsReplaySeeds$
+(\path{experiments/fltrust_shutdown/}), logs every trust cosine and counterfactual
+root updates from the same global model; it shuts down in rounds $\fsShutRounds$,
+as the re-run did. In its $\fsShutNrounds$ shutdown rounds every client's cosine to the root
+update is in $[\fsBalCosLo,\fsBalCosHi]$; a second draw of the balanced root agrees
+(largest cosine $\fsRepCosHi$), so this is not mini-batch noise, and training the
+root with the clients' class weights does not help ($\le\fsBalWCosHi$). A root of
+the same size drawn from the training distribution gives every client
+$[\fsNatCosLo,\fsNatCosHi]$, and its update points away from the balanced one
+(cosine $\fsNatToBalLo$ to $\fsNatToBalHi$). The root update does not vanish
+($\|g_0\|=\fsGzeroShLo$--$\fsGzeroShHi$, before: $\fsGzeroPreLo$--$\fsGzeroPreHi$).
+So once the model fits the majority classes, a class-balanced
+root pulls toward the minority classes and every IID client, holding the
+majority-heavy distribution, pulls the other way. With all trust zero FLTrust's
+normalisation is undefined and we keep the model, so the next round faces the same
+conflict: the state is absorbing. Under Dirichlet shards minority-heavy clients keep
+positive trust (replay: at most $\fsDirMaxFlagged$ of $\fsDirClients$ excluded). The code computes FLTrust as specified; the cause is our
+class-balanced root, which Cao et al.\ do not assume. Closed loop with a
+training-distribution root (fixed arm, IID, exploratory): clean FPR
+$\fsNatCleanFpr$, CA $\fsNatCleanCA$, shutdowns $\fsNatCleanShut$/$\fsNatCleanN$;
+attacked DR $\fsNatAtkDr$, FPR $\fsNatAtkFpr$ ($n=\fsNatAtkN$).
+
 \section{Attack calibration and the seed-robust adversary}
 \label{sup:calib}
 This section expands the paragraph ``Attack calibration'' of
@@ -372,11 +393,8 @@ backdoor implants it does so abruptly: BSR sits at the clean floor and then jump
 past $0.5$ within one round, at round $\csOnsetMin$--$\csOnsetMax$ in the
 $\csOnsetN$ implanting cells of Table~\ref{tab:seedcal}. On seed $46$ the jump
 comes at round $\csSmEtenImplantFortySix$ ($E_m=10$) or
-$\csSmEfifteenImplantFortySix$ ($E_m=15$), peaks at $\csSixMaxRoundTen$ and
-$\csSixMaxRoundFifteen$, and the final round reads $\csSixLastRoundTen$ and
-$\csSixLastRoundFifteen$. A jump at round $14$ or later cannot register under a
-last-five-round criterion, so the $E_m=15$ reading is right-censored; the $E_m=10$
-reading is not (the jump at round $12$ fell back the next round). Our reading is
+$\csSmEfifteenImplantFortySix$ ($E_m=15$), too late or too briefly to register
+under a last-five-round criterion. Our reading is
 that the attack sits near a threshold on seed $46$, not that the seed is immune.
 The poisoned data do not single the seed out
 (\texttt{experiments/calib\_iter6/s46\_probe.py}): the attackers stamp
@@ -449,9 +467,8 @@ seed & clean & share & $E_m=5$ & share & $E_m=5$ & $E_m=10$ & $E_m=15$ \\
 $100$ rounds and $400{,}000$ rows; the campaign is ten times smaller in rows and
 about seven times shorter. Hence a weak detector (Table~\ref{tab:p1}) and a backdoor
 that survives averaging only with extra local epochs (Table~\ref{tab:calib}).
-The campaign should be read first as a test of what the counter
-does to the \emph{decisions} of aggregation rules and to clean accuracy, and only
-second as a measurement of backdoor robustness under one calibrated attack.
+The campaign tests what the counter does to the rules' \emph{decisions} first,
+and backdoor robustness under one calibrated attack only second.
 
 \section{The engine's round-one defect}
 \label{sup:alias}
@@ -578,9 +595,7 @@ exact $p=\paFPRFltrustDirCleanP$, the floor at five seeds), while clean accuracy
 $\paCAFltrustDirCleanDiff$ (lower on $\paCAFltrustDirCleanNeg$ of $\paCAFltrustDirCleanN$
 seeds). FLAME excluded the same fraction in both arms ($\paFPRFlameDirCleanDef$ against
 $\paFPRFlameDirCleanFix$ in clean runs), and its clean accuracy moved by
-$\paCAFlameDirCleanDiff$. The
-first campaign's FoolsGold cells depended on the round-one defect and are withdrawn
-(Sec.~\ref{sec:setup}).
+$\paCAFlameDirCleanDiff$. 
 
 \label{sec:retro}
 
@@ -590,15 +605,11 @@ they show the hazard changing conclusions, not only numbers. None of their numbe
 is reused here.
 
 \emph{``FLTrust never excludes a client; its robustness is continuous
-reweighting.''} This is Corollary~\ref{cor:fltrust}. In the fixed arm of the
-first campaign FLTrust excluded a fraction $\paFPRFltrustDirCleanFix$ of the
-clients in clean runs (Sec.~\ref{sec:p1}).
+reweighting.''} This is Corollary~\ref{cor:fltrust}.
 
-\emph{``FLTrust pays a clean-accuracy cost.''} At that version's scale the
-root set was two batches against $79$ per client, so the rescaling factor $B_0/B_i$
-of Corollary~\ref{cor:fltrust} shrank every client update about fortyfold before
-averaging, for reasons unrelated to trust; a clean-accuracy deficit is what such a
-slowed learning rate produces.
+\emph{``FLTrust pays a clean-accuracy cost.''} The rescaling factor
+$B_0/B_i\approx2/79$ of Corollary~\ref{cor:fltrust} shrank every client update
+about fortyfold, for reasons unrelated to trust.
 
 \emph{``FoolsGold pays for its robustness in clean accuracy, and the counter is
 why.''} This is withdrawn on two counts. The measured difference came from our
@@ -606,17 +617,12 @@ engine's round-one defect (Sec.~\ref{sec:setup}), and with it fixed FoolsGold
 excludes most honest clients under our label skew in either arm, because clients
 sharing a majority class have similar histories (Sec.~\ref{sec:mech}).
 
-\emph{``Colluders' updates have pairwise cosine near one, and a cheap zero-sum
-noise removes that resemblance.''} The floor near one was the shared counter
-direction of Corollary~\ref{cor:band}: over the transmitted vector every pair of
-clients, honest or not, sits near $\pfDiagCosFullDir$ in our non-IID runs.  The
-evasion and salience analysis built on it are withdrawn.
+\emph{``Colluders' updates have pairwise cosine near one.''} So does every pair
+(about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}); the evasion and salience
+analysis built on it are withdrawn.
 
-\emph{``FLAME's robustness is bought with false positives.''} In the first
-campaign this one survived the counter fix: FLAME excluded a fraction
-$\paFPRFlameDirCleanFix$ of honest clients in clean non-IID runs of the fixed arm,
-as in the defect arm. The re-run, on the engine without the round-one defect,
-reads $\pfFPRFlameDirCleanFix$ (Table~\ref{tab:p1flag}).
+\emph{``FLAME's robustness is bought with false positives''} survived the fix
+(fixed arm, clean non-IID: $\paFPRFlameDirCleanFix$; re-run: $\pfFPRFlameDirCleanFix$).
 
 \section{Realizability of feature-space triggers}
 \label{sup:realize}
@@ -664,8 +670,6 @@ $\rzNrowsArtifact$ trigger/mode/scale rows with every statistic, is a generated
 table in the repository (\path{results/artifact/realizability_ciciot2023.md},
 written by \path{paper/make_numbers.py}).
 
-Three things follow.
-
 \emph{Marginal magnitude is a poor proxy for joint plausibility.} The fixed
 trigger at $0.25\times$ has a largest marginal deviation of
 $\rzSigFixedQtr\sigma$---by the usual standard, unremarkable---yet sits at
@@ -683,17 +687,13 @@ inside the benign joint envelope at every scale we test
 $d_M^{p99}=\rzPnnStatistical$). The temporal trigger is not, by more than two
 orders of magnitude ($d_M$ of $\rzDMTemporalQtr$--$\rzDMTemporalThree$ against
 $\rzPnnTemporal$): setting IAT, packet count and total size independently produces
-a flow whose timing and volume contradict each other. Results resting on the
-temporal trigger, in this literature generally, should be read as feature-space
-results only. The fixed trigger used in our campaign lies between the two.
+a flow whose timing and volume contradict each other. Results resting on such a trigger are feature-space results only. The fixed trigger used in our campaign lies between the two.
 
 \emph{A partial fix.} Our \texttt{donor} construction copies the trigger block
 from a single real benign flow, chosen to be distinctive relative to attack
 traffic while remaining inside the benign joint envelope (below its $95$th
 Mahalanobis percentile). By construction the stamped block is a combination the
-network actually produced, and it matches a more realistic adversary, one who
-shapes traffic to imitate a benign flow rather than dialling individual
-statistics to chosen $\sigma$ values. It brings all three triggers to
+network actually produced. It brings all three triggers to
 $d_M$ of $\rzDMTemporalDonor$--$\rzDMStatisticalDonor$. It does not close the
 gap: $d_{NN}$ stays at $\rzNNFixedDonor$--$\rzNNStatisticalDonor$, because
 pasting a real benign block into a real attack flow still yields a
@@ -710,9 +710,7 @@ clean model does not already accept is harder to key on. We take the median of t
 distinctiveness ordering and screen every donor trigger by its clean-model BSR. The screen's values are
 not yet routed through the generator, so we do not quote them. \PENDING
 % RETIRES WITH: donor-trigger clean-model BSR screen routed through make_numbers.py (QA_FINDINGS.md F9)
-A trigger realizable as benign-looking traffic and learnable as distinct from
-``benign'' is asked to be two things at once; the narrow window between them
-constrains problem-space backdoors in a way the feature-space formulation hides.
+A realizable trigger must look benign yet be learnable as distinct from benign.
 
 % Restore once moved text cites anything (an empty bibliography is a LaTeX error):
 % No bibliography of its own: \cite resolves through xr-hyper to the paper's
