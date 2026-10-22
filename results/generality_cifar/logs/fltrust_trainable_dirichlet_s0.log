@@ -1,0 +1,21 @@
+[fltrust_trainable_dirichlet_s0] r1 acc=nan cshare=0.769 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 334.5s
+[fltrust_trainable_dirichlet_s0] r2 acc=nan cshare=0.835 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 281.5s
+[fltrust_trainable_dirichlet_s0] r3 acc=nan cshare=0.932 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 321.3s
+[fltrust_trainable_dirichlet_s0] r4 acc=nan cshare=0.949 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 285.7s
+[fltrust_trainable_dirichlet_s0] r5 acc=0.157 cshare=0.906 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 466.0s
+[fltrust_trainable_dirichlet_s0] r6 acc=nan cshare=0.918 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=4/5 246.2s
+[fltrust_trainable_dirichlet_s0] r7 acc=nan cshare=0.950 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 229.5s
+[fltrust_trainable_dirichlet_s0] r8 acc=nan cshare=0.970 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 219.4s
+[fltrust_trainable_dirichlet_s0] r9 acc=nan cshare=0.958 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 268.2s
+[fltrust_trainable_dirichlet_s0] r10 acc=0.141 cshare=0.965 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 352.0s
+[fltrust_trainable_dirichlet_s0] r11 acc=nan cshare=0.974 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 252.5s
+[fltrust_trainable_dirichlet_s0] r12 acc=nan cshare=0.977 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 230.6s
+[fltrust_trainable_dirichlet_s0] r13 acc=nan cshare=0.956 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 263.5s
+[fltrust_trainable_dirichlet_s0] r14 acc=nan cshare=0.975 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 231.3s
+[fltrust_trainable_dirichlet_s0] r15 acc=0.137 cshare=0.972 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 333.1s
+[fltrust_trainable_dirichlet_s0] r16 acc=nan cshare=0.970 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 236.0s
+[fltrust_trainable_dirichlet_s0] r17 acc=nan cshare=0.972 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 241.1s
+[fltrust_trainable_dirichlet_s0] r18 acc=nan cshare=0.972 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=9/5 225.5s
+[fltrust_trainable_dirichlet_s0] r19 acc=nan cshare=0.977 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 235.4s
+[fltrust_trainable_dirichlet_s0] r20 acc=0.169 cshare=0.980 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 319.8s
+[done] fltrust_trainable_dirichlet_s0

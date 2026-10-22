@@ -5,3 +5,17 @@
 [fedavg_dirichlet_s1] r5 acc=0.231 cshare=0.985 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 617.9s
 [fedavg_dirichlet_s1] r6 acc=nan cshare=0.989 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 471.7s
 [fedavg_dirichlet_s1] r7 acc=nan cshare=0.991 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 437.1s
+[fedavg_dirichlet_s1] r8 acc=nan cshare=0.992 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 403.3s
+[fedavg_dirichlet_s1] r9 acc=nan cshare=0.990 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 381.9s
+[fedavg_dirichlet_s1] r10 acc=0.268 cshare=0.988 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 569.4s
+[fedavg_dirichlet_s1] r11 acc=nan cshare=0.991 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 288.1s
+[fedavg_dirichlet_s1] r12 acc=nan cshare=0.991 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 315.6s
+[fedavg_dirichlet_s1] r13 acc=nan cshare=0.992 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 404.7s
+[fedavg_dirichlet_s1] r14 acc=nan cshare=0.989 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 387.4s
+[fedavg_dirichlet_s1] r15 acc=0.315 cshare=0.990 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 577.0s
+[fedavg_dirichlet_s1] r16 acc=nan cshare=0.991 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 460.3s
+[fedavg_dirichlet_s1] r17 acc=nan cshare=0.991 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 416.7s
+[fedavg_dirichlet_s1] r18 acc=nan cshare=0.992 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 268.8s
+[fedavg_dirichlet_s1] r19 acc=nan cshare=0.993 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=1/7 276.7s
+[fedavg_dirichlet_s1] r20 acc=0.357 cshare=0.992 B=[29, 30, 27, 25, 34, 52, 27, 10, 44, 40] B0=4 krum full/tr=0/7 376.9s
+[done] fedavg_dirichlet_s1

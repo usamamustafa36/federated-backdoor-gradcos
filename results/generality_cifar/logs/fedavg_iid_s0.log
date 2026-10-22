@@ -5,3 +5,17 @@
 [fedavg_iid_s0] r5 acc=0.304 cshare=0.996 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=3/3 591.1s
 [fedavg_iid_s0] r6 acc=nan cshare=0.992 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=2/2 462.9s
 [fedavg_iid_s0] r7 acc=nan cshare=0.996 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=6/2 449.4s
+[fedavg_iid_s0] r8 acc=nan cshare=0.995 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=9/6 421.3s
+[fedavg_iid_s0] r9 acc=nan cshare=0.995 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=8/6 377.6s
+[fedavg_iid_s0] r10 acc=0.373 cshare=0.993 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=3/5 526.7s
+[fedavg_iid_s0] r11 acc=nan cshare=0.993 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=9/9 303.1s
+[fedavg_iid_s0] r12 acc=nan cshare=0.992 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=8/8 335.4s
+[fedavg_iid_s0] r13 acc=nan cshare=0.994 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=8/3 384.3s
+[fedavg_iid_s0] r14 acc=nan cshare=0.994 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=9/3 381.8s
+[fedavg_iid_s0] r15 acc=0.399 cshare=0.994 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=6/6 571.6s
+[fedavg_iid_s0] r16 acc=nan cshare=0.994 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=3/8 466.9s
+[fedavg_iid_s0] r17 acc=nan cshare=0.991 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=8/6 424.0s
+[fedavg_iid_s0] r18 acc=nan cshare=0.993 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=3/3 271.5s
+[fedavg_iid_s0] r19 acc=nan cshare=0.989 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=3/2 291.5s
+[fedavg_iid_s0] r20 acc=0.427 cshare=0.993 B=[32, 32, 32, 32, 32, 32, 32, 32, 32, 32] B0=4 krum full/tr=4/7 360.8s
+[done] fedavg_iid_s0

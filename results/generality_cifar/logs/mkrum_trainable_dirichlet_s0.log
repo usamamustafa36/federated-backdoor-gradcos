@@ -1,0 +1,21 @@
+[mkrum_trainable_dirichlet_s0] r1 acc=nan cshare=0.769 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 233.0s
+[mkrum_trainable_dirichlet_s0] r2 acc=nan cshare=0.892 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 247.5s
+[mkrum_trainable_dirichlet_s0] r3 acc=nan cshare=0.978 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 257.0s
+[mkrum_trainable_dirichlet_s0] r4 acc=nan cshare=0.987 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 235.9s
+[mkrum_trainable_dirichlet_s0] r5 acc=0.204 cshare=0.991 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 319.8s
+[mkrum_trainable_dirichlet_s0] r6 acc=nan cshare=0.990 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 233.7s
+[mkrum_trainable_dirichlet_s0] r7 acc=nan cshare=0.989 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 230.1s
+[mkrum_trainable_dirichlet_s0] r8 acc=nan cshare=0.993 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 236.7s
+[mkrum_trainable_dirichlet_s0] r9 acc=nan cshare=0.993 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 244.1s
+[mkrum_trainable_dirichlet_s0] r10 acc=0.300 cshare=0.992 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 313.9s
+[mkrum_trainable_dirichlet_s0] r11 acc=nan cshare=0.986 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=0/5 239.6s
+[mkrum_trainable_dirichlet_s0] r12 acc=nan cshare=0.989 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 232.1s
+[mkrum_trainable_dirichlet_s0] r13 acc=nan cshare=0.993 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 239.3s
+[mkrum_trainable_dirichlet_s0] r14 acc=nan cshare=0.992 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 261.6s
+[mkrum_trainable_dirichlet_s0] r15 acc=0.362 cshare=0.989 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 311.7s
+[mkrum_trainable_dirichlet_s0] r16 acc=nan cshare=0.992 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 223.1s
+[mkrum_trainable_dirichlet_s0] r17 acc=nan cshare=0.988 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 216.9s
+[mkrum_trainable_dirichlet_s0] r18 acc=nan cshare=0.989 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 237.2s
+[mkrum_trainable_dirichlet_s0] r19 acc=nan cshare=0.984 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=7/5 229.2s
+[mkrum_trainable_dirichlet_s0] r20 acc=0.435 cshare=0.987 B=[36, 46, 20, 20, 34, 12, 45, 37, 37, 31] B0=4 krum full/tr=8/5 321.2s
+[done] mkrum_trainable_dirichlet_s0

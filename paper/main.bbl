@@ -106,6 +106,16 @@ H.~Chen, T.~Xu, X.~Wu, and J.~Kittler, ``Hybrid batch normalisation: Resolving
   \emph{Proceedings of the 42nd International Conference on Machine Learning
   (ICML)}, ser. PMLR, vol. 267, 2025, pp. 9500--9515.
 
+\bibitem{xu2025oba}
+J.~Xu, Z.~Zhang, and R.~Hu, ``On the out-of-distribution backdoor attack for
+  federated learning,'' 2025, arXiv:2509.13219; to appear in ACM MobiHoc 2025
+  (arXiv record). Proposes the BNGuard defense.
+
+\bibitem{flower2026issue8298}
+{Flower contributors}, ``{DP} clipping shrinks every update when the model has
+  integer arrays ({BatchNorm} \texttt{num\_batches\_tracked}),'' GitHub issue
+  flwrlabs/flower \#8298, opened 6 Oct. 2026; proposed fix in PR \#8381, 2026.
+
 \bibitem{yin2018}
 D.~Yin, Y.~Chen, K.~Ramchandran, and P.~Bartlett, ``{B}yzantine-robust
   distributed learning: Towards optimal statistical rates,'' in

@@ -158,7 +158,8 @@ def main():
         seeds = sorted({s for (a, p, s) in runs if a == f"{rule}_full" and p == "dirichlet"}
                        & {s for (a, p, s) in runs if a == f"{rule}_trainable" and p == "dirichlet"})
         if not seeds:
-            for k in ("AccFull", "AccTr", "AccDiff", "N", "Wins"):
+            for k in ("AccFull", "AccTr", "AccDiff", "N", "Wins", "LoopFull", "LoopTr",
+                      "AccMin", "AccMax"):
                 mac[f"gc{tag}{k}"] = P
             continue
         af = np.array([runs[(f"{rule}_full", "dirichlet", s)]["log"][-1]["test_acc"] for s in seeds])
@@ -168,6 +169,26 @@ def main():
         mac[f"gc{tag}AccDiff"] = f"{(at - af).mean():+.3f}"
         mac[f"gc{tag}N"] = str(len(seeds))
         mac[f"gc{tag}Wins"] = str(int((at > af).sum()))
+        # What the driving rule actually did in its own loop (its own arm's decision
+        # record each round): attackers' FLTrust weight share, attackers Multi-Krum kept.
+        def inloop(arm):
+            vals = []
+            for s in seeds:
+                for r in runs[(f"{rule}_{arm}", "dirichlet", s)]["log"]:
+                    D = r["dec"]["full" if arm == "full" else "trainable"]
+                    nm = runs[(f"{rule}_{arm}", "dirichlet", s)]["setting"]["n_mal"]
+                    if rule == "fltrust":
+                        vals.append(sum(D["fltrust_w"][i] for i in range(nm)))
+                    else:
+                        vals.append(len(set(range(nm)) & set(D["mkrum_keep"])))
+            return float(np.mean(vals))
+        lf, lt = inloop("full"), inloop("trainable")
+        if rule == "fltrust":
+            mac[f"gc{tag}LoopFull"], mac[f"gc{tag}LoopTr"] = pct(lf), pct(lt)
+        else:
+            mac[f"gc{tag}LoopFull"], mac[f"gc{tag}LoopTr"] = f"{lf:.2f}", f"{lt:.2f}"
+        mac[f"gc{tag}AccMin"] = f"{min(af.min(), at.min()):.3f}"
+        mac[f"gc{tag}AccMax"] = f"{max(af.max(), at.max()):.3f}"
         summary[f"{rule}_closed_loop"] = {"seeds": seeds, "acc_full": af.tolist(),
                                           "acc_trainable": at.tolist()}
 

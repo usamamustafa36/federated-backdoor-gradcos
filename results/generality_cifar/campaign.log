@@ -1,0 +1,19 @@
+01:20:13 done fedavg dirichlet 0 rc=0
+01:20:37 done fedavg iid 1 rc=0
+01:20:41 done fedavg iid 0 rc=0
+01:20:52 done fedavg dirichlet 1 rc=0
+01:21:21 done fedavg iid 2 rc=0
+01:21:31 done fedavg dirichlet 2 rc=0
+02:53:13 done fltrust_full dirichlet 0 rc=0
+02:53:45 done fltrust_full dirichlet 2 rc=0
+02:53:55 done fltrust_trainable dirichlet 0 rc=0
+02:54:08 done fltrust_trainable dirichlet 1 rc=0
+02:54:23 done fltrust_full dirichlet 1 rc=0
+02:54:40 done fltrust_trainable dirichlet 2 rc=0
+04:18:26 done mkrum_trainable dirichlet 0 rc=0
+04:18:38 done mkrum_trainable dirichlet 1 rc=0
+04:19:11 done mkrum_full dirichlet 2 rc=0
+04:19:13 done mkrum_full dirichlet 0 rc=0
+04:19:26 done mkrum_full dirichlet 1 rc=0
+04:19:55 done mkrum_trainable dirichlet 2 rc=0
+04:19:55 GENERALITY COMPLETE

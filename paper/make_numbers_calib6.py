@@ -227,6 +227,30 @@ def main():
                   "FltNroundsCosNonpos", "FltNdefectRuns", "FltDefectMaxExcl"):
             P(k, "\\PENDING")
 
+    # --- iteration 20: fixed-arm FLTrust shutdown -------------------------------
+    # In the fixed arm FLTrust can give every client zero trust (all trainable cosines
+    # to the root update <= 0); then the global model stops moving. Per partition:
+    # runs (clean + attacked, seeds of P3) that end with every client excluded, the
+    # earliest/latest round from which every later round excludes everyone.
+    for part, ptag in (("iid", "Iid"), ("dirichlet", "Dir")):
+        starts, nruns = [], 0
+        for path in sorted(glob.glob(R("postfix_p3", f"p3trainable_{part}_ciciot2023_fltrust_*.json"))):
+            try:
+                h = json.load(open(path))["history"]
+            except (OSError, json.JSONDecodeError):
+                continue
+            nruns += 1
+            # a round "excludes everyone" iff FPR >= 0.99 (and DR >= 0.99 when attacked)
+            allx = [(f is not None and f >= 0.99) and ("atk0" in path or (d is not None and d >= 0.99))
+                    for d, f in zip(h["detection_rate"], h["false_positive_rate"])]
+            st = next((i + 1 for i in range(len(allx)) if all(allx[i:])), None)
+            if st is not None:
+                starts.append(st)
+        P(f"FltShutRuns{ptag}", str(nruns))
+        P(f"FltShutN{ptag}", str(len(starts)))
+        P(f"FltShutFirst{ptag}", str(min(starts)) if starts else "--")
+        P(f"FltShutLast{ptag}", str(max(starts)) if starts else "--")
+
     # --- data-only probe of what the attackers poison (iteration 7) ------------
     # results/calib_iter6/s46_probe.json <- experiments/calib_iter6/s46_probe.py
     pp = R("calib_iter6", "s46_probe.json")

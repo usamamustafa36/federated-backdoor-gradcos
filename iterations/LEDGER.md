@@ -1328,3 +1328,40 @@ finished here.)
      sentence once all 6 FedAvg runs reach round 20, check the statistics still say the same at rounds 8-20, and
      write the closed-loop FLTrust/Multi-Krum accuracy sentence (n=3, exploratory, no p-value claims).
   3. Keep main <= ~9.5 pp: the P3 confirmatory paragraph must be paid for by cuts.
+
+## Iteration 20 - 2026-10-22 - Generality campaign harvested (final, closed loop included); P3 at 475 cells: all four primary hypotheses 5/5 in the predicted direction (not yet supportable), S2 final and not supported; fixed-arm FLTrust IID "shutdown" found and reported
+
+- **State at start (06:06):** generality campaign finished 04:19 (18 runs, all rc=0, 20/20 rounds). P3 475/1040;
+  run_p3_prereg.sh 13/36 jobs (NormClip IID s42-46 both arms, FLAME Dir s47-51 clean full). 8 GPU lanes; I added none.
+- **Reviewer score before: 4/10, REJECT.** Ranked: (1) confirmatory outcomes missing; (2) the generality evidence was
+  interim and had no accuracy outcome; (3) **new, found this iteration:** the fixed-arm FLTrust IID cells show FPR
+  0.996 / DR 1.000, which a reviewer would read either as a broken fix or as a meaningless "detection".
+- **Fixes:**
+  - **Generality harvest.** make_numbers_generality.py now also emits in-loop decision macros (\gcFtLoopFull/Tr,
+    \gcMkLoopFull/Tr: what the driving rule did in its own loop) and \gc{Ft,Mk}AccMin/Max. Final (3 seeds x 2
+    partitions, 20 rounds): counter share 99.0% (Dir)/99.5% (IID); FLTrust flipper trust 19.9% full vs 1.8% trainable
+    (Dir), 19.6 vs 0.5 (IID); flippers zero-trusted 89.2% on trainable (honest 9.6%). Closed loop (Dir, n=3): FLTrust
+    driven by full gives flippers 20.1% of trust vs 4.7%; Multi-Krum keeps 1.62 vs 1.15 flippers/round. **Accuracy does
+    not separate the arms**: FLTrust 0.130 vs 0.147 (near chance in both, 100-image root barely trains in 20 rounds),
+    Multi-Krum 0.398 vs 0.404 (2/3). Supplement paragraph rewritten (interim dropped, closed-loop result added with the
+    weak-attack caveat); main Limitations sentence now says accuracy does not separate at n=3.
+  - **Fixed-arm FLTrust shutdown (new diagnostic, make_numbers_calib6.py -> \csFltShut*):** in all 10/10 fixed-arm IID
+    FLTrust runs (clean+attacked, s42-46) every client gets zero trust from round 6-15 on and the model freezes (CA
+    0.549 vs 0.680 defect); Dir: 2/10 runs. Sec. VI-C now says the IID DR of 1.000 is a shutdown, not detection, and the
+    old explanation ("disagrees with non-IID honest updates") was wrong (IID is worse) and is removed.
+  - **Confirmatory paragraph (interim, honest):** P1-P4 each n=5, 5+/0-, one-sided p=0.031, Holm 0.125 -> not supported
+    (n=5 cannot reach 0.05 under Holm-4); P2/P4 are blind and also 5/5 but their effect is the shutdown. S2 (NormClip IID
+    CA) complete at n=10: 8/2, diff +0.001, p=0.072, Holm 0.25 -> **not supported** (final for S2). S1 n=5 4/1, S3/S4 3/2.
+    0/4 primary, 0/4 secondary supported. RE-CHECK comment marks the representative-P1-macro sentence.
+- **Build/check:** latexmk rc 0, 0 undefined refs. **IEEEtran pages: main 10 (ends at 9.49, was 9.38) / supplement 6
+  (5.96).** check_manuscript: all PASS except the gate (139 unresolved, all P3). Backups main.tex.pre-iter20.bak,
+  supplement.tex.pre-iter20.bak. results/fltrust_falsify.json float-noise rewrite reverted again.
+- **Running jobs (none mine):** P3 PIDs 5901, 15185, 52037 (prereg runner, 13/36 done at 06:05).
+- **Score after: 4/10, REJECT.** Generality is now a clean decision-level result with an honest null on accuracy; the
+  FLTrust story is sharper but less flattering (the counter masks a FLTrust that, read correctly, shuts down here).
+- **Top 3 priorities:**
+  1. Harvest P3 as seeds 47-51 land for FLTrust IID/Dir (P1-P4 reach n=10 -> first point where support is possible);
+     then retire the abstract/intro/conclusion PENDING sentences with macro-driven text.
+  2. The FLTrust shutdown needs a mechanism sentence or a quick CPU probe (why trainable cosines to a 300-row root go
+     <=0 near convergence under IID: root update noise vs vanishing client updates?) -- a reviewer will ask.
+  3. Main is at 9.49 pp: any new text must be paid for by cuts (aim <= 9.5).
