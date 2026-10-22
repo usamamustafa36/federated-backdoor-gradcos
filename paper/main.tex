@@ -46,19 +46,20 @@ the cosine and the Euclidean distance between transmitted updates into trainable
 buffer parts explains which rules are exposed: in every pairwise cosine the trainable
 signal is weighted by at most one minus the buffer share, whatever the data, while
 distance-based rules are exposed only when clients run different numbers of batches, by
-exactly $L(B_i-B_j)^2$ for $L$ BatchNorm layers. In a federated CNN\,+\,LSTM intrusion
+exactly $L(B_i-B_j)^2$ for $L$ BatchNorm layers. In a federated CNN-LSTM intrusion
 detector on CICIoT2023 with non-IID clients, the buffers carry a median
 $\pfDiagBufNormShareDir$ of the squared update norm, and the mean pairwise client cosine
 is $\pfDiagCosFullDir$ over the transmitted vector against $\pfDiagCosSigDir$ over the
-trainable parameters. A seed-paired A/B campaign that changes only which coordinates
-thirteen aggregation rules read then measures what the counter does to clean accuracy,
-backdoor success and client flagging: \PENDING.
-% RETIRES WITH: P3 campaign (results/postfix_p3), one sentence from \pf... macros
+trainable parameters. In a seed-paired A/B that changes only which
+coordinates thirteen rules read, registered ten-seed tests confirm the predicted
+FLTrust effect under non-IID shards (Holm $p\le\pfPrePThreePh$): with the counter
+it excludes no client; without it, it excludes honest clients (rate
+$\pfFPRFltrustDirAtkFix$) about as often as attackers ($\pfDRFltrustDirAtkFix$). The counter changes what the
+rule decides, not whether it detects.
+% RE-CHECK (iter 23): Holm bound needs P3Ph>=P1Ph; DR~FPR (fixed, Dir).
 Four of ten inspected implementations put the counter in that vector, including a 2025
 defense's reference code and Flower's official PyTorch example, whose updates Flower's
-own Krum and Bulyan compare counter included. A separate audit shows that a
-feature-space trigger deviating at most $\rzSigFixedQtr\sigma$ per feature lies further
-from the benign mean than all but $\rzExceedFixedQtr$ of $\rzRefRows$ benign flows.
+own Krum and Bulyan compare.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -169,9 +170,13 @@ three benchmarks. We do not claim that published results are wrong.
 \item \textbf{What the counter changes, measured causally} (Sec.~\ref{sec:p1}).
 Every rule runs twice, identical except whether its decisions read the full vector
 or the trainable coordinates (paired seeds, two partitions, clean and attacked,
-exact tests, hypotheses registered before their cells completed). The campaign is
-not yet complete (\PENDING).
-% RETIRES WITH: P3 campaign (results/postfix_p3)
+exact tests, hypotheses registered before their cells completed;
+$\pfCellsDone$ of $\pfCellsTarget$ cells so far). Under non-IID shards the
+registered FLTrust tests are supported: the counter suppresses every exclusion, and
+without it honest clients go about as often as attackers. No predicted
+clean-accuracy effect is detected; with a training-distribution root FLTrust
+excludes no attacker in either partition.
+% RE-CHECK (iter 23): P1/P3 'supported', S1-S3 'not supported', \fsNatAtkDr and \fsNatDirAtkDr both 0.
 \item \textbf{Mechanisms} (Sec.~\ref{sec:mech}). Under the defect FLTrust excludes
 no client once the counter shares satisfy $q_i+q_0>1$ (Corollary~\ref{cor:fltrust});
 a client that falsifies its own counter is admitted with a fixed step whatever its
@@ -645,10 +650,9 @@ confirm Corollary~\ref{cor:fltrust}: removing the counter restores FLTrust's
 exclusions, though not useful detection (honest clients go about as often as
 flippers, Sec.~\ref{sec:mech}). The blind IID pair P2/P4
 ($n=\pfPrePTwoN$, $p_H=\pfPrePTwoPh$) measures the fixed arm's shutdown and is read
-the same way (amendment, \texttt{PREREG\_P3.md}). S2 is complete
-($n=\pfPreSTwoN$, $\pfPreSTwoPos$/$\pfPreSTwoNeg$, $\Delta=\pfPreSTwoDiff$,
-$p=\pfPreSTwoP$) and not supported: the predicted noise penalty is too small to
-see.
+the same way (amendment, \texttt{PREREG\_P3.md}). S1--S3 are complete and cannot be supported (e.g.\ S2:
+$\pfPreSTwoPos$/$\pfPreSTwoNeg$, $\Delta=\pfPreSTwoDiff$, $p=\pfPreSTwoP$): the
+predicted noise penalty is too small to see.
 % RE-CHECK (iter 22): 'both under Dirichlet' holds while P1,P3 are the supported ones;
 % P2/P4 share n and p_H only while both are 5/0.
 
@@ -680,8 +684,7 @@ S4 & FLAME & IID & CA & \pfPreSFourN & \pfPreSFourPos/\pfPreSFourNeg & $\pfPreSF
 \end{tabular}
 \end{table}
 
-\textbf{Exploratory cells so far.} \PENDING{} most cells of the re-run.
-% RETIRES WITH: P3 campaign (results/postfix_p3)
+\textbf{Exploratory cells} ($\pfCellsDone$ of $\pfCellsTarget$ run).
 (i) \emph{Negative control.} FedAvg's clean non-IID accuracy is
 $\pfCAFedavgDirCleanDef$ and $\pfCAFedavgDirCleanFix$ in the two arms (difference
 $\pfCAFedavgDirCleanDiff$, $n=\pfCAFedavgDirCleanN$): where the arms run the same
@@ -851,22 +854,21 @@ $\pfDRFltrustDirAtkDef$, $\pfFPRFltrustDirAtkDef$ and $\pfFPRFltrustDirCleanDef$
 $\approx B_0/B_i$ also shrinks the aggregate step about eightfold. Removing the
 counter does not make FLTrust a good detector here: its fixed arm excludes
 malicious clients at $\pfDRFltrustDirAtkFix$ and honest ones at
-$\pfFPRFltrustDirAtkFix$, so a $300$-row root direction disagrees with
-honest updates about as often as with poisoned ones. Under IID shards it is worse:
+$\pfFPRFltrustDirAtkFix$. Under IID shards it is worse:
 in all $\csFltShutNIid$ of $\csFltShutRunsIid$ fixed-arm runs (Dirichlet:
 $\csFltShutNDir$ of $\csFltShutRunsDir$; defect arm: $\csFltShutDefN$ of $\csFltShutDefRuns$) FLTrust gives every
 client zero trust from round $\csFltShutFirstIid$--$\csFltShutLastIid$ on, and the
 model stops moving (clean CA $\pfCAFltrustIidCleanFix$ against
 $\pfCAFltrustIidCleanDef$), so its DR of $\pfDRFltrustIidAtkFix$ is a shutdown, not
 detection. The cause is our class-balanced root set, not the fix
-(Sec.~\ref{sup:fltshut}): in a replay every client's cosine to the root update is
-then $\fsBalCosLo$ to $\fsBalCosHi$, against $\fsNatCosLo$ to $\fsNatCosHi$ for a
-root drawn from the training distribution. Once the model fits the majority
-classes, the balanced root pulls against every IID client, and zero total trust
-leaves the model unchanged, so the state is absorbing. A root drawn from the
-training distribution (exploratory) ends the shutdown ($\fsNatCleanShut$/$\fsNatCleanN$
+(Sec.~\ref{sup:fltshut}): once the model fits the majority classes, every IID
+client's cosine to the balanced root update is $\fsBalCosLo$ to $\fsBalCosHi$
+in a replay, and zero total trust leaves the model unchanged, so the state is
+absorbing. A root drawn from the training distribution (exploratory) ends the shutdown ($\fsNatCleanShut$/$\fsNatCleanN$
 runs, CA $\fsNatCleanCA$) but admits every flipper (DR $\fsNatAtkDr$, $n=\fsNatAtkN$),
-like the defect arm: under IID neither root makes FLTrust a detector.
+like the defect arm; under Dirichlet it excludes honest clients ($\fsNatDirAtkFpr$)
+and still no flipper (DR $\fsNatDirAtkDr$, $n=\fsNatDirAtkN$). With neither root, in
+neither partition, is FLTrust a useful detector here.
 
 \textbf{What a falsified counter buys under FLTrust.} The counter is a value each
 client sets for itself (Sec.~\ref{sec:setup}). Under the defect FLTrust adds
@@ -1029,8 +1031,9 @@ default momentum yet dominant in the update's norm; it weakens every pairwise co
 and enters distances exactly when batch counts differ, the non-IID case rather than
 the equal-shard one in which such code is usually tested. The remedy is one mask:
 decide on the trainable coordinates, aggregate the full state. What the counter changes is rule-specific: it stops FLTrust from excluding
-anyone, as Corollary~\ref{cor:fltrust} requires, and leaves FLAME's decisions
-unchanged so far. The full controlled campaign is \PENDING.
+anyone, as Corollary~\ref{cor:fltrust} requires, and leaves FLAME's non-IID decisions
+unchanged. Restored exclusions do not make FLTrust a detector here: what a rule
+decides and whether it defends are separate questions. The full controlled campaign is \PENDING.
 % RE-CHECK the interim sentence above against Tables tab:p1/tab:p1flag when P3 completes.
 % RETIRES WITH: P3 campaign (results/postfix_p3)
 We release the pipeline with the fix, the per-round defect diagnostics and the

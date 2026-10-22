@@ -1457,3 +1457,46 @@ finished here.)
   2. Harvest P3 as P2/P4 (FLTrust IID s47-51) land; when every cell of the eight hypotheses reaches n=10 the family
      becomes final -- then retire the abstract/contribution PENDING sentences with macro-driven text.
   3. Main 9.61 pp, supplement full: any addition must be paid for by cuts (aim <= 9.5).
+
+## Iteration 23 - 2026-10-22 - Dirichlet natural-root FLTrust harvested (no detection in either partition); abstract and contribution PENDING retired; framing re-read against the data
+
+- **State at start (12:00):** natroot Dirichlet campaign finished 11:58 (0 ERROR lines; clean + attacked s42-44).
+  P3 692/1040 after `make numbers`; prereg runner 24/36 jobs (remaining 12 = IID FLAME/FLTrust/NormClip s47-51, so
+  P2/P4 still n=5, ETA a few hours). 8 GPU lanes (not mine); I added none and started no jobs.
+- **Reviewer score before: 4/10, REJECT.** Ranked: (1) family interim (P2/P4 n=5); (2) abstract/contribution still
+  promised outcomes as PENDING while the decisive FLTrust result exists; (3) risk of overselling: the fix restores
+  FLTrust's exclusions but not detection; (4) page budget.
+- **Natural-root Dirichlet harvest (exploratory, `make_numbers_fltshut.py`):** clean n=3 FPR 0.120, CA 0.648, 0
+  shutdowns; attacked n=3 **DR 0.000 in every round of every seed**, FPR 0.183, BSR 0.042. So with a
+  training-distribution root FLTrust excludes no attacker in either partition (IID DR 0.000, n=2), and with the
+  balanced root its Dirichlet "detection" (DR 0.510) comes with FPR 0.585. **Settled: FLTrust is not a useful detector
+  in this setting under either root or partition.** Written into main Sec. VI-C (one sentence), supplement S-III-D
+  (one clause), contribution 3 and the conclusion.
+- **Confirmatory status:** P1 n=10 10/0 p_H 0.0039, P3 n=10 9/0 p_H 0.0059 (supported, final cells); P2/P4 n=5 5/0
+  p_H 0.0625. Secondary: S1 (n=10, p 0.048), S2 (p 0.072), S3 (p 0.90) complete; since Holm's multiplier for the
+  smallest of them is >=3, none can become supported whatever S4 gives -> main text now says "S1-S3 are complete and
+  cannot be supported". S4 n=5.
+- **Text:** abstract PENDING retired with a macro sentence (registered ten-seed tests confirm the FLTrust effect
+  under non-IID, Holm p <= \pfPrePThreePh; honest clients excluded about as often as attackers; "the counter changes
+  what the rule decides, not whether it detects"). Trigger-audit sentence dropped from the abstract to make room
+  (still in contributions, Sec. realizable, limitations); abstract 250 words (checker). Contribution 3 PENDING retired
+  (cells so far, P1/P3 supported, no accuracy effect detected, natural root detects nothing). "Exploratory cells"
+  PENDING line replaced by the cell count. Conclusion: FLAME "non-IID" qualifier; one sentence separating "what a rule
+  decides" from "whether it defends". Main replay explanation shortened (details stay in supplement).
+- **Hostile re-read of abstract/intro/contributions:** claims now limited to (a) exact geometry, (b) measured
+  dominance of the counter, (c) registered, supported decision change for FLTrust (non-IID), (d) no accuracy effect
+  detected, (e) FLTrust not a useful detector here with either root. No accuracy/BSR benefit is claimed; CIFAR
+  closed-loop null stays in Limitations (abstract/intro do not mention CIFAR outcomes).
+- **Build/check:** latexmk rc 0, 0 undefined refs. **IEEEtran pages: main 10 (ends at 9.63, was 9.61) /
+  supplement 6.** check_manuscript all PASS except the gate (40 unresolved, all P3 lane). Backups
+  main.tex.pre-iter23.bak, supplement.tex.pre-iter23.bak. fltrust_falsify.json float noise reverted.
+- **Running jobs:** none of mine. Not mine: P3 PIDs 5901, 15185, 52037 (+ gap-filler 7093).
+- **Score after: 4/10, REJECT** (cleaner and honest, but the central measured outcome is a decision change in one
+  rule that does not translate into defense benefit; most of the A/B table, incl. BSR, still pending).
+- **Top 3 priorities:**
+  1. Harvest P3 as P2/P4 (FLTrust IID s47-51) land; at n=10 for all eight hypotheses mark the family final
+     (\pfPreFinal) and re-check the abstract's Holm bound comment (line ~59) and contribution 3 comment.
+  2. When the A/B table fills, decide what the paper's outcome headline is: if no rule's CA/BSR separates, say so in
+     abstract (the paper becomes "evaluations silently test a different rule"), and consider strengthening with the
+     falsified-counter attack measured closed-loop (Cor. falsify) -- the one place the defect could be an attack surface.
+  3. Main 9.63 pp, abstract at exactly 250 words: any addition must be paid for (aim <= 9.5).
