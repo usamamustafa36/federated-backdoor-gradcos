@@ -1633,3 +1633,61 @@ finished here.)
   2. Harvest the R1 pilot (choose_b.py -> b*) and P3 prereg (P2/P4 n=10 -> family final).
   3. When R2 Krum cells land: `python3 paper/analyse_r2.py`, \input numbers_r2.tex, one main paragraph + a small
      table (main is at 9.61: pay for it), reported whatever the sign; then AlignIns as PREREG_R2 Amendment 1.
+
+## Iteration 26 - 2026-10-23 - R1 pilot harvested (b* = 2 by the registered rule), R1 campaign moved onto the GPU, R2 queued behind it; P3 harvested: all four primary hypotheses supported (P4 interim n=8)
+
+- **State at start (14:01):** CUDA zombie. R1 pilot complete (09:45, 0 ERROR lines); the waiter (181451) had applied
+  choose_b.py at 09:54 and started the 160-cell campaign on CPU (3 lanes x 2 threads, run_r1.sh 527497, xargs
+  527516): 6 cells done in 4 h (~2 h/cell on CPU -> ~107 h). P3 prereg runner (179336) on its last two jobs (IID
+  FLTrust attacked full s51, trainable s50-51). Load 31 on 20 cores (other users' jobs).
+- **Reviewer score before: 4/10, REJECT** (ranking unchanged: no security outcome the counter changes; R1/R2 have no
+  outcome; P2/P4 interim).
+- **R1 pilot / b\*.** choose_b.py output (campaign.log): FedAvg final BSR b=1 0.026/0.059 (mean 0.042), b=2
+  0.867/0.062 (mean 0.465); neither >= 0.5, so **b\* = 2** and, as registered, the stealthy attacker "does not implant
+  reliably even without a defense" and the BSR hypotheses are uninformative (to be reported, not reinterpreted). The
+  waiter did start the campaign with b*=2. First cells checked: share policy q_a 0.46-0.52, trainable norm ratio
+  2.000 (<= b*), honest policy writes the trained counter (435/60 vs honest 13); 0 ERROR lines. Recorded as
+  **PREREG_R1 Amendment 2** (b*, outcomes seen: 6 FLTrust cells s42-43, device change; no test changed).
+- **R1 onto the GPU.** CUDA came back ~14:20 (coordinator). Killing iteration 24's CPU runner was refused by the
+  permission classifier (not my processes), so instead: `experiments/r1_falsify/run_r1_reverse.sh` (new) walks the
+  same jobs_campaign.txt from the end, one cell per run_sweep call (identical arguments, single seed), skipping
+  finished cells and the cell the CPU runner is on (lowest unfinished seed of a job whose log exists); lock dirs
+  stop self-duplication; CUDA, 3 lanes x 1 thread. A CPU variant of it ran 14:04-14:20 and was stopped by me (one
+  partial cell lost). On GPU: ~32 min/cell at 3 lanes, peak ~0.65 GB/lane (Ollama, not ours, holds 4.7 GB of the
+  card); 3 cells done by 14:55, 0 ERROR lines.
+- **R2 cannot share the card with R1.** Launched run_r2.sh at 1 lane next to the 3 R1 lanes: the first byzantineFL
+  run did not finish round 1 in 10+ min (GPU 100%, the process spins in CUDA sync; a faulthandler dump of a 1-round
+  debug run sits in the authors' local training loop), and its first try died at 15:05 with no traceback because
+  run_r2.sh overwrote the log on retry. Stopped (my PIDs). run_r2.sh now appends per-run logs. **Queued**
+  `experiments/r2_exposed/wait_r1_then_r2.sh` (PID 734442, log results/r2_exposed/waiter.log): waits for the R1 GPU
+  helper to exit, checks CUDA, then runs run_r2.sh on CUDA with 3 lanes. Note: PREREG_R2 says "120 trainable runs
+  (krum only)", but its own grid gives 3 c x 2 p x 10 seeds = 60, so the campaign is 430 runs (run_r2.sh), not 490:
+  arithmetic slip in the prereg, no design change; record as an amendment when R2 runs.
+- **P3 harvest (`make numbers`, 749/1040 cells):** P1 n=10 10/0, P2 n=10 10/0, P3 n=10 9/0, all p_H 0.0039;
+  **P4 n=8 8/0 p_H 0.0039 (interim; its last two seeds are running)**; so 4/4 primary supported (2/2 blind).
+  S1-S4 all n=10, none supported (closest S1 7/3, p 0.048, p_H 0.19). Confirmatory paragraph rewritten from macros:
+  P1/P3 confirm Cor. fltrust; the IID pair is supported but is FLTrust's shutdown (zero trust for every client), not
+  detection; RE-CHECK comment notes that P4 at 8+/2- with ties |d|=1 would give p 0.055.
+- **Build/check:** latexmk rc 0, 0 undefined. **IEEEtran pages: main 10 (ends at 9.63) / supplement 6.**
+  check_manuscript all PASS except the gate (36 unresolved, all P3 lane). pytest tests/: 14 pass. Backup
+  main.tex.pre-iter26.bak.
+- **Jobs left running:**
+  - R1 CPU forward runner (iteration 24's, not stoppable by me): waiter 181451 / run_r1.sh 527497 / xargs 527516,
+    log results/r1_falsify/campaign.log, 3 lanes x 2 threads. **Whoever can: stop it** (`kill 527497 527516 527517
+    527518 527519 527520 527521 527522`; 181451 and 527496 then exit) once the GPU lane is healthy; the GPU helper
+    then takes every remaining cell on its next pass (it is resumable; re-launch it if it has exited).
+  - R1 GPU helper (mine): systemd-inhibit 710677 / bash 710678, log results/r1_falsify/gpu.log (+ rlog_*.log),
+    3 CUDA lanes. ~151 cells left at ~6/h GPU + ~1.5/h CPU -> **ETA ~2026-10-24 12:00-15:00**. It makes one pass; cells
+    the CPU runner held at scan time stay with the CPU runner.
+  - R2 waiter (mine): PID 734442, results/r2_exposed/waiter.log -> results/r2_exposed/campaign.log. Run time per
+    run alone on the GPU not yet measured.
+  - P3 prereg runner 179336/179337 (iteration 24's): last cells, **ETA ~15:00 (full s51) and ~18:00 (trainable s51)**.
+- **Score after: 4/10, REJECT** (all four FLTrust predictions hold, but the security outcome R1/R2 is still
+  unmeasured).
+- **Top 3 priorities:**
+  1. `make numbers` after ~18:00: P4 n=10 -> family final (\pfPreFinal); re-check the confirmatory paragraph's
+     RE-CHECK comment and the abstract.
+  2. Check R1 GPU progress (`grep -c ERROR results/r1_falsify/rlog_*.log`; nvidia-smi); when the FLTrust family
+     (A/B/C x 10 seeds) completes, run analyse_r1.py, \input numbers_r1.tex, and draft the R1 paragraph+table (main
+     at 9.63 pp: pay for it). Report b*=2's uninformative-BSR consequence as registered.
+  3. When R2 starts, time one run alone; if 430 runs do not fit, prioritise Krum (H1) as run_r2.sh already does.

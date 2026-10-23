@@ -167,3 +167,22 @@ No R1 cell (seeds 42-51, 15 rounds) had been run.
   under results/) for FLTrust/share and Krum1/share/median, b = 1: the counter and norm
   records are as specified (attacker trainable norm = 1.000 x honest median; share
   policy counter share 0.45-0.52). Not evidence.
+
+## Amendment 2 (2026-10-23, iteration 26): b* and the device change. No test changes.
+
+- **b\* = 2, by the registered rule, applied mechanically by choose_b.py at 09:54**
+  (results/r1_falsify/campaign.log): FedAvg pilot final BSR b = 1: 0.026 / 0.059 (mean
+  0.042); b = 2: 0.867 / 0.062 (mean 0.465). Neither reaches 0.5, so b\* = 2 and, as
+  registered, the report must say that the stealthy attacker does not implant reliably
+  even without a defense and that the BSR hypotheses are uninformative (reported, not
+  reinterpreted). The FedAvg reference cells (seeds 42-51) still run and the analysis
+  script's informativeness gate is applied to them as registered.
+- Pilot outcomes seen (not evidence): the five pilot cells (ERROR lines 0).
+- Campaign outcomes seen by the author before this amendment: FLTrust seeds 42 and 43 of
+  A-defect, A-fixed and B (6 cells), inspected only to check the counter records
+  (share policy q_a 0.46-0.52, trainable norm ratio <= 2.000; honest policy writes the
+  trained counter). No test, cell or rule was changed after seeing them.
+- **Device.** The campaign started on CPU (3 lanes) at 09:54. CUDA was restored at about
+  14:20; a second runner (experiments/r1_falsify/run_r1_reverse.sh, CUDA, 3 lanes) takes
+  the same job list from the end, skipping finished cells and the cell the CPU runner is
+  on. Same run_sweep call per cell; device does not change any test.

@@ -635,19 +635,20 @@ bears on a mechanism, and labelled.
 registered comparisons (Sec.~\ref{sec:setup}) as they stand ($\pfPreFinal$);
 it becomes final when every cell has ten seeds (with a one-sided floor of $2^{-n}$,
 Holm over four needs $n\ge7$). At this interim point $\pfPrePrimarySupported$ of
-$\pfPrePrimaryTotal$ primary hypotheses are supported, both under Dirichlet shards:
-P1 ($n=\pfPrePOneN$, $\pfPrePOnePos$/$\pfPrePOneNeg$, $p_H=\pfPrePOnePh$) and P3
-($n=\pfPrePThreeN$, $\pfPrePThreePos$/$\pfPrePThreeNeg$, $p_H=\pfPrePThreePh$); their
-cells are complete, and $p_H\le4p$ keeps them supported whatever P2/P4 give. They
-confirm Corollary~\ref{cor:fltrust}: removing the counter restores FLTrust's
-exclusions, though not useful detection (honest clients go about as often as
-flippers, Sec.~\ref{sec:mech}). The blind IID pair P2/P4
-($n=\pfPrePTwoN$, $p_H=\pfPrePTwoPh$) measures the fixed arm's shutdown and is read
-the same way (dated amendment to the plan). S1--S3 are complete and cannot be supported (e.g.\ S2:
-$\pfPreSTwoPos$/$\pfPreSTwoNeg$, $\Delta=\pfPreSTwoDiff$, $p=\pfPreSTwoP$): the
-predicted noise penalty is too small to see.
-% RE-CHECK (iter 22): 'both under Dirichlet' holds while P1,P3 are the supported ones;
-% P2/P4 share n and p_H only while both are 5/0.
+$\pfPrePrimaryTotal$ primary hypotheses are supported. Under Dirichlet shards, P1
+($n=\pfPrePOneN$, $\pfPrePOnePos$/$\pfPrePOneNeg$, $p_H=\pfPrePOnePh$) and P3
+($n=\pfPrePThreeN$, $\pfPrePThreePos$/$\pfPrePThreeNeg$, $p_H=\pfPrePThreePh$) are
+complete and confirm Corollary~\ref{cor:fltrust}: removing the counter restores
+FLTrust's exclusions, though not useful detection (honest clients go about as often as
+flippers, Sec.~\ref{sec:mech}). The blind IID pair is supported as well, P2 with
+$n=\pfPrePTwoN$ and P4 with $n=\pfPrePFourN$ of ten so far
+($\pfPrePFourPos$/$\pfPrePFourNeg$, $p_H=\pfPrePFourPh$), but under IID the fixed
+arm's exclusions are FLTrust's shutdown (Sec.~\ref{sec:mech}): it gives every client
+zero trust, so the effect is real and is not detection. S1--S4 are complete and none
+is supported (closest, S1: $\pfPreSOnePos$/$\pfPreSOneNeg$, $\Delta=\pfPreSOneDiff$,
+$p=\pfPreSOneP$, $p_H=\pfPreSOnePh$): the predicted noise penalty is too small to see.
+% RE-CHECK (iter 26): written for P1-P4 all supported, P4 n=8/10 interim, S1-S4 n=10
+% none supported. P4 with two negative seeds out of ten could exceed 0.05 (ties at |d|=1).
 
 \begin{table}[t]
 \centering

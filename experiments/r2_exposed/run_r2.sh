@@ -31,7 +31,7 @@ run_one() {
   for try in 1 2; do
     python3 experiments/r2_exposed/run_byzfl.py --arm $a --threads $THREADS --out $f -- \
       --method $m --c_frac $c --p $p --quantity_skew --gpu $GPU --seed $s --debug \
-      > $OUT/log_${m}_${p}_c${c}_${a}_s${s}.log 2>&1 && break
+      >> $OUT/log_${m}_${p}_c${c}_${a}_s${s}.log 2>&1 && break   # append: keep a failed try's traceback
   done
   echo "[$(date '+%F %T')] done $m $p $c $a $s" >> $OUT/campaign.log
 }
