@@ -37,7 +37,12 @@ run_one() {
 }
 export -f run_one; export OUT GPU THREADS
 echo "[$(date '+%F %T')] R2 start DEVICE=$DEVICE LANES=$LANES jobs=$(wc -l < $JOBS)" >> $OUT/campaign.log
-# order: krum first (H1), seed-major so every seed's pairs complete together
-grep '^krum' $JOBS > $JOBS.ord; grep -v '^krum' $JOBS >> $JOBS.ord
+# order: krum full/nonbt first (H1, the only primary family), seed-major so every
+# seed's pairs complete together; then krum trainable (reported, not tested); then H2
+# and fedavg. Iteration 27: a CPU profile showed one round is compute-bound in the
+# authors' ResNet-18 training (backward 60%, harness diagnostics ~5%), so the grid may
+# not finish quickly; this order makes H1 complete first. Order only, no design change.
+grep -E '^krum .* (full|nonbt) ' $JOBS > $JOBS.ord; grep -E '^krum .* trainable ' $JOBS >> $JOBS.ord
+grep -v '^krum' $JOBS >> $JOBS.ord
 tr '\n' '\0' < $JOBS.ord | xargs -0 -P $LANES -I{} bash -c 'run_one "$@"' _ {}
 echo "[$(date '+%F %T')] R2 end" >> $OUT/campaign.log

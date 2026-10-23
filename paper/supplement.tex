@@ -252,8 +252,29 @@ agree far less (mean pairwise trainable cosine $\pfDiagCosSigDir$), which would
 lower $M_j$, but the re-run logs $q_0$ and $q_j$, not $\rho_j$, so the real-data
 ratio is not measured. What the check establishes is the arithmetic of one round:
 under the defect, admission by FLTrust is something a client can buy with a
-number it chooses. We have not trained with a counter-falsifying client
-(\path{experiments/counter_defect/fltrust_falsify.py}).
+number it chooses.
+
+\subsection{A trained falsifier (registered, running)}
+\label{sup:r1}
+The check above is one round. A registered campaign trains the attacker end to end:
+the backdoor attacker of the main campaign under Dirichlet shards, with two additions
+it alone controls. It rescales its trainable update to at most $b$ times the round's
+median honest trainable norm, so that its norm does not give it away as it gives away
+the $E_m=15$ attacker, and it reports the counter of Corollary~\ref{cor:falsify}'s
+optimum ($q=\tfrac12$) against FLTrust, or the median honest counter against
+Multi-Krum and Krum. The rule is unchanged, the arms differ only in what it decides
+on, and seeds are paired ($42$--$51$). A pilot rule fixed $b$ before any campaign cell
+ran: the smallest $b\in\{1,2\}$ whose mean FedAvg BSR over two pilot seeds is at
+least $0.5$, else $b=2$. Neither reached it (BSR $\rOnePilotBSRbOne$ at $b=1$,
+$\rOnePilotBSRbTwo$ at $b=2$), so $b^*=\rOneBstar$ and, as registered, this stealthy
+attacker does not implant reliably even without a defense: its three BSR tests are
+\rOnePrimUninf{} and are reported without being read as support or refutation.
+The confirmatory outcome is the registered mechanism family: the attackers' share of
+FLTrust's trust-weighted trainable step, and their admission rate under Multi-Krum
+and Krum, defect against fixed (one-sided paired sign-flip tests, Holm over three).
+That is the quantity a robust rule's guarantee bounds, and measuring it needs no
+payload that implants. $\rOneCellsDone$ of $\rOneCellsTarget$ cells have run; no
+outcome is reported until the three rules' families are complete.
 
 \subsection{The FoolsGold diagnostic}
 \label{sup:fgdiag}

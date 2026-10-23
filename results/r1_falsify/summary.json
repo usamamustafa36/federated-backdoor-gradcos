@@ -1,0 +1,223 @@
+{
+  "b_star": 2.0,
+  "choose_b": "b=1: final BSR ['0.026', '0.059'] mean 0.042\nb=2: final BSR ['0.867', '0.062'] mean 0.465\nrule: no b reaches 0.5; b*=2, stealthy attacker does not implant reliably (BSR hypotheses uninformative)\nB=2\n",
+  "families": {
+    "prim": [
+      {
+        "rule": "fltrust",
+        "tag": "Flt",
+        "key": "bsr",
+        "n": 2,
+        "p": 0.5,
+        "pos": 1,
+        "neg": 1,
+        "defect": 0.06373684210526315,
+        "fixed": 0.027210526315789473,
+        "diff": 0.036526315789473685,
+        "p_holm": 1.0,
+        "supported": false
+      },
+      {
+        "rule": "krum",
+        "tag": "Mk",
+        "key": "bsr",
+        "n": 0,
+        "p": NaN,
+        "pos": 0,
+        "neg": 0,
+        "defect": NaN,
+        "fixed": NaN,
+        "diff": NaN,
+        "p_holm": NaN,
+        "supported": false
+      },
+      {
+        "rule": "krum1",
+        "tag": "Kr",
+        "key": "bsr",
+        "n": 0,
+        "p": NaN,
+        "pos": 0,
+        "neg": 0,
+        "defect": NaN,
+        "fixed": NaN,
+        "diff": NaN,
+        "p_holm": NaN,
+        "supported": false
+      }
+    ],
+    "mech": [
+      {
+        "rule": "fltrust",
+        "tag": "Flt",
+        "key": "mss",
+        "n": 2,
+        "p": 0.5,
+        "pos": 1,
+        "neg": 1,
+        "defect": 0.3386423733391163,
+        "fixed": 0.33023803994121814,
+        "diff": 0.008404333397898173,
+        "p_holm": 1.0,
+        "supported": false
+      },
+      {
+        "rule": "krum",
+        "tag": "Mk",
+        "key": "adm",
+        "n": 0,
+        "p": NaN,
+        "pos": 0,
+        "neg": 0,
+        "defect": NaN,
+        "fixed": NaN,
+        "diff": NaN,
+        "p_holm": NaN,
+        "supported": false
+      },
+      {
+        "rule": "krum1",
+        "tag": "Kr",
+        "key": "adm",
+        "n": 0,
+        "p": NaN,
+        "pos": 0,
+        "neg": 0,
+        "defect": NaN,
+        "fixed": NaN,
+        "diff": NaN,
+        "p_holm": NaN,
+        "supported": false
+      }
+    ]
+  },
+  "fedavg_ref": {
+    "n": 3,
+    "median_bsr": 0.026842105263157896,
+    "primary_uninformative": true
+  },
+  "primary_uninformative_pilot": true,
+  "primary_uninformative": true,
+  "exploratory": {
+    "AvB_fltrust": {
+      "n": 2,
+      "pos": 1,
+      "neg": 1,
+      "a": 0.06373684210526315,
+      "b": 0.06773684210526315,
+      "diff": -0.0040000000000000036
+    },
+    "AvBMech_fltrust": {
+      "n": 2,
+      "pos": 2,
+      "neg": 0,
+      "a": 0.3386423733391163,
+      "b": 0.051929135375586175,
+      "diff": 0.2867132379635301
+    },
+    "C_fltrust": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "CMech_fltrust": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "CCa_fltrust": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "AvB_krum": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "AvBMech_krum": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "C_krum": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "CMech_krum": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "CCa_krum": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "AvB_krum1": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "AvBMech_krum1": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "C_krum1": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "CMech_krum1": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    },
+    "CCa_krum1": {
+      "n": 0,
+      "pos": 0,
+      "neg": 0,
+      "a": NaN,
+      "b": NaN,
+      "diff": NaN
+    }
+  }
+}

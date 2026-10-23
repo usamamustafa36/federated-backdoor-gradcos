@@ -1691,3 +1691,60 @@ finished here.)
      (A/B/C x 10 seeds) completes, run analyse_r1.py, \input numbers_r1.tex, and draft the R1 paragraph+table (main
      at 9.63 pp: pay for it). Report b*=2's uninformative-BSR consequence as registered.
   3. When R2 starts, time one run alone; if 430 runs do not fit, prioritise Krum (H1) as run_r2.sh already does.
+
+## Iteration 27 - 2026-10-23 - What R1 can still show: PREREG_R1 Amendment 3 (pilot rule governs, mechanism family is the security outcome), PREREG_R2 Amendment 1 (430 runs), R1 macros in the paper, R2 profiled and re-ordered H1-first
+
+- **State at start (15:20):** CUDA fine. R1: 9/160 cells (GPU helper 710677/710678, 3 lanes; CPU runner 527497/527516);
+  0 ERROR lines in any R1 log. R2 waiter 734442 waiting. P3 prereg runner 179336 on its last cell (trainable s51).
+- **Reviewer score before: 4/10, REJECT.** Blockers: (1) no security outcome the counter changes is measured (R1
+  running, R2 queued); (2) at b*=2 the stealthy attacker does not implant even under FedAvg, so R1's BSR family
+  cannot carry a backdoor claim; the reader must be told what R1 *can* show, before it shows it; (3) P4 interim;
+  (4) scale.
+- **What the security-relevant outcome is (argued in the amendment, before the outcomes):** a robust rule's guarantee
+  is a bound on adversarial influence on the aggregate (Krum: selection close to honest; FLTrust: weight set by
+  direction vs root). That bound is a property of the defense and is measured without a payload: R1's registered
+  mechanism family (FLTrust attackers' trust-weighted trainable step share; Krum/Multi-Krum admission rate, defect >
+  fixed). BSR needs a payload that implants undefended, which b*=2 does not. R2 carries the "published number"
+  outcome (min test error with the authors' attacks), which does not depend on our attacker.
+- **PREREG_R1 Amendment 3 and PREREG_R2 Amendment 1, committed first (8657211, 15:40; sha256 844b8e77... /
+  5c1a31af...):** (i) the pilot rule's b*=2 branch makes the primary BSR family uninformative whatever the campaign
+  FedAvg gate says (if they disagree the report says so); BSR tests still printed, never called supported/refuted;
+  (ii) the mechanism family is R1's confirmatory security outcome, with pre-committed wording for both outcomes;
+  (iii) exploratory made explicit: A-defect vs B-defect on the mechanism quantities, variant C defect vs fixed (BSR,
+  CA, mechanism), share vs head count 2/10; no tests. R2: 60 trainable runs, 430 total (the 120/490 was an
+  arithmetic slip; run_r2.sh always generated 430); plumbing run outcome disclosed. Outcomes seen before the
+  amendment: iteration 26's numbers_r1.tex (FLTrust s42-43) and choose_b output; listed in the amendment.
+- **analyse_r1.py:** `primary_uninformative_pilot` from choose_b output (\rOnePrimUninf, \rOnePilotBSRbOne/bTwo),
+  exploratory AvB/AvBMech/C/CMech/CCa macros (means, sign counts, n; no p). **Looks after the amendment (logged as
+  Amendment 3 item 4 requires):** FedAvg ref n=3 (s49-51) median BSR 0.027 (gate also says uninformative; the two
+  criteria agree so far); exploratory AvBMech FLTrust n=2: falsified counter 0.339 vs honest counter 0.052 step share
+  under the defect, while A-fixed is 0.330. **Warning for whoever writes R1 up:** if this holds, the registered FLTrust
+  mechanism test (defect > fixed) may well not be supported, because the fixed rule already gives this attacker about
+  that share; the hazard is that under the defect the attacker's share is set by a scalar it chooses (x6.5 between
+  honest and falsified counter). That contrast is exploratory by registration and must be reported as such, not
+  promoted. n=2: no conclusion.
+- **Paper:** numbers_r1.tex now \input (preamble, Makefile deps). Supplement: new Sec. S-III-B "A trained falsifier
+  (registered, running)" (design, pilot rule, b*, BSR family labelled from the macro, confirmatory outcome = influence,
+  cells done; no outcome reported). Main Limitations "Threat model" item rewritten to say this (macros only);
+  recommendations sentence shortened to pay for it. Backups main/supplement .pre-iter27.bak.
+- **R2 feasibility:** cProfile of one round (CPU, 2 threads, local_ep 1, krum c0.1 target s3; scratch, not a campaign
+  cell) 416 s: conv backward 260 s, forward ~95 s, test 28 s, harness diagnostics + Krum ~23 s. So the run is
+  compute-bound in the authors' ResNet-18 training, not in our harness; at local_ep 5 the grid is GPU-only and may
+  take days. run_r2.sh re-ordered (order only, logged in the script): H1 krum full/nonbt (120 runs) first, then krum
+  trainable (60), then H2 and fedavg. The waiter launches the edited script.
+- **P3:** still on its last cell (trainable s51) at 16:00; not harvested this iteration. P4 stays interim n=8.
+- **Build/check:** latexmk rc 0, 0 undefined. **IEEEtran pages: main 10 (ends at 9.63) / supplement 6 (ends at 5.66).**
+  check_manuscript all PASS except the gate (36 unresolved, P3 lane). pytest tests/: 14 pass.
+- **Jobs left running (none started by me remain):** R1 GPU helper 710677/710678 (results/r1_falsify/gpu.log; cells
+  started 14:54 still running at 15:55, slower than the 32 min/cell of iteration 26 -> ETA likely later than
+  2026-10-24 15:00); R1 CPU runner 527497/527516 (campaign.log); R2 waiter 734442 (waiter.log); P3 runner 179336
+  (ETA ~18:00); coordinator lock 178623. My profile run (737598) finished.
+- **Score after: 4/10, REJECT** (the paper now says honestly what R1 can and cannot show; nothing new measured).
+- **Top 3 priorities:**
+  1. After ~18:00: `make numbers`; if P4 has n=10, mark the P3 family final (\pfPreFinal), re-check the confirmatory
+     paragraph's RE-CHECK comment, the conclusion's \PENDING sentence and the abstract.
+  2. R1: when the FLTrust A/B/C families reach 10 seeds, run analyse_r1.py and write the result with Amendment 3's
+     pre-committed wording (mechanism test as registered; AvBMech as exploratory). Consider stopping the CPU runner
+     only if the user authorises it.
+  3. R2: when it starts, time one run from results/r2_exposed/log_*.log; if H1's 120 runs exceed ~2 days, say so
+     and decide (by amendment, before outcomes) whether to cut seeds or rounds — do not do it silently.

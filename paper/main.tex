@@ -982,9 +982,8 @@ trainable coordinates, and average the full state so that BatchNorm statistics s
 synchronised. (ii) Log the buffer share $s_i$ of~\eqref{eq:share} each round; a
 share near one means the rule is deciding on buffers. (iii) Test robustness
 code under unequal shard sizes, since equal shards hide the distance exposure.
-(iv) State in the paper which coordinates the rules decide on. The same reasoning
-applies to any non-trainable state a pipeline transmits, including the running
-statistics themselves, whose scale has nothing to do with what a client learned.
+(iv) State in the paper which coordinates the rules decide on. This applies to
+any non-trainable state a pipeline transmits, running statistics included.
 
 \textbf{Limitations,} in the order we expect them to matter.
 \emph{Scale and attack strength.} The campaign is CPU-sized
@@ -1012,9 +1011,11 @@ but no counter.
 settings enlarge or shrink the paired differences is open.
 \emph{Recency.} Twelve of the thirteen rules are from 2017--2022; a newer rule's
 exposure must be checked rule by rule, as AlignIns' split prediction shows.
-\emph{Threat model.} Static, feature-space attacker. We have not evaluated adaptive
-attacks on the fixed pipeline, nor trained with an attacker that falsifies its
-counter, whose effect under the defect we derive but do not measure.
+\emph{Threat model.} Static, feature-space attacker; no adaptive attack on the
+fixed pipeline. A registered campaign trains a norm-bounded counter falsifier
+(Sec.~\ref{sup:r1}; $\rOneCellsDone$/$\rOneCellsTarget$ cells); at its registered
+bound it does not implant even under FedAvg (BSR $\rOnePilotBSRbTwo$), so its outcome
+is admission and step share, the influence a robust rule bounds, not BSR.
 
 \section{Conclusion}
 

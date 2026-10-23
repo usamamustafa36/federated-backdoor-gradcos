@@ -18,13 +18,13 @@ all: main.pdf supplement.pdf
 
 # main.tex and supplement.tex cross-reference each other through xr-hyper, so
 # each is rebuilt after the other's .aux changes (latexmk -g forces the pass).
-NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex
+NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex
 
 supplement.pdf: supplement.tex preamble.tex main.pdf $(NUMBERS)
 	$(LATEXMK) supplement.tex
 	$(LATEXMK) -g main.tex
 
-main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex $(wildcard figs/*)
+main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
