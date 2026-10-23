@@ -1864,3 +1864,58 @@ finished here.)
      held-out FLDetector/AlignIns cells) to make the transition claim more than one seed; ~80 min/seed on CPU.
   3. When R1's GPU helper exits, move the P3 tail onto the GPU (note it in the ledger) before R2; check the
      ollama runner's GPU memory first (it held 4.7 GB on 2026-10-23).
+
+## Iteration 30 - 2026-10-24 - an exact counter-angle identity (Proposition prop:angle) predicts the direction of the detection effects and is checked against the logged geometry of 112 paired IID seeds; a stale FoolsGold "withdrawn (PENDING)" sentence in the supplement fixed
+
+- **State at start (2026-10-23 evening; resumed 2026-10-24 ~01:15 after an API rate-limit cut):** all jobs from
+  iteration 29 still running (P3 tail 743527/743530, R1 GPU 710677/710678, R1 CPU 527497/527516, R2 waiter 734442,
+  lock 178623). No new runs started (shared machine, no CPU lanes added).
+- **Reviewer score before: 5/10, MAJOR.** Highest-leverage blocker not raised before: the paper's security-relevant
+  finding (the counter hides attackers from FLAME, hands FoolsGold detections) had no theory, only a one-seed probe
+  narrative; a TIFS reviewer reads "exploratory, unpredicted, n.s. after correction" as noise. Nothing said *why* the
+  sign differs between rule families or *when* it reverses.
+- **New result (main, Sec. Mechanisms; proof in supplement S-III):** with q_i = cos^2(theta_i) the counter share and
+  rho_ij the non-counter cosine, exactly 1-cos(d_i,d_j) = [1-cos(theta_i-theta_j)] + sin(theta_i)sin(theta_j)(1-rho_ij).
+  With equal angles per group and k = sin(theta_m)/sin(theta_h) ~ t/E (trainable-norm ratio over batch-count ratio):
+  (a) attackers' mutual distance relative to honest pairs is multiplied by k^2 (collusion rules see more: FoolsGold,
+  GradCos); (b) their distance to honest clients keeps a fraction k of the content term plus a share floor
+  Phi -> (1-k)^2/2, so they are as typical as honest clients once (b) <= 1, whatever their content (outlier rules see
+  less: FLAME). k>1 predicts the reverse (not run); a counter-falsifier sets k. Stated honestly as a post-hoc
+  explanation ("not predicted before the cells ran").
+- **Checks (paper/make_numbers_kgeom.py -> numbers_kgeom.tex, \kg* macros; in Makefile `numbers`, preamble):**
+  campaign, rounds 2-15, per paired seed, fixed arm's t and trainable cosines as proxies: IID **112 pairs, 13 rules,
+  median observed/predicted 0.97 (0.44-2.46), 95/112 within a factor 2**; per rule 0.61 (AlignIns) - 1.52 (NormClip).
+  Dirichlet (where (a) does not apply, honest batch counts differ): 42/65 below (t/E)^2, median 0.38. Probe (s42,
+  rounds 2-10): k from norms vs t/(counter ratio) within 10%; identity with trainable cosines reproduces full-vector
+  attacker distances within 8% (honest pairs 28%, running stats); ratio (b) is <= 1.07 in all 5 rounds where FLAME's
+  cluster admits an attacker and >= 1.27 in the 4 where it does not (6.1 in round 2). Transmitted counter ratio is
+  15.0-15.9 (truncation), noted.
+- **P3X blinding:** the script excludes all P3X held-out cells (FLDetector/AlignIns Dir s47-51, AlignIns IID s42-46,
+  FoolsGold IID s47-51). Disclosure: one exploratory print during development, before the exclusion was coded,
+  included the geometry (mal/honest pair cosine, norm ratio; no DR/FPR/BSR) of one FLDetector Dir held-out cell
+  present on disk, aggregated into a per-rule median. No registered outcome was read.
+- **Also fixed:** supplement round-one-aliasing paragraph still said every FoolsGold outcome in Secs. p1-mech "is
+  withdrawn until the campaign is re-run with the copy (\PENDING)" - stale since P3 (configs/p3_*.yaml set
+  copy_initial_global: true); now says the first campaign's FoolsGold outcomes are withdrawn and the re-run uses the
+  copy. Paid for space: Lemma (histories) moved to the supplement (Lemma S1; one-sentence statement in main), eq.
+  bufcos replaced by a sentence, contributions/scope/FLTrust-root/FLAME paragraphs tightened, supplement's "first
+  campaign, for reference" paragraph cut, check paragraph compact. Backups main/supplement .pre-iter30.bak.
+  tests/test_kgeom.py (3: identity exact on random vectors, k^2 law, generator). An unused figure
+  (paper/figs/fig_kgeom.pdf, observed vs predicted scatter) is generated in case space is found.
+- **Build/check:** latexmk rc 0, 0 undefined. **IEEEtran pages: main 10 (ends 9.61) / supplement 6 (ends 5.99).**
+  check_manuscript all PASS except the gate (34 unresolved, P3 tail lane). pytest tests/: 21 pass.
+- **Jobs left running (none mine):** P3 tail 743527/743530 (results/postfix_p3/campaign_tail.log; at 00:37 it was
+  finishing FLDetector Dir s50-51, i.e. P3X held-out cells; P3X ETA ~2026-10-24 afternoon); R1 GPU helper
+  710677/710678 (results/r1_falsify/gpu.log); R1 CPU runner 527497/527516 (campaign.log); R2 waiter 734442; lock 178623.
+- **Score after: 5/10, MAJOR REVISION (upper end).** The detection effects now have an exact mechanism whose
+  directions match the tables and whose k^2 law the logged IID geometry follows quantitatively across 13 rules; but
+  it is post hoc, the per-seed check uses fixed-arm proxies, and the outcomes it explains are still exploratory until
+  P3X lands. Still blocking: P3X outcome, R1, one small tabular setting.
+- **Top 3 priorities:**
+  1. When P3X lands: `make numbers`; write X1/X2 with PREREG_P3X's wording; if X1 fails, remove "in both directions"
+     everywhere, and say Proposition prop:angle then explains geometry, not a replicated detection effect.
+  2. The proposition makes a falsifiable, unrun prediction: an attacker with k>1 (honest batch count, E_m=1 with a
+     boosted update, or a counter set below its batches) reverses both effects (FLAME catches it, FoolsGold does not).
+     Register it (dated commit) before running; it is cheap on CPU/GPU once a lane frees and would turn the post-hoc
+     mechanism into a confirmed prediction. R1's falsifier sets k directly: add k to analyse_r1's exploratory output.
+  3. If space is found, paper/figs/fig_kgeom.pdf (observed vs predicted k^2, all pairs) is generated and ready.

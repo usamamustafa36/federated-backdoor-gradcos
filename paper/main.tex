@@ -156,13 +156,11 @@ aligned once the shared counter direction is appended
 \paragraph{Contributions}
 \begin{itemize}
 \item \textbf{The hazard and its exact geometry} (Sec.~\ref{sec:defect}). An exact
-decomposition of the cosine and squared distance between transmitted updates
+decomposition of cosines and squared distances between transmitted updates
 (Proposition~\ref{prop:decomp}) predicts which rules are exposed: cosine rules
-always, since the trainable cosine enters with weight at most $1-s$
-(Corollary~\ref{cor:band}); distance rules exactly when batch counts differ, by
-$L(B_i-B_j)^2$; coordinate-wise rules not at all. We verify it on real updates to
-floating-point precision, and verify that the counter is inert under the default
-momentum.
+always (Corollary~\ref{cor:band}), distance rules exactly when batch counts differ,
+coordinate-wise rules not at all. It holds on real updates to floating-point
+precision, and the counter is inert under the default momentum.
 \item \textbf{Scope, stated narrowly} (Sec.~\ref{sec:scope}). The hazard belongs
 to the transmission convention, not to any rule. Three of nine third-party public
 implementations we inspected (and our own pipeline) put the counter in the decision vector or hand it to one,
@@ -180,12 +178,13 @@ attackers, in both directions: it hides them from FLAME and FLDetector and hands
 FoolsGold detections the trainable update does not support (exploratory, none
 significant over all $\pfTestsRun$ tests; a held-out replication is registered).
 % RE-CHECK (iter 28): P1-P4 'supported', S1-S4 'not supported'; exploratory DR/BSR signs.
-\item \textbf{Mechanisms} (Sec.~\ref{sec:mech}). Under the defect FLTrust excludes
-no client once the counter shares satisfy $q_i+q_0>1$ (Corollary~\ref{cor:fltrust});
-a client that falsifies its own counter is admitted with a fixed step whatever its
-direction (Corollary~\ref{cor:falsify}); cumulative histories such as FoolsGold's
-stay compressed (Lemma~\ref{lem:history}); FLAME loses the attackers once honest
-updates are as counter-dominated as theirs (one-seed probe).
+\item \textbf{Mechanisms} (Sec.~\ref{sec:mech}). FLTrust excludes no client once
+$q_i+q_0>1$ (Corollary~\ref{cor:fltrust}); a client that falsifies its counter is
+admitted with a fixed step whatever its direction (Corollary~\ref{cor:falsify});
+histories stay compressed; an exact identity (Proposition~\ref{prop:angle})
+gives both detection effects' directions: an attacker running $E$ times more batches
+with a $t<E$ times larger update looks $(t/E)^2$ closer to accomplices and more typical
+to everyone, as the logged geometry of $\kgIidN$ IID seed pairs follows.
 \end{itemize}
 The supplement (Sec.~\ref{sup:overview}) holds proofs, calibration, the
 engine's second defect and withdrawn findings. Values not yet
@@ -311,16 +310,9 @@ This does not say the trainable signal is lost: with nearly constant shares and
 buffer cosines, \eqref{eq:cos} is close to an increasing affine map, so the
 \emph{ordering} of cosines can survive (FLAME, Sec.~\ref{sec:mech}). A rule is
 affected when it uses a fixed cosine threshold, or when shares and buffer cosines
-vary across clients by more than the compressed trainable term. The buffer cosine is in turn pulled toward one
-by the counter: with $\gamma_i=\|c_i\|^2/\|b_i\|^2$ and $\cos(c_i,c_j)=1$,
-applying~\eqref{eq:cos} inside $b=(r,c)$ gives
-\begin{equation}
-\label{eq:bufcos}
-\cos(b_i,b_j)\ge\sqrt{\gamma_i\gamma_j}-\sqrt{(1-\gamma_i)(1-\gamma_j)}\ge 2\gamma-1
-\end{equation}
-for $\gamma_i,\gamma_j\ge\gamma$, $r_i,r_j\ne0$, $B_i,B_j>0$. So as the counter
-comes to dominate, every pairwise cosine is pulled toward $1$, whatever the
-partition. In our non-IID runs (median buffer share $\pfDiagBufNormShareDir$) every
+vary across clients by more than the compressed trainable term. Because every counter
+block points along $\mathbf{1}_L$, the buffer cosine is itself pulled toward one as the
+counter dominates (Proposition~\ref{prop:angle}), and with it every pairwise cosine. In our non-IID runs (median buffer share $\pfDiagBufNormShareDir$) every
 pairwise cosine lies within $\pfDiagCosBandDir$ of the buffer cosine whatever the
 trainable updates are.
 
@@ -367,13 +359,11 @@ into the vector its rule decides on. Pipelines that vectorise gradients or
 FedBN~\cite{li2021fedbn}. Table~\ref{tab:survey} lists the public implementations
 we inspected; most research reference implementations are immune. The exposed ones
 are our own pipeline before the fix, the official code of an ISBI~2024
-defense~\cite{lee2024triplet}, whose Krum, trimmed-mean and Fang baselines compare
-whole ResNet-18 \sd{}s, Flower's official PyTorch quick-start, whose
-\texttt{ArrayRecord(model.state\_dict())} carries \nbt{} as an \texttt{int64}
-array, and the official code of AlignIns~\cite{xu2025alignins}, which flattens the
-\sd{} before and after local training; its CIFAR-10 ResNet-9 disables running
-statistics, while its CIFAR-100 VGG-9 and Tiny-ImageNet ResNet-18 carry the counter
-(line references in the released survey notes). Flower's row matters most. The quick-start itself
+defense~\cite{lee2024triplet} (Krum, trimmed-mean and Fang baselines on whole
+ResNet-18 \sd{}s), Flower's PyTorch quick-start (\texttt{ArrayRecord(model.state\_dict())}),
+and AlignIns' official code~\cite{xu2025alignins}, which flattens the \sd{} in its
+CIFAR-100 and Tiny-ImageNet benchmarks (line references in the survey notes).
+Flower's row matters most. The quick-start itself
 aggregates with FedAvg, which makes no client-level decision, but Flower's built-in
 Krum, Multi-Krum and Bulyan (flwr~1.30) score clients by squared distances between
 the concatenated arrays of each record, counter included: on two quick-start-style
@@ -690,7 +680,8 @@ $\pfFPRFoolsgoldIidAtkDef$ against $\pfFPRFoolsgoldIidAtkFix$), and without it t
 implants (BSR $\pfBSRFoolsgoldIidAtkFix$ against $\pfBSRFoolsgoldIidAtkDef$,
 $n=\pfBSRFoolsgoldIidAtkN$), as under FedAvg ($\pfBSRFedavgAllSeedsIid$); AlignIns' IID DR
 also drops without it ($\pfDRAligninsIidAtkDef$ to $\pfDRAligninsIidAtkFix$). None of
-this was predicted, so it is exploratory, and none of it survives Holm over all
+this was predicted before the cells ran (Proposition~\ref{prop:angle} explains the
+directions afterwards), so it is exploratory, and none of it survives Holm over all
 $\pfTestsRun$ exploratory tests. Before the remaining seeds ran we registered
 that the four incomplete cells keep their direction (Sec.~\ref{sup:p3x}): pooled over
 $\pxNReg$ held-out pairs, $\pxXOneN$ have run ($p=\pxXOneP$, \pxFinal).
@@ -826,8 +817,7 @@ Apply~\eqref{eq:cos} to the split into the counter block and the rest, with
 $\cos(c_i,c_0)=1$ (Sec.~\ref{sup:proofs}).
 \end{proof}
 
-The condition needs no assumption about the data or the partition. The server's share
-is the weaker ($B_0=\dfFltBzero$ batches); over $\csFltNrounds$ logged rounds $q_0$ lies in
+The server's share is the weaker ($B_0=\dfFltBzero$ batches); over $\csFltNrounds$ logged rounds $q_0$ lies in
 $\csFltQzeroMin$--$\csFltQzeroMax$ and the smallest $q_i+q_0$ is $\csFltQsumMin$. The
 condition is sufficient, not necessary: in $\csFltNroundsQsumLeOne$ rounds the bound
 guarantees nothing, yet no measured cosine is non-positive (smallest $\csFltCosFullMin$),
@@ -845,11 +835,9 @@ client zero trust from round $\csFltShutFirstIid$--$\csFltShutLastIid$ on, and t
 model stops moving (clean CA $\pfCAFltrustIidCleanFix$ against
 $\pfCAFltrustIidCleanDef$), so its DR of $\pfDRFltrustIidAtkFix$ is a shutdown, not
 detection. The cause is our class-balanced root set, not the fix: zero total trust
-leaves the model unchanged, so the state is absorbing (Sec.~\ref{sup:fltshut}). A root drawn from the training distribution (exploratory) ends the shutdown ($\fsNatCleanShut$/$\fsNatCleanN$
-runs, CA $\fsNatCleanCA$) but admits every flipper (DR $\fsNatAtkDr$, $n=\fsNatAtkN$),
-like the defect arm; under Dirichlet it excludes honest clients ($\fsNatDirAtkFpr$)
-and still no flipper (DR $\fsNatDirAtkDr$, $n=\fsNatDirAtkN$). With neither root, in
-neither partition, is FLTrust a useful detector here.
+leaves the model unchanged, so the state is absorbing. A root drawn from the training
+distribution ends the shutdown but admits every flipper (DR $\fsNatAtkDr$; exploratory,
+Sec.~\ref{sup:fltshut}): with neither root is FLTrust a useful detector here.
 
 \textbf{What a falsified counter buys under FLTrust.} The counter is a value each
 client sets for itself (Sec.~\ref{sec:setup}). Under the defect FLTrust adds
@@ -898,24 +886,10 @@ every round adds to it with the same sign, so its norm grows linearly in $t$,
 whereas the trainable block grows linearly only if the increments $u_i(\tau)$ stay
 aligned across rounds, and more slowly if they do not.
 
-\begin{lemma}[Histories stay compressed]
-\label{lem:history}
-If client $i$ runs at least $B_{\min}>0$ batches in each of rounds $1,\dots,t$ and
-every trainable increment satisfies $\|u_i(\tau)\|\le\eta$, then the trainable share
-of its history obeys
-\[
-1-s_i(t)\;=\;\frac{\|U_i(t)\|^2}{\|H_i(t)\|^2}\;\le\;\frac{\eta^2}{\eta^2+LB_{\min}^2}
-\qquad\text{for every }t,
-\]
-where $U_i(t)=\sum_{\tau\le t}u_i(\tau)$ is the trainable block of $H_i(t)$.
-\end{lemma}
-
-\begin{proof}[Proof sketch]
-$\|U_i(t)\|\le t\eta$ while the counter block grows at least as $\sqrt{L}\,tB_{\min}$
-(Sec.~\ref{sup:proofs}).
-\end{proof}
-
-The bound does not depend on $t$, so the compression never wears off.
+If client $i$ runs at least $B_{\min}$ batches per round and every trainable
+increment has norm at most $\eta$, the trainable share of its history is at most
+$\eta^2/(\eta^2+LB_{\min}^2)$ for every $t$ (Lemma~\ref{lem:history}, Sec.~\ref{sup:proofs}):
+the compression never wears off.
 FoolsGold's weight is a decreasing function of $\max_j\cos(H_i,H_j)$, normalised
 and passed through a logit, which stretch residues of order $2(1-s)$ to the full
 range: which clients end near weight zero is then decided by small differences in
@@ -929,30 +903,56 @@ cause. FoolsGold assumes that honest histories are dissimilar, which fails here
 with or without the counter, so its fixed arm measures this failure, and only its
 defect arm can add a counter effect on top of it.
 
-\textbf{FLAME: unchanged among equals, blind to outliers.} FLAME's clustering reads
-the compressed cosine of Corollary~\ref{cor:band}. In clean runs its exclusions are
-the same in both arms (Sec.~\ref{sec:p1}): when the shares $s_i$ are nearly equal and
-the buffer cosine nearly constant, Eq.~\eqref{eq:cos} is close to an increasing affine
-map of the trainable cosine, which keeps the ordering that FLAME's admission step
-(keep the largest cluster if it holds a majority) mainly depends on. An attacker that
-trains $E_m=15$ epochs breaks the premise, but not at once. Its counter is $15$ times an
-honest one (IID), more in proportion than its trainable update
-($\csMalTrNormRatioMin$--$\csMalTrNormRatioMax$ times), and in the defect arm FLAME
-excludes both attackers in the first five rounds (DR $\csFlameDefDRFirstFive$) and
-neither in the last five ($\csFlameDefDRLastFive$; $n=\csFlameDefN$). A probe that logs,
-for the same received updates, what FLAME would admit on either mask (one seed,
-$\fpRounds$ rounds, logging only) shows the transition: as honest trainable updates
-shrink, the honest buffer share rises from $\fpShareHonFirst$ to $\fpShareHonLate$, and
-the attackers' full-vector cosine to honest clients climbs from $\fpMhFirst$ (honest
-pairs: $\fpHhFirst$) to $\fpMhLate$, the honest level ($\fpHhLate$, rounds
-$\fpLateFrom$ on), while the two attackers stay each other's nearest neighbours
-(cosine $\csFlameDefMalCos$ against $\csFlameDefHonCos$ for honest pairs, last five
-rounds, all seeds). On the full vector the majority cluster admits an attacker in
-$\fpAdmitInWindow$ of the $\fpAdmitWindow$ rounds from round $\fpFirstAdmit$ on;
-on the trainable coordinates of the same updates their cosine to honest clients is
-$\fpTrMhLate$ against $\fpTrHhLate$ and they are admitted in $\fpTrAdmitRounds$ of
-$\fpRounds$ rounds. FLDetector, whose statistic the decomposition does not cover,
-shows the same direction.
+\textbf{One angle per client.} Split $d_i$ into its counter block $c_i$ and the rest
+$e_i$, and write $q_i=\cos^2\theta_i$, $\theta_i\in[0,\pi/2]$.
+
+\begin{proposition}[Counter angle]
+\label{prop:angle}
+With $\rho_{ij}=\cos(e_i,e_j)$,
+\begin{equation}
+\label{eq:angle}
+1-\cos(d_i,d_j)=\big[1-\cos(\theta_i-\theta_j)\big]+\sin\theta_i\sin\theta_j\,(1-\rho_{ij}).
+\end{equation}
+If attackers $m,m'$ share one angle $\theta_m$, honest clients $h,h'$ another,
+$\theta_h$, and $k=\sin\theta_m/\sin\theta_h$, then
+\begin{align}
+\frac{1-\cos(d_m,d_{m'})}{1-\cos(d_h,d_{h'})}&=k^2\,\frac{1-\rho_{mm'}}{1-\rho_{hh'}},\tag{a}\\
+\frac{1-\cos(d_m,d_h)}{1-\cos(d_h,d_{h'})}&=\frac{\Phi+k\,(1-\rho_{mh})}{1-\rho_{hh'}},\tag{b}
+\end{align}
+with $\Phi=[1-\cos(\theta_m-\theta_h)]/\sin^2\theta_h\to\tfrac12(1-k)^2$ and
+$k\to(\|e_m\|/\|e_h\|)/(B_m/B_h)$ as the angles vanish.
+\end{proposition}
+\begin{proof}[Proof sketch]
+$\cos(d_i,d_j)=\cos\theta_i\cos\theta_j+\sin\theta_i\sin\theta_j\rho_{ij}$ because
+$\cos(c_i,c_j)=1$; add and subtract $\sin\theta_i\sin\theta_j$ (Sec.~\ref{sup:proofs}).
+\end{proof}
+
+What a detector is meant to read enters~\eqref{eq:angle} only through $\rho_{ij}$,
+scaled by $\sin\theta_i\sin\theta_j$. An attacker running $E$ times as many batches as
+an honest client, with a trainable update only $t<E$ times larger, has $k\approx t/E<1$.
+By (a) its mutual distance to an accomplice shrinks by $k^2$ relative to honest pairs, so
+similarity-penalising rules (FoolsGold, GradCos) see more collusion; by (b) it keeps a
+fraction $k$ of its content distance to honest clients plus a share-set floor $\Phi$, and
+is as typical as they are once (b) reaches $1$, whatever its content, so outlier rules
+(FLAME) see less. These are the directions in Table~\ref{tab:p1flag}; $k>1$ predicts the
+reverse (not run), and a client that sets its counter sets $k$. With $E=15$ and the fixed
+arm's logged $t$ and trainable cosines in place of $\rho$, (a) predicts the defect arm's ratio across $\kgIidN$ paired IID seeds of
+$\kgIidRules$ rules with a median observed/predicted ratio of $\kgIidQMed$
+($\kgIidQMin$--$\kgIidQMax$; $\kgIidInTwo$ within a factor of two; exploratory, Sec.~\ref{sup:proofs}).
+Under Dirichlet shards honest batch counts differ and (a) does not apply.
+
+\textbf{FLAME: unchanged among equals, blind to outliers.} Clean exclusions match across arms: with nearly equal shares, Eq.~\eqref{eq:cos} is
+close to an increasing affine map of the trainable cosine. Under attack, in the defect arm
+FLAME excludes both attackers in the first five rounds (DR $\csFlameDefDRFirstFive$)
+and neither in the last five ($\csFlameDefDRLastFive$; $n=\csFlameDefN$). A probe that
+logs, for the same received updates, what FLAME would admit on either mask (one seed,
+$\fpRounds$ rounds, logging only) shows that ratio (b) decides it: computed from
+per-client norms and trainable cosines, it falls from $\kgPrLamFirst$ in round~$2$ to at
+most $\kgPrLamAdmMax$ in the $\kgPrAdmN$ rounds in which the full-vector majority cluster
+admits an attacker, and is at least $\kgPrLamNoMin$ in the other rounds. It falls because
+the honest trainable updates de-align as training proceeds (honest-pair trainable cosine
+$\fpTrHhLate$ late), while $\Phi$ stays near $\tfrac12(1-k)^2$. On the trainable
+coordinates (attacker-honest cosine $\fpTrMhLate$) they are admitted in $\fpTrAdmitRounds$ of $\fpRounds$ rounds.
 
 \textbf{Distance rules and negative controls.} By Corollary~\ref{cor:dist}, clean
 IID cells are the null for Krum, Bulyan and RFA and clean Dirichlet cells the

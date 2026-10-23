@@ -221,6 +221,19 @@ and a positive $M^*$ means a positive trust score, so the client is admitted.
 \end{proof}
 
 
+\renewcommand{\thelemma}{S\arabic{lemma}}%
+\begin{lemma}[Histories stay compressed]
+\label{lem:history}
+If client $i$ runs at least $B_{\min}>0$ batches in each of rounds $1,\dots,t$ and
+every trainable increment satisfies $\|u_i(\tau)\|\le\eta$, then the trainable share
+of its history obeys
+\[
+1-s_i(t)\;=\;\frac{\|U_i(t)\|^2}{\|H_i(t)\|^2}\;\le\;\frac{\eta^2}{\eta^2+LB_{\min}^2}
+\qquad\text{for every }t,
+\]
+where $U_i(t)=\sum_{\tau\le t}u_i(\tau)$ is the trainable block of $H_i(t)$.
+\end{lemma}
+
 \begin{proof}[Proof of Lemma~\ref{lem:history}]
 By the triangle inequality $\|U_i(t)\|\le t\eta$, and the counter block of $H_i(t)$
 has squared norm $L\big(\sum_{\tau\le t}B_i(\tau)\big)^2\ge Lt^2B_{\min}^2$. The
@@ -229,6 +242,31 @@ $x\mapsto x/(x+a)$ is increasing for $a>0$,
 $1-s_i(t)\le t^2\eta^2/(t^2\eta^2+Lt^2B_{\min}^2)$.
 \end{proof}
 
+
+\begin{proof}[Proof of Proposition~\ref{prop:angle}]
+As in the proof of Corollary~\ref{cor:fltrust}, $\cos(d_i,d_j)=\sqrt{q_iq_j}+\sqrt{(1-q_i)(1-q_j)}\,\rho_{ij}
+=\cos\theta_i\cos\theta_j+\sin\theta_i\sin\theta_j\,\rho_{ij}$. Since
+$\cos(\theta_i-\theta_j)=\cos\theta_i\cos\theta_j+\sin\theta_i\sin\theta_j$,
+$1-\cos(d_i,d_j)=1-\cos(\theta_i-\theta_j)+\sin\theta_i\sin\theta_j(1-\rho_{ij})$. With
+equal angles inside each group the first term vanishes for $(m,m')$ and $(h,h')$; dividing
+gives (a) and (b). As $\theta_m,\theta_h\to0$,
+$1-\cos(\theta_m-\theta_h)=\tfrac12(\theta_m-\theta_h)^2+O(\theta^4)$ and
+$\sin\theta\sim\theta$, so $\Phi\to\tfrac12(1-k)^2$; and $\tan\theta_i=\|e_i\|/\|c_i\|$
+gives $k\to(\|e_m\|/\|e_h\|)/(B_m/B_h)$.
+\end{proof}
+
+\textbf{Checking Proposition~\ref{prop:angle}} (exploratory). The identity is exact; the
+checks test its premises (equal angles within a group; non-counter cosines close to
+trainable ones once running statistics settle) and $k\approx t/E$. The campaign check uses,
+per paired seed and rounds $2$--$15$, the fixed arm's $t$ and trainable cosines for the defect
+arm's, whose trajectory differs; held-out cells (Sec.~\ref{sup:p3x}) are excluded. The
+transmitted counter ratio is $15.0$--$15.9$, not $15$, because the global counter is truncated.
+Under Dirichlet shards honest pairs carry their own term $1-\cos(\theta_h-\theta_{h'})$, and the
+observed ratio is below $(t/E)^2$ in $\kgDirBelow$ of $\kgDirN$ pairs (median $\kgDirQMed$ of
+it). On the probe (rounds $2$--$10$), $k$ from each client's norms matches $t$ over the counter
+ratio within $\kgPrKErr\%$, and the identity with trainable cosines reproduces the logged
+full-vector attacker distances within $\kgPrRelMax\%$ (honest pairs $\kgPrRelMaxHh\%$).
+Code: \texttt{paper/make\_numbers\_kgeom.py}.
 
 \subsection{The falsified-counter check}
 \label{sup:falsify}
@@ -537,16 +575,12 @@ $\raRepArmFoolsgoldCleanCAFix$ with the copy against $\raRepArmFoolsgoldCleanCAB
 without, and in FPR $\raRepArmFoolsgoldCleanFPRFix$ against
 $\raRepArmFoolsgoldCleanFPRBug$; under attack the BSR arm difference is
 $\raRepArmFoolsgoldAtkBSRFix$ against $\raRepArmFoolsgoldAtkBSRBug$.
-With the copy, FoolsGold's first aggregate is built from ten updates that all start
-from the same initial model. It then excludes most of them and never recovers.
-Clean accuracy is $\raRepFoolsgoldFullCleanCAFix$ in the defect arm and
-$\raRepFoolsgoldTrCleanCAFix$ in the fixed arm, against
-$\raRepFoolsgoldFullCleanCABug$ and $\raRepFoolsgoldTrCleanCABug$ in the campaign.
-Without the copy, the sequential round~$1$ had handed FoolsGold a model already
-trained by all ten clients. Every FoolsGold outcome reported in
-Secs.~\ref{sec:p1}--\ref{sec:mech} is therefore a measurement of the defective
-engine and is withdrawn until the campaign is re-run with the copy (\PENDING).
-The re-run uses the copy (\texttt{federated.copy\_initial\_global}).
+With the copy, FoolsGold excludes most of the ten round-$1$ updates and never recovers
+(clean accuracy $\raRepFoolsgoldFullCleanCAFix$ defect, $\raRepFoolsgoldTrCleanCAFix$ fixed,
+against $\raRepFoolsgoldFullCleanCABug$ and $\raRepFoolsgoldTrCleanCABug$ without it). The
+first campaign's FoolsGold outcomes are therefore withdrawn (Sec.~\ref{sup:retro}); the re-run
+of Secs.~\ref{sec:p1}--\ref{sec:mech}, the source of every FoolsGold number in the paper,
+uses the copy (\texttt{federated.copy\_initial\_global}).
 % Sources: results/round1_alias/{trace.json,campaign_replay.json}; paper/make_numbers_alias.py.
 
 \section{The thirteen rules in detail}
@@ -625,19 +659,6 @@ $\kappa=1.5$, RFA $8$ iterations; none was tuned.
 
 \section{The first campaign and the withdrawn findings}
 \label{sup:retro}
-\textbf{The first campaign, for reference.} Its non-IID cells are where the
-FLTrust and FLAME observations of Sec.~\ref{sec:mech} first came from. Its engine
-had the round-one defect, which FLTrust and FLAME do not carry across rounds but
-which changes their trajectories, so the re-run replaces these numbers. In the
-first campaign FLTrust excluded a fraction $\paFPRFltrustDirCleanDef$ of the
-clients in clean runs of the defect arm and $\paFPRFltrustDirCleanFix$ in the
-fixed arm (higher on $\paFPRFltrustDirCleanPos$ of $\paFPRFltrustDirCleanN$ seeds,
-exact $p=\paFPRFltrustDirCleanP$, the floor at five seeds), while clean accuracy moved by
-$\paCAFltrustDirCleanDiff$ (lower on $\paCAFltrustDirCleanNeg$ of $\paCAFltrustDirCleanN$
-seeds). FLAME excluded the same fraction in both arms ($\paFPRFlameDirCleanDef$ against
-$\paFPRFlameDirCleanFix$ in clean runs), and its clean accuracy moved by
-$\paCAFlameDirCleanDiff$. 
-
 \label{sec:retro}
 
 This paper began as a robustness study on a pipeline with the defect; several of
