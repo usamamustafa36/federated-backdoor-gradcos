@@ -1,0 +1,3 @@
+device=cpu dataset=ciciot2023 classes=8 rounds=10
+total cells: 1 x 1 seed(s) = 1
+

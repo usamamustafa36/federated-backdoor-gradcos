@@ -18,13 +18,13 @@ all: main.pdf supplement.pdf
 
 # main.tex and supplement.tex cross-reference each other through xr-hyper, so
 # each is rebuilt after the other's .aux changes (latexmk -g forces the pass).
-NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex
+NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex numbers_flameprobe.tex
 
 supplement.pdf: supplement.tex preamble.tex main.pdf $(NUMBERS)
 	$(LATEXMK) supplement.tex
 	$(LATEXMK) -g main.tex
 
-main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex $(wildcard figs/*)
+main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex numbers_flameprobe.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
@@ -57,6 +57,8 @@ numbers:
 	cd $(ROOT) && $(PY) paper/make_numbers_fltshut.py
 	# P3X (iterations/PREREG_P3X.md): held-out replication of P3's exploratory detection effects
 	cd $(ROOT) && $(PY) paper/analyse_p3x.py
+	# FLAME mechanism probe (iteration 29; experiments/flame_probe/flame_probe.py, logging only)
+	cd $(ROOT) && $(PY) paper/make_numbers_flameprobe.py
 	# R1 (iterations/PREREG_R1.md): trained counter-falsifying attacker; paper/numbers_r1.tex
 	cd $(ROOT) && $(PY) paper/analyse_r1.py
 	# R2 (iterations/PREREG_R2.md): byzantineFL re-run with/without the mask; paper/numbers_r2.tex

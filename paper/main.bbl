@@ -108,8 +108,7 @@ H.~Chen, T.~Xu, X.~Wu, and J.~Kittler, ``Hybrid batch normalisation: Resolving
 
 \bibitem{xu2025oba}
 J.~Xu, Z.~Zhang, and R.~Hu, ``On the out-of-distribution backdoor attack for
-  federated learning,'' 2025, arXiv:2509.13219; to appear in ACM MobiHoc 2025
-  (arXiv record). Proposes the BNGuard defense.
+  federated learning,'' 2025, arXiv:2509.13219 (ACM MobiHoc 2025).
 
 \bibitem{he2022gluefl}
 S.~He, Q.~Yan, F.~Wu, L.~Wang, M.~L{\'e}cuyer, and I.~Beschastnikh, ``{GlueFL}:

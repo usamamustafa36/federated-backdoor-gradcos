@@ -1802,3 +1802,65 @@ finished here.)
      R2, since P3's missing cells are cheap on CUDA (~10-20 min) and fill the main table.
   3. Check the FLAME mechanism claim with the logged per-round diagnostics (mal_pair_cos/honest_pair_cos,
      mal_norm_ratio) in defect vs fixed attacked IID runs; promote or drop the sentence.
+
+## Iteration 29 - 2026-10-23 - hostile review of the reframed paper: a mislabelled norm ratio fixed, the FLAME mechanism measured (probe), multiplicity carried into abstract/contribution/conclusion, survey count corrected
+
+- **State at start (17:11):** P3 tail runner on its first cells (CPU, 3 lanes; 3 jobs done by 20:00, ~2 h per attacked
+  cell under load 22-25 -> **P3X held-out cells (38 jobs) now ETA ~2026-10-24 afternoon, not 06:00**). R1 50 JSONs.
+  GPU 6.6/8 GB used (R1's 3 lanes ~0.63 GB each + an **ollama runner, another user's, 4.7 GB**): no room for a P3X or
+  R2 lane; left alone. P3X outcomes not read (only the tail log's done lines).
+- **Reviewer score before: 5/10, MAJOR (borderline reject).** Blockers found, ranked:
+  1. *Data mislabelled.* `\csMalNormRatio*` ("the attackers' trainable update norm is 16-50 times an honest
+     client's", Setup, FLAME and distance paragraphs) comes from calib6 cells run with signal_subspace=full, where
+     engine `_update_geometry` measures `_signal_mask()` = the FULL vector. It is the counter-included ratio. The
+     trainable ratio (P3 trainable-arm FedAvg attacked, per-seed medians, rounds 2-15, n=9) is **2.7-4.1**. The FLAME
+     sentence "counter 15x, larger in proportion than its trainable update (16-50x)" was self-contradictory; with the
+     right number it is consistent (15 > 2.7-4.1).
+  2. *Multiplicity not carried to the headline.* Abstract said exploratory cells "show"; contribution and conclusion
+     stated the detection effects as facts; none survives Holm over all 210 exploratory tests.
+  3. *Survey count inflated:* "four of ten implementations" counted our own pipeline.
+  4. *FLAME mechanism unverified* and "excludes neither attacker in any seed" hid that it does exclude them early.
+  5. *FoolsGold "overstate" direction:* no FPR given (defect arm excludes 0.170 honest vs 0.000); the security point
+     (a detection that exists only through a self-reported counter is attacker-revocable) not made.
+  6. Data availability stale (FLNET2023 not used; trigger audit dropped by R4); registration called "registered"
+     with no word that it is a git commit, not a third-party registry.
+- **Fixes:**
+  - make_numbers_calib6.py: relabelled MalNormRatio* as full-vector (comment), new `\csMalTrNormRatioMin/Max/N` from
+    P3 trainable-arm FedAvg cells; all three prose uses switched. New `\csFlameDef*` (FLAME IID attacked defect arm,
+    n=10: DR rounds 1-5 0.96, rounds 11-15 0.00; full-vector attacker-pair cosine 0.9997 vs honest pairs 0.995).
+  - **FLAME probe (new, exploratory, logging only):** experiments/flame_probe/flame_probe.py patches
+    `_defect_diagnostics` to log per round, for the received updates, buffer shares, counters, full/trainable cosines
+    and what FLAME's majority cluster admits on each mask. Seed 42 IID attacked defect arm, 10 rounds, CPU (mine,
+    finished; scratch out_dir, no campaign cell written). results/flame_probe/flame_iid_s42.jsonl ->
+    paper/make_numbers_flameprobe.py -> numbers_flameprobe.tex (`\fp*`, in Makefile `numbers` and preamble);
+    tests/test_flameprobe.py (2). Result: honest buffer share 0.958 -> 0.993 as trainable updates shrink; attacker-
+    honest full cosine 0.934 -> 0.996 = honest-honest level (rounds 6+); full-vector cluster admits an attacker in 5 of
+    6 rounds from round 5; trainable mask admits them 0 of 10 (trainable attacker-honest cosine 0.17 vs 0.51). So the
+    "attacker looks typical" mechanism is now measured (one seed), and it is time-dependent: the counter hides the
+    attacker only once honest updates are as counter-dominated as the attacker's.
+  - Abstract (249 words by the checker): "Exploratory cells, none significant after correction over all 210
+    exploratory tests, suggest ..."; "Three of nine inspected third-party implementations". Contribution 2/3 and
+    Conclusion hedged the same way; Mechanisms bullet gains the FLAME transition. Results (iii): FLAME "stops
+    excluding", FoolsGold FPR added, "none survives Holm over all 210". Discussion: the stronger-looking (FoolsGold)
+    case is the worse one, since the attacker can withdraw it at no cost by reporting the cohort's count (stated as
+    a consequence of the threat model; not run). Statistics: registration = dated commit in the released repo, no
+    third-party registry. Data availability rewritten (CICIoT2023 + CIFAR-10; registration docs listed).
+  - Paid for with cuts: Implementation's duplicate distance sentence and hyperparameter sentence, calibration
+    wording, the FLTrust defect DR/FPR restatement (in Table V), the Krum nondeterminism sentence, FLAME's "exposed
+    input" coda, a conclusion clause and the release sentence, Backdoors related work compressed, BNGuard bib note.
+    Backups main/supplement .pre-iter29.bak.
+- **Build/check:** latexmk rc 0, 0 undefined. **IEEEtran pages: main 10 (ends 9.61) / supplement 6 (ends 5.83).**
+  check_manuscript all PASS except the gate (34 unresolved, P3 tail lane). pytest tests/: 18 pass.
+- **Jobs left running (none mine):** P3 tail 743527/743530 (results/postfix_p3/campaign_tail.log; P3X cells ETA
+  ~2026-10-24 afternoon, whole tail days on CPU); R1 GPU helper 710677/710678 (results/r1_falsify/gpu.log); R1 CPU
+  runner 527497/527516; R2 waiter 734442; lock 178623. My probe (765097, 773907) is finished/stopped.
+- **Score after: 5/10, MAJOR REVISION.** Claims are now labelled to match the statistics, a wrong number is gone, and
+  the FLAME mechanism is measured rather than suggested. The score does not move until P3X replicates (or not) and
+  R1 reports.
+- **Top 3 priorities:**
+  1. When the P3X cells land: `make numbers`; write X1/X2 with PREREG_P3X's pre-committed wording; if X1 fails,
+     remove "in both directions" from abstract/contributions/conclusion/discussion.
+  2. Optional, cheap, exploratory: rerun the FLAME probe on 2-3 more IID seeds (and one Dirichlet seed, not s42-46's
+     held-out FLDetector/AlignIns cells) to make the transition claim more than one seed; ~80 min/seed on CPU.
+  3. When R1's GPU helper exits, move the P3 tail onto the GPU (note it in the ledger) before R2; check the
+     ollama runner's GPU memory first (it held 4.7 GB on 2026-10-23).

@@ -174,10 +174,14 @@ def main():
                 P("RepImplantFortyThree", "--" if c3["imp"] is None else str(c3["imp"]))
     P("RepN", str(rep_n)); P("RepAgree", str(rep_agree))
 
-    # --- attackers' trainable update size (iteration 14) -------------------------
-    # history.mal_norm_ratio = median malicious / median honest norm of the TRAINABLE
-    # update (src/fl/engine.py::_update_geometry); per seed, median over rounds 2..R
-    # (round 1 aliased) of the E_m=15 share-matched FedAvg calibration cells.
+    # --- attackers' update size (iteration 14; relabelled iteration 29) ---------
+    # history.mal_norm_ratio = median malicious / median honest norm over the vector
+    # _update_geometry measures, i.e. engine._signal_mask(): ALL coordinates under
+    # defense.signal_subspace=full, trainable ones only under =trainable. The calib6
+    # cells run in `full` mode, so MalNormRatio* below is the FULL-VECTOR (counter-
+    # included) ratio, not the trainable one (iterations 14-28 mislabelled it).
+    # Per seed, median over rounds 2..R (round 1 aliased) of the E_m=15 share-matched
+    # FedAvg calibration cells.
     mr = []
     for path in glob.glob(R("calib_iter6", "calib6_dirichlet_*fedavg_atk1_m0.2_p0.1_fixed_me15_sm_s*.json")):
         try:
@@ -190,6 +194,39 @@ def main():
     P("MalNormRatioMin", f"{min(mr):.0f}" if mr else "\\PENDING")
     P("MalNormRatioMax", f"{max(mr):.0f}" if mr else "\\PENDING")
     P("MalNormRatioN", str(len(mr)))
+    # Trainable-only ratio (iteration 29): P3 trainable-arm attacked FedAvg cells (FedAvg's
+    # arms run the same computation, so this is the attacker the defended cells face),
+    # both partitions, per seed median over rounds 2..15.
+    mt = []
+    for path in glob.glob(R("postfix_p3", "p3trainable_*_ciciot2023_fedavg_atk1_m0.2_p0.1_fixed_me15_sm_s*.json")):
+        try:
+            h = json.load(open(path))["history"]
+        except (OSError, json.JSONDecodeError):
+            continue
+        v = [x for x in h.get("mal_norm_ratio", [])[1:] if x is not None and not math.isnan(x)]
+        if v:
+            mt.append(float(np.median(v)))
+    P("MalTrNormRatioMin", f"{min(mt):.1f}" if mt else "\\PENDING")
+    P("MalTrNormRatioMax", f"{max(mt):.1f}" if mt else "\\PENDING")
+    P("MalTrNormRatioN", str(len(mt)))
+    # FLAME's defect arm over time (iteration 29, exploratory; FLAME IID is not a PREREG_P3X
+    # held-out cell). In `full` runs _update_geometry measures the transmitted vector, so
+    # mal_pair_cos / honest_pair_cos are full-vector within-group cosines.
+    fm = {"dr0": [], "dr1": [], "mc": [], "hc": []}
+    for path in glob.glob(R("postfix_p3", "p3full_iid_ciciot2023_flame_atk1_m0.2_p0.1_fixed_me15_sm_s*.json")):
+        try:
+            h = json.load(open(path))["history"]
+        except (OSError, json.JSONDecodeError):
+            continue
+        a_ = lambda k, sl: float(np.nanmean(np.array(h[k], dtype=float)[sl]))
+        fm["dr0"].append(a_("detection_rate", slice(0, 5)))
+        fm["dr1"].append(a_("detection_rate", slice(-5, None)))
+        fm["mc"].append(a_("mal_pair_cos", slice(-5, None)))
+        fm["hc"].append(a_("honest_pair_cos", slice(-5, None)))
+    m_ = lambda k, nd=3: (f"{np.mean(fm[k]):.{nd}f}" if fm[k] else "\\PENDING")
+    P("FlameDefDRFirstFive", m_("dr0", 2)); P("FlameDefDRLastFive", m_("dr1", 2))
+    P("FlameDefMalCos", m_("mc", 4)); P("FlameDefHonCos", m_("hc", 3))
+    P("FlameDefN", str(len(fm["dr0"])))
 
     # --- Corollary 3 on real data: FLTrust counter shares (iteration 9) ---------
     # src/defenses/fltrust.py logs, per round, q0 (server), min qi (clients), the
