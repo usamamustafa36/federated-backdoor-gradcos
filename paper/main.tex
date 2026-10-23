@@ -45,18 +45,19 @@ model. We show that aggregation rules nonetheless decide on it. An exact decompo
 the cosine and the Euclidean distance between transmitted updates into trainable and
 buffer parts explains which rules are exposed: in every pairwise cosine the trainable
 signal is weighted by at most one minus the buffer share, whatever the data, while
-distance-based rules are exposed only when clients run different numbers of batches, by
-exactly $L(B_i-B_j)^2$ for $L$ BatchNorm layers. In a federated CNN-LSTM intrusion
-detector on CICIoT2023 with non-IID clients, the buffers carry a median
-$\pfDiagBufNormShareDir$ of the squared update norm, and the mean pairwise client cosine
-is $\pfDiagCosFullDir$ over the transmitted vector against $\pfDiagCosSigDir$ over the
-trainable parameters. In a seed-paired A/B that changes only which
-coordinates thirteen rules read, registered ten-seed tests confirm the predicted
-FLTrust effect under non-IID shards (Holm $p\le\pfPrePThreePh$): with the counter
-it excludes no client; without it, it excludes honest clients (rate
-$\pfFPRFltrustDirAtkFix$) about as often as attackers ($\pfDRFltrustDirAtkFix$). The counter changes what the
-rule decides, not whether it detects.
-% RE-CHECK (iter 23): Holm bound needs P3Ph>=P1Ph; DR~FPR (fixed, Dir).
+distance-based rules are exposed only when clients run different numbers of batches. In a
+non-IID federated intrusion detector on CICIoT2023 the buffers carry a median
+$\pfDiagBufNormShareDir$ of the squared update norm. A seed-paired A/B that changes only
+which coordinates thirteen rules read confirms, in registered ten-seed tests, that the
+counter stops FLTrust from excluding anyone (Holm $p\le\pfPrePThreePh$). Exploratory
+cells show that it also changes whether defenses catch a backdoor attacker, in both
+directions: it hides both attackers from FLAME (detection rate $\pfDRFlameIidAtkDef$ against
+$\pfDRFlameIidAtkFix$ without it, IID) and FLDetector ($\pfDRFldetectorIidAtkDef$ against
+$\pfDRFldetectorIidAtkFix$), and makes FoolsGold exclude attackers it otherwise admits
+(backdoor success $\pfBSRFoolsgoldIidAtkDef$ against $\pfBSRFoolsgoldIidAtkFix$,
+$n=\pfBSRFoolsgoldIidAtkN$). Evaluations on such pipelines can understate or overstate a
+defense.
+% RE-CHECK (iter 28): Holm bound needs P3Ph>=P1Ph; FLAME/FLDetector/FoolsGold directions; P3X outcome.
 Four of ten inspected implementations put the counter in that vector, including a 2025
 defense's reference code and Flower's official PyTorch example, whose updates Flower's
 own Krum and Bulyan compare.
@@ -171,12 +172,13 @@ three benchmarks. We do not claim that published results are wrong.
 Every rule runs twice, identical except whether its decisions read the full vector
 or the trainable coordinates (paired seeds, two partitions, clean and attacked,
 exact tests, hypotheses registered before their cells completed;
-$\pfCellsDone$ of $\pfCellsTarget$ cells so far). Under non-IID shards the
-registered FLTrust tests are supported: the counter suppresses every exclusion, and
-without it honest clients go about as often as attackers. No predicted
-clean-accuracy effect is detected; with a training-distribution root FLTrust
-excludes no attacker in either partition.
-% RE-CHECK (iter 23): P1/P3 'supported', S1-S3 'not supported', \fsNatAtkDr and \fsNatDirAtkDr both 0.
+$\pfCellsDone$ of $\pfCellsTarget$ cells so far). The registered FLTrust tests are
+supported: the counter suppresses every exclusion. No predicted clean-accuracy effect
+is detected. Under attack the counter changes whether rules catch the attackers, in
+both directions: it hides them from FLAME and FLDetector and hands FoolsGold detections
+the trainable update does not support (exploratory; a held-out replication is
+registered).
+% RE-CHECK (iter 28): P1-P4 'supported', S1-S4 'not supported'; exploratory DR/BSR signs.
 \item \textbf{Mechanisms} (Sec.~\ref{sec:mech}). Under the defect FLTrust excludes
 no client once the counter shares satisfy $q_i+q_0>1$ (Corollary~\ref{cor:fltrust});
 a client that falsifies its own counter is admitted with a fixed step whatever its
@@ -245,14 +247,11 @@ proposing new ones. All of this work concerns
 what the attacker sends; ours is what the honest pipeline puts into the vector
 the rule reads.
 
-\textbf{Federated IDS.} Federated detectors use benchmarks such as
-CICIoT2023~\cite{neto2023ciciot} and FLNET2023~\cite{flnet2023}; their poisoning
-has been studied with model- and data-level defenses~\cite{zhang2022secfednids},
-parameterized attacker budgets~\cite{merzouk2023param} and Weibull-fitted
-validation scores~\cite{sameera2025weidetect}, all against static attackers and
-none reporting the false-positive cost of exclusion. Such work inherits its
-framework's transmission convention, which is why we use a detector as the
-application.
+\textbf{Federated IDS.} Poisoning of federated detectors on
+CICIoT2023~\cite{neto2023ciciot} and FLNET2023~\cite{flnet2023} has been studied
+with several defenses~\cite{zhang2022secfednids,merzouk2023param,sameera2025weidetect},
+against static attackers and without the false-positive cost of exclusion. Such work
+inherits its framework's transmission convention.
 
 \section{The Defect: What a \texttt{state\_dict()} Update Contains}
 \label{sec:defect}
@@ -351,9 +350,8 @@ predicts no exposure; they are negative controls in Sec.~\ref{sec:p1}.
 \texttt{momentum=None} (the default is $0.1$). On our model, two copies
 differing only by $+10^5$ on the counter, fed identical batches, end with maximum
 absolute differences of $\dfInertMean$ (running means), $\dfInertVar$ (running
-variances) and $\dfInertLogit$ (evaluation logits); with \texttt{momentum=None} the
-same perturbation moves the running mean by $\dfCmaMean$, so the probe would detect
-a read. The decomposition holds on real local updates of our CNN\,+\,LSTM, where
+variances) and $\dfInertLogit$ (logits); with \texttt{momentum=None} the running mean
+moves by $\dfCmaMean$, so the probe would detect a read. The decomposition holds on real local updates of our CNN\,+\,LSTM, where
 the counter alone carries $\dfPropShareI\%$ of one client's squared norm and two
 updates have full cosine $\dfPropCosFull$ against a trainable cosine of
 $\dfPropCosSig$, and on a ResNet-18 with $\drNBN$ BatchNorm layers, where the
@@ -482,8 +480,7 @@ $\csShareTol$ percentage point of $m$, training $E_m=15$ local epochs. That sett
 fixed before its calibration finished (FedAvg implants, last-five-round BSR above
 $0.5$, on at least eight of ten non-IID seeds); it implants on
 $\csSmEfifteenNimpl$ of ten, seed $46$ being the exception
-(Table~\ref{tab:seedcal}; in a $40$-round re-run it implants after round
-$\csHzLastLowFortySixEfifteen$, Sec.~\ref{sup:calib}). A rule's attacked BSR is read only on seeds where the re-run's own
+(Table~\ref{tab:seedcal}, Sec.~\ref{sup:calib}). A rule's attacked BSR is read only on seeds where the re-run's own
 FedAvg cell implants. The price is visibility: the attackers' trainable update
 norm is $\csMalNormRatioMin$--$\csMalNormRatioMax$ times an honest client's.
 
@@ -528,12 +525,9 @@ cells done).
 % RE-CHECK every interpretive sentence in Sec. 6 when P3 completes (1,040 cells);
 % the macros update themselves, the prose does not.
 
-\textbf{Round-one aliasing.} A second engine defect, unrelated to the counter,
-stored the initial global model as views of the model's storage, so in round~$1$
-only, clients trained one after another and the rules received the last client's
-model as reference (Sec.~\ref{sup:alias}; a unit test now guards it). It is the same
-in both arms but changes FoolsGold, whose history carries round~$1$ forward, so the
-first campaign's FoolsGold outcomes are withdrawn. The re-run fixes it.
+\textbf{Round-one aliasing.} A second engine defect, unrelated to the counter, gave
+the rules a wrong round-$1$ reference (Sec.~\ref{sup:alias}; now unit-tested). It
+changed FoolsGold, whose history carries round~$1$ forward; the re-run fixes it.
 
 
 \section{Aggregation Rules and What the Decomposition Predicts}
@@ -632,23 +626,21 @@ $E_m=5$, round-one-defective engine; Sec.~\ref{sup:retro}) is quoted only where 
 bears on a mechanism, and labelled.
 
 \textbf{Confirmatory hypotheses.} Table~\ref{tab:prereg} reports the eight
-registered comparisons (Sec.~\ref{sec:setup}) as they stand ($\pfPreFinal$);
-it becomes final when every cell has ten seeds (with a one-sided floor of $2^{-n}$,
-Holm over four needs $n\ge7$). At this interim point $\pfPrePrimarySupported$ of
+registered comparisons (Sec.~\ref{sec:setup}); the family is \pfPreFinal{} (it is final
+once every cell has ten seeds). $\pfPrePrimarySupported$ of
 $\pfPrePrimaryTotal$ primary hypotheses are supported. Under Dirichlet shards, P1
 ($n=\pfPrePOneN$, $\pfPrePOnePos$/$\pfPrePOneNeg$, $p_H=\pfPrePOnePh$) and P3
 ($n=\pfPrePThreeN$, $\pfPrePThreePos$/$\pfPrePThreeNeg$, $p_H=\pfPrePThreePh$) are
 complete and confirm Corollary~\ref{cor:fltrust}: removing the counter restores
 FLTrust's exclusions, though not useful detection (honest clients go about as often as
 flippers, Sec.~\ref{sec:mech}). The blind IID pair is supported as well, P2 with
-$n=\pfPrePTwoN$ and P4 with $n=\pfPrePFourN$ of ten so far
+$n=\pfPrePTwoN$ and P4 with $n=\pfPrePFourN$
 ($\pfPrePFourPos$/$\pfPrePFourNeg$, $p_H=\pfPrePFourPh$), but under IID the fixed
 arm's exclusions are FLTrust's shutdown (Sec.~\ref{sec:mech}): it gives every client
 zero trust, so the effect is real and is not detection. S1--S4 are complete and none
 is supported (closest, S1: $\pfPreSOnePos$/$\pfPreSOneNeg$, $\Delta=\pfPreSOneDiff$,
 $p=\pfPreSOneP$, $p_H=\pfPreSOnePh$): the predicted noise penalty is too small to see.
-% RE-CHECK (iter 26): written for P1-P4 all supported, P4 n=8/10 interim, S1-S4 n=10
-% none supported. P4 with two negative seeds out of ten could exceed 0.05 (ties at |d|=1).
+% RE-CHECK (iter 28): written for P1-P4 all supported, S1-S4 n=10 none supported.
 
 \begin{table}[t]
 \centering
@@ -684,31 +676,39 @@ $\pfCAFedavgDirCleanDef$ and $\pfCAFedavgDirCleanFix$ in the two arms (differenc
 $\pfCAFedavgDirCleanDiff$, $n=\pfCAFedavgDirCleanN$): where the arms run the same
 computation they reproduce each other.
 % RE-CHECK "reproduce" against \pfCAFedavgDirCleanDiff as seeds land.
-(ii) \emph{FoolsGold}, clean non-IID, excludes $\pfFPRFoolsgoldDirCleanDef$
-(defect) and $\pfFPRFoolsgoldDirCleanFix$ (fixed) of an honest cohort, the failure
-of its own assumption diagnosed in Sec.~\ref{sec:mech}; clean accuracy differs by
-$\pfCAFoolsgoldDirCleanDiff$ (fixed higher on $\pfCAFoolsgoldDirCleanPos$ of
-$\pfCAFoolsgoldDirCleanN$ seeds).
+(ii) \emph{Clean non-IID exclusions.} FoolsGold excludes $\pfFPRFoolsgoldDirCleanDef$
+(defect) and $\pfFPRFoolsgoldDirCleanFix$ (fixed) of an honest cohort, a failure of its
+own assumption (Sec.~\ref{sec:mech}); FLAME's arms differ by $\pfFPRFlameDirCleanDiff$
+($n=\pfFPRFlameDirCleanN$), indistinguishable despite an exposed input.
 % RE-CHECK when the FoolsGold Dir clean cells reach n=10.
-(iii) \emph{FLAME}, clean non-IID: exclusions differ by $\pfFPRFlameDirCleanDiff$
-($\pfFPRFlameDirCleanPos$ seeds up, $\pfFPRFlameDirCleanNeg$ down; $n=\pfFPRFlameDirCleanN$):
-indistinguishable arms despite an exposed input.
-% RE-CHECK the FLAME sentence when its Dir clean cells reach n=10 (P3).
-(iv) \emph{FLTrust}, clean non-IID: exclusions $\pfFPRFltrustDirCleanDef$
-(defect) and $\pfFPRFltrustDirCleanFix$ (fixed; P1), clean accuracy difference
-$\pfCAFltrustDirCleanDiff$.
+(iii) \emph{Detection under attack} (Table~\ref{tab:p1flag}). With the counter, FLAME
+excludes neither attacker in any seed (IID DR $\pfDRFlameIidAtkDef$, fixed
+$\pfDRFlameIidAtkFix$, $\pfDRFlameIidAtkPos$/$\pfDRFlameIidAtkNeg$ seeds, $p_H=\pfDRFlameIidAtkPh$)
+while excluding more honest clients ($\pfFPRFlameIidAtkDef$ against
+$\pfFPRFlameIidAtkFix$); FLDetector's DR is $\pfDRFldetectorIidAtkDef$ against
+$\pfDRFldetectorIidAtkFix$ ($p_H=\pfDRFldetectorIidAtkPh$), and both point the same way
+under Dirichlet shards so far (FLAME $\pfDRFlameDirAtkDef$/$\pfDRFlameDirAtkFix$,
+FLDetector $\pfDRFldetectorDirAtkDef$/$\pfDRFldetectorDirAtkFix$, AlignIns
+$\pfDRAligninsDirAtkDef$/$\pfDRAligninsDirAtkFix$; $n=5$). The counter can also do the
+opposite: under IID shards it makes FoolsGold exclude both attackers (DR
+$\pfDRFoolsgoldIidAtkDef$ against $\pfDRFoolsgoldIidAtkFix$), and without it the backdoor
+implants (BSR $\pfBSRFoolsgoldIidAtkFix$ against $\pfBSRFoolsgoldIidAtkDef$,
+$n=\pfBSRFoolsgoldIidAtkN$), as under FedAvg ($\pfBSRFedavgAllSeedsIid$); AlignIns' IID DR
+also drops without it ($\pfDRAligninsIidAtkDef$ to $\pfDRAligninsIidAtkFix$). None of
+this was predicted, so it is exploratory. Before the remaining seeds ran we registered
+that the four incomplete cells keep their direction (Sec.~\ref{sup:p3x}): pooled over
+$\pxNReg$ held-out pairs, $\pxXOneN$ have run ($p=\pxXOneP$, \pxFinal).
+% RE-CHECK (iter 28): directions above; P3X X1 when it lands (iterations/PREREG_P3X.md).
 
 \textbf{What the BSR columns can and cannot say.} An attacked BSR is read against
 the rule's clean-model BSR (the floor) and FedAvg's attacked BSR (the undefended
 ceiling), and only on the \emph{implant set}: the seeds on which every re-run
-FedAvg attacked cell implants (last-five-round BSR above $0.5$). So far $\pfImplantDecidedDir$ non-IID seeds have a
-FedAvg attacked cell and $\pfImplantNDir$ of them implant (excluded:
-$\pfImplantExclDir$); for IID, $\pfImplantNIid$ of $\pfImplantDecidedIid$
-(excluded: $\pfImplantExclIid$). Over every decided seed FedAvg's attacked BSR is
-$\pfBSRFedavgAllSeedsDir$ (non-IID) and $\pfBSRFedavgAllSeedsIid$ (IID), against
-clean floors of $\pfBSRFedavgDirCleanFix$ and $\pfBSRFedavgIidCleanFix$. The BSR
-columns of Table~\ref{tab:p1} are means over the implant set; CA, DR and FPR use
-every paired seed.
+FedAvg attacked cell implants (last-five-round BSR above $0.5$): so far
+$\pfImplantNDir$ of $\pfImplantDecidedDir$ non-IID and $\pfImplantNIid$ of
+$\pfImplantDecidedIid$ IID seeds. FedAvg's attacked BSR is $\pfBSRFedavgAllSeedsDir$
+(non-IID) and $\pfBSRFedavgAllSeedsIid$ (IID), against clean floors of
+$\pfBSRFedavgDirCleanFix$ and $\pfBSRFedavgIidCleanFix$. CA, DR and FPR use every
+paired seed.
 % Implant rule: paper/analyse_postfix.py --implant-bsr 0.5 (iteration 10).
 
 \begin{table*}[t]
@@ -830,17 +830,13 @@ Apply~\eqref{eq:cos} to the split into the counter block and the rest, with
 $\cos(c_i,c_0)=1$ (Sec.~\ref{sup:proofs}).
 \end{proof}
 
-The condition needs no assumption about the data or the partition: shares above
-one half on both sides suffice. The server's share is the weaker ($B_0=\dfFltBzero$
-batches), so the re-run's FLTrust cells log $q_0$, the smallest $q_i$, the bound
-and the smallest full-vector cosine every round. Over $\csFltNrounds$ logged rounds, $q_0$ lies in
-$\csFltQzeroMin$--$\csFltQzeroMax$, the smallest $q_i$ is $\csFltQiMin$, the
-smallest $q_i+q_0$ is $\csFltQsumMin$ and the smallest bound $\csFltBoundMin$. The
-condition is sufficient, not necessary: in $\csFltNroundsQsumLeOne$ of the
-$\csFltNrounds$ rounds the bound guarantees nothing, yet no measured cosine is
-non-positive in any round ($\csFltNroundsCosNonpos$; smallest $\csFltCosFullMin$),
-and across the $\csFltNdefectRuns$ defect-arm runs logged so far the largest
-per-round fraction excluded is $\csFltDefectMaxExcl$.
+The condition needs no assumption about the data or the partition. The server's share
+is the weaker ($B_0=\dfFltBzero$ batches); over $\csFltNrounds$ logged rounds $q_0$ lies in
+$\csFltQzeroMin$--$\csFltQzeroMax$ and the smallest $q_i+q_0$ is $\csFltQsumMin$. The
+condition is sufficient, not necessary: in $\csFltNroundsQsumLeOne$ rounds the bound
+guarantees nothing, yet no measured cosine is non-positive (smallest $\csFltCosFullMin$),
+and across $\csFltNdefectRuns$ defect-arm runs the largest per-round fraction excluded is
+$\csFltDefectMaxExcl$.
 % RE-CHECK the counts above as P3 FLTrust cells land (make_numbers_calib6.py).
 In the re-run the defect arm's DR, attacked FPR and clean FPR are
 $\pfDRFltrustDirAtkDef$, $\pfFPRFltrustDirAtkDef$ and $\pfFPRFltrustDirCleanDef$
@@ -854,11 +850,8 @@ $\csFltShutNDir$ of $\csFltShutRunsDir$; defect arm: $\csFltShutDefN$ of $\csFlt
 client zero trust from round $\csFltShutFirstIid$--$\csFltShutLastIid$ on, and the
 model stops moving (clean CA $\pfCAFltrustIidCleanFix$ against
 $\pfCAFltrustIidCleanDef$), so its DR of $\pfDRFltrustIidAtkFix$ is a shutdown, not
-detection. The cause is our class-balanced root set, not the fix
-(Sec.~\ref{sup:fltshut}): once the model fits the majority classes, every IID
-client's cosine to the balanced root update is $\fsBalCosLo$ to $\fsBalCosHi$
-in a replay, and zero total trust leaves the model unchanged, so the state is
-absorbing. A root drawn from the training distribution (exploratory) ends the shutdown ($\fsNatCleanShut$/$\fsNatCleanN$
+detection. The cause is our class-balanced root set, not the fix: zero total trust
+leaves the model unchanged, so the state is absorbing (Sec.~\ref{sup:fltshut}). A root drawn from the training distribution (exploratory) ends the shutdown ($\fsNatCleanShut$/$\fsNatCleanN$
 runs, CA $\fsNatCleanCA$) but admits every flipper (DR $\fsNatAtkDr$, $n=\fsNatAtkN$),
 like the defect arm; under Dirichlet it excludes honest clients ($\fsNatDirAtkFpr$)
 and still no flipper (DR $\fsNatDirAtkDr$, $n=\fsNatDirAtkN$). With neither root, in
@@ -942,39 +935,43 @@ cause. FoolsGold assumes that honest histories are dissimilar, which fails here
 with or without the counter, so its fixed arm measures this failure, and only its
 defect arm can add a counter effect on top of it.
 
-\textbf{FLAME: a compressed input, an unchanged decision.} FLAME's clustering reads
-the compressed cosine of Corollary~\ref{cor:band}, yet in the first campaign its
-exclusions and clean accuracy were the same in both arms, and so far they are in
-the re-run's clean non-IID cells too (Sec.~\ref{sec:p1}; attacked cells pending).
-When the shares $s_i$ are nearly equal and the buffer cosine nearly constant,
-Eq.~\eqref{eq:cos} is approximately an increasing affine map of the trainable
-cosine, which compresses pairwise cosine distances but preserves their ordering,
-and FLAME's admission step (keep the largest cluster if it holds a majority)
-depends on the cosines mainly through that ordering. We state this as a
-hypothesis, not a verified cause. An exposed input does not imply an affected
-decision, which is why outcomes have to be measured rule by rule.
+\textbf{FLAME: unchanged among equals, blind to outliers.} FLAME's clustering reads
+the compressed cosine of Corollary~\ref{cor:band}. In clean runs its exclusions are
+the same in both arms (Sec.~\ref{sec:p1}): when the shares $s_i$ are nearly equal and
+the buffer cosine nearly constant, Eq.~\eqref{eq:cos} is close to an increasing affine
+map of the trainable cosine, which keeps the ordering that FLAME's admission step
+(keep the largest cluster if it holds a majority) mainly depends on. An attacker that
+trains $E_m=15$ epochs breaks the premise: its counter is about $15$ times an honest
+one, larger in proportion than its trainable update ($\csMalNormRatioMin$--$\csMalNormRatioMax$
+times), so its update is even more counter-dominated than an honest one and,
+by~\eqref{eq:cos} and~\eqref{eq:bufcos}, its cosine to every client is pulled toward one. The update that differs
+most in what it learned is then the one that looks most typical, and FLAME keeps it
+(Sec.~\ref{sec:p1}, (iii)). We state this as the mechanism the decomposition suggests,
+not a verified cause; FLDetector, whose statistic the decomposition does not cover,
+shows the same direction. An exposed input does not imply an affected decision, and an
+unaffected clean decision does not imply an unaffected attacked one.
 
 \textbf{Distance rules and negative controls.} By Corollary~\ref{cor:dist}, clean
 IID cells are the null for Krum, Bulyan and RFA and clean Dirichlet cells the
 exposed case. In attacked runs the attackers' $E_m$-fold counter is a batch-count
 outlier in both partitions, but so is their trainable update (median norm
 $\csMalNormRatioMin$--$\csMalNormRatioMax$ times the honest one in calibration), so
-we predict no sign for the attacked difference and treat it as exploratory. FedAvg,
-the median and the trimmed mean estimate the nondeterminism floor. \PENDING
-% RETIRES WITH: P3 campaign, Krum/Bulyan/RFA and FedAvg/median/trimmed-mean cells (results/postfix_p3)
+we predict no sign for the attacked difference and treat it as exploratory. Krum
+excludes both attackers in both arms (DR $\pfDRKrumIidAtkDef$ and $\pfDRKrumIidAtkFix$, IID,
+$n=\pfDRKrumIidAtkN$): as their trainable norm alone predicts. FedAvg, the median and the trimmed
+mean estimate the nondeterminism floor (Table~\ref{tab:p1}).
+% RE-CHECK (iter 28) Krum DR when Dirichlet s47-51 land.
 
-\textbf{An earlier version of this study} reported four findings that were about
-the counter or the round-one defect, not the rules (Sec.~\ref{sec:retro}); none of
-its numbers is reused.
 
 \section{Discussion and Limitations}
 \label{sec:discussion}
 
 \textbf{Why the hazard survives review.} No accuracy curve reveals an inert
 counter; equal IID shards hide it from distance rules (Corollary~\ref{cor:dist});
-and for cosine rules it breaks nothing visibly, with consequences from none (FLAME)
-to excluding nobody (FLTrust). Failures unrelated to the counter (FoolsGold; FLTrust's
-balanced root) are separated from it only by the fixed arm.
+clean runs can look unaffected (FLAME) while attacked ones are not; and its errors
+run both ways, so a defense evaluated with it can look weaker (FLAME, FLDetector) or
+stronger (FoolsGold) than the rule is. Failures unrelated to the counter (FoolsGold
+under label skew; FLTrust's balanced root) are separated from it only by the fixed arm.
 
 \textbf{What we recommend.} (i) Decide on \texttt{parameters()}, aggregate the
 \sd{}: compute every similarity, distance, norm, clip bound and noise scale on the
@@ -1000,17 +997,15 @@ the squared update norm, and FLTrust gives two label flippers $\gcAtkWFullDir\%$
 its trust on the full vector against $\gcAtkWTrDir\%$ on the trainable one
 over $\gcRounds$ rounds (Table~\ref{tab:gen}). Closed-loop accuracy there does not
 separate the arms at $n=\gcFtN$ (Sec.~\ref{sup:probe}).
-\emph{Feature-space trigger.} We do not show that a stamped flow is
-realizable traffic~\cite{pierazzi2020problem}.
+\emph{Feature-space trigger}, not shown to be realizable
+traffic~\cite{pierazzi2020problem}.
 \emph{Survey scope.} Ten hand-read implementations show the convention exists;
 they do not estimate how many published results are affected.
 \emph{Momentum and frameworks.} With \texttt{momentum=None} PyTorch reads the
 counter (not studied). Keras and Flax BatchNorm layers keep running statistics
 but no counter.
-\emph{Hyperparameters} are untuned defaults shared by both arms; whether tuned
-settings enlarge or shrink the paired differences is open.
-\emph{Recency.} Twelve of the thirteen rules are from 2017--2022; a newer rule's
-exposure must be checked rule by rule, as AlignIns' split prediction shows.
+\emph{Hyperparameters} are untuned defaults shared by both arms, and twelve of the
+thirteen rules are from 2017--2022; a newer rule must be checked rule by rule.
 \emph{Threat model.} Static, feature-space attacker; no adaptive attack on the
 fixed pipeline. A registered campaign trains a norm-bounded counter falsifier
 (Sec.~\ref{sup:r1}; $\rOneCellsDone$/$\rOneCellsTarget$ cells); at its registered
@@ -1024,12 +1019,15 @@ pipeline transmits. A BatchNorm network's \sd{} contains \nbt{}, inert under the
 default momentum yet dominant in the update's norm; it weakens every pairwise cosine
 and enters distances exactly when batch counts differ, the non-IID case rather than
 the equal-shard one in which such code is usually tested. The remedy is one mask:
-decide on the trainable coordinates, aggregate the full state. What the counter changes is rule-specific: it stops FLTrust from excluding
-anyone, as Corollary~\ref{cor:fltrust} requires, and leaves FLAME's non-IID decisions
-unchanged. Restored exclusions do not make FLTrust a detector here: what a rule
-decides and whether it defends are separate questions. The full controlled campaign is \PENDING.
-% RE-CHECK the interim sentence above against Tables tab:p1/tab:p1flag when P3 completes.
-% RETIRES WITH: P3 campaign (results/postfix_p3)
+decide on the trainable coordinates, aggregate the full state. What the counter changes
+is rule-specific: it stops FLTrust from excluding anyone, as
+Corollary~\ref{cor:fltrust} requires (registered); it leaves FLAME's clean decisions
+unchanged but hides long-training attackers from FLAME and FLDetector, and it lends
+FoolsGold detections that the trainable update does not support (exploratory, with a
+registered held-out replication). Restored exclusions do not make FLTrust a detector
+here: what a rule decides and whether it defends are separate questions, and both have
+to be measured with the counter out of the decision vector.
+% RE-CHECK (iter 28) against Tables tab:p1/tab:p1flag and P3X when P3 completes.
 We release the pipeline with the fix, its unit tests and the per-round defect
 diagnostics.
 

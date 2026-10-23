@@ -1748,3 +1748,57 @@ finished here.)
      only if the user authorises it.
   3. R2: when it starts, time one run from results/r2_exposed/log_*.log; if H1's 120 runs exceed ~2 days, say so
      and decide (by amendment, before outcomes) whether to cut seeds or rounds — do not do it silently.
+
+## Iteration 28 - 2026-10-23 - P3 registered family FINAL (P1-P4 supported); the paper's framing was contradicted by its own tables and is restructured; PREREG_P3X (held-out replication of the detection effects) committed first; P3 tail runner (289 missing cells) launched
+
+- **State at start (15:32):** P3 751/1040 cells; prereg runner 179336 on its last cell (P4 trainable s51). The main
+  P3 runner had died in the 2026-10-22 reboots and nobody relaunched it: **289 cells were missing with no runner**
+  (all Dirichlet s47-51 for 9 rules, FoolsGold Dirichlet attacked entirely, FedAvg Dirichlet attacked full, FLAME
+  Dirichlet attacked full s42-46, FoolsGold IID s47-51, AlignIns IID part). R1 16/160 cells, 0 ERROR.
+- **Reviewer score before: 4/10, REJECT.** Blocker 1 found this iteration: the abstract said "the counter changes what
+  the rule decides, not whether it detects", and the FLAME mechanism paragraph said "unchanged decision ... attacked
+  cells pending", while the paper's own Table (exploratory, n=10, family-Holm) shows the opposite: attacked IID FLAME
+  DR 0.000 (defect) vs 0.860 (fixed), FPR 0.485 vs 0.267, 10/0 seeds, p_H 0.016; FLDetector IID DR 0.20 vs 1.00
+  (10/0, p_H 0.016). And in the other direction FoolsGold IID (n=5): defect DR 1.0 / BSR 0.013, fixed DR 0.0 /
+  BSR 0.973 (the counter makes FoolsGold look like a perfect defense; without it the backdoor implants as under
+  FedAvg). AlignIns: Dirichlet DR 0.08 vs 0.68 (5/0), IID 1.00 vs 0.82 (0/5). None survives global Holm (0/210).
+  This is the security-relevant outcome the chain has been looking for: an evaluation in an exposed pipeline can
+  under- or overstate a defense. It was in the data since iteration ~23 and the prose never caught up.
+- **PREREG_P3X (commit 0fd5a51, before any of its cells existed; sha256 8a42903c...; manifest of all 751 JSONs):**
+  held-out replication of the exploratory directions on cells with both arms absent: h1 FLDetector Dir s47-51 (+),
+  h2 AlignIns Dir s47-51 (+), h3 AlignIns IID s43-46 (-), h4 FoolsGold IID s47-51 (-); 19 pairs. X1 primary =
+  pooled sign-adjusted DR difference, exact one-sided sign-flip; X2 = same on Youden J; X3 FoolsGold IID BSR direction
+  (descriptive). FLAME Dir s42-46 excluded (I read its fixed arm per seed before writing). paper/analyse_p3x.py ->
+  numbers_p3x.tex (in Makefile `numbers`), tests/test_p3x.py (2 tests).
+- **P3 tail runner launched (mine):** experiments/postfix/run_p3_tail.sh, waiter -> started 16:25 after 179336 exited;
+  CPU 3 lanes x 2 threads; jobs results/postfix_p3/jobs_tail.txt (289 per-seed jobs, P3X held-out cells first, then
+  FLAME Dir, FedAvg implant set, FoolsGold Dir attacked, other attacked, clean). PIDs 743527 (systemd-inhibit) /
+  743530 (bash). Log results/postfix_p3/campaign_tail.log. ~1-1.8 h per attacked CPU cell -> P3X cells (38 jobs) by
+  ~2026-10-24 06:00; whole tail ~3-4 days on CPU (faster if moved to the GPU after R1).
+- **P3 harvest (`make numbers`, 752/1040):** P4 n=10 10/0. **Registered family FINAL: P1-P4 supported (all p_H 0.0039),
+  S1-S4 not supported.** Abstract's Holm bound (p <= \pfPrePThreePh = 0.0039) checked.
+- **Paper restructure (backups main/supplement .pre-iter28.bak):** abstract (249 words) now: registered FLTrust
+  result + exploratory "changes whether defenses catch the attacker, in both directions" (FLAME, FLDetector,
+  FoolsGold from macros) + "evaluations on such pipelines can understate or overstate a defense". Contribution 3,
+  Results (iii) "Detection under attack" (macros, P3X status), FLAME mechanism rewritten (counter-dominated outlier
+  looks most typical; stated as suggested mechanism), Discussion "why it survives review", Conclusion, highlights
+  (stale trigger-audit item removed). Distance-rule \PENDING retired with Krum DR macros. Supplement S-III-C "held-out
+  replication (registered)". Paid with cuts (earlier-version paragraph, round-one aliasing, FLTrust log/shutdown
+  detail, Fed-IDS related work, BSR paragraph).
+- **R1 (exploratory only, as Amendment 3 allows; not in the paper):** 16/160 cells. FLTrust n=3: mechanism defect
+  0.323 vs fixed 0.262 (2/1, p_H 0.75); A-vs-B (falsified vs honest counter, defect) 0.323 vs 0.041 (3/0). Krum/MK n=0.
+  Iteration 27's warning stands. ETA of the campaign ~2026-10-25 (GPU 3 lanes ~50 min/cell + CPU 3 lanes).
+- **Build/check:** latexmk rc 0, 0 undefined. **IEEEtran pages: main 10 (ends 9.61) / supplement 6 (ends 5.83).**
+  check_manuscript all PASS except the gate (34 unresolved, P3 tail lane). pytest 16 pass.
+- **Jobs left running:** P3 tail 743527/743530 (mine); R1 GPU helper 710677/710678 (gpu.log); R1 CPU runner
+  527497/527516 (campaign.log); R2 waiter 734442; coordinator lock 178623. P3 prereg runner 179336 finished 16:23.
+- **Score after: 5/10, MAJOR REVISION (borderline reject).** The registered family is final and the paper now states
+  the security-relevant finding its data support (detection changed both ways), honestly labelled exploratory with a
+  blind replication registered. Still blocking: P3X outcome, 288 missing A/B cells, one small tabular setting, R1.
+- **Top 3 priorities:**
+  1. When the P3X cells land (~06:00 tomorrow): `make numbers`; write X1/X2 with PREREG_P3X's pre-committed wording;
+     if X1 fails, remove the "both directions" claim from abstract/contribution/conclusion.
+  2. Once R1's GPU helper exits, consider (by note in the ledger, not silently) giving the GPU to the P3 tail before
+     R2, since P3's missing cells are cheap on CUDA (~10-20 min) and fill the main table.
+  3. Check the FLAME mechanism claim with the logged per-round diagnostics (mal_pair_cos/honest_pair_cos,
+     mal_norm_ratio) in defect vs fixed attacked IID runs; promote or drop the sentence.
