@@ -1919,3 +1919,61 @@ finished here.)
      Register it (dated commit) before running; it is cheap on CPU/GPU once a lane frees and would turn the post-hoc
      mechanism into a confirmed prediction. R1's falsifier sets k directly: add k to analyse_r1's exploratory output.
   3. If space is found, paper/figs/fig_kgeom.pdf (observed vs predicted k^2, all pairs) is generated and ready.
+
+## Iteration 31 - 2026-10-24 - Proposition prop:angle's k>1 reversal registered as an out-of-sample test (PREREG_K1, dated commit e7d1345 before any cell), with a resumable capacity-gated GPU runner and a waiter
+
+- **State at start (01:41):** load ~38/20 cores, ~8 GB RAM free, GPU 6.75/8 GB (R1's three CUDA lanes at 0.64 GB
+  each + another user's ollama 4.7 GB, util 100%). Coordinator: start no new CPU/GPU job. Running (none mine, none
+  touched): P3 tail 743527/743530, R1 GPU 710677/710678, R1 CPU 527497/527516, R2 waiter 734442, lock 178623.
+- **Reviewer score before: 5/10, MAJOR (upper end).** Top blocker this iteration can move: the proposition that
+  explains the detection effects is post hoc (derived after the cells); a TIFS reviewer gives it no evidential weight
+  until it predicts something unseen. Its unrun consequence (k>1 reverses both effects) is the cheapest such test.
+- **PREREG_K1 (iterations/PREREG_K1.md + manifest of the 40 P3 baseline cells and the iteration-4 pilots read;
+  committed 01:54:36 as e7d1345, before the waiter started at 01:54:44; no K1 cell exists).** IID, attacked, P3
+  otherwise. KA (primary): E_m=1, boost 4 (attackers keep the P3 attacker's trainable norm, ~5-6.5x honest, but an
+  honest batch count; expected k~4-7). KB: the P3 attacker (E_m=15) boosted 10x (expected k~2-5). FLAME, FoolsGold,
+  FLDetector, GradCos x 2 arms x seeds 42-46 = 80 cells. Signed predictions only where the proposition reaches:
+  FLAME reads (b) -> defect arm now excludes attackers (expected DR_def >= 0.9; k<1: 0.00); FoolsGold reads (a) ->
+  defect arm stops flagging them (expected <= 0.1; k<1: 1.00). GradCos (clique stage reads (a), its mean-similarity
+  fallback reads (b)) and FLDetector (Euclidean score) get no sign, reported descriptively. M0 manipulation check
+  (median k_hat > 1, k_hat = sin(atan((t/E) tan th_h))/sin th_h from logged norms and buffer share); H1 primary:
+  sum tau_r [G_K - G_P3] > 0, exact sign-flip per setting, Holm over settings passing M0; H2 secondary: reversal in
+  sign within k>1, pooled over settings (pooled because FoolsGold's fixed arm is expected at DR 0, so its pairs tie
+  and a per-setting Holm test on 5 informative pairs could not reach 0.05 - caught by the synthetic test before
+  commit); M1: k^2 law out of sample (Q_obs > 1 in >= 80% of pairs, median obs/pred in [0.5, 2]); pass/fail
+  wording for the paper committed. Amendment 1 (clerical: header time window vs commit time).
+- **Code:** configs/kgt_{full,trainable}.yaml (= p3_* with out_dir results/kgt_k1); experiments/k1_reversal/run_k1.sh
+  (one run_sweep call per cell, KA first, seed/rule/arm order so pairs complete; skips finished JSONs, two passes;
+  before every cell: GPU free >= 1800 MiB, MemAvailable >= 5 GB, load1 <= 36; 2 lanes, 1 while R2 runs, 0 if
+  results/kgt_k1/POLICY says `yield`, none new if `pause`; CUDA checked at start and before retries);
+  experiments/k1_reversal/wait_k1.sh (waits for run_r1_reverse.sh to exit, then 15 min so R2's waiter goes first);
+  paper/analyse_k1.py -> numbers_k1.tex (\ko*, \PENDING while missing; in Makefile `numbers` and preamble);
+  tests/test_k1.py (4: sign-flip/Holm, k_hat small-angle limit, a synthetic predicted reversal is supported, missing
+  cells -> PENDING). Cell filenames dry-checked against run_sweep.cell_name; capacity functions smoke-tested.
+  No cell was run.
+- **Paper:** main Sec. Mechanisms "k>1 predicts the reverse (not run)" -> "(registered, not yet run: Sec. S-III-D)"
+  (no PENDING added to main). Supplement new S-III-D "A registered test of the k>1 reversal" (design, predictions,
+  test, status macros). Paid for in the supplement: withdrawn-findings section compressed to one paragraph (the
+  FLAME-FPR "survived" item cut), R1 and AlignIns paragraphs and trigger text tightened, trigger caption shortened,
+  table placement [!htb]. Also fixed a stale supplement sentence: AlignIns' "campaign cells are \PENDING" (they ran;
+  now points to Tables tab:p1/tab:p1flag). Backups main/supplement .pre-iter31.bak.
+- **Build/check:** latexmk rc 0, 0 undefined. **IEEEtran pages: main 10 (ends 9.61) / supplement 6 (ends 6.00;
+  full - the next supplement addition must be paid for).** check_manuscript all PASS except the gate (34
+  unresolved, P3 tail lane). pytest tests/: 25 pass.
+- **Jobs left running:** mine: K1 waiter 960552 (results/kgt_k1/waiter.log; runner log will be
+  results/kgt_k1/runner.log). It starts K1 after R1's GPU helper exits (R1 ETA ~2026-10-25); K1 ~80 cells x ~10
+  min on 1-2 GPU lanes -> ~10-14 h after start. Not mine, untouched: P3 tail 743527/743530 (P3X held-out cells ETA
+  ~2026-10-24 afternoon; still blinded); R1 GPU 710677/710678; R1 CPU 527497/527516; R2 waiter 734442; lock 178623.
+  Note: R2's waiter fires on the same R1 exit; while R2 runs K1 takes one lane by default. To give R2 the card
+  alone: `echo yield > results/kgt_k1/POLICY`.
+- **Score after: 5/10, MAJOR REVISION (upper end).** Nothing new measured. The post-hoc mechanism now has a
+  registered falsifiable prediction with committed wording either way; if H1 holds the paper gains its first
+  confirmed prediction about which defenses detect.
+- **Top 3 priorities:**
+  1. When P3X lands: `make numbers`; write X1/X2 with PREREG_P3X's wording (unchanged from iteration 30).
+  2. When K1 completes (results/kgt_k1/runner.log "COMPLETE"; `grep -c ERROR results/kgt_k1/log_*`):
+     `python3 paper/analyse_k1.py`, then write the result in main Sec. Mechanisms with PREREG_K1's committed
+     wording (pay for it in main; supplement is at 6.00). If H1 fails, drop any sentence calling the proposition
+     predictive of detection.
+  3. If R1's GPU helper is still running late on 2026-10-25, consider (note in the ledger) whether K1 (80 short
+     cells) should go before R2 on the card.

@@ -300,18 +300,16 @@ it alone controls. It rescales its trainable update to at most $b$ times the rou
 median honest trainable norm, so that its norm does not give it away as it gives away
 the $E_m=15$ attacker, and it reports the counter of Corollary~\ref{cor:falsify}'s
 optimum ($q=\tfrac12$) against FLTrust, or the median honest counter against
-Multi-Krum and Krum. The rule is unchanged, the arms differ only in what it decides
-on, and seeds are paired ($42$--$51$). A pilot rule fixed $b$ before any campaign cell
+Multi-Krum and Krum. Seeds are paired ($42$--$51$). A pilot rule fixed $b$ before any campaign cell
 ran: the smallest $b\in\{1,2\}$ whose mean FedAvg BSR over two pilot seeds is at
 least $0.5$, else $b=2$. Neither reached it (BSR $\rOnePilotBSRbOne$ at $b=1$,
 $\rOnePilotBSRbTwo$ at $b=2$), so $b^*=\rOneBstar$ and, as registered, this stealthy
 attacker does not implant reliably even without a defense: its three BSR tests are
 \rOnePrimUninf{} and are reported without being read as support or refutation.
 The confirmatory outcome is the registered mechanism family: the attackers' share of
-FLTrust's trust-weighted trainable step, and their admission rate under Multi-Krum
-and Krum, defect against fixed (one-sided paired sign-flip tests, Holm over three).
-That is the quantity a robust rule's guarantee bounds, and measuring it needs no
-payload that implants. $\rOneCellsDone$ of $\rOneCellsTarget$ cells have run; no
+FLTrust's trust-weighted trainable step and their admission rate under Multi-Krum
+and Krum, defect against fixed (one-sided paired sign-flip tests, Holm over three): what
+a robust rule's guarantee bounds, measurable without a payload that implants. $\rOneCellsDone$ of $\rOneCellsTarget$ cells have run; no
 outcome is reported until the three rules' families are complete.
 
 \subsection{A held-out replication of the detection effects (registered)}
@@ -330,6 +328,19 @@ not count as detection; FoolsGold's IID BSR (fixed $>$ defect) is a registered
 direction without a test. Status (\pxFinal): $\pxXOneN$ of $\pxNReg$ pairs,
 primary $p=\pxXOneP$ (\pxXOneSup), secondary $p=\pxXTwoP$; FoolsGold BSR
 $\pxXThreeDef$ (defect) against $\pxXThreeFix$ ($n=\pxXThreeN$).
+
+\subsection{A registered test of the $k>1$ reversal}
+\label{sup:k1}
+Proposition~\ref{prop:angle} is post hoc, so we registered its unrun consequence first: IID, attacked, as in the re-run otherwise, $k>1$ by construction
+(KA: honest batch count, trainable update boosted fourfold, expected $k\approx5$; KB: the re-run's attacker
+boosted tenfold); FLAME, FoolsGold, FLDetector, GradCos, both arms, seeds $42$--$46$
+($\koCellsTotal$ cells). Predicted: FLAME's defect arm now excludes the attackers and
+FoolsGold's does not (no sign for the other two). The primary test pools
+$\tau_r[(\mathrm{DR_{def}}-\mathrm{DR_{fix}})_{k>1}-(\cdot)_{k<1}]$ ($k<1$: the re-run, same rule and seed; $\tau=+1$
+FLAME, $-1$ FoolsGold) in an exact sign-flip test per setting (Holm) after a manipulation
+check (median $\hat k>1$). Status (\koStatus, $\koCells$/$\koCellsTotal$): KA
+$\hat k=\koAKhat$, \koAHOneSup{} ($p=\koAHOneP$); KB $\hat k=\koBKhat$, \koBHOneSup;
+$k^2$ law \koMOneSup.
 
 \subsection{The FoolsGold diagnostic}
 \label{sup:fgdiag}
@@ -640,17 +651,15 @@ one: that of the cosine between the update and the current global model
 $\theta_t$ (TDA), and that of the fraction of the update's largest $30\%$ of
 coordinates whose sign agrees with the coordinate-wise majority sign (MPSA). It
 then clips every update to the median norm of the kept ones. The decomposition
-predicts a split. MPSA counts signs and ignores magnitudes. The counter is one
-coordinate, positive for every client, so it agrees with the majority sign, and it
-can move MPSA by at most one over the number of coordinates inspected. TDA is a
+predicts a split. MPSA counts signs, and the counter, one coordinate positive for every
+client, moves it by at most one over the number of coordinates inspected. TDA is a
 cosine against $\theta_t$, and the counter coordinate of $\theta_t$ grows by
 about $B$ every round, so under the defect TDA is pushed toward a common value for
-all clients. The $z$-score divides by the spread and undoes that compression, so
-the decision is made on what is left over. That remainder varies with
-$B_i/\|d_i\|$, a property of shard size and not of behaviour. The clip bound is
+all clients. The $z$-score undoes that compression, so the decision is made on a remainder that
+varies with $B_i/\|d_i\|$, a property of shard size, not behaviour. The clip bound is
 a norm and is exposed as NormClip's is. The prediction is that AlignIns' TDA
 filter, under unequal shards, selects clients by batch count, and that its MPSA
-filter is not affected. Its campaign cells are \PENDING.
+filter is not affected (cells in Tables~\ref{tab:p1} and~\ref{tab:p1flag}).
 % Implementation: src/defenses/alignins.py; synthetic check experiments/alignins/selftest.py.
 
 \textbf{Hyperparameters} (\texttt{configs/p1\_full.yaml}, both arms): FLAME noise
@@ -661,45 +670,27 @@ $\kappa=1.5$, RFA $8$ iterations; none was tuned.
 \label{sup:retro}
 \label{sec:retro}
 
-This paper began as a robustness study on a pipeline with the defect; several of
-its findings were statements about the counter, not the rules. We list them because
-they show the hazard changing conclusions, not only numbers. None of their numbers
-is reused here.
-
-\emph{``FLTrust never excludes a client; its robustness is continuous
-reweighting.''} This is Corollary~\ref{cor:fltrust}.
-
-\emph{``FLTrust pays a clean-accuracy cost.''} The rescaling factor
-$B_0/B_i\approx2/79$ of Corollary~\ref{cor:fltrust} shrank every client update
-about fortyfold, for reasons unrelated to trust.
-
-\emph{``FoolsGold pays for its robustness in clean accuracy, and the counter is
-why.''} This is withdrawn on two counts. The measured difference came from our
-engine's round-one defect (Sec.~\ref{sec:setup}), and with it fixed FoolsGold
-excludes most honest clients under our label skew in either arm, because clients
-sharing a majority class have similar histories (Sec.~\ref{sec:mech}).
-
-\emph{``Colluders' updates have pairwise cosine near one.''} So does every pair
-(about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}); the evasion and salience
-analysis built on it are withdrawn.
-
-\emph{``FLAME's robustness is bought with false positives''} survived the fix
-(fixed arm, clean non-IID: $\paFPRFlameDirCleanFix$; re-run: $\pfFPRFlameDirCleanFix$).
+This paper began as a robustness study on a pipeline with the defect. Four of its findings
+were statements about the counter, not the rules, and are withdrawn (none of their numbers is
+reused): that FLTrust never excludes a client (Corollary~\ref{cor:fltrust}); that it
+pays a clean-accuracy cost (the factor $B_0/B_i\approx2/79$ of that corollary shrank every
+update fortyfold); that FoolsGold pays for its robustness in clean accuracy because of
+the counter (the difference came from our engine's round-one defect, Sec.~\ref{sec:setup};
+once fixed, FoolsGold excludes most honest clients under our label skew in either arm,
+Sec.~\ref{sec:mech}); and that colluders' updates have pairwise cosine near one (so does every
+pair, about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}), with the analysis built on it.
 
 \section{The trigger}
 \label{sup:realize}
 \label{sec:realizable}
 
-Because the classifier consumes standardized features, triggers are defined in
-normalized space, so train-time poisoning and test-time evaluation are consistent
-by construction. Table~\ref{tab:trig} lists the fixed trigger the campaign uses
-(flag/header features, mixed-sign at roughly $1.5$--$2\sigma$) beside two
-alternatives built the same way. Whether a flow stamped with such a trigger could
-be produced by real traffic is a problem-space question~\cite{pierazzi2020problem}
-that this paper does not address; its backdoor results are feature-space results.
+Triggers are defined in standardized feature space, so poisoning and evaluation are
+consistent by construction. Table~\ref{tab:trig} lists the campaign's fixed trigger
+(flag/header features, mixed-sign, $1.5$--$2\sigma$) and two alternatives. Whether real traffic could carry such a trigger is a problem-space
+question~\cite{pierazzi2020problem} we do not address; our backdoor results are feature-space results.
 
-\begin{table}[t]
-\caption{Trigger families (values in units of $\sigma$; CICIoT2023 schema).}
+\begin{table}[!htb]
+\caption{Trigger families (units of $\sigma$).}
 \label{tab:trig}
 \centering
 \footnotesize

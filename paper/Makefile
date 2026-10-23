@@ -18,13 +18,13 @@ all: main.pdf supplement.pdf
 
 # main.tex and supplement.tex cross-reference each other through xr-hyper, so
 # each is rebuilt after the other's .aux changes (latexmk -g forces the pass).
-NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex numbers_flameprobe.tex numbers_kgeom.tex
+NUMBERS = numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex numbers_flameprobe.tex numbers_kgeom.tex numbers_k1.tex
 
 supplement.pdf: supplement.tex preamble.tex main.pdf $(NUMBERS)
 	$(LATEXMK) supplement.tex
 	$(LATEXMK) -g main.tex
 
-main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex numbers_flameprobe.tex numbers_kgeom.tex $(wildcard figs/*)
+main.pdf: main.tex preamble.tex refs.bib declarations_ieee.tex numbers.tex numbers_postfix.tex numbers_postfix_p1.tex numbers_defect.tex numbers_defect_resnet.tex numbers_pilot.tex numbers_alias.tex numbers_calib6.tex numbers_falsify.tex numbers_r1.tex numbers_p3x.tex numbers_flameprobe.tex numbers_kgeom.tex numbers_k1.tex $(wildcard figs/*)
 	$(LATEXMK) main.tex
 
 highlights: highlights.tex
@@ -61,6 +61,8 @@ numbers:
 	cd $(ROOT) && $(PY) paper/make_numbers_flameprobe.py
 	# Counter-angle identity checks (iteration 30; Proposition prop:angle)
 	cd $(ROOT) && $(PY) paper/make_numbers_kgeom.py
+	# K1 (iterations/PREREG_K1.md): registered k>1 reversal test of Proposition prop:angle
+	cd $(ROOT) && $(PY) paper/analyse_k1.py
 	# R1 (iterations/PREREG_R1.md): trained counter-falsifying attacker; paper/numbers_r1.tex
 	cd $(ROOT) && $(PY) paper/analyse_r1.py
 	# R2 (iterations/PREREG_R2.md): byzantineFL re-run with/without the mask; paper/numbers_r2.tex

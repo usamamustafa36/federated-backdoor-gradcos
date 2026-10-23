@@ -162,3 +162,9 @@ missing). `experiments/k1_reversal/run_k1.sh` runs the cells on CUDA, one run_sw
 (setting, seed, rule, arm), resumable (finished JSONs are skipped), checking GPU memory, RAM
 and load before each cell. `experiments/k1_reversal/wait_k1.sh` starts it only after the R1 GPU
 helper (run_r1_reverse.sh) has exited.
+
+## Amendment 1 (2026-10-24, ~03:05 PKT; clerical)
+
+The header's "01:45-02:40" was the planned writing window; the file was committed at 01:54:36
+(commit e7d1345), before the waiter was started (01:54:44). No design, test or wording changed.
+No K1 cell existed when this amendment was written.
