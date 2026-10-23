@@ -80,3 +80,23 @@ the ~12-core budget. Resumable: a run whose JSON has `finished` is skipped. A ru
 errors is retried once and then recorded as missing; missing seeds are reported, never
 imputed. The analysis (paper/analyse_r2.py, to be written before the campaign's results
 are read) applies exactly the tests above.
+
+## Amendment 1 (2026-10-23 15:40 PKT, iteration 27): run count. No design change.
+
+- **Arithmetic slip.** The Seeds paragraph says "+ 120 `trainable` runs (krum only)" and
+  so implies 490 runs. The registered grid gives 3 c_frac x 2 p x 10 seeds = **60**
+  `trainable` runs (krum only), so the campaign is 360 + 10 fedavg + 60 = **430 runs**.
+  experiments/r2_exposed/run_r2.sh (committed with iteration 25, before any outcome)
+  already generates exactly these 430 jobs (results/r2_exposed/jobs.txt); nothing about
+  the arms, cells, tests or analysis changes. The sentence above is left as written and
+  is superseded by this amendment.
+- **Outcomes seen before this amendment** (none from the campaign; no campaign run has
+  completed): the one-round plumbing run results/r2_exposed/plumb_krum_target_nonbt_le1_s3.json
+  (iteration 26; `--local_ep 1`, not the authors' setting, so not a campaign cell): round-0
+  counter_share_dist 0.168, Krum's choice 2 / 9 / 6 under full / nonbt / trainable. It is
+  excluded from every test, as the smoke run is.
+- **Device/timing.** R2 cannot share the GPU with R1's three lanes (iteration 26: one run
+  did not finish a round in 10+ min); it is queued behind R1
+  (experiments/r2_exposed/wait_r1_then_r2.sh). On CPU one round with `--local_ep 1` took
+  about 11 min (plumbing run), so the authors' `local_ep 5` grid is GPU-only. Device does
+  not change any test.

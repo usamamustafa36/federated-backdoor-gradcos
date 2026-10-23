@@ -186,3 +186,54 @@ No R1 cell (seeds 42-51, 15 rounds) had been run.
   14:20; a second runner (experiments/r1_falsify/run_r1_reverse.sh, CUDA, 3 lanes) takes
   the same job list from the end, skipping finished cells and the cell the CPU runner is
   on. Same run_sweep call per cell; device does not change any test.
+
+## Amendment 3 (2026-10-23 15:40 PKT, iteration 27): how the outcome is interpreted, given b\* = 2. No test, cell, rule or threshold changes.
+
+**Outcomes seen by the author before writing this amendment:** the committed
+paper/numbers_r1.tex of iteration 26 (FLTrust seeds 42-43 only: variant A defect and
+fixed, variant B; final BSR, mean mal_step_share, A-vs-B BSR difference) and the output
+of choose_b.py (the pilot, already in Amendment 2). Nine of 160 campaign cells exist; no
+Multi-Krum, Krum, variant C or FedAvg-reference outcome was opened. Cell file names (not
+contents) were listed to count progress.
+
+1. **The pilot rule governs the primary family.** Two registered statements bear on it:
+   the pilot rule ("if neither reaches 0.5, b\* = 2 and ... every BSR hypothesis below
+   [is] uninformative") and the campaign gate ("if the FedAvg reference BSR (campaign
+   seeds) has median < 0.2, the primary family is reported as uninformative"). The pilot
+   branch was taken, so the primary family is reported as uninformative **whatever the
+   campaign FedAvg median turns out to be**; the gate is still computed and reported, and
+   if it is >= 0.2 the report says that the two registered criteria disagree and that the
+   stricter (pilot) one was applied, as written. The three BSR tests are still computed and
+   printed with their p-values, labelled uninformative; none is called supported or
+   refuted in the text. analyse_r1.py gets a flag for this (`primary_uninformative_pilot`,
+   from choose_b.py), so the label is generated, not typed.
+2. **The confirmatory security outcome of R1 is the registered mechanism family**
+   (FLTrust: attackers' mean share of the trust-weighted trainable step; Multi-Krum and
+   Krum: admission rate, defect > fixed, one-sided, Holm over 3). Reason, stated before
+   these outcomes are seen: a Byzantine-robust rule's security claim is a bound on how much
+   of the aggregate an adversary can control (Krum/Multi-Krum: what is selected is close to
+   honest updates; FLTrust: a client's weight is set by its direction relative to the
+   root). Whether that bound holds is a property of the defense, measurable without a
+   payload; BSR is a property of defense *and* payload, and is informative only when the
+   payload implants without the defense, which at b\* = 2 it does not. The paper will
+   therefore state R1's result as "the counter does / does not let a trained, norm-bounded
+   attacker raise its admission / step share", and will not translate a supported
+   mechanism into a backdoor claim. Pre-committed wording, by outcome:
+   - mechanism test supported for a rule: "under the defect the trained falsifier obtains
+     more admission (or step share) than the same attacker under the fix";
+   - not supported: "the falsified counter does not raise this attacker's admission (step
+     share) above what the fixed rule already grants it", reported with the effect size and
+     sign counts, and Corollary 4's synthetic demonstration stays labelled as such.
+3. **Exploratory outcomes made explicit (no tests, no claims; reported as mean paired
+   differences and sign counts over the seeds present):**
+   (a) variant A-defect vs variant B-defect on the *mechanism* quantities (FLTrust
+   mal_step_share; Krum/Multi-Krum admission rate), in addition to BSR: this isolates the
+   attacker's choice of counter within the defective pipeline (Corollary 4's quantity);
+   (b) variant C, defect vs fixed, on BSR, CA and the mechanism quantities, because the
+   unbounded attacker is the one that implants under FedAvg in calibration
+   (results/calib_iter6); (c) the attackers' mechanism quantity against their head-count
+   share 2/10. None of (a)-(c) enters a family or a Holm correction, and the paper calls
+   them exploratory.
+4. Repeated looks at partial results do not change n (fixed at the 10 registered seeds),
+   so no stopping decision depends on them; every look after this amendment is logged in
+   the ledger.
