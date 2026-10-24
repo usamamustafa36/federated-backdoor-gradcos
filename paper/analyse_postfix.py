@@ -58,6 +58,8 @@ from scipy import stats
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from src.metrics.aggregate import summarize_history  # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import p3x_blind  # noqa: E402
 
 RES = os.path.join(ROOT, "results", "postfix_p1")
 OUT_TEX = os.path.join(ROOT, "paper", "numbers_postfix.tex")
@@ -84,9 +86,17 @@ def tail_mean(xs, k=TAIL):
     return float(np.mean(xs)) if xs else float("nan")
 
 
+HELD_OUT_SKIPPED: set = set()
+
+
 def load(res=RES):
-    """-> runs[(defense, partition, attack)][mode][seed] = dict of metrics."""
+    """-> runs[(defense, partition, attack)][mode][seed] = dict of metrics.
+
+    Iteration 32 (PREREG_P3X Amendment 1): while the P3X held-out set is incomplete,
+    its attacked cells are skipped (paper/p3x_blind.py), so this exploratory analysis
+    cannot unblind them; the guard lifts once all registered pairs exist."""
     runs = defaultdict(lambda: defaultdict(dict))
+    blind = os.path.basename(os.path.normpath(res)) == "postfix_p3" and not p3x_blind.unblinded(res)
     for path in glob.glob(os.path.join(res, "*.json")):
         try:
             payload = json.load(open(path))
@@ -97,6 +107,9 @@ def load(res=RES):
         cfg = payload["config"]
         mode = str(cfg["defense"].get("signal_subspace", "trainable")).lower()
         s = summarize_history(payload, tail=TAIL)
+        if blind and p3x_blind.is_held_out(s["defense"], s["partition"], s["attack"], cfg["seed"]):
+            HELD_OUT_SKIPPED.add(os.path.abspath(path))  # counted as run, never read
+            continue
         h = payload["history"]
         # Diagnostics are a property of the pipeline, so every round counts --
         # except round 1. Iteration 5: in round 1 the engine's global weights
@@ -497,7 +510,7 @@ def main():
                   f"atk={int(h['attack'])} {h['metric']:3s} blind={h['blind']:7s} n={h['n']:2d} "
                   f"signs {h['n_pos']}/{h['n_neg']} p1={h['p1']:.4g} holm={h.get('ph', float('nan')):.4g}")
     # Campaign progress, so the manuscript can say how much of P1 it rests on.
-    n_cells = sum(len(s) for arms in runs.values() for s in arms.values())
+    n_cells = sum(len(s) for arms in runs.values() for s in arms.values()) + len(HELD_OUT_SKIPPED)
     lines.append(f"\\providecommand{{\\pfCellsDone}}{{{n_cells}}}")
     lines.append(f"\\providecommand{{\\pfCellsTarget}}{{{args.target}}}")
     out_tex = args.out or OUT_TEX

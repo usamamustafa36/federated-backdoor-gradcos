@@ -1977,3 +1977,51 @@ finished here.)
      predictive of detection.
   3. If R1's GPU helper is still running late on 2026-10-25, consider (note in the ledger) whether K1 (80 short
      cells) should go before R2 on the card.
+
+## Iteration 32 - 2026-10-24 - P3X not complete (10/19 pairs), not unblinded; a blinding leak in `make numbers` found and closed (PREREG_P3X Amendment 1); R1 harvested as a logged look (124/160)
+
+- **State at start (14:01):** load ~21, ~6 GB RAM available, GPU 6.75/8 GB at 100%. Coordinator: no new CPU lanes.
+  Running (none mine, none touched): P3 tail 743527/743530 (3 CPU lanes), R1 GPU 710677/710678, R1 CPU
+  527497/527516, R2 waiter 734442, K1 waiter 960552, lock 178623.
+- **Reviewer score before: 5/10, MAJOR (upper end).**
+- **P3X completeness (file existence + `len(history.accuracy)` only; no metric read):** 10 of 19 pairs. h1
+  FLDetector Dir s47-51 and h2 AlignIns Dir s47-51 complete; missing 18 cells = h3 AlignIns IID s43-46 (both arms;
+  s43 both arms and full s44 running since 12:20-12:27) and h4 FoolsGold IID s47-51 (both arms), next in
+  jobs_tail.txt. Tail rate ~1 cell/h over 3 contended CPU lanes (2-4 h per cell) -> **P3X ETA ~2026-10-25
+  04:00-10:00.** Not unblinded, not scored.
+- **Blocker found and fixed (non-data, would have broken the registration):** `make numbers` runs
+  analyse_postfix.py, which pooled every JSON in results/postfix_p3 into the exploratory tables (and printed them),
+  so the next agent to rebuild numbers would have unblinded h1/h2 through the descriptive cells; analyse_p3x.py
+  would also have written and printed an interim p into the paper (main Sec. P1 prints \pxXOneP). New
+  paper/p3x_blind.py (the registered cell table, completeness by round count only); analyse_p3x.py writes only
+  the pair count and \pxFinal=blinded until all 19 pairs exist, then scores as registered; analyse_postfix.py skips
+  the attacked held-out cells while incomplete and counts them in \pfCellsDone unread. PREREG_P3X Amendment 1
+  records it (no cell/sign/test/wording change; no held-out outcome seen). tests/test_p3x.py +2 (blinded at 18/19,
+  scored at 19/19; held-out set membership). Regenerated numbers_postfix.tex: only AlignIns IID attacked changed
+  (s42 trainable landed; n 5->6, direction unchanged: DR 1.00 vs 0.85, 0/5 signs+ties), \pfSigRaw 20->21,
+  \pfCellsDone 773; verified macro-by-macro that nothing else moved. Main: hand-typed "$n=5$" for the Dirichlet
+  FLAME/FLDetector/AlignIns DR cells replaced by their \pf...N macros (would have gone stale on unblinding).
+- **R1 look (Amendment 3 item 4: logged, exploratory, not in the paper, whose text keeps "no outcome is reported
+  until the three rules' families are complete"; n stays fixed at 10):** 124/160 cells, b*=2, FedAvg ref median
+  BSR 0.021 (n=10); primary family uninformative (pilot rule, gate both). Mechanism: FLTrust step share defect
+  0.319 vs fixed 0.160, 8/2, p1=0.0068 (n=10, Holm 0.021); Multi-Krum admission 1.000 vs 0.283, 5/0, p1=0.031
+  (n=6, Holm 0.0625, interim); Krum 0 vs 0 (n=5). Uninformative primary, printed only: Multi-Krum BSR 0.827 vs
+  0.025 (6/0). Note for whoever writes R1: under the defect Multi-Krum selects the falsifiers and the backdoor
+  implants although it does not under FedAvg; by Amendment 3 this may NOT be called a backdoor result (BSR
+  family uninformative) - report it as admission, with the BSR printed and labelled. numbers_r1.tex regenerated
+  (paper uses only \rOneCellsDone).
+- **Build/check:** latexmk rc 0. **IEEEtran pages: main 10 (ends 9.61) / supplement 6 (ends 6.00).** check_manuscript
+  all PASS except the gate (34 unresolved, P3 tail lane). pytest tests/: 27 pass. Backups *.pre-iter32.bak.
+- **Jobs left running:** none mine. Untouched: P3 tail 743527/743530 (results/postfix_p3/campaign_tail.log; P3X ETA
+  ~2026-10-25 morning, then the rest of the 289-cell tail); R1 GPU 710677/710678 (results/r1_falsify/gpu.log),
+  R1 CPU 527497/527516 (campaign.log), 36 cells left, ETA ~2026-10-25; R2 waiter 734442; K1 waiter 960552;
+  lock 178623.
+- **Score after: 5/10, MAJOR REVISION (upper end).** Nothing new confirmed; the registration that the detection
+  claims rest on is now protected from the routine rebuild.
+- **Top 3 priorities:**
+  1. When the P3X set is complete (`python3 paper/analyse_p3x.py` prints "final" instead of "blinded"):
+     `make numbers`, then apply PREREG_P3X's committed wording in abstract, contributions, Sec. P1 and conclusion
+     (the RE-CHECK comments mark them). If X1 fails: remove "in both directions"/detection claims, FLTrust family as
+     the only confirmed effect. No rescue.
+  2. When R1 completes (160 cells): write the mechanism family with Amendment 3's wording (pay for it in main).
+  3. K1 after R1's GPU helper exits (see iteration 31).

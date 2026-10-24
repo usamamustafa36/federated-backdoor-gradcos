@@ -86,3 +86,23 @@ the last five rounds of `history.detection_rate` and `history.false_positive_rat
 `paper/analyse_p3x.py` (committed with this file) computes X1-X3 from results/postfix_p3 and
 writes `paper/numbers_p3x.tex` (\pxXOneP, \pxXOneN, \pxXOneSup, ...). The P3 cells run in the
 order of `results/postfix_p3/jobs_tail.txt` (held-out cells first).
+
+## Amendment 1 (2026-10-24 ~14:30 PKT, iteration 32): blinding guard. No cell, sign, test or wording changes.
+
+**Outcomes seen before writing this amendment: none of the held-out cells.** At 14:02 the
+held-out set had 10 of 19 pairs complete (h1 and h2 done; h3 AlignIns IID s43-46 and h4
+FoolsGold IID s47-51 not yet run or running). Only file existence and the length of
+`history.accuracy` were read to count them. The committed paper/numbers_p3x.tex (n = 0, from
+iteration 28) had never been regenerated.
+
+Problem found: `make numbers` runs paper/analyse_postfix.py, which pools every JSON in
+results/postfix_p3 into the exploratory tables (and prints them), so the held-out cells would
+have been unblinded through the exploratory analysis, and analyse_p3x.py would have written
+and printed an interim p. Fix (paper/p3x_blind.py, used by both scripts):
+1. analyse_p3x.py writes only the pair count (\pxXOneN) and \pxFinal = "blinded", with every
+   outcome macro \PENDING, until all 19 pairs exist; it then scores them exactly as
+   registered above. The "interim" label of the missing-data rule is therefore never used.
+2. analyse_postfix.py skips the attacked held-out cells (h1-h4 rule, partition, seeds) while
+   the set is incomplete, and counts them in \pfCellsDone without reading them. The guard
+   lifts by itself when the set is complete. AlignIns IID s42 is not held out and is read.
+3. tests/test_p3x.py checks both behaviours on synthetic cells.
