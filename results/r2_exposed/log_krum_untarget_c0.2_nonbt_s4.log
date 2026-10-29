@@ -1,0 +1,198 @@
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 0/200 [01:04<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 71, in <module>
+    w = local.train(net = copy.deepcopy(net_glob).to(args.device))
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 170, in _tr
+    return _tr0(self, net)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/src/update.py", line 27, in train
+    log_probs = net(images)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/.pylib/torchvision/models/resnet.py", line 285, in forward
+    return self._forward_impl(x)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/.pylib/torchvision/models/resnet.py", line 274, in _forward_impl
+    x = self.layer2(x)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/container.py", line 250, in forward
+    input = module(input)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/.pylib/torchvision/models/resnet.py", line 100, in forward
+    identity = self.downsample(x)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/container.py", line 250, in forward
+    input = module(input)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 554, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 549, in _conv_forward
+    return F.conv2d(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 1.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1234326 has 2.20 GiB memory in use. Including non-PyTorch memory, this process has 436.00 MiB memory in use. Process 1242800 has 394.00 MiB memory in use. Of the allocated memory 284.32 MiB is allocated by PyTorch, and 21.68 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 0/200 [00:32<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 71, in <module>
+    w = local.train(net = copy.deepcopy(net_glob).to(args.device))
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 153, in deepcopy
+    y = copier(memo)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/parameter.py", line 68, in __deepcopy__
+    self.data.clone(memory_format=torch.preserve_format), self.requires_grad
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 5.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1234326 has 2.20 GiB memory in use. Process 1242800 has 522.00 MiB memory in use. Including non-PyTorch memory, this process has 304.00 MiB memory in use. Of the allocated memory 164.26 MiB is allocated by PyTorch, and 9.74 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [01:53<6:15:20, 113.17s/it]  1%|          | 2/200 [04:24<7:27:50, 135.71s/it]  2%|▏         | 3/200 [06:48<7:38:10, 139.55s/it]  2%|▏         | 4/200 [09:14<7:43:14, 141.81s/it]  2%|▎         | 5/200 [11:05<7:05:48, 131.02s/it]  3%|▎         | 6/200 [13:16<7:02:53, 130.79s/it]  4%|▎         | 7/200 [15:40<7:15:20, 135.34s/it]  4%|▍         | 8/200 [18:03<7:20:14, 137.58s/it]  4%|▍         | 9/200 [20:03<7:00:13, 132.01s/it]  5%|▌         | 10/200 [22:27<7:09:51, 135.75s/it]  6%|▌         | 11/200 [24:48<7:12:50, 137.41s/it]  6%|▌         | 12/200 [27:29<7:32:56, 144.56s/it]  6%|▋         | 13/200 [30:50<8:23:44, 161.63s/it]  7%|▋         | 14/200 [33:40<8:29:28, 164.35s/it]  8%|▊         | 15/200 [36:05<8:08:30, 158.43s/it]  8%|▊         | 15/200 [38:36<7:56:16, 154.47s/it]
+Round: 0
+Test accuracy: 56.59164047241211
+Test loss: 1.164792270208792
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 65.36100769042969
+Test loss: 0.9555641404023403
+Check accuracy: 56.59164047241211
+patience: 0
+Round: 2
+Test accuracy: 74.36421966552734
+Test loss: 0.7241384923823986
+Check accuracy: 65.36100769042969
+patience: 0
+Round: 3
+Test accuracy: 77.2288818359375
+Test loss: 0.6413972637730709
+Check accuracy: 74.36421966552734
+patience: 0
+Round: 4
+Test accuracy: 76.11809539794922
+Test loss: 0.6762531127751275
+Check accuracy: 77.2288818359375
+patience: 0
+Round: 5
+Test accuracy: 79.74276733398438
+Test loss: 0.5715665507825346
+Check accuracy: 77.2288818359375
+patience: 1
+Round: 6
+Test accuracy: 80.79508972167969
+Test loss: 0.5440347164703788
+Check accuracy: 79.74276733398438
+patience: 0
+Round: 7
+Test accuracy: 81.4674072265625
+Test loss: 0.5439705479322766
+Check accuracy: 80.79508972167969
+patience: 0
+Round: 8
+Test accuracy: 79.04121398925781
+Test loss: 0.5814223257431124
+Check accuracy: 81.4674072265625
+patience: 0
+Round: 9
+Test accuracy: 78.04735565185547
+Test loss: 0.6364388821313898
+Check accuracy: 81.4674072265625
+patience: 1
+Round: 10
+Test accuracy: 79.65507507324219
+Test loss: 0.6028144365860962
+Check accuracy: 81.4674072265625
+patience: 2
+Round: 11
+Test accuracy: 80.47354888916016
+Test loss: 0.5843964637771959
+Check accuracy: 81.4674072265625
+patience: 3
+Round: 12
+Test accuracy: 79.83045959472656
+Test loss: 0.5981304912461206
+Check accuracy: 81.4674072265625
+patience: 4
+Round: 13
+Test accuracy: 81.23355865478516
+Test loss: 0.5709388117384611
+Check accuracy: 81.4674072265625
+patience: 5
+Round: 14
+Test accuracy: 80.56124114990234
+Test loss: 0.6163675051201021
+Check accuracy: 81.4674072265625
+patience: 6
+Round: 15
+Test accuracy: 80.21046447753906
+Test loss: 0.6174898590828305
+Check accuracy: 81.4674072265625
+patience: 7
+Early stopped federated training!

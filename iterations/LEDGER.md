@@ -2099,3 +2099,7 @@ finished here.)
      the kernel for unfinished seeds after the weekly GPU-quota reset.
   2. When H1 has 120/120: `python3 paper/analyse_r2.py`, write R2 in the supplement/limitations (pay for space).
   3. Final read-through for submission (humanizer pass, cover letter).
+- **Addendum (23:45):** Kaggle R2 session finished in 3.8 h: 48/48 complete (seeds 9-12 H1), copied in;
+  one duplicate (krum untarget c0.3 full s11, also complete locally from 10-24) resolved by the same-device
+  pair rule, local copy moved unread to results/r2_exposed/superseded/ (PREREG_R2 Amendment 4).
+  R2 H1 now 67/120 (blinded). Local GPU covers seeds 3-8 (53 left).

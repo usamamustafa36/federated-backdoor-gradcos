@@ -1,0 +1,191 @@
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 0/200 [04:44<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 78, in <module>
+    w_glob, _ = krum(w_locals, compromised_num, args)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 128, in krum
+    PENDING["diag"] = round_diag(w_locals, c, args, "krum")
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 109, in round_diag
+    vs = {a: make_mv(a)(w_locals, args) for a in ("full", "nonbt", "trainable")}
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 109, in <dictcomp>
+    vs = {a: make_mv(a)(w_locals, args) for a in ("full", "nonbt", "trainable")}
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 76, in mv
+    out.append(torch.cat([v[k].reshape([-1]).to(args.device).float()
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 44.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 9.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Including non-PyTorch memory, this process has 848.00 MiB memory in use. Process 1231353 has 2.18 GiB memory in use. Of the allocated memory 668.50 MiB is allocated by PyTorch, and 49.50 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 0/200 [03:21<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 71, in <module>
+    w = local.train(net = copy.deepcopy(net_glob).to(args.device))
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 170, in _tr
+    return _tr0(self, net)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/src/update.py", line 31, in train
+    loss.backward()
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/_tensor.py", line 626, in backward
+    torch.autograd.backward(
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 3.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1231353 has 2.18 GiB memory in use. Including non-PyTorch memory, this process has 588.00 MiB memory in use. Process 1233619 has 264.00 MiB memory in use. Of the allocated memory 435.33 MiB is allocated by PyTorch, and 22.67 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [01:43<5:42:50, 103.37s/it]  1%|          | 2/200 [04:24<7:32:39, 137.17s/it]  2%|▏         | 3/200 [10:06<12:37:34, 230.73s/it]  2%|▏         | 4/200 [16:01<15:14:13, 279.86s/it]  2%|▎         | 5/200 [20:59<15:30:37, 286.35s/it]  3%|▎         | 6/200 [25:41<15:21:00, 284.85s/it]  4%|▎         | 7/200 [30:48<15:39:43, 292.14s/it]  4%|▍         | 8/200 [36:12<16:07:28, 302.33s/it]  4%|▍         | 9/200 [42:32<17:19:16, 326.47s/it]  5%|▌         | 10/200 [50:00<19:12:38, 363.99s/it]  6%|▌         | 11/200 [55:28<18:31:50, 352.97s/it]  6%|▌         | 12/200 [1:01:38<18:42:24, 358.21s/it]  6%|▋         | 13/200 [1:07:36<18:36:51, 358.35s/it]  7%|▋         | 14/200 [1:16:20<21:05:31, 408.23s/it]  8%|▊         | 15/200 [1:22:17<20:11:00, 392.76s/it]  8%|▊         | 16/200 [1:29:49<20:59:09, 410.60s/it]  8%|▊         | 17/200 [1:35:50<20:07:02, 395.75s/it]  9%|▉         | 18/200 [1:42:52<20:23:52, 403.47s/it] 10%|▉         | 19/200 [1:49:44<20:24:53, 406.04s/it] 10%|█         | 20/200 [1:53:36<17:41:47, 353.93s/it] 10%|█         | 21/200 [1:58:06<16:21:01, 328.84s/it] 11%|█         | 22/200 [2:03:30<16:11:17, 327.40s/it] 12%|█▏        | 23/200 [2:09:42<16:44:50, 340.62s/it] 12%|█▏        | 24/200 [2:15:12<16:29:49, 337.44s/it] 12%|█▎        | 25/200 [2:19:44<15:27:15, 317.92s/it] 13%|█▎        | 26/200 [2:24:49<15:10:28, 313.96s/it] 14%|█▎        | 27/200 [2:30:41<15:38:03, 325.34s/it] 14%|█▍        | 28/200 [2:35:07<14:41:55, 307.65s/it] 14%|█▍        | 28/200 [2:42:19<16:37:11, 347.86s/it]
+Round: 0
+Test accuracy: 59.71937942504883
+Test loss: 1.1353035787154764
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 68.34259033203125
+Test loss: 0.8983871161118825
+Check accuracy: 59.71937942504883
+patience: 0
+Round: 2
+Test accuracy: 69.6287612915039
+Test loss: 0.8448168596514691
+Check accuracy: 68.34259033203125
+patience: 0
+Round: 3
+Test accuracy: 69.92107391357422
+Test loss: 0.8306581753103819
+Check accuracy: 69.6287612915039
+patience: 0
+Round: 4
+Test accuracy: 70.97339630126953
+Test loss: 0.8087471139880518
+Check accuracy: 69.92107391357422
+patience: 0
+Round: 5
+Test accuracy: 71.11955261230469
+Test loss: 0.7987157670561593
+Check accuracy: 70.97339630126953
+patience: 0
+Round: 6
+Test accuracy: 70.68108367919922
+Test loss: 0.8242092717986677
+Check accuracy: 71.11955261230469
+patience: 0
+Round: 7
+Test accuracy: 72.02572631835938
+Test loss: 0.8006009813011546
+Check accuracy: 71.11955261230469
+patience: 1
+Round: 8
+Test accuracy: 71.52879333496094
+Test loss: 0.796459836940325
+Check accuracy: 72.02572631835938
+patience: 0
+Round: 9
+Test accuracy: 72.14264678955078
+Test loss: 0.7914265395953132
+Check accuracy: 72.02572631835938
+patience: 1
+Round: 10
+Test accuracy: 71.17801666259766
+Test loss: 0.8219151478767116
+Check accuracy: 72.14264678955078
+patience: 0
+Round: 11
+Test accuracy: 72.23033905029297
+Test loss: 0.8112842957898909
+Check accuracy: 72.14264678955078
+patience: 1
+Round: 12
+Test accuracy: 71.47032928466797
+Test loss: 0.8273518887642217
+Check accuracy: 72.23033905029297
+patience: 0
+Round: 13
+Test accuracy: 72.6103515625
+Test loss: 0.7981162362543333
+Check accuracy: 72.23033905029297
+patience: 1
+Round: 14
+Test accuracy: 72.52265167236328
+Test loss: 0.8000931192022847
+Check accuracy: 72.6103515625
+patience: 0
+Round: 15
+Test accuracy: 71.99649047851562
+Test loss: 0.820610884928766
+Check accuracy: 72.6103515625
+patience: 1
+Round: 16
+Test accuracy: 72.46419525146484
+Test loss: 0.8053811337299007
+Check accuracy: 72.6103515625
+patience: 2
+Round: 17
+Test accuracy: 72.17188262939453
+Test loss: 0.815041250737917
+Check accuracy: 72.6103515625
+patience: 3
+Round: 18
+Test accuracy: 72.55188751220703
+Test loss: 0.8102287609163902
+Check accuracy: 72.6103515625
+patience: 4
+Round: 19
+Test accuracy: 72.7272720336914
+Test loss: 0.8164124487436714
+Check accuracy: 72.6103515625
+patience: 5
+Round: 20
+Test accuracy: 73.01958465576172
+Test loss: 0.8018934388705702
+Check accuracy: 72.7272720336914
+patience: 0
+Round: 21
+Test accuracy: 72.84420013427734
+Test loss: 0.8114536143784912
+Check accuracy: 73.01958465576172
+patience: 0
+Round: 22
+Test accuracy: 72.23033905029297
+Test loss: 0.8331625658808588
+Check accuracy: 73.01958465576172
+patience: 1
+Round: 23
+Test accuracy: 72.02572631835938
+Test loss: 0.8355132757798512
+Check accuracy: 73.01958465576172
+patience: 2
+Round: 24
+Test accuracy: 72.69804382324219
+Test loss: 0.8208400745274762
+Check accuracy: 73.01958465576172
+patience: 3
+Round: 25
+Test accuracy: 72.87342834472656
+Test loss: 0.8260699854507603
+Check accuracy: 73.01958465576172
+patience: 4
+Round: 26
+Test accuracy: 72.9903564453125
+Test loss: 0.8194564656533891
+Check accuracy: 73.01958465576172
+patience: 5
+Round: 27
+Test accuracy: 72.28880310058594
+Test loss: 0.833196105332585
+Check accuracy: 73.01958465576172
+patience: 6
+Round: 28
+Test accuracy: 72.66880798339844
+Test loss: 0.8434820032997878
+Check accuracy: 73.01958465576172
+patience: 7
+Early stopped federated training!

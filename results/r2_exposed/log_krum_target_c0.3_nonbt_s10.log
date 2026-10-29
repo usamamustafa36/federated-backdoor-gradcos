@@ -1,0 +1,156 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 43, in <module>
+    net_glob = resnet18(num_classes = args.num_classes).to(args.device)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+RuntimeError: CUDA error: out of memory
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 43, in <module>
+    net_glob = resnet18(num_classes = args.num_classes).to(args.device)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+RuntimeError: CUDA error: out of memory
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+===== Kaggle usamaa36/paper08-r2-kaggle v1, 2x Tesla T4, torch 2.11.0+cu128 (2026-10-29) =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:46<2:34:34, 46.60s/it]  1%|          | 2/200 [01:32<2:31:43, 45.97s/it]  2%|▏         | 3/200 [02:17<2:30:36, 45.87s/it]  2%|▏         | 4/200 [03:03<2:29:09, 45.66s/it]  2%|▎         | 5/200 [03:47<2:26:18, 45.02s/it]  3%|▎         | 6/200 [04:27<2:20:40, 43.51s/it]  4%|▎         | 7/200 [05:12<2:21:43, 44.06s/it]  4%|▍         | 8/200 [05:58<2:22:46, 44.62s/it]  4%|▍         | 9/200 [06:44<2:23:30, 45.08s/it]  5%|▌         | 10/200 [07:30<2:22:55, 45.13s/it]  6%|▌         | 11/200 [08:15<2:22:50, 45.34s/it]  6%|▌         | 12/200 [09:01<2:22:26, 45.46s/it]  6%|▋         | 13/200 [09:47<2:21:51, 45.52s/it]  7%|▋         | 14/200 [10:32<2:21:13, 45.56s/it]  8%|▊         | 15/200 [11:18<2:20:55, 45.70s/it]  8%|▊         | 16/200 [12:04<2:19:58, 45.64s/it]  8%|▊         | 17/200 [12:50<2:19:42, 45.80s/it]  9%|▉         | 18/200 [13:36<2:19:03, 45.84s/it] 10%|▉         | 19/200 [14:22<2:18:14, 45.83s/it] 10%|█         | 20/200 [15:08<2:17:33, 45.85s/it] 10%|█         | 20/200 [15:53<2:23:01, 47.67s/it]
+Round: 0
+Test accuracy: 63.98713684082031
+Test loss: 1.055758242368768
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 70.68108367919922
+Test loss: 0.837621613574704
+Check accuracy: 63.98713684082031
+patience: 0
+Round: 2
+Test accuracy: 72.66880798339844
+Test loss: 0.7736678660107579
+Check accuracy: 70.68108367919922
+patience: 0
+Round: 3
+Test accuracy: 73.98421478271484
+Test loss: 0.7573039721968717
+Check accuracy: 72.66880798339844
+patience: 0
+Round: 4
+Test accuracy: 74.45191192626953
+Test loss: 0.7394202421088555
+Check accuracy: 73.98421478271484
+patience: 0
+Round: 5
+Test accuracy: 75.09500122070312
+Test loss: 0.7206893581913355
+Check accuracy: 74.45191192626953
+patience: 0
+Round: 6
+Test accuracy: 74.74422454833984
+Test loss: 0.7311854536719435
+Check accuracy: 75.09500122070312
+patience: 0
+Round: 7
+Test accuracy: 75.56269836425781
+Test loss: 0.728068800287545
+Check accuracy: 75.09500122070312
+patience: 1
+Round: 8
+Test accuracy: 75.88424682617188
+Test loss: 0.7338032302923351
+Check accuracy: 75.56269836425781
+patience: 0
+Round: 9
+Test accuracy: 75.09500122070312
+Test loss: 0.7445161981702513
+Check accuracy: 75.88424682617188
+patience: 0
+Round: 10
+Test accuracy: 75.35808563232422
+Test loss: 0.7403886622763698
+Check accuracy: 75.88424682617188
+patience: 1
+Round: 11
+Test accuracy: 76.2057876586914
+Test loss: 0.7236637828016239
+Check accuracy: 75.88424682617188
+patience: 2
+Round: 12
+Test accuracy: 76.73194885253906
+Test loss: 0.7126604786604965
+Check accuracy: 76.2057876586914
+patience: 0
+Round: 13
+Test accuracy: 76.4688720703125
+Test loss: 0.7341938882987773
+Check accuracy: 76.73194885253906
+patience: 0
+Round: 14
+Test accuracy: 75.35808563232422
+Test loss: 0.7506369886534913
+Check accuracy: 76.73194885253906
+patience: 1
+Round: 15
+Test accuracy: 75.97193908691406
+Test loss: 0.7512757558635855
+Check accuracy: 76.73194885253906
+patience: 2
+Round: 16
+Test accuracy: 75.21192932128906
+Test loss: 0.7530829176781506
+Check accuracy: 76.73194885253906
+patience: 3
+Round: 17
+Test accuracy: 75.32884979248047
+Test loss: 0.7667080618003348
+Check accuracy: 76.73194885253906
+patience: 4
+Round: 18
+Test accuracy: 75.85501098632812
+Test loss: 0.7430408403072675
+Check accuracy: 76.73194885253906
+patience: 5
+Round: 19
+Test accuracy: 75.12422943115234
+Test loss: 0.7930087859224276
+Check accuracy: 76.73194885253906
+patience: 6
+Round: 20
+Test accuracy: 75.79654693603516
+Test loss: 0.7693627041635789
+Check accuracy: 76.73194885253906
+patience: 7
+Early stopped federated training!

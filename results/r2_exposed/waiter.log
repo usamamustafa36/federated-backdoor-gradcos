@@ -1,0 +1,3 @@
+[2026-10-23 15:18:45] R2 waiter (pid 734442) waiting for the R1 GPU helper
+[2026-10-24 19:09:57] launching R2 on CUDA, LANES=3
+[2026-10-25 04:41:03] R2 waiter exiting (rc=0)

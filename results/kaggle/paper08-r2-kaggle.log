@@ -1,0 +1,108 @@
+[{"stream_name":"stderr","time":6.247665672,"data":"/kaggle/src/script.py:14: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n"}
+,{"stream_name":"stderr","time":6.247721469,"data":"  tarfile.open(tgz[0]).extractall(\"/tmp\")\n"}
+,{"stream_name":"stdout","time":6.653202388,"data":"48 jobs, 48 to run\n"}
+,{"stream_name":"stdout","time":14.860495496,"data":"2.11.0+cu128 2 ['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":14.86132273,"data":"[0.00h] start lane0 ('krum', 'target', '0.1', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":14.862045581,"data":"[0.00h] start lane1 ('krum', 'target', '0.1', 'nonbt', 12) try1\n"}
+,{"stream_name":"stdout","time":14.862959882,"data":"[0.00h] start lane2 ('krum', 'untarget', '0.1', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":14.863677701,"data":"[0.00h] start lane3 ('krum', 'untarget', '0.1', 'nonbt', 12) try1\n"}
+,{"stream_name":"stdout","time":764.87286625,"data":"[0.21h] end lane3 ('krum', 'untarget', '0.1', 'nonbt', 12) rc=0\n"}
+,{"stream_name":"stdout","time":764.8748995,"data":"[0.21h] start lane3 ('krum', 'target', '0.2', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":1034.879535054,"data":"[0.29h] end lane2 ('krum', 'untarget', '0.1', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":1034.881915981,"data":"[0.29h] start lane2 ('krum', 'target', '0.2', 'nonbt', 12) try1\n"}
+,{"stream_name":"stdout","time":1544.887038547,"data":"[0.43h] end lane0 ('krum', 'target', '0.1', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":1544.888675969,"data":"[0.43h] start lane0 ('krum', 'untarget', '0.2', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":1724.892095149,"data":"[0.48h] end lane2 ('krum', 'target', '0.2', 'nonbt', 12) rc=0\n"}
+,{"stream_name":"stdout","time":1724.89393696,"data":"[0.48h] start lane2 ('krum', 'untarget', '0.2', 'nonbt', 12) try1\n"}
+,{"stream_name":"stdout","time":2024.897351919,"data":"[0.56h] end lane1 ('krum', 'target', '0.1', 'nonbt', 12) rc=0\n"}
+,{"stream_name":"stdout","time":2024.899764783,"data":"[0.56h] start lane1 ('krum', 'target', '0.3', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":2594.90558651,"data":"[0.72h] end lane2 ('krum', 'untarget', '0.2', 'nonbt', 12) rc=0\n"}
+,{"stream_name":"stdout","time":2594.90681965,"data":"[0.72h] start lane2 ('krum', 'target', '0.3', 'nonbt', 12) try1\n"}
+,{"stream_name":"stdout","time":2804.912100933,"data":"[0.78h] end lane0 ('krum', 'untarget', '0.2', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":2804.91472581,"data":"[0.78h] start lane0 ('krum', 'untarget', '0.3', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":2864.916009786,"data":"[0.80h] end lane3 ('krum', 'target', '0.2', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":2864.917090089,"data":"[0.80h] start lane3 ('krum', 'untarget', '0.3', 'nonbt', 12) try1\n"}
+,{"stream_name":"stdout","time":3614.925715987,"data":"[1.00h] end lane2 ('krum', 'target', '0.3', 'nonbt', 12) rc=0\n"}
+,{"stream_name":"stdout","time":3614.927056303,"data":"[1.00h] start lane2 ('krum', 'target', '0.1', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":3794.92875021,"data":"[1.05h] end lane0 ('krum', 'untarget', '0.3', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":3794.929289177,"data":"[1.05h] start lane0 ('krum', 'target', '0.1', 'nonbt', 11) try1\n"}
+,{"stream_name":"stdout","time":4034.933074019,"data":"[1.12h] end lane1 ('krum', 'target', '0.3', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":4034.934314145,"data":"[1.12h] start lane1 ('krum', 'untarget', '0.1', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":4184.938249223,"data":"[1.16h] end lane3 ('krum', 'untarget', '0.3', 'nonbt', 12) rc=0\n"}
+,{"stream_name":"stdout","time":4184.940898041,"data":"[1.16h] start lane3 ('krum', 'untarget', '0.1', 'nonbt', 11) try1\n"}
+,{"stream_name":"stdout","time":4874.947486331,"data":"[1.35h] end lane1 ('krum', 'untarget', '0.1', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":4874.948396411,"data":"[1.35h] start lane1 ('krum', 'target', '0.2', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":4904.948846806,"data":"[1.36h] end lane0 ('krum', 'target', '0.1', 'nonbt', 11) rc=0\n"}
+,{"stream_name":"stdout","time":4904.950005302,"data":"[1.36h] start lane0 ('krum', 'target', '0.2', 'nonbt', 11) try1\n"}
+,{"stream_name":"stdout","time":5054.953455894,"data":"[1.40h] end lane2 ('krum', 'target', '0.1', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":5054.955465373,"data":"[1.40h] start lane2 ('krum', 'untarget', '0.2', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":5324.959658342,"data":"[1.48h] end lane3 ('krum', 'untarget', '0.1', 'nonbt', 11) rc=0\n"}
+,{"stream_name":"stdout","time":5324.962821581,"data":"[1.48h] start lane3 ('krum', 'untarget', '0.2', 'nonbt', 11) try1\n"}
+,{"stream_name":"stdout","time":5684.96493409,"data":"[1.58h] end lane0 ('krum', 'target', '0.2', 'nonbt', 11) rc=0\n"}
+,{"stream_name":"stdout","time":5684.966963268,"data":"[1.58h] start lane0 ('krum', 'target', '0.3', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":5774.967995684,"data":"[1.60h] end lane2 ('krum', 'untarget', '0.2', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":5774.969456907,"data":"[1.60h] start lane2 ('krum', 'target', '0.3', 'nonbt', 11) try1\n"}
+,{"stream_name":"stdout","time":5804.970033973,"data":"[1.61h] end lane1 ('krum', 'target', '0.2', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":5804.97279364,"data":"[1.61h] start lane1 ('krum', 'untarget', '0.3', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":6314.976265764,"data":"[1.75h] end lane3 ('krum', 'untarget', '0.2', 'nonbt', 11) rc=0\n"}
+,{"stream_name":"stdout","time":6314.976791293,"data":"[1.75h] start lane3 ('krum', 'untarget', '0.3', 'nonbt', 11) try1\n"}
+,{"stream_name":"stdout","time":6494.98065499,"data":"[1.80h] end lane2 ('krum', 'target', '0.3', 'nonbt', 11) rc=0\n"}
+,{"stream_name":"stdout","time":6494.983807772,"data":"[1.80h] start lane2 ('krum', 'target', '0.1', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":6704.987102537,"data":"[1.86h] end lane1 ('krum', 'untarget', '0.3', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":6704.988125235,"data":"[1.86h] start lane1 ('krum', 'target', '0.1', 'nonbt', 10) try1\n"}
+,{"stream_name":"stdout","time":6764.988743362,"data":"[1.88h] end lane0 ('krum', 'target', '0.3', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":6764.989569887,"data":"[1.88h] start lane0 ('krum', 'untarget', '0.1', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":7304.997211227,"data":"[2.03h] end lane3 ('krum', 'untarget', '0.3', 'nonbt', 11) rc=0\n"}
+,{"stream_name":"stdout","time":7305.000765223,"data":"[2.03h] start lane3 ('krum', 'untarget', '0.1', 'nonbt', 10) try1\n"}
+,{"stream_name":"stdout","time":7514.999531515,"data":"[2.09h] end lane2 ('krum', 'target', '0.1', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":7515.002672383,"data":"[2.09h] start lane2 ('krum', 'target', '0.2', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":7965.003745699,"data":"[2.21h] end lane1 ('krum', 'target', '0.1', 'nonbt', 10) rc=0\n"}
+,{"stream_name":"stdout","time":7965.006706409,"data":"[2.21h] start lane1 ('krum', 'target', '0.2', 'nonbt', 10) try1\n"}
+,{"stream_name":"stdout","time":8445.011256612,"data":"[2.35h] end lane2 ('krum', 'target', '0.2', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":8445.014665291,"data":"[2.35h] start lane2 ('krum', 'untarget', '0.2', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":8475.01268407,"data":"[2.35h] end lane3 ('krum', 'untarget', '0.1', 'nonbt', 10) rc=0\n"}
+,{"stream_name":"stdout","time":8475.015661805,"data":"[2.35h] start lane3 ('krum', 'untarget', '0.2', 'nonbt', 10) try1\n"}
+,{"stream_name":"stdout","time":8595.017222284,"data":"[2.39h] end lane0 ('krum', 'untarget', '0.1', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":8595.02191236,"data":"[2.39h] start lane0 ('krum', 'target', '0.3', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":9015.025160976,"data":"[2.50h] end lane0 ('krum', 'target', '0.3', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":9015.027734198,"data":"[2.50h] start lane0 ('krum', 'target', '0.3', 'nonbt', 10) try1\n"}
+,{"stream_name":"stdout","time":9195.029422293,"data":"[2.55h] end lane1 ('krum', 'target', '0.2', 'nonbt', 10) rc=0\n"}
+,{"stream_name":"stdout","time":9195.031908398,"data":"[2.55h] start lane1 ('krum', 'untarget', '0.3', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":9255.032635935,"data":"[2.57h] end lane2 ('krum', 'untarget', '0.2', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":9255.033748391,"data":"[2.57h] start lane2 ('krum', 'untarget', '0.3', 'nonbt', 10) try1\n"}
+,{"stream_name":"stdout","time":9555.037725721,"data":"[2.65h] end lane3 ('krum', 'untarget', '0.2', 'nonbt', 10) rc=0\n"}
+,{"stream_name":"stdout","time":9555.038356637,"data":"[2.65h] start lane3 ('krum', 'target', '0.1', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":10005.043324036,"data":"[2.78h] end lane0 ('krum', 'target', '0.3', 'nonbt', 10) rc=0\n"}
+,{"stream_name":"stdout","time":10005.047964749,"data":"[2.78h] start lane0 ('krum', 'target', '0.1', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":10125.051203571,"data":"[2.81h] end lane1 ('krum', 'untarget', '0.3', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":10125.056653567,"data":"[2.81h] start lane1 ('krum', 'untarget', '0.1', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":10245.055690759,"data":"[2.85h] end lane2 ('krum', 'untarget', '0.3', 'nonbt', 10) rc=0\n"}
+,{"stream_name":"stdout","time":10245.056024282,"data":"[2.85h] start lane2 ('krum', 'untarget', '0.1', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":11025.063541225,"data":"[3.06h] end lane1 ('krum', 'untarget', '0.1', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":11025.066900052,"data":"[3.06h] start lane1 ('krum', 'target', '0.2', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":11235.070535424,"data":"[3.12h] end lane3 ('krum', 'target', '0.1', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":11235.070625392,"data":"[3.12h] start lane3 ('krum', 'target', '0.2', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":11595.073627168,"data":"[3.22h] end lane0 ('krum', 'target', '0.1', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":11595.076228297,"data":"[3.22h] start lane0 ('krum', 'untarget', '0.2', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":11895.077875706,"data":"[3.30h] end lane2 ('krum', 'untarget', '0.1', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":11895.080919067,"data":"[3.30h] start lane2 ('krum', 'untarget', '0.2', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":12075.083264559,"data":"[3.35h] end lane1 ('krum', 'target', '0.2', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":12075.084389651,"data":"[3.35h] start lane1 ('krum', 'target', '0.3', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":12285.086424179,"data":"[3.41h] end lane3 ('krum', 'target', '0.2', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":12285.088901326,"data":"[3.41h] start lane3 ('krum', 'target', '0.3', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":12735.094630425,"data":"[3.54h] end lane2 ('krum', 'untarget', '0.2', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":12735.097731557,"data":"[3.54h] start lane2 ('krum', 'untarget', '0.3', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":12825.096498256,"data":"[3.56h] end lane0 ('krum', 'untarget', '0.2', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":12825.097507146,"data":"[3.56h] start lane0 ('krum', 'untarget', '0.3', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":13305.104770706,"data":"[3.70h] end lane1 ('krum', 'target', '0.3', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":13485.105849987,"data":"[3.75h] end lane2 ('krum', 'untarget', '0.3', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":13605.106696275,"data":"[3.78h] end lane0 ('krum', 'untarget', '0.3', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":13725.107504345,"data":"[3.81h] end lane3 ('krum', 'target', '0.3', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":13725.121861966,"data":"FINISHED: 48/48 complete after 3.81h\n"}
+,{"stream_name":"stderr","time":13727.756678459,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":13727.756723726,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":13728.073863912,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":13728.073891276,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":13728.916315236,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":13730.000717992,"data":"[NbConvertApp] Writing 297980 bytes to __results__.html\n"}
+]

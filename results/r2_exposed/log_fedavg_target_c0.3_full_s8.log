@@ -1,0 +1,47 @@
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [04:18<14:16:12, 258.15s/it]  1%|          | 2/200 [08:14<13:28:44, 245.07s/it]  2%|▏         | 3/200 [12:09<13:10:02, 240.62s/it]  2%|▏         | 4/200 [16:11<13:08:18, 241.32s/it]  2%|▎         | 5/200 [21:28<14:32:43, 268.53s/it]  3%|▎         | 6/200 [26:21<14:55:13, 276.88s/it]  4%|▎         | 7/200 [30:36<14:26:58, 269.53s/it]  4%|▍         | 8/200 [34:15<13:31:23, 253.56s/it]  4%|▍         | 8/200 [37:56<15:10:25, 284.51s/it]
+Round: 0
+Test accuracy: 19.46799087524414
+Test loss: 2.2209500800932545
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 8.301666259765625
+Test loss: 2.4423071876041935
+Check accuracy: 19.46799087524414
+patience: 0
+Round: 2
+Test accuracy: 13.738673210144043
+Test loss: 2.182792942344846
+Check accuracy: 19.46799087524414
+patience: 1
+Round: 3
+Test accuracy: 8.301666259765625
+Test loss: 2.2787659262328495
+Check accuracy: 19.46799087524414
+patience: 2
+Round: 4
+Test accuracy: 13.738673210144043
+Test loss: 2.0998884489298635
+Check accuracy: 19.46799087524414
+patience: 3
+Round: 5
+Test accuracy: 8.301666259765625
+Test loss: 2.1024927999568384
+Check accuracy: 19.46799087524414
+patience: 4
+Round: 6
+Test accuracy: 8.71090316772461
+Test loss: 2.0891621312841413
+Check accuracy: 19.46799087524414
+patience: 5
+Round: 7
+Test accuracy: 6.693949222564697
+Test loss: 2.075938800453826
+Check accuracy: 19.46799087524414
+patience: 6
+Round: 8
+Test accuracy: 9.324758529663086
+Test loss: 2.0643305417495457
+Check accuracy: 19.46799087524414
+patience: 7
+Early stopped federated training!

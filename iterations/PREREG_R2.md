@@ -129,3 +129,11 @@ from unblinding R2, analyse_r2.py now scores a family only when all of its full/
 complete (H1 120, H2 240; `--final` overrides, for a write-up after a stopped campaign under the
 registered missing-data rule). Until then it reports only run counts. Tests, cells and arms are
 unchanged. **Outcomes seen:** none.
+
+## Amendment 4 (2026-10-29 ~23:45 PKT, iteration 34): one duplicate run. No design change.
+
+The Kaggle session (Amendment 2) completed all 48 seed-9-12 H1 runs in 3.8 h. One of them,
+krum untarget c0.3 full s11, also existed as a complete local run (2026-10-24, first campaign); its
+nonbt partner existed only from Kaggle. By Amendment 2's rule (both arms of a pair on one device)
+the Kaggle run is used; the local one is kept, unread, in results/r2_exposed/superseded/ and is not
+analysed. **Outcomes seen:** none (completeness flags only).

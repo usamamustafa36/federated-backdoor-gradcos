@@ -1,0 +1,89 @@
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 0/200 [00:02<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 71, in <module>
+    w = local.train(net = copy.deepcopy(net_glob).to(args.device))
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 170, in _tr
+    return _tr0(self, net)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/src/update.py", line 31, in train
+    loss.backward()
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/_tensor.py", line 626, in backward
+    torch.autograd.backward(
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/__init__.py", line 347, in backward
+    _engine_run_backward(
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+RuntimeError: GET was unable to find an engine to execute this computation
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 0/200 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/run_byzfl.py", line 215, in <module>
+    runpy.run_path(os.path.join(EXT, "main.py"), run_name="__main__")
+  File "/usr/lib/python3.10/runpy.py", line 289, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib/python3.10/runpy.py", line 96, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/main.py", line 71, in <module>
+    w = local.train(net = copy.deepcopy(net_glob).to(args.device))
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 172, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+  File "/usr/lib/python3.10/copy.py", line 271, in _reconstruct
+    state = deepcopy(state, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 146, in deepcopy
+    y = copier(x, memo)
+  File "/usr/lib/python3.10/copy.py", line 231, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+  File "/usr/lib/python3.10/copy.py", line 153, in deepcopy
+    y = copier(memo)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/parameter.py", line 68, in __deepcopy__
+    self.data.clone(memory_format=torch.preserve_format), self.requires_grad
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 1.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1234326 has 2.20 GiB memory in use. Process 1241251 has 674.00 MiB memory in use. Including non-PyTorch memory, this process has 156.00 MiB memory in use. Of the allocated memory 43.17 MiB is allocated by PyTorch, and 20.83 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [03:12<10:37:58, 192.36s/it]  1%|          | 2/200 [05:25<8:40:45, 157.81s/it]   2%|▏         | 3/200 [07:52<8:21:29, 152.74s/it]  2%|▏         | 4/200 [10:55<8:57:16, 164.47s/it]  2%|▎         | 5/200 [14:06<9:25:54, 174.13s/it]  3%|▎         | 6/200 [17:04<9:27:03, 175.38s/it]  4%|▎         | 7/200 [19:45<9:09:49, 170.93s/it]  4%|▍         | 8/200 [22:40<9:10:56, 172.17s/it]  4%|▍         | 9/200 [25:36<9:11:35, 173.27s/it]  5%|▌         | 10/200 [28:51<9:30:01, 180.01s/it]  6%|▌         | 11/200 [32:04<9:39:46, 184.06s/it]  6%|▌         | 12/200 [34:14<8:44:46, 167.48s/it]  6%|▋         | 13/200 [36:43<8:24:39, 161.92s/it]  7%|▋         | 14/200 [39:24<8:21:17, 161.71s/it]  8%|▊         | 15/200 [41:35<7:50:04, 152.45s/it]  8%|▊         | 16/200 [43:36<7:17:56, 142.81s/it]  8%|▊         | 17/200 [45:56<7:12:55, 141.94s/it]  9%|▉         | 18/200 [48:17<7:10:08, 141.80s/it] 10%|▉         | 19/200 [50:43<7:11:34, 143.06s/it] 10%|█         | 20/200 [53:21<7:22:55, 147.64s/it] 10%|█         | 21/200 [55:59<7:29:23, 150.63s/it] 11%|█         | 22/200 [59:20<8:11:21, 165.62s/it] 12%|█▏        | 23/200 [1:02:22<8:23:39, 170.73s/it] 12%|█▏        | 24/200 [1:04:45<7:56:23, 162.41s/it] 12%|█▎        | 25/200 [1:07:25<7:51:22, 161.61s/it] 13%|█▎        | 26/200 [1:10:26<8:05:12, 167.31s/it] 14%|█▎        | 27/200 [1:12:54<7:46:24, 161.76s/it] 14%|█▍        | 28/200 [1:16:08<8:10:44, 171.19s/it] 14%|█▍        | 29/200 [1:19:28<8:32:32, 179.84s/it] 15%|█▌        | 30/200 [1:23:25<9:18:08, 196.99s/it] 16%|█▌        | 31/200 [1:27:02<9:32:03, 203.10s/it] 16%|█▌        | 32/200 [1:30:01<9:08:18, 195.83s/it] 16%|█▋        | 33/200 [1:33:02<8:52:36, 191.36s/it] 17%|█▋        | 34/200 [1:36:31<9:04:20, 196.75s/it] 18%|█▊        | 35/200 [1:40:24<9:30:44, 207.54s/it] 18%|█▊        | 36/200 [1:44:38<10:05:22, 221.48s/it] 18%|█▊        | 37/200 [1:48:15<9:58:23, 220.27s/it] 
