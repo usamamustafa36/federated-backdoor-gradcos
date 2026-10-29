@@ -40,28 +40,27 @@ the public, commercial or not-for-profit sectors.}}
 Byzantine-robust aggregation rules protect federated learning by comparing the updates
 that clients send. Many PyTorch pipelines send each model as a \texttt{state\_dict()},
 which for a network with BatchNorm includes \texttt{num\_batches\_tracked}: an integer
-that counts local mini-batches and, under PyTorch's default momentum, has no effect on the
-model. We show that aggregation rules nonetheless decide on it. An exact decomposition of
-the cosine and the distance between transmitted updates explains which rules are
-exposed: in every pairwise cosine the trainable
-signal is weighted by at most one minus the buffer share, whatever the data, while
-distance-based rules are exposed only when clients run different numbers of batches. In a
+that counts local mini-batches and, under PyTorch's default momentum, does not affect the
+model. We show that aggregation rules nonetheless decide on it. An exact decomposition explains which rules are exposed: every pairwise cosine
+weights the trainable signal by at most one minus the buffer share, whatever the data,
+while distances are exposed only when clients run different numbers of batches. In a
 non-IID intrusion detector on CICIoT2023 the buffers carry a median
 $\pfDiagBufNormShareDir$ of the squared update norm. A seed-paired A/B that changes only
 which coordinates thirteen rules read confirms, in registered tests, that the
-counter stops FLTrust from excluding anyone (Holm $p\le\pfPrePThreePh$). Exploratory
-cells, none significant after correction over all $\pfTestsRun$ exploratory tests,
-suggest it also changes whether defenses catch a backdoor attacker, in both
-directions: it hides the attackers from FLAME (detection rate $\pfDRFlameIidAtkDef$ against
-$\pfDRFlameIidAtkFix$ without it, IID) and FLDetector ($\pfDRFldetectorIidAtkDef$ against
-$\pfDRFldetectorIidAtkFix$), and makes FoolsGold exclude attackers it otherwise admits
-(backdoor success $\pfBSRFoolsgoldIidAtkDef$ against $\pfBSRFoolsgoldIidAtkFix$,
-$n=\pfBSRFoolsgoldIidAtkN$). Evaluations on such pipelines can understate or overstate a
-defense.
-% RE-CHECK (iter 28): Holm bound needs P3Ph>=P1Ph; FLAME/FLDetector/FoolsGold directions; P3X outcome.
+counter stops FLTrust from excluding anyone (Holm $p\le\pfPrePThreePh$) and a
+trained, norm-bounded attacker that falsifies it gains FLTrust weight and Multi-Krum
+admission (Holm $p\le\rOneMechFltPh$). It also changes, in both directions, whether
+defenses catch a backdoor attacker: it hides attackers from FLAME (detection rate
+$\pfDRFlameIidAtkDef$ against $\pfDRFlameIidAtkFix$, IID) and FLDetector
+($\pfDRFldetectorIidAtkDef$ against $\pfDRFldetectorIidAtkFix$), and makes FoolsGold
+exclude attackers it otherwise admits (backdoor success $\pfBSRFoolsgoldIidAtkDef$
+against $\pfBSRFoolsgoldIidAtkFix$). These exploratory directions replicated on
+registered held-out seeds ($\pxXOneN$ pairs, $p=\pxXOneP$). Evaluations on
+such pipelines can understate or overstate a defense.
+% RE-CHECK (iter 33): Holm bound needs P3Ph>=P1Ph; FLAME/FLDetector/FoolsGold directions (P3X supported).
 Three of nine inspected third-party implementations put the counter in that vector,
-including a 2025 defense's reference code and Flower's official PyTorch example, whose
-updates Flower's own Krum and Bulyan compare.
+including a 2025 defense's reference code and Flower's PyTorch example, whose updates
+Flower's own Krum and Bulyan compare.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -175,12 +174,14 @@ $\pfCellsDone$ of $\pfCellsTarget$ cells so far). The registered FLTrust tests a
 supported: the counter suppresses every exclusion. No predicted clean-accuracy effect
 is detected. Under attack the counter appears to change whether rules catch the
 attackers, in both directions: it hides them from FLAME and FLDetector and hands
-FoolsGold detections the trainable update does not support (exploratory, none
-significant over all $\pfTestsRun$ tests; a held-out replication is registered).
+FoolsGold detections the trainable update does not support (found by looking; on
+$\pxXOneN$ held-out pairs registered beforehand the direction replicated,
+$p=\pxXOneP$, in detection rate and in Youden's $J$).
 % RE-CHECK (iter 28): P1-P4 'supported', S1-S4 'not supported'; exploratory DR/BSR signs.
 \item \textbf{Mechanisms} (Sec.~\ref{sec:mech}). FLTrust excludes no client once
 $q_i+q_0>1$ (Corollary~\ref{cor:fltrust}); a client that falsifies its counter is
-admitted with a fixed step whatever its direction (Corollary~\ref{cor:falsify});
+admitted with a fixed step whatever its direction (Corollary~\ref{cor:falsify}),
+and a trained falsifier gains step share and Multi-Krum admission (registered);
 histories stay compressed; an exact identity (Proposition~\ref{prop:angle})
 gives both detection effects' directions: an attacker running $E$ times more batches
 with a $t<E$ times larger update looks $(t/E)^2$ closer to accomplices and more typical
@@ -671,7 +672,7 @@ $\pfDRFlameIidAtkFix$, $\pfDRFlameIidAtkPos$/$\pfDRFlameIidAtkNeg$ seeds, $p_H=\
 while excluding more honest clients ($\pfFPRFlameIidAtkDef$ against
 $\pfFPRFlameIidAtkFix$); FLDetector's DR is $\pfDRFldetectorIidAtkDef$ against
 $\pfDRFldetectorIidAtkFix$ ($p_H=\pfDRFldetectorIidAtkPh$), and both point the same way
-under Dirichlet shards so far (FLAME $\pfDRFlameDirAtkDef$/$\pfDRFlameDirAtkFix$,
+under Dirichlet shards (FLAME $\pfDRFlameDirAtkDef$/$\pfDRFlameDirAtkFix$,
 FLDetector $\pfDRFldetectorDirAtkDef$/$\pfDRFldetectorDirAtkFix$, AlignIns
 $\pfDRAligninsDirAtkDef$/$\pfDRAligninsDirAtkFix$; $n=\pfDRFlameDirAtkN$, $\pfDRFldetectorDirAtkN$, $\pfDRAligninsDirAtkN$). The counter can also do the
 opposite: under IID shards it makes FoolsGold exclude both attackers (DR
@@ -683,9 +684,11 @@ also drops without it ($\pfDRAligninsIidAtkDef$ to $\pfDRAligninsIidAtkFix$). No
 this was predicted before the cells ran (Proposition~\ref{prop:angle} explains the
 directions afterwards), so it is exploratory, and none of it survives Holm over all
 $\pfTestsRun$ exploratory tests. Before the remaining seeds ran we registered
-that the four incomplete cells keep their direction (Sec.~\ref{sup:p3x}): pooled over
-$\pxNReg$ held-out pairs, $\pxXOneN$ have run ($p=\pxXOneP$, \pxFinal).
-% RE-CHECK (iter 28): directions above; P3X X1 when it lands (iterations/PREREG_P3X.md).
+that four incomplete cells keep their direction (Sec.~\ref{sup:p3x}), and they did:
+on the $\pxXOneN$ held-out pairs DR moved the recorded way in $\pxXOnePos$ and against
+it in $\pxXOneNeg$ ($p=\pxXOneP$), and Youden's $J$ in $\pxXTwoPos$ ($p=\pxXTwoP$), so
+the change is in detection, not in blanket exclusion. The IID FLAME and FLDetector
+cells, complete when the direction was recorded, stay exploratory.
 
 \textbf{What the BSR columns can and cannot say.} An attacked BSR is read against
 the rule's clean-model BSR (the floor) and FedAvg's attacked BSR (the undefended
@@ -876,8 +879,10 @@ counter dominates them ($M_j\to0$ as $q_j\to1$). Our FLTrust implementation
 reproduces Eqs.~\eqref{eq:mj} and~\eqref{eq:mstar} to a relative error of
 $\ffMaxRelErr$, and a $\rho=-1$ attacker, excluded when it reports the batches it
 ran, is admitted with a falsified counter at $\ffAmpNeg\times$ the median honest
-step (Sec.~\ref{sup:falsify}; one round, synthetic inputs; we have not trained
-with a falsifying client).
+step (Sec.~\ref{sup:falsify}; one round, synthetic inputs). Trained end to end at
+twice the honest norm (registered, Sec.~\ref{sup:r1}), the falsifier takes
+$\rOneMechFltDef$ of FLTrust's trainable step against $\rOneMechFltFix$ under the fix
+($\rOneMechFltPos$/$\rOneMechFltNeg$ seeds, $p_H=\rOneMechFltPh$).
 
 \textbf{FoolsGold: a history that is mostly counter.} FoolsGold compares the
 running sums $H_i(t)=\sum_{\tau\le t}d_i(\tau)$ rather than single updates. The
@@ -1013,10 +1018,12 @@ but no counter.
 \emph{Hyperparameters} are untuned defaults shared by both arms, and twelve of the
 thirteen rules are from 2017--2022; a newer rule must be checked rule by rule.
 \emph{Threat model.} Static, feature-space attacker; no adaptive attack on the
-fixed pipeline. A registered campaign trains a norm-bounded counter falsifier
-(Sec.~\ref{sup:r1}; $\rOneCellsDone$/$\rOneCellsTarget$ cells); at its registered
-bound it does not implant even under FedAvg (BSR $\rOnePilotBSRbTwo$), so its outcome
-is admission and step share, the influence a robust rule bounds, not BSR.
+fixed pipeline. A trained, norm-bounded counter falsifier (registered,
+Sec.~\ref{sup:r1}) gains FLTrust step share and Multi-Krum admission
+($\rOneMechMkDef$ against $\rOneMechMkFix$, $p_H=\rOneMechMkPh$) but not Krum
+admission; at its bound it does not implant even under FedAvg (median BSR
+$\rOneRefBSRmed$), so this is a result on the influence a robust rule bounds, not
+on backdoors.
 
 \section{Conclusion}
 
@@ -1028,8 +1035,10 @@ decide on the trainable coordinates, aggregate the full state. What the counter 
 is rule-specific: it stops FLTrust from excluding anyone, as
 Corollary~\ref{cor:fltrust} requires (registered); in exploratory cells it leaves
 FLAME's clean decisions unchanged but hides long-training attackers from FLAME and
-FLDetector, and lends FoolsGold detections that the trainable update does not support
-(a held-out replication is registered). Restored exclusions do not make FLTrust a detector
+FLDetector, and lends FoolsGold detections that the trainable update does not support,
+a direction that replicated on registered held-out seeds. A client may also
+falsify the counter: trained to, it gains FLTrust weight and Multi-Krum admission
+(registered). Restored exclusions do not make FLTrust a detector
 here: what a rule decides and whether it defends are separate questions, and both have
 to be measured with the counter out of the decision vector.
 % RE-CHECK (iter 28) against Tables tab:p1/tab:p1flag and P3X when P3 completes.

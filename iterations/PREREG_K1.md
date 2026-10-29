@@ -168,3 +168,14 @@ helper (run_r1_reverse.sh) has exited.
 The header's "01:45-02:40" was the planned writing window; the file was committed at 01:54:36
 (commit e7d1345), before the waiter was started (01:54:44). No design, test or wording changed.
 No K1 cell existed when this amendment was written.
+
+## Amendment 2 (2026-10-29, iteration 33): device. No cell, sign, test or wording changes.
+
+The machine rebooted on 2026-10-28 and CUDA came back in the unusable state (`CUDA unknown
+error`; recovery needs the module reload, which needs the owner's password). 26 of the 80 K1
+cells had finished on the GPU. The runner was restarted on 2026-10-28 23:04 with
+`DEVICE=cpu LANES=1 THREADS=2`; it skips finished cells, so the remaining cells run on the CPU.
+The two devices are reproductions, not bit-identical copies (as for P3 and R1, PREREG_R1
+Amendment 2). Pairs are formed within (rule, seed, setting) as registered; the device of each
+cell is recorded in its log. **Outcomes seen:** none. `paper/analyse_k1.py` was run by
+`make numbers` and printed only the cell count (26/80); no K1 JSON was opened.

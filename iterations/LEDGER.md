@@ -2025,3 +2025,40 @@ finished here.)
      the only confirmed effect. No rescue.
   2. When R1 completes (160 cells): write the mechanism family with Amendment 3's wording (pay for it in main).
   3. K1 after R1's GPU helper exits (see iteration 31).
+
+## Iteration 33 - 2026-10-28/29 - P3X unblinded and SUPPORTED (19/19 pairs, p=7.6e-6; Youden J p=1.9e-6); R1 complete, mechanism family supported for FLTrust and Multi-Krum; R2 found void (425/430 runs died on CUDA OOM/errors); jobs restarted on CPU after a reboot
+
+- **State at start (2026-10-28 23:03):** machine rebooted ~23:00 on 10-27/28; nothing of ours running. CUDA in
+  the unknown-error state (needs `sudo rmmod nvidia_uvm && sudo modprobe nvidia_uvm`); another project
+  (uppsala `step5b_detect_more.py`, ~16 procs) holds most cores. P3 tail had stopped at 2026-10-25 05:35;
+  K1 runner at 26/80 (stopped 10-25 06:23); R1 COMPLETE 10-24 21:53; R2 "ended" 10-25 04:41.
+- **Restarted:** P3 tail `LANES=2` (pid 48660, results/postfix_p3/campaign_tail.log); K1 runner on CPU
+  `DEVICE=cpu LANES=1 THREADS=2` (pid 48663, results/kgt_k1/runner.log); PREREG_K1 Amendment 2 records it
+  (no outcome seen). By 10-29 07:56: K1 42/80, P3 tail progressing (~1 cell/h/lane).
+- **P3X (final):** all 19 pairs; X1 17 in direction / 0 against / 2 ties, p=7.6e-6 (supported); X2 (Youden J)
+  19/0, p=1.9e-6 (supported); X3 FoolsGold BSR 0.012 vs 0.960 (5/5). Applied PREREG_P3X's committed wording
+  in abstract, contributions, Sec. P1 (iii), conclusion, supplement S-p3x (per-cell means added); IID
+  FLAME/FLDetector kept labelled exploratory. Global Holm over all 215 exploratory tests still 0 significant
+  (`\pfSigGlobal`), so that sentence stands in Sec. P1. Dirichlet FLAME/FLDetector/AlignIns DR now n=10.
+- **R1 (160/160):** primary (BSR) family uninformative by the pilot rule; campaign FedAvg gate agrees (median
+  0.021 < 0.2). Mechanism family (Holm over 3): FLTrust step share 0.319 vs 0.160, 8/2, p_H=0.014 supported;
+  Multi-Krum admission 1.000 vs 0.230, 9/0, p_H=0.006 supported; Krum 0 vs 0, not supported. Written with
+  Amendment 3's committed wording (supplement S-r1; main Sec. Mechanisms, limitations, abstract, contributions,
+  conclusion). BSR printed labelled uninformative (Multi-Krum 0.873 vs 0.017 is not called a result).
+  Exploratory A-vs-B: the falsified value is what buys Multi-Krum admission (1.000 vs 0.000).
+- **R2 is void, not negative.** 430 JSONs: 5 complete, 337 CUDA OutOfMemoryError (ollama held 4.6 GB while
+  R2 ran 3 lanes), 88 RuntimeError. analyse_r2.py correctly reads 5 runs, all \PENDING; the paper does not
+  cite R2. Needs re-running on a working, unshared GPU (CPU is infeasible: ~11 min/round at local_ep 1).
+  run_r2.sh skips only JSONs with "complete": true, so the 425 failed runs are retried on relaunch
+  (error JSONs are overwritten; nothing to archive).
+- **Build/check:** main 10 pp (ends 9.71), supplement 6 pp (paid for by compressing S-r1, S-p3x, AlignIns and
+  the seed-46 calibration passage; a "seeds 49/51 hold as few benign rows" draft was wrong (81 vs 46) and was
+  replaced by the values). Abstract 249 words. check_manuscript all PASS except the gate: 18 unresolved (was
+  34), all P3 tail lane. pytest 27 pass.
+- **Score after: 6/10, MAJOR REVISION -> minor-ish once the tail and K1 land.** The detection effects are now a
+  registered, replicated result, and the falsifier is a trained, registered mechanism result.
+- **Top 3 priorities:**
+  1. Owner: fix CUDA (`sudo systemctl stop ollama && sudo rmmod nvidia_uvm && sudo modprobe nvidia_uvm`),
+     relaunch R2 (keep ollama stopped; R2 waiter/launcher in experiments/r2_exposed).
+  2. When K1 completes: `python3 paper/analyse_k1.py`, write with PREREG_K1's wording (main Sec. Mechanisms).
+  3. When the P3 tail completes: `make numbers`, clear the 18-item gate, re-check the RE-CHECK comments.

@@ -292,42 +292,50 @@ ratio is not measured. What the check establishes is the arithmetic of one round
 under the defect, admission by FLTrust is something a client can buy with a
 number it chooses.
 
-\subsection{A trained falsifier (registered, running)}
+\subsection{A trained falsifier (registered)}
 \label{sup:r1}
-The check above is one round. A registered campaign trains the attacker end to end:
-the backdoor attacker of the main campaign under Dirichlet shards, with two additions
-it alone controls. It rescales its trainable update to at most $b$ times the round's
-median honest trainable norm, so that its norm does not give it away as it gives away
-the $E_m=15$ attacker, and it reports the counter of Corollary~\ref{cor:falsify}'s
-optimum ($q=\tfrac12$) against FLTrust, or the median honest counter against
-Multi-Krum and Krum. Seeds are paired ($42$--$51$). A pilot rule fixed $b$ before any campaign cell
-ran: the smallest $b\in\{1,2\}$ whose mean FedAvg BSR over two pilot seeds is at
-least $0.5$, else $b=2$. Neither reached it (BSR $\rOnePilotBSRbOne$ at $b=1$,
-$\rOnePilotBSRbTwo$ at $b=2$), so $b^*=\rOneBstar$ and, as registered, this stealthy
-attacker does not implant reliably even without a defense: its three BSR tests are
-\rOnePrimUninf{} and are reported without being read as support or refutation.
-The confirmatory outcome is the registered mechanism family: the attackers' share of
-FLTrust's trust-weighted trainable step and their admission rate under Multi-Krum
-and Krum, defect against fixed (one-sided paired sign-flip tests, Holm over three): what
-a robust rule's guarantee bounds, measurable without a payload that implants. $\rOneCellsDone$ of $\rOneCellsTarget$ cells have run; no
-outcome is reported until the three rules' families are complete.
+The check above is one round. A registered campaign trains the attacker end to end
+(the main backdoor attacker, Dirichlet shards, seeds $42$--$51$ paired), with two
+additions: it rescales its trainable update to at most $b$ times the round's median
+honest trainable norm, so that its norm does not give it away, and it reports the
+counter of Corollary~\ref{cor:falsify}'s optimum ($q=\tfrac12$) against FLTrust, or the
+median honest counter against Multi-Krum and Krum. A pilot rule fixed $b$ before any
+campaign cell: the smallest $b\in\{1,2\}$ with mean FedAvg BSR $\ge0.5$ on two pilot
+seeds, else $2$. Neither reached it ($\rOnePilotBSRbOne$, $\rOnePilotBSRbTwo$), so
+$b^*=\rOneBstar$ and, as registered, the BSR tests are \rOnePrimUninf{} (campaign FedAvg
+median $\rOneRefBSRmed$ agrees). The confirmatory family is what a robust rule's
+guarantee bounds: the attackers' share of FLTrust's trust-weighted trainable step and
+their Multi-Krum and Krum admission, defect against fixed (one-sided sign-flip, Holm
+over three). All $\rOneCellsTarget$ cells ran. Under the defect the trained falsifier
+obtains more step share and admission than the same attacker under the fix: FLTrust
+$\rOneMechFltDef$ against $\rOneMechFltFix$ ($\rOneMechFltPos$/$\rOneMechFltNeg$ seeds,
+$p_H=\rOneMechFltPh$), Multi-Krum $\rOneMechMkDef$ against $\rOneMechMkFix$
+($\rOneMechMkPos$/$\rOneMechMkNeg$, $p_H=\rOneMechMkPh$). Krum admits it in neither arm
+($\rOneMechKrDef$): the falsified counter does not raise its admission above what the
+fixed rule grants. Printed, \rOnePrimUninf{}: final BSR (defect/fixed)
+$\rOnePrimFltDef$/$\rOnePrimFltFix$ FLTrust, $\rOnePrimMkDef$/$\rOnePrimMkFix$ Multi-Krum,
+$\rOnePrimKrDef$/$\rOnePrimKrFix$ Krum. Exploratory: in the defect arm the falsified
+value is what buys it (Multi-Krum admission $\rOneAvBMechMkA$, $\rOneAvBMechMkB$ when it
+reports the batches it ran; FLTrust share $\rOneAvBMechFltA$ against $\rOneAvBMechFltB$).
 
 \subsection{A held-out replication of the detection effects (registered)}
 \label{sup:p3x}
-The attacked-run detection effects of Sec.~\ref{sec:p1} (iv) were found by looking.
-With $751$ of $1{,}040$ cells run, we registered (a dated, committed plan with a hash
-manifest of every result file on disk) that four cells whose remaining seeds had not
+The attacked-run detection effects of Sec.~\ref{sec:p1} (iii) were found by looking.
+At $751$ of $1{,}040$ cells we registered (dated commit, hash manifest of the results
+on disk) that four cells whose remaining seeds had not
 run keep the direction seen on their first five: fixed $>$ defect DR for FLDetector
 and AlignIns under Dirichlet shards (seeds $47$--$51$), defect $>$ fixed for AlignIns
 (IID, $43$--$46$) and FoolsGold (IID, $47$--$51$); $\pxNReg$ pairs, both arms absent
 when registered. FLAME under Dirichlet shards is left out because its fixed arm for
 seeds $42$--$46$ had been read. The primary test pools the sign-adjusted paired DR
-differences in one exact one-sided sign-flip test ($p\le0.05$); a secondary test does
-the same with Youden's $J=\mathrm{DR}-\mathrm{FPR}$, so that blanket exclusion does
-not count as detection; FoolsGold's IID BSR (fixed $>$ defect) is a registered
-direction without a test. Status (\pxFinal): $\pxXOneN$ of $\pxNReg$ pairs,
-primary $p=\pxXOneP$ (\pxXOneSup), secondary $p=\pxXTwoP$; FoolsGold BSR
-$\pxXThreeDef$ (defect) against $\pxXThreeFix$ ($n=\pxXThreeN$).
+differences in one exact one-sided sign-flip test ($p\le0.05$); a secondary uses
+Youden's $J=\mathrm{DR}-\mathrm{FPR}$ (blanket exclusion is not detection); FoolsGold's IID BSR (fixed $>$ defect) is a registered
+direction without a test. All $\pxNReg$ pairs ran: $\pxXOnePos$ moved the registered
+way, $\pxXOneNeg$ against, the rest tied; primary $p=\pxXOneP$ (\pxXOneSup), secondary
+$p=\pxXTwoP$ (\pxXTwoSup); FoolsGold BSR $\pxXThreeDef$ (defect) against $\pxXThreeFix$
+($\pxXThreePos$/$\pxXThreeN$). DR, defect/fixed: FLDetector (Dir.)
+$\pxHOneDef$/$\pxHOneFix$, AlignIns (Dir.) $\pxHTwoDef$/$\pxHTwoFix$, AlignIns (IID)
+$\pxHThreeDef$/$\pxHThreeFix$, FoolsGold (IID) $\pxHFourDef$/$\pxHFourFix$.
 
 \subsection{A registered test of the $k>1$ reversal}
 \label{sup:k1}
@@ -487,16 +495,10 @@ $\csSmEfifteenImplantFortySix$ ($E_m=15$), too late or too briefly to register
 under a last-five-round criterion. Our reading is
 that the attack sits near a threshold on seed $46$, not that the seed is immune.
 The poisoned data do not single the seed out
-(\texttt{experiments/calib\_iter6/s46\_probe.py}): the attackers stamp
-$\csPoisRowsMin$--$\csPoisRowsMax$ rows on every seed, DDoS is the majority source
-class everywhere, and $\csTrigNoutRange$ of the $\csTrigNcols$ stamped values fall
-outside the training range. Seed $46$'s attackers hold few genuine benign rows
-($\csMalBenignFortySix$, against $\csMalBenignImplMin$--$\csMalBenignImplMax$ on
-seeds $42$--$44$); seeds $49$ and $51$ ($\csMalBenignFortyNine$ and
-$\csMalBenignFiftyOne$), registered as the test before their cells finished, both
-implant strongly at $E_m=15$ (BSR $\csSmEfifteenBSRFortyNine$ and
-$\csSmEfifteenBSRFiftyOne$), so benign
-scarcity does not explain seed $46$.
+(\texttt{experiments/calib\_iter6/s46\_probe.py}: $\csPoisRowsMin$--$\csPoisRowsMax$
+stamped rows on every seed), and benign scarcity does not explain it: seeds $49$ and
+$51$, whose attackers also hold few benign rows ($\csMalBenignFortyNine$, $\csMalBenignFiftyOne$;
+seed $46$: $\csMalBenignFortySix$), were registered as the test and implant at $E_m=15$ (BSR $\csSmEfifteenBSRFortyNine$, $\csSmEfifteenBSRFiftyOne$).
 A $40$-round re-run tests the censoring reading. Seed $44$ at $E_m=5$, which never
 implants within $15$ rounds, implants at round $\csHzImplantFortyFourEfive$ of
 $\csHzRoundsFortyFourEfive$ (BSR last at or below $0.5$ at round
@@ -514,12 +516,8 @@ the ten non-IID seeds. It implants on $\csSmEfifteenNimpl$ of ten; seed $46$ is
 the exception, and seed $45$ only just clears the bar ($\csSmEfifteenBSRFortyFive$,
 first round above $0.5$ at round $\csSmEfifteenImplantFortyFive$). A rule's
 attacked BSR is read only on seeds where the re-run's own FedAvg cell implants,
-and the excluded seeds are reported with the results. The re-run executes on a GPU
-and the calibration ran on a CPU, so the two are reproductions of each other, not
-bit-identical copies. On the first seed both have finished (seed $43$), the re-run's
-FedAvg cell implants as the calibration did (BSR $\csRepBSRFortyThree$, first round
-above $0.5$ at round $\csRepImplantFortyThree$, against $\csSmEfifteenBSRFortyThree$
-at round $\csSmEfifteenImplantFortyThree$).
+and the excluded seeds are reported with the results. The re-run (GPU) reproduces the calibration (CPU), not bit for bit: on seed $43$
+FedAvg implants in both (BSR $\csRepBSRFortyThree$ against $\csSmEfifteenBSRFortyThree$).
 
 \begin{table*}[t]
 \centering
@@ -650,16 +648,14 @@ ported from its authors' code, and is part of the re-run (Sec.~\ref{sec:p1}). It
 one: that of the cosine between the update and the current global model
 $\theta_t$ (TDA), and that of the fraction of the update's largest $30\%$ of
 coordinates whose sign agrees with the coordinate-wise majority sign (MPSA). It
-then clips every update to the median norm of the kept ones. The decomposition
-predicts a split. MPSA counts signs, and the counter, one coordinate positive for every
+then clips every update to the median norm of the kept ones. MPSA counts signs, and the counter, one coordinate positive for every
 client, moves it by at most one over the number of coordinates inspected. TDA is a
 cosine against $\theta_t$, and the counter coordinate of $\theta_t$ grows by
 about $B$ every round, so under the defect TDA is pushed toward a common value for
-all clients. The $z$-score undoes that compression, so the decision is made on a remainder that
-varies with $B_i/\|d_i\|$, a property of shard size, not behaviour. The clip bound is
-a norm and is exposed as NormClip's is. The prediction is that AlignIns' TDA
-filter, under unequal shards, selects clients by batch count, and that its MPSA
-filter is not affected (cells in Tables~\ref{tab:p1} and~\ref{tab:p1flag}).
+all clients; the $z$-score undoes that compression, so the decision rests on a remainder
+that varies with $B_i/\|d_i\|$, shard size rather than behavior. The clip bound is a norm,
+exposed as NormClip's is. Prediction: under unequal shards TDA selects by batch count and
+MPSA is unaffected (Tables~\ref{tab:p1} and~\ref{tab:p1flag}).
 % Implementation: src/defenses/alignins.py; synthetic check experiments/alignins/selftest.py.
 
 \textbf{Hyperparameters} (\texttt{configs/p1\_full.yaml}, both arms): FLAME noise
@@ -689,7 +685,7 @@ consistent by construction. Table~\ref{tab:trig} lists the campaign's fixed trig
 (flag/header features, mixed-sign, $1.5$--$2\sigma$) and two alternatives. Whether real traffic could carry such a trigger is a problem-space
 question~\cite{pierazzi2020problem} we do not address; our backdoor results are feature-space results.
 
-\begin{table}[!htb]
+\begin{table}[!h]
 \caption{Trigger families (units of $\sigma$).}
 \label{tab:trig}
 \centering
