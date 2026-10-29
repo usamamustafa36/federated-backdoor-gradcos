@@ -44,5 +44,8 @@ echo "[$(date '+%F %T')] R2 start DEVICE=$DEVICE LANES=$LANES jobs=$(wc -l < $JO
 # not finish quickly; this order makes H1 complete first. Order only, no design change.
 grep -E '^krum .* (full|nonbt) ' $JOBS > $JOBS.ord; grep -E '^krum .* trainable ' $JOBS >> $JOBS.ord
 grep -v '^krum' $JOBS >> $JOBS.ord
+# PREREG_R2 Amendment 2: jobs run elsewhere (Kaggle), by whole seed, are listed in
+# $OUT/remote_jobs.txt and skipped here.
+[ -s $OUT/remote_jobs.txt ] && { grep -vxFf $OUT/remote_jobs.txt $JOBS.ord > $JOBS.loc; mv $JOBS.loc $JOBS.ord; }
 tr '\n' '\0' < $JOBS.ord | xargs -0 -P $LANES -I{} bash -c 'run_one "$@"' _ {}
 echo "[$(date '+%F %T')] R2 end" >> $OUT/campaign.log

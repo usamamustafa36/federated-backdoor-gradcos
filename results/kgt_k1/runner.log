@@ -1,0 +1,184 @@
+[2026-10-24 19:25:43] K1 runner (pid 1235436) start: 80 cells, DEVICE=cuda LANES=2 NEED_MB=1800 MEM_GB=5 LOAD_MAX=36 policy=share
+[2026-10-24 19:25:44] waiting: running=0 allowed=1 gpu_free=1060MiB mem=9G load=33 (need 1800MiB 5G <=36)
+[2026-10-24 19:26:44] start KA full flame s42 (pass 1)
+[2026-10-24 19:27:04] waiting: running=1 allowed=1 gpu_free=442MiB mem=9G load=33 (need 1800MiB 5G <=36)
+[2026-10-24 19:32:09] FAILED(rc=0, ERROR lines 1, no JSON) KA full flame s42
+[2026-10-24 19:57:15] waiting: running=0 allowed=1 gpu_free=836MiB mem=11G load=31 (need 1800MiB 5G <=36)
+[2026-10-24 20:27:24] waiting: running=0 allowed=1 gpu_free=86MiB mem=10G load=16 (need 1800MiB 5G <=36)
+[2026-10-24 20:57:35] waiting: running=0 allowed=1 gpu_free=304MiB mem=10G load=15 (need 1800MiB 5G <=36)
+[2026-10-24 21:27:46] waiting: running=0 allowed=1 gpu_free=68MiB mem=10G load=16 (need 1800MiB 5G <=36)
+[2026-10-24 21:41:51] start KA trainable flame s42 (pass 1)
+[2026-10-24 21:42:12] waiting: running=1 allowed=1 gpu_free=1948MiB mem=10G load=24 (need 1800MiB 5G <=36)
+[2026-10-24 21:48:38] FAILED(rc=0, ERROR lines 1, no JSON) KA trainable flame s42
+[2026-10-24 22:12:22] waiting: running=0 allowed=1 gpu_free=248MiB mem=10G load=29 (need 1800MiB 5G <=36)
+[2026-10-24 22:42:30] waiting: running=0 allowed=1 gpu_free=148MiB mem=10G load=12 (need 1800MiB 5G <=36)
+[2026-10-24 23:12:38] waiting: running=0 allowed=1 gpu_free=428MiB mem=10G load=19 (need 1800MiB 5G <=36)
+[2026-10-24 23:42:45] waiting: running=0 allowed=1 gpu_free=56MiB mem=10G load=12 (need 1800MiB 5G <=36)
+[2026-10-25 00:12:54] waiting: running=0 allowed=1 gpu_free=278MiB mem=7G load=34 (need 1800MiB 5G <=36)
+[2026-10-25 00:43:01] waiting: running=0 allowed=1 gpu_free=232MiB mem=9G load=16 (need 1800MiB 5G <=36)
+[2026-10-25 01:13:10] waiting: running=0 allowed=1 gpu_free=12MiB mem=9G load=21 (need 1800MiB 5G <=36)
+[2026-10-25 01:43:19] waiting: running=0 allowed=1 gpu_free=802MiB mem=10G load=27 (need 1800MiB 5G <=36)
+[2026-10-25 02:13:23] waiting: running=0 allowed=1 gpu_free=6MiB mem=13G load=13 (need 1800MiB 5G <=36)
+[2026-10-25 02:43:27] waiting: running=0 allowed=1 gpu_free=126MiB mem=12G load=11 (need 1800MiB 5G <=36)
+[2026-10-25 03:13:32] waiting: running=0 allowed=1 gpu_free=300MiB mem=11G load=12 (need 1800MiB 5G <=36)
+[2026-10-25 03:43:35] waiting: running=0 allowed=1 gpu_free=436MiB mem=12G load=11 (need 1800MiB 5G <=36)
+[2026-10-25 04:13:39] waiting: running=0 allowed=1 gpu_free=920MiB mem=13G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 04:41:43] start KA full foolsgold s42 (pass 1)
+[2026-10-25 04:42:03] start KA trainable foolsgold s42 (pass 1)
+[2026-10-25 04:42:23] waiting: running=2 allowed=2 gpu_free=2912MiB mem=15G load=8 (need 1800MiB 5G <=36)
+[2026-10-25 04:46:26] done(rc=0, ERROR lines 0) KA full foolsgold s42
+[2026-10-25 04:46:51] done(rc=0, ERROR lines 0) KA trainable foolsgold s42
+[2026-10-25 04:47:24] start KA full fldetector s42 (pass 1)
+[2026-10-25 04:47:44] start KA trainable fldetector s42 (pass 1)
+[2026-10-25 04:48:04] waiting: running=2 allowed=2 gpu_free=2912MiB mem=15G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 04:52:31] done(rc=0, ERROR lines 0) KA full fldetector s42
+[2026-10-25 04:52:43] done(rc=0, ERROR lines 0) KA trainable fldetector s42
+[2026-10-25 04:53:05] start KA full gradcos s42 (pass 1)
+[2026-10-25 04:53:25] start KA trainable gradcos s42 (pass 1)
+[2026-10-25 04:53:45] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 04:58:21] done(rc=0, ERROR lines 0) KA full gradcos s42
+[2026-10-25 04:58:32] done(rc=0, ERROR lines 0) KA trainable gradcos s42
+[2026-10-25 04:58:46] start KA full flame s43 (pass 1)
+[2026-10-25 04:59:06] start KA trainable flame s43 (pass 1)
+[2026-10-25 04:59:26] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 05:03:42] done(rc=0, ERROR lines 0) KA full flame s43
+[2026-10-25 05:04:10] done(rc=0, ERROR lines 0) KA trainable flame s43
+[2026-10-25 05:04:26] start KA full foolsgold s43 (pass 1)
+[2026-10-25 05:04:46] start KA trainable foolsgold s43 (pass 1)
+[2026-10-25 05:05:07] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:09:27] done(rc=0, ERROR lines 0) KA full foolsgold s43
+[2026-10-25 05:09:53] done(rc=0, ERROR lines 0) KA trainable foolsgold s43
+[2026-10-25 05:10:07] start KA full fldetector s43 (pass 1)
+[2026-10-25 05:10:27] start KA trainable fldetector s43 (pass 1)
+[2026-10-25 05:10:47] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:16:33] done(rc=0, ERROR lines 0) KA full fldetector s43
+[2026-10-25 05:16:48] start KA full gradcos s43 (pass 1)
+[2026-10-25 05:17:08] waiting: running=2 allowed=2 gpu_free=2414MiB mem=14G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:17:12] done(rc=0, ERROR lines 0) KA trainable fldetector s43
+[2026-10-25 05:18:08] start KA trainable gradcos s43 (pass 1)
+[2026-10-25 05:18:29] waiting: running=2 allowed=2 gpu_free=2616MiB mem=14G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:28:45] done(rc=0, ERROR lines 0) KA full gradcos s43
+[2026-10-25 05:29:18] done(rc=0, ERROR lines 0) KA trainable gradcos s43
+[2026-10-25 05:29:30] start KA full flame s44 (pass 1)
+[2026-10-25 05:29:51] start KA trainable flame s44 (pass 1)
+[2026-10-25 05:30:11] waiting: running=2 allowed=2 gpu_free=2912MiB mem=15G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:37:58] done(rc=0, ERROR lines 0) KA full flame s44
+[2026-10-25 05:38:07] done(rc=0, ERROR lines 0) KA trainable flame s44
+[2026-10-25 05:38:13] start KA full foolsgold s44 (pass 1)
+[2026-10-25 05:38:33] start KA trainable foolsgold s44 (pass 1)
+[2026-10-25 05:38:54] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:46:21] done(rc=0, ERROR lines 0) KA full foolsgold s44
+[2026-10-25 05:46:50] done(rc=0, ERROR lines 0) KA trainable foolsgold s44
+[2026-10-25 05:46:56] start KA full fldetector s44 (pass 1)
+[2026-10-25 05:47:16] start KA trainable fldetector s44 (pass 1)
+[2026-10-25 05:47:36] waiting: running=2 allowed=2 gpu_free=2922MiB mem=15G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 05:55:17] done(rc=0, ERROR lines 0) KA full fldetector s44
+[2026-10-25 05:55:38] start KA full gradcos s44 (pass 1)
+[2026-10-25 05:55:54] done(rc=0, ERROR lines 0) KA trainable fldetector s44
+[2026-10-25 05:55:59] start KA trainable gradcos s44 (pass 1)
+[2026-10-25 05:56:19] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 06:04:02] done(rc=0, ERROR lines 0) KA full gradcos s44
+[2026-10-25 06:04:21] start KA full flame s45 (pass 1)
+[2026-10-25 06:04:41] waiting: running=2 allowed=2 gpu_free=2414MiB mem=14G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 06:04:48] done(rc=0, ERROR lines 0) KA trainable gradcos s44
+[2026-10-25 06:05:42] start KA trainable flame s45 (pass 1)
+[2026-10-25 06:06:02] waiting: running=2 allowed=2 gpu_free=2912MiB mem=15G load=9 (need 1800MiB 5G <=36)
+[2026-10-25 06:12:34] done(rc=0, ERROR lines 0) KA full flame s45
+[2026-10-25 06:13:04] start KA full foolsgold s45 (pass 1)
+[2026-10-25 06:13:24] waiting: running=2 allowed=2 gpu_free=2414MiB mem=13G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 06:14:06] done(rc=0, ERROR lines 0) KA trainable flame s45
+[2026-10-25 06:14:25] start KA trainable foolsgold s45 (pass 1)
+[2026-10-25 06:14:45] waiting: running=2 allowed=2 gpu_free=2912MiB mem=14G load=11 (need 1800MiB 5G <=36)
+[2026-10-25 06:21:44] done(rc=0, ERROR lines 0) KA full foolsgold s45
+[2026-10-25 06:21:47] start KA full fldetector s45 (pass 1)
+[2026-10-25 06:22:07] waiting: running=2 allowed=2 gpu_free=2414MiB mem=14G load=10 (need 1800MiB 5G <=36)
+[2026-10-25 06:23:04] done(rc=0, ERROR lines 0) KA trainable foolsgold s45
+[2026-10-25 06:23:08] start KA trainable fldetector s45 (pass 1)
+[2026-10-25 06:23:28] waiting: running=2 allowed=2 gpu_free=2912MiB mem=15G load=10 (need 1800MiB 5G <=36)
+[2026-10-28 23:04:55] K1 runner (pid 48663) start: 80 cells, DEVICE=cpu LANES=1 NEED_MB=1800 MEM_GB=5 LOAD_MAX=36 policy=share
+[2026-10-28 23:04:55] start KA full flame s42 (pass 1)
+[2026-10-28 23:05:15] waiting: running=1 allowed=1 gpu_free=999999MiB mem=17G load=20 (need 1800MiB 5G <=36)
+[2026-10-28 23:29:51] done(rc=0, ERROR lines 1) KA full flame s42
+[2026-10-28 23:30:19] start KA trainable flame s42 (pass 1)
+[2026-10-28 23:30:39] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=23 (need 1800MiB 5G <=36)
+[2026-10-28 23:49:53] done(rc=0, ERROR lines 1) KA trainable flame s42
+[2026-10-28 23:50:42] start KA full fldetector s45 (pass 1)
+[2026-10-28 23:51:02] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=23 (need 1800MiB 5G <=36)
+[2026-10-29 00:09:00] done(rc=0, ERROR lines 0) KA full fldetector s45
+[2026-10-29 00:09:04] start KA trainable fldetector s45 (pass 1)
+[2026-10-29 00:09:24] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=24 (need 1800MiB 5G <=36)
+[2026-10-29 00:28:30] done(rc=0, ERROR lines 0) KA trainable fldetector s45
+[2026-10-29 00:29:26] start KA full gradcos s45 (pass 1)
+[2026-10-29 00:29:46] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=23 (need 1800MiB 5G <=36)
+[2026-10-29 00:48:36] done(rc=0, ERROR lines 0) KA full gradcos s45
+[2026-10-29 00:48:48] start KA trainable gradcos s45 (pass 1)
+[2026-10-29 00:49:08] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 01:08:06] done(rc=0, ERROR lines 0) KA trainable gradcos s45
+[2026-10-29 01:08:10] start KA full flame s46 (pass 1)
+[2026-10-29 01:08:31] waiting: running=1 allowed=1 gpu_free=999999MiB mem=15G load=26 (need 1800MiB 5G <=36)
+[2026-10-29 01:27:51] done(rc=0, ERROR lines 0) KA full flame s46
+[2026-10-29 01:28:33] start KA trainable flame s46 (pass 1)
+[2026-10-29 01:28:53] waiting: running=1 allowed=1 gpu_free=999999MiB mem=15G load=24 (need 1800MiB 5G <=36)
+[2026-10-29 01:46:56] done(rc=0, ERROR lines 0) KA trainable flame s46
+[2026-10-29 01:47:55] start KA full foolsgold s46 (pass 1)
+[2026-10-29 01:48:15] waiting: running=1 allowed=1 gpu_free=999999MiB mem=15G load=24 (need 1800MiB 5G <=36)
+[2026-10-29 02:07:58] done(rc=0, ERROR lines 0) KA full foolsgold s46
+[2026-10-29 02:08:17] start KA trainable foolsgold s46 (pass 1)
+[2026-10-29 02:08:37] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 02:28:04] done(rc=0, ERROR lines 0) KA trainable foolsgold s46
+[2026-10-29 02:28:39] start KA full fldetector s46 (pass 1)
+[2026-10-29 02:28:59] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 02:46:34] done(rc=0, ERROR lines 0) KA full fldetector s46
+[2026-10-29 02:47:01] start KA trainable fldetector s46 (pass 1)
+[2026-10-29 02:47:21] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 03:06:44] done(rc=0, ERROR lines 0) KA trainable fldetector s46
+[2026-10-29 03:07:23] start KA full gradcos s46 (pass 1)
+[2026-10-29 03:07:43] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 03:27:30] done(rc=0, ERROR lines 0) KA full gradcos s46
+[2026-10-29 03:27:45] start KA trainable gradcos s46 (pass 1)
+[2026-10-29 03:28:05] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=26 (need 1800MiB 5G <=36)
+[2026-10-29 03:47:45] done(rc=0, ERROR lines 0) KA trainable gradcos s46
+[2026-10-29 03:48:07] start KB full flame s42 (pass 1)
+[2026-10-29 03:48:27] waiting: running=1 allowed=1 gpu_free=999999MiB mem=15G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 04:18:30] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 04:48:14] done(rc=0, ERROR lines 0) KB full flame s42
+[2026-10-29 04:48:33] start KB trainable flame s42 (pass 1)
+[2026-10-29 04:48:53] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=24 (need 1800MiB 5G <=36)
+[2026-10-29 05:18:56] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=26 (need 1800MiB 5G <=36)
+[2026-10-29 05:48:59] waiting: running=1 allowed=1 gpu_free=999999MiB mem=15G load=26 (need 1800MiB 5G <=36)
+[2026-10-29 05:49:08] done(rc=0, ERROR lines 0) KB trainable flame s42
+[2026-10-29 05:49:59] start KB full foolsgold s42 (pass 1)
+[2026-10-29 05:50:19] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=24 (need 1800MiB 5G <=36)
+[2026-10-29 06:20:22] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 06:50:25] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 07:20:28] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 07:50:31] waiting: running=1 allowed=1 gpu_free=999999MiB mem=15G load=27 (need 1800MiB 5G <=36)
+[2026-10-29 08:20:35] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=27 (need 1800MiB 5G <=36)
+[2026-10-29 08:50:47] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=29 (need 1800MiB 5G <=36)
+[2026-10-29 09:20:47] done(rc=0, ERROR lines 0) KB full foolsgold s42
+[2026-10-29 09:20:56] start KB trainable foolsgold s42 (pass 1)
+[2026-10-29 09:21:16] waiting: running=1 allowed=1 gpu_free=999999MiB mem=16G load=25 (need 1800MiB 5G <=36)
+[2026-10-29 09:51:19] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=13 (need 1800MiB 5G <=36)
+[2026-10-29 10:21:30] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=29 (need 1800MiB 5G <=36)
+[2026-10-29 10:51:40] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=29 (need 1800MiB 5G <=36)
+[2026-10-29 11:21:52] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=32 (need 1800MiB 5G <=36)
+[2026-10-29 11:52:03] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=32 (need 1800MiB 5G <=36)
+[2026-10-29 12:22:14] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=33 (need 1800MiB 5G <=36)
+[2026-10-29 12:52:25] waiting: running=1 allowed=1 gpu_free=999999MiB mem=11G load=33 (need 1800MiB 5G <=36)
+[2026-10-29 13:22:34] waiting: running=1 allowed=1 gpu_free=999999MiB mem=11G load=30 (need 1800MiB 5G <=36)
+[2026-10-29 13:52:42] waiting: running=1 allowed=1 gpu_free=999999MiB mem=11G load=29 (need 1800MiB 5G <=36)
+[2026-10-29 14:22:51] waiting: running=1 allowed=1 gpu_free=999999MiB mem=11G load=30 (need 1800MiB 5G <=36)
+[2026-10-29 14:53:01] waiting: running=1 allowed=1 gpu_free=999999MiB mem=11G load=32 (need 1800MiB 5G <=36)
+[2026-10-29 15:23:10] waiting: running=1 allowed=1 gpu_free=999999MiB mem=11G load=30 (need 1800MiB 5G <=36)
+[2026-10-29 15:35:45] done(rc=0, ERROR lines 0) KB trainable foolsgold s42
+[2026-10-29 15:36:15] start KB full fldetector s42 (pass 1)
+[2026-10-29 15:36:35] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=29 (need 1800MiB 5G <=36)
+[2026-10-29 16:06:42] waiting: running=1 allowed=1 gpu_free=999999MiB mem=13G load=24 (need 1800MiB 5G <=36)
+[2026-10-29 16:55:53] K1 runner (pid 8412) start: 80 cells, DEVICE=cpu LANES=1 NEED_MB=1800 MEM_GB=5 LOAD_MAX=36 policy=share
+[2026-10-29 16:55:53] start KB full fldetector s42 (pass 1)
+[2026-10-29 16:56:13] waiting: running=1 allowed=1 gpu_free=999999MiB mem=20G load=3 (need 1800MiB 5G <=36)
+[2026-10-29 17:26:18] waiting: running=1 allowed=1 gpu_free=999999MiB mem=19G load=15 (need 1800MiB 5G <=36)
+[2026-10-29 17:56:24] waiting: running=1 allowed=1 gpu_free=999999MiB mem=17G load=32 (need 1800MiB 5G <=36)
+[2026-10-29 18:26:29] waiting: running=1 allowed=1 gpu_free=999999MiB mem=17G load=31 (need 1800MiB 5G <=36)
+[2026-10-29 18:56:36] waiting: running=1 allowed=1 gpu_free=999999MiB mem=12G load=39 (need 1800MiB 5G <=36)
+[2026-10-29 19:01:54] stopped by owner request (CPU freed); remaining jobs moved to Kaggle CPU kernels

@@ -346,9 +346,15 @@ boosted tenfold); FLAME, FoolsGold, FLDetector, GradCos, both arms, seeds $42$--
 FoolsGold's does not (no sign for the other two). The primary test pools
 $\tau_r[(\mathrm{DR_{def}}-\mathrm{DR_{fix}})_{k>1}-(\cdot)_{k<1}]$ ($k<1$: the re-run, same rule and seed; $\tau=+1$
 FLAME, $-1$ FoolsGold) in an exact sign-flip test per setting (Holm) after a manipulation
-check (median $\hat k>1$). Status (\koStatus, $\koCells$/$\koCellsTotal$): KA
-$\hat k=\koAKhat$, \koAHOneSup{} ($p=\koAHOneP$); KB $\hat k=\koBKhat$, \koBHOneSup;
-$k^2$ law \koMOneSup.
+check (median $\hat k>1$). All $\koCells$ cells ran ($36$ on Kaggle GPUs); both settings
+pass the check (KA $\hat k=\koAKhat$, KB $\koBKhat$) and the reversal is \koAHOneSup{} in each
+($p_H=\koAHOneP$, $\koBHOneP$; $n=\koAHOneN$ pairs each). DR, defect/fixed: FLAME $\koAFlameDRdef$/$\koAFlameDRfix$
+(KA), $\koBFlameDRdef$/$\koBFlameDRfix$ (KB); FoolsGold $\koAFgDRdef$/$\koAFgDRfix$, $\koBFgDRdef$/$\koBFgDRfix$
+(expected $\le0.1$: met in KA only); descriptive, FLDetector $\koAFldDRdef$/$\koAFldDRfix$,
+$\koBFldDRdef$/$\koBFldDRfix$, GradCos $\koAGcDRdef$/$\koAGcDRfix$, $\koBGcDRdef$/$\koBGcDRfix$. The pooled
+within-$k>1$ test is \koHTwoSup{} ($p=\koHTwoP$, $n=\koHTwoN$): the effect vanished but did not
+reverse in sign. The $k^2$ law is \koMOneSup{} out of sample (median observed/predicted $\koMOneQ$,
+$Q_{\mathrm{obs}}>1$ in $\koMOneAbove$ of $\koMOneN$ pairs).
 
 \subsection{The FoolsGold diagnostic}
 \label{sup:fgdiag}
@@ -669,12 +675,9 @@ $\kappa=1.5$, RFA $8$ iterations; none was tuned.
 This paper began as a robustness study on a pipeline with the defect. Four of its findings
 were statements about the counter, not the rules, and are withdrawn (none of their numbers is
 reused): that FLTrust never excludes a client (Corollary~\ref{cor:fltrust}); that it
-pays a clean-accuracy cost (the factor $B_0/B_i\approx2/79$ of that corollary shrank every
-update fortyfold); that FoolsGold pays for its robustness in clean accuracy because of
-the counter (the difference came from our engine's round-one defect, Sec.~\ref{sec:setup};
-once fixed, FoolsGold excludes most honest clients under our label skew in either arm,
-Sec.~\ref{sec:mech}); and that colluders' updates have pairwise cosine near one (so does every
-pair, about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}), with the analysis built on it.
+pays a clean-accuracy cost (the factor $B_0/B_i\approx2/79$ shrank every update); that FoolsGold pays for its robustness in clean accuracy because of
+the counter (it came from our engine's round-one defect, Sec.~\ref{sec:setup}); and that colluders' updates have pairwise cosine near one (so does every
+pair, about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}), and the analysis built on it.
 
 \section{The trigger}
 \label{sup:realize}

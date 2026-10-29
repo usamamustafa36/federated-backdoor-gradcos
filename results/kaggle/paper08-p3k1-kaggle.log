@@ -1,0 +1,531 @@
+[{"stream_name":"stderr","time":11.047231783,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":11.047263092,"data":"grpcio-tools 1.71.2 requires protobuf\u003c6.0dev,\u003e=5.26.1, but you have protobuf 6.33.6 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.047268246,"data":"nilearn 0.14.1 requires packaging\u003e=26.0.0, but you have packaging 25.0 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.047271957,"data":"sigstore 4.5.1 requires cryptography\u003e=47, but you have cryptography 46.0.7 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.047275662,"data":"black 26.10.1 requires pathspec\u003e=1.0.0, but you have pathspec 0.12.1 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.047279712,"data":"gradio 6.26.0 requires pillow\u003c13.0,\u003e=8.0, but you have pillow 13.0.0 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.0472846,"data":"google-ai-generativelanguage 0.6.15 requires protobuf!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5,\u003c6.0.0dev,\u003e=3.20.2, but you have protobuf 6.33.6 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.047290492,"data":"pyopenssl 26.4.0 requires cryptography\u003c51,\u003e=49.0.0, but you have cryptography 46.0.7 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.047295002,"data":"grpcio-status 1.71.2 requires protobuf\u003c6.0dev,\u003e=5.26.1, but you have protobuf 6.33.6 which is incompatible.\n"}
+,{"stream_name":"stderr","time":11.969125344,"data":"/kaggle/src/script.py:267: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n"}
+,{"stream_name":"stderr","time":11.969159147,"data":"  tarfile.open(glob.glob(\"/kaggle/input/**/p08code.tgz\", recursive=True)[0]).extractall(REPO)\n"}
+,{"stream_name":"stdout","time":19.323079148,"data":"2.11.0+cu128 ['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":19.323622986,"data":"255 jobs, 6 lanes on 2 GPUs\n"}
+,{"stream_name":"stdout","time":19.326945412,"data":"[0.01h] start lane0 K1 KB 15 10 full fldetector 42\n"}
+,{"stream_name":"stdout","time":19.326965741,"data":"[0.01h] start lane1 K1 KB 15 10 trainable fldetector 42\n"}
+,{"stream_name":"stdout","time":19.326970141,"data":"[0.01h] start lane2 K1 KB 15 10 full gradcos 42\n"}
+,{"stream_name":"stdout","time":19.327217943,"data":"[0.01h] start lane3 K1 KB 15 10 trainable gradcos 42\n"}
+,{"stream_name":"stdout","time":19.332043006,"data":"[0.01h] start lane4 K1 KB 15 10 full flame 43\n"}
+,{"stream_name":"stdout","time":19.334294278,"data":"[0.01h] start lane5 K1 KB 15 10 trainable flame 43\n"}
+,{"stream_name":"stdout","time":799.351009507,"data":"[0.22h] done(rc=0) K1 KB 15 10 full fldetector 42 13.0min\n"}
+,{"stream_name":"stdout","time":799.351867807,"data":"[0.22h] start lane0 K1 KB 15 10 full foolsgold 43\n"}
+,{"stream_name":"stdout","time":799.351995673,"data":"[0.22h] done(rc=0) K1 KB 15 10 trainable fldetector 42 13.0min\n"}
+,{"stream_name":"stdout","time":799.352805123,"data":"[0.22h] start lane1 K1 KB 15 10 trainable foolsgold 43\n"}
+,{"stream_name":"stdout","time":799.353554959,"data":"[0.22h] done(rc=0) K1 KB 15 10 full gradcos 42 13.0min\n"}
+,{"stream_name":"stdout","time":799.355097639,"data":"[0.22h] start lane2 K1 KB 15 10 full fldetector 43\n"}
+,{"stream_name":"stdout","time":799.355350709,"data":"[0.22h] done(rc=0) K1 KB 15 10 trainable gradcos 42 13.0min\n"}
+,{"stream_name":"stdout","time":799.3563777,"data":"[0.22h] start lane3 K1 KB 15 10 trainable fldetector 43\n"}
+,{"stream_name":"stdout","time":799.35674583,"data":"[0.22h] done(rc=0) K1 KB 15 10 full flame 43 13.0min\n"}
+,{"stream_name":"stdout","time":799.359125732,"data":"[0.22h] start lane4 K1 KB 15 10 full gradcos 43\n"}
+,{"stream_name":"stdout","time":799.359484097,"data":"[0.22h] done(rc=0) K1 KB 15 10 trainable flame 43 13.0min\n"}
+,{"stream_name":"stdout","time":799.364146182,"data":"[0.22h] start lane5 K1 KB 15 10 trainable gradcos 43\n"}
+,{"stream_name":"stdout","time":1099.379389383,"data":"[0.31h] done(rc=0) K1 KB 15 10 full foolsgold 43 5.0min\n"}
+,{"stream_name":"stdout","time":1099.380436584,"data":"[0.31h] start lane0 K1 KB 15 10 full flame 44\n"}
+,{"stream_name":"stdout","time":1099.380598659,"data":"[0.31h] done(rc=0) K1 KB 15 10 trainable foolsgold 43 5.0min\n"}
+,{"stream_name":"stdout","time":1099.38144293,"data":"[0.31h] start lane1 K1 KB 15 10 trainable flame 44\n"}
+,{"stream_name":"stdout","time":1099.381525972,"data":"[0.31h] done(rc=0) K1 KB 15 10 full fldetector 43 5.0min\n"}
+,{"stream_name":"stdout","time":1099.382758618,"data":"[0.31h] start lane2 K1 KB 15 10 full foolsgold 44\n"}
+,{"stream_name":"stdout","time":1099.383683644,"data":"[0.31h] done(rc=0) K1 KB 15 10 trainable fldetector 43 5.0min\n"}
+,{"stream_name":"stdout","time":1099.385152771,"data":"[0.31h] start lane3 K1 KB 15 10 trainable foolsgold 44\n"}
+,{"stream_name":"stdout","time":1099.385478593,"data":"[0.31h] done(rc=0) K1 KB 15 10 full gradcos 43 5.0min\n"}
+,{"stream_name":"stdout","time":1099.38651967,"data":"[0.31h] start lane4 K1 KB 15 10 full fldetector 44\n"}
+,{"stream_name":"stdout","time":1099.389015613,"data":"[0.31h] done(rc=0) K1 KB 15 10 trainable gradcos 43 5.0min\n"}
+,{"stream_name":"stdout","time":1099.393269964,"data":"[0.31h] start lane5 K1 KB 15 10 trainable fldetector 44\n"}
+,{"stream_name":"stdout","time":1384.406132052,"data":"[0.38h] done(rc=0) K1 KB 15 10 full flame 44 4.8min\n"}
+,{"stream_name":"stdout","time":1384.408480133,"data":"[0.38h] start lane0 K1 KB 15 10 full gradcos 44\n"}
+,{"stream_name":"stdout","time":1384.40935534,"data":"[0.38h] done(rc=0) K1 KB 15 10 full foolsgold 44 4.8min\n"}
+,{"stream_name":"stdout","time":1384.415190177,"data":"[0.38h] start lane2 K1 KB 15 10 trainable gradcos 44\n"}
+,{"stream_name":"stdout","time":1384.415501578,"data":"[0.38h] done(rc=0) K1 KB 15 10 full fldetector 44 4.8min\n"}
+,{"stream_name":"stdout","time":1384.417380512,"data":"[0.38h] start lane4 K1 KB 15 10 full flame 45\n"}
+,{"stream_name":"stdout","time":1399.418050144,"data":"[0.39h] done(rc=0) K1 KB 15 10 trainable flame 44 5.0min\n"}
+,{"stream_name":"stdout","time":1399.419468424,"data":"[0.39h] start lane1 K1 KB 15 10 trainable flame 45\n"}
+,{"stream_name":"stdout","time":1399.420073011,"data":"[0.39h] done(rc=0) K1 KB 15 10 trainable foolsgold 44 5.0min\n"}
+,{"stream_name":"stdout","time":1399.422948597,"data":"[0.39h] start lane3 K1 KB 15 10 full foolsgold 45\n"}
+,{"stream_name":"stdout","time":1399.423316157,"data":"[0.39h] done(rc=0) K1 KB 15 10 trainable fldetector 44 5.0min\n"}
+,{"stream_name":"stdout","time":1399.426484338,"data":"[0.39h] start lane5 K1 KB 15 10 trainable foolsgold 45\n"}
+,{"stream_name":"stdout","time":1654.437054442,"data":"[0.46h] done(rc=0) K1 KB 15 10 full flame 45 4.5min\n"}
+,{"stream_name":"stdout","time":1654.439342107,"data":"[0.46h] start lane4 K1 KB 15 10 full fldetector 45\n"}
+,{"stream_name":"stdout","time":1669.439862642,"data":"[0.46h] done(rc=0) K1 KB 15 10 full gradcos 44 4.8min\n"}
+,{"stream_name":"stdout","time":1669.442422188,"data":"[0.46h] start lane0 K1 KB 15 10 trainable fldetector 45\n"}
+,{"stream_name":"stdout","time":1669.443062866,"data":"[0.46h] done(rc=0) K1 KB 15 10 trainable gradcos 44 4.8min\n"}
+,{"stream_name":"stdout","time":1669.446166555,"data":"[0.46h] start lane2 K1 KB 15 10 full gradcos 45\n"}
+,{"stream_name":"stdout","time":1684.446128542,"data":"[0.47h] done(rc=0) K1 KB 15 10 trainable flame 45 4.8min\n"}
+,{"stream_name":"stdout","time":1684.451035525,"data":"[0.47h] start lane1 K1 KB 15 10 trainable gradcos 45\n"}
+,{"stream_name":"stdout","time":1684.451062593,"data":"[0.47h] done(rc=0) K1 KB 15 10 full foolsgold 45 4.8min\n"}
+,{"stream_name":"stdout","time":1684.45174698,"data":"[0.47h] start lane3 K1 KB 15 10 full flame 46\n"}
+,{"stream_name":"stdout","time":1684.455309804,"data":"[0.47h] done(rc=0) K1 KB 15 10 trainable foolsgold 45 4.8min\n"}
+,{"stream_name":"stdout","time":1684.457485647,"data":"[0.47h] start lane5 K1 KB 15 10 trainable flame 46\n"}
+,{"stream_name":"stdout","time":1924.464508047,"data":"[0.53h] done(rc=0) K1 KB 15 10 full fldetector 45 4.5min\n"}
+,{"stream_name":"stdout","time":1924.466456256,"data":"[0.53h] start lane4 K1 KB 15 10 full foolsgold 46\n"}
+,{"stream_name":"stdout","time":1954.467215661,"data":"[0.54h] done(rc=0) K1 KB 15 10 trainable fldetector 45 4.8min\n"}
+,{"stream_name":"stdout","time":1954.469454825,"data":"[0.54h] start lane0 K1 KB 15 10 trainable foolsgold 46\n"}
+,{"stream_name":"stdout","time":1954.471200383,"data":"[0.54h] done(rc=0) K1 KB 15 10 full gradcos 45 4.8min\n"}
+,{"stream_name":"stdout","time":1954.472773036,"data":"[0.54h] start lane2 K1 KB 15 10 full fldetector 46\n"}
+,{"stream_name":"stdout","time":1984.473357595,"data":"[0.55h] done(rc=0) K1 KB 15 10 trainable gradcos 45 5.0min\n"}
+,{"stream_name":"stdout","time":1984.477678158,"data":"[0.55h] start lane1 K1 KB 15 10 trainable fldetector 46\n"}
+,{"stream_name":"stdout","time":1984.477945999,"data":"[0.55h] done(rc=0) K1 KB 15 10 full flame 46 5.0min\n"}
+,{"stream_name":"stdout","time":1984.47913723,"data":"[0.55h] start lane3 K1 KB 15 10 full gradcos 46\n"}
+,{"stream_name":"stdout","time":1984.479354931,"data":"[0.55h] done(rc=0) K1 KB 15 10 trainable flame 46 5.0min\n"}
+,{"stream_name":"stdout","time":1984.482292132,"data":"[0.55h] start lane5 K1 KB 15 10 trainable gradcos 46\n"}
+,{"stream_name":"stdout","time":2179.49083995,"data":"[0.61h] done(rc=0) K1 KB 15 10 full foolsgold 46 4.3min\n"}
+,{"stream_name":"stdout","time":2179.492358755,"data":"[0.61h] start lane4 P3 attacked trainable dirichlet foolsgold 46\n"}
+,{"stream_name":"stdout","time":2224.493248465,"data":"[0.62h] done(rc=0) K1 KB 15 10 trainable foolsgold 46 4.5min\n"}
+,{"stream_name":"stdout","time":2224.496231871,"data":"[0.62h] start lane0 P3 attacked full dirichlet foolsgold 47\n"}
+,{"stream_name":"stdout","time":2224.496263992,"data":"[0.62h] done(rc=0) K1 KB 15 10 full fldetector 46 4.5min\n"}
+,{"stream_name":"stdout","time":2224.499088587,"data":"[0.62h] start lane2 P3 attacked trainable dirichlet foolsgold 47\n"}
+,{"stream_name":"stdout","time":2284.499927193,"data":"[0.63h] done(rc=0) K1 KB 15 10 trainable fldetector 46 5.0min\n"}
+,{"stream_name":"stdout","time":2284.501867744,"data":"[0.63h] start lane1 P3 attacked full dirichlet foolsgold 48\n"}
+,{"stream_name":"stdout","time":2284.502031919,"data":"[0.63h] done(rc=0) K1 KB 15 10 full gradcos 46 5.0min\n"}
+,{"stream_name":"stdout","time":2284.506088665,"data":"[0.63h] start lane3 P3 attacked trainable dirichlet foolsgold 48\n"}
+,{"stream_name":"stdout","time":2284.506172081,"data":"[0.63h] done(rc=0) K1 KB 15 10 trainable gradcos 46 5.0min\n"}
+,{"stream_name":"stdout","time":2284.511077632,"data":"[0.63h] start lane5 P3 attacked full dirichlet foolsgold 49\n"}
+,{"stream_name":"stdout","time":2419.513913402,"data":"[0.67h] done(rc=0) P3 attacked trainable dirichlet foolsgold 46 4.0min\n"}
+,{"stream_name":"stdout","time":2419.519136932,"data":"[0.67h] start lane4 P3 attacked trainable dirichlet foolsgold 49\n"}
+,{"stream_name":"stdout","time":2479.522451215,"data":"[0.69h] done(rc=0) P3 attacked full dirichlet foolsgold 47 4.3min\n"}
+,{"stream_name":"stdout","time":2479.525004202,"data":"[0.69h] start lane0 P3 attacked full dirichlet foolsgold 50\n"}
+,{"stream_name":"stdout","time":2479.525024739,"data":"[0.69h] done(rc=0) P3 attacked trainable dirichlet foolsgold 47 4.3min\n"}
+,{"stream_name":"stdout","time":2479.529082711,"data":"[0.69h] start lane2 P3 attacked trainable dirichlet foolsgold 50\n"}
+,{"stream_name":"stdout","time":2569.530984293,"data":"[0.71h] done(rc=0) P3 attacked trainable dirichlet foolsgold 48 4.8min\n"}
+,{"stream_name":"stdout","time":2569.532275893,"data":"[0.71h] start lane3 P3 attacked full dirichlet foolsgold 51\n"}
+,{"stream_name":"stdout","time":2584.532671088,"data":"[0.72h] done(rc=0) P3 attacked full dirichlet foolsgold 48 5.0min\n"}
+,{"stream_name":"stdout","time":2584.534050389,"data":"[0.72h] start lane1 P3 attacked trainable dirichlet foolsgold 51\n"}
+,{"stream_name":"stdout","time":2584.534291438,"data":"[0.72h] done(rc=0) P3 attacked full dirichlet foolsgold 49 5.0min\n"}
+,{"stream_name":"stdout","time":2584.539162357,"data":"[0.72h] start lane5 P3 attacked full dirichlet krum 47\n"}
+,{"stream_name":"stdout","time":2674.541184412,"data":"[0.74h] done(rc=0) P3 attacked trainable dirichlet foolsgold 49 4.3min\n"}
+,{"stream_name":"stdout","time":2674.545092737,"data":"[0.74h] start lane4 P3 attacked trainable dirichlet krum 47\n"}
+,{"stream_name":"stdout","time":2749.546216072,"data":"[0.76h] done(rc=0) P3 attacked full dirichlet foolsgold 50 4.5min\n"}
+,{"stream_name":"stdout","time":2749.551966944,"data":"[0.76h] start lane0 P3 attacked full dirichlet krum 48\n"}
+,{"stream_name":"stdout","time":2749.552024509,"data":"[0.76h] done(rc=0) P3 attacked trainable dirichlet foolsgold 50 4.5min\n"}
+,{"stream_name":"stdout","time":2749.552031896,"data":"[0.76h] start lane2 P3 attacked trainable dirichlet krum 48\n"}
+,{"stream_name":"stdout","time":2854.557642062,"data":"[0.79h] done(rc=0) P3 attacked full dirichlet foolsgold 51 4.8min\n"}
+,{"stream_name":"stdout","time":2854.559375921,"data":"[0.79h] start lane3 P3 attacked full dirichlet krum 49\n"}
+,{"stream_name":"stdout","time":2854.559578235,"data":"[0.79h] done(rc=0) P3 attacked full dirichlet krum 47 4.5min\n"}
+,{"stream_name":"stdout","time":2854.563070755,"data":"[0.79h] start lane5 P3 attacked trainable dirichlet krum 49\n"}
+,{"stream_name":"stdout","time":2869.563533663,"data":"[0.80h] done(rc=0) P3 attacked trainable dirichlet foolsgold 51 4.8min\n"}
+,{"stream_name":"stdout","time":2869.564986807,"data":"[0.80h] start lane1 P3 attacked full dirichlet krum 50\n"}
+,{"stream_name":"stdout","time":2899.566344649,"data":"[0.81h] done(rc=0) P3 attacked trainable dirichlet krum 47 3.8min\n"}
+,{"stream_name":"stdout","time":2899.571166631,"data":"[0.81h] start lane4 P3 attacked trainable dirichlet krum 50\n"}
+,{"stream_name":"stdout","time":3004.576712059,"data":"[0.83h] done(rc=0) P3 attacked full dirichlet krum 48 4.3min\n"}
+,{"stream_name":"stdout","time":3004.582111712,"data":"[0.83h] start lane0 P3 attacked full dirichlet krum 51\n"}
+,{"stream_name":"stdout","time":3004.582368481,"data":"[0.83h] done(rc=0) P3 attacked trainable dirichlet krum 48 4.3min\n"}
+,{"stream_name":"stdout","time":3004.584296574,"data":"[0.83h] start lane2 P3 attacked trainable dirichlet krum 51\n"}
+,{"stream_name":"stdout","time":3124.588053117,"data":"[0.87h] done(rc=0) P3 attacked trainable dirichlet krum 50 3.8min\n"}
+,{"stream_name":"stdout","time":3124.589443384,"data":"[0.87h] start lane4 P3 attacked full dirichlet gradcos 47\n"}
+,{"stream_name":"stdout","time":3139.590028699,"data":"[0.87h] done(rc=0) P3 attacked full dirichlet krum 49 4.8min\n"}
+,{"stream_name":"stdout","time":3139.592284144,"data":"[0.87h] start lane3 P3 attacked trainable dirichlet gradcos 47\n"}
+,{"stream_name":"stdout","time":3139.592307608,"data":"[0.87h] done(rc=0) P3 attacked trainable dirichlet krum 49 4.8min\n"}
+,{"stream_name":"stdout","time":3139.596098598,"data":"[0.87h] start lane5 P3 attacked full dirichlet gradcos 48\n"}
+,{"stream_name":"stdout","time":3154.596490252,"data":"[0.88h] done(rc=0) P3 attacked full dirichlet krum 50 4.8min\n"}
+,{"stream_name":"stdout","time":3154.600010331,"data":"[0.88h] start lane1 P3 attacked trainable dirichlet gradcos 48\n"}
+,{"stream_name":"stdout","time":3259.604322239,"data":"[0.91h] done(rc=0) P3 attacked full dirichlet krum 51 4.3min\n"}
+,{"stream_name":"stdout","time":3259.607387043,"data":"[0.91h] start lane0 P3 attacked full dirichlet gradcos 49\n"}
+,{"stream_name":"stdout","time":3259.607639067,"data":"[0.91h] done(rc=0) P3 attacked trainable dirichlet krum 51 4.3min\n"}
+,{"stream_name":"stdout","time":3259.608970081,"data":"[0.91h] start lane2 P3 attacked trainable dirichlet gradcos 49\n"}
+,{"stream_name":"stdout","time":3349.612710356,"data":"[0.93h] done(rc=0) P3 attacked full dirichlet gradcos 47 3.8min\n"}
+,{"stream_name":"stdout","time":3349.615165722,"data":"[0.93h] start lane4 P3 attacked full dirichlet gradcos 50\n"}
+,{"stream_name":"stdout","time":3424.618941161,"data":"[0.95h] done(rc=0) P3 attacked trainable dirichlet gradcos 47 4.8min\n"}
+,{"stream_name":"stdout","time":3424.621266495,"data":"[0.95h] start lane3 P3 attacked trainable dirichlet gradcos 50\n"}
+,{"stream_name":"stdout","time":3424.621574324,"data":"[0.95h] done(rc=0) P3 attacked full dirichlet gradcos 48 4.8min\n"}
+,{"stream_name":"stdout","time":3424.625085393,"data":"[0.95h] start lane5 P3 attacked full dirichlet gradcos 51\n"}
+,{"stream_name":"stdout","time":3439.625511635,"data":"[0.96h] done(rc=0) P3 attacked trainable dirichlet gradcos 48 4.8min\n"}
+,{"stream_name":"stdout","time":3439.627351589,"data":"[0.96h] start lane1 P3 attacked trainable dirichlet gradcos 51\n"}
+,{"stream_name":"stdout","time":3529.631928386,"data":"[0.98h] done(rc=0) P3 attacked full dirichlet gradcos 49 4.5min\n"}
+,{"stream_name":"stdout","time":3529.633462085,"data":"[0.98h] start lane0 P3 attacked full dirichlet bulyan 47\n"}
+,{"stream_name":"stdout","time":3529.633677889,"data":"[0.98h] done(rc=0) P3 attacked trainable dirichlet gradcos 49 4.5min\n"}
+,{"stream_name":"stdout","time":3529.638029243,"data":"[0.98h] start lane2 P3 attacked trainable dirichlet bulyan 47\n"}
+,{"stream_name":"stdout","time":3589.643252789,"data":"[1.00h] done(rc=0) P3 attacked full dirichlet gradcos 50 4.0min\n"}
+,{"stream_name":"stdout","time":3589.645549868,"data":"[1.00h] start lane4 P3 attacked full dirichlet bulyan 48\n"}
+,{"stream_name":"stdout","time":3709.648792786,"data":"[1.03h] done(rc=0) P3 attacked trainable dirichlet gradcos 50 4.8min\n"}
+,{"stream_name":"stdout","time":3709.651408741,"data":"[1.03h] start lane3 P3 attacked trainable dirichlet bulyan 48\n"}
+,{"stream_name":"stdout","time":3709.651553638,"data":"[1.03h] done(rc=0) P3 attacked full dirichlet gradcos 51 4.8min\n"}
+,{"stream_name":"stdout","time":3709.654420427,"data":"[1.03h] start lane5 P3 attacked full dirichlet bulyan 49\n"}
+,{"stream_name":"stdout","time":3724.655227262,"data":"[1.03h] done(rc=0) P3 attacked trainable dirichlet gradcos 51 4.8min\n"}
+,{"stream_name":"stdout","time":3724.661109497,"data":"[1.03h] start lane1 P3 attacked trainable dirichlet bulyan 49\n"}
+,{"stream_name":"stdout","time":3799.663808278,"data":"[1.06h] done(rc=0) P3 attacked full dirichlet bulyan 47 4.5min\n"}
+,{"stream_name":"stdout","time":3799.667327263,"data":"[1.06h] start lane0 P3 attacked full dirichlet bulyan 50\n"}
+,{"stream_name":"stdout","time":3799.667593961,"data":"[1.06h] done(rc=0) P3 attacked trainable dirichlet bulyan 47 4.5min\n"}
+,{"stream_name":"stdout","time":3799.669311072,"data":"[1.06h] start lane2 P3 attacked trainable dirichlet bulyan 50\n"}
+,{"stream_name":"stdout","time":3844.673324597,"data":"[1.07h] done(rc=0) P3 attacked full dirichlet bulyan 48 4.3min\n"}
+,{"stream_name":"stdout","time":3844.677502616,"data":"[1.07h] start lane4 P3 attacked full dirichlet bulyan 51\n"}
+,{"stream_name":"stdout","time":3994.679405235,"data":"[1.11h] done(rc=0) P3 attacked trainable dirichlet bulyan 49 4.5min\n"}
+,{"stream_name":"stdout","time":3994.680608503,"data":"[1.11h] start lane1 P3 attacked trainable dirichlet bulyan 51\n"}
+,{"stream_name":"stdout","time":3994.683028882,"data":"[1.11h] done(rc=0) P3 attacked trainable dirichlet bulyan 48 4.8min\n"}
+,{"stream_name":"stdout","time":3994.684065357,"data":"[1.11h] start lane3 P3 attacked full dirichlet rfa 47\n"}
+,{"stream_name":"stdout","time":3994.684490296,"data":"[1.11h] done(rc=0) P3 attacked full dirichlet bulyan 49 4.8min\n"}
+,{"stream_name":"stdout","time":3994.689205252,"data":"[1.11h] start lane5 P3 attacked trainable dirichlet rfa 47\n"}
+,{"stream_name":"stdout","time":4084.690350148,"data":"[1.13h] done(rc=0) P3 attacked full dirichlet bulyan 50 4.8min\n"}
+,{"stream_name":"stdout","time":4084.692421017,"data":"[1.13h] start lane0 P3 attacked full dirichlet rfa 48\n"}
+,{"stream_name":"stdout","time":4084.692810708,"data":"[1.13h] done(rc=0) P3 attacked trainable dirichlet bulyan 50 4.8min\n"}
+,{"stream_name":"stdout","time":4084.69619407,"data":"[1.13h] start lane2 P3 attacked trainable dirichlet rfa 48\n"}
+,{"stream_name":"stdout","time":4114.696819298,"data":"[1.14h] done(rc=0) P3 attacked full dirichlet bulyan 51 4.5min\n"}
+,{"stream_name":"stdout","time":4114.698338249,"data":"[1.14h] start lane4 P3 attacked full dirichlet rfa 49\n"}
+,{"stream_name":"stdout","time":4279.707569752,"data":"[1.19h] done(rc=0) P3 attacked trainable dirichlet bulyan 51 4.8min\n"}
+,{"stream_name":"stdout","time":4279.708705124,"data":"[1.19h] start lane1 P3 attacked trainable dirichlet rfa 49\n"}
+,{"stream_name":"stdout","time":4279.710924967,"data":"[1.19h] done(rc=0) P3 attacked full dirichlet rfa 47 4.8min\n"}
+,{"stream_name":"stdout","time":4279.710942527,"data":"[1.19h] start lane3 P3 attacked full dirichlet rfa 50\n"}
+,{"stream_name":"stdout","time":4279.71094821,"data":"[1.19h] done(rc=0) P3 attacked trainable dirichlet rfa 47 4.8min\n"}
+,{"stream_name":"stdout","time":4279.712524332,"data":"[1.19h] start lane5 P3 attacked trainable dirichlet rfa 50\n"}
+,{"stream_name":"stdout","time":4354.717373901,"data":"[1.21h] done(rc=0) P3 attacked full dirichlet rfa 48 4.5min\n"}
+,{"stream_name":"stdout","time":4354.722194091,"data":"[1.21h] start lane0 P3 attacked full dirichlet rfa 51\n"}
+,{"stream_name":"stdout","time":4369.722738925,"data":"[1.21h] done(rc=0) P3 attacked trainable dirichlet rfa 48 4.8min\n"}
+,{"stream_name":"stdout","time":4369.724546963,"data":"[1.21h] start lane2 P3 attacked trainable dirichlet rfa 51\n"}
+,{"stream_name":"stdout","time":4399.725352381,"data":"[1.22h] done(rc=0) P3 attacked full dirichlet rfa 49 4.8min\n"}
+,{"stream_name":"stdout","time":4399.728360143,"data":"[1.22h] start lane4 P3 attacked full dirichlet median 47\n"}
+,{"stream_name":"stdout","time":4579.735176129,"data":"[1.27h] done(rc=0) P3 attacked trainable dirichlet rfa 49 5.0min\n"}
+,{"stream_name":"stdout","time":4579.736221083,"data":"[1.27h] start lane1 P3 attacked trainable dirichlet median 47\n"}
+,{"stream_name":"stdout","time":4579.736407352,"data":"[1.27h] done(rc=0) P3 attacked full dirichlet rfa 50 5.0min\n"}
+,{"stream_name":"stdout","time":4579.737241928,"data":"[1.27h] start lane3 P3 attacked full dirichlet median 48\n"}
+,{"stream_name":"stdout","time":4579.737355779,"data":"[1.27h] done(rc=0) P3 attacked trainable dirichlet rfa 50 5.0min\n"}
+,{"stream_name":"stdout","time":4579.740437035,"data":"[1.27h] start lane5 P3 attacked trainable dirichlet median 48\n"}
+,{"stream_name":"stdout","time":4609.742346893,"data":"[1.28h] done(rc=0) P3 attacked full dirichlet rfa 51 4.3min\n"}
+,{"stream_name":"stdout","time":4609.745099139,"data":"[1.28h] start lane0 P3 attacked full dirichlet median 49\n"}
+,{"stream_name":"stdout","time":4639.748450684,"data":"[1.29h] done(rc=0) P3 attacked trainable dirichlet rfa 51 4.5min\n"}
+,{"stream_name":"stdout","time":4639.751450895,"data":"[1.29h] start lane2 P3 attacked trainable dirichlet median 49\n"}
+,{"stream_name":"stdout","time":4669.752152261,"data":"[1.30h] done(rc=0) P3 attacked full dirichlet median 47 4.5min\n"}
+,{"stream_name":"stdout","time":4669.757397066,"data":"[1.30h] start lane4 P3 attacked full dirichlet median 50\n"}
+,{"stream_name":"stdout","time":4864.760463801,"data":"[1.35h] done(rc=0) P3 attacked trainable dirichlet median 47 4.8min\n"}
+,{"stream_name":"stdout","time":4864.764044884,"data":"[1.35h] start lane1 P3 attacked trainable dirichlet median 50\n"}
+,{"stream_name":"stdout","time":4864.764501479,"data":"[1.35h] done(rc=0) P3 attacked full dirichlet median 48 4.8min\n"}
+,{"stream_name":"stdout","time":4864.765479794,"data":"[1.35h] start lane3 P3 attacked full dirichlet median 51\n"}
+,{"stream_name":"stdout","time":4864.765844615,"data":"[1.35h] done(rc=0) P3 attacked trainable dirichlet median 48 4.8min\n"}
+,{"stream_name":"stdout","time":4864.771188816,"data":"[1.35h] start lane5 P3 attacked trainable dirichlet median 51\n"}
+,{"stream_name":"stdout","time":4879.771857927,"data":"[1.36h] done(rc=0) P3 attacked full dirichlet median 49 4.5min\n"}
+,{"stream_name":"stdout","time":4879.77337041,"data":"[1.36h] start lane0 P3 attacked full dirichlet trimmedmean 47\n"}
+,{"stream_name":"stdout","time":4909.774089266,"data":"[1.36h] done(rc=0) P3 attacked trainable dirichlet median 49 4.5min\n"}
+,{"stream_name":"stdout","time":4909.776653624,"data":"[1.36h] start lane2 P3 attacked trainable dirichlet trimmedmean 47\n"}
+,{"stream_name":"stdout","time":4924.779378202,"data":"[1.37h] done(rc=0) P3 attacked full dirichlet median 50 4.3min\n"}
+,{"stream_name":"stdout","time":4924.782090261,"data":"[1.37h] start lane4 P3 attacked full dirichlet trimmedmean 48\n"}
+,{"stream_name":"stdout","time":5134.787962382,"data":"[1.43h] done(rc=0) P3 attacked full dirichlet trimmedmean 47 4.3min\n"}
+,{"stream_name":"stdout","time":5134.789535126,"data":"[1.43h] start lane0 P3 attacked trainable dirichlet trimmedmean 48\n"}
+,{"stream_name":"stdout","time":5149.792105103,"data":"[1.43h] done(rc=0) P3 attacked trainable dirichlet median 50 4.8min\n"}
+,{"stream_name":"stdout","time":5149.793806676,"data":"[1.43h] start lane1 P3 attacked full dirichlet trimmedmean 49\n"}
+,{"stream_name":"stdout","time":5149.795044356,"data":"[1.43h] done(rc=0) P3 attacked full dirichlet median 51 4.8min\n"}
+,{"stream_name":"stdout","time":5149.79746601,"data":"[1.43h] start lane3 P3 attacked trainable dirichlet trimmedmean 49\n"}
+,{"stream_name":"stdout","time":5149.798224502,"data":"[1.43h] done(rc=0) P3 attacked trainable dirichlet median 51 4.8min\n"}
+,{"stream_name":"stdout","time":5149.803396796,"data":"[1.43h] start lane5 P3 attacked full dirichlet trimmedmean 50\n"}
+,{"stream_name":"stdout","time":5164.804138427,"data":"[1.43h] done(rc=0) P3 attacked trainable dirichlet trimmedmean 47 4.3min\n"}
+,{"stream_name":"stdout","time":5164.80654352,"data":"[1.43h] start lane2 P3 attacked trainable dirichlet trimmedmean 50\n"}
+,{"stream_name":"stdout","time":5194.810500227,"data":"[1.44h] done(rc=0) P3 attacked full dirichlet trimmedmean 48 4.5min\n"}
+,{"stream_name":"stdout","time":5194.812511789,"data":"[1.44h] start lane4 P3 attacked full dirichlet trimmedmean 51\n"}
+,{"stream_name":"stdout","time":5389.818366053,"data":"[1.50h] done(rc=0) P3 attacked trainable dirichlet trimmedmean 48 4.3min\n"}
+,{"stream_name":"stdout","time":5389.820449919,"data":"[1.50h] start lane0 P3 attacked trainable dirichlet trimmedmean 51\n"}
+,{"stream_name":"stdout","time":5419.823216841,"data":"[1.51h] done(rc=0) P3 attacked trainable dirichlet trimmedmean 50 4.3min\n"}
+,{"stream_name":"stdout","time":5419.825111063,"data":"[1.51h] start lane2 P3 attacked full iid fedavg 47\n"}
+,{"stream_name":"stdout","time":5434.828016474,"data":"[1.51h] done(rc=0) P3 attacked full dirichlet trimmedmean 50 4.8min\n"}
+,{"stream_name":"stdout","time":5434.832204208,"data":"[1.51h] start lane5 P3 attacked trainable iid fedavg 47\n"}
+,{"stream_name":"stdout","time":5449.833527665,"data":"[1.51h] done(rc=0) P3 attacked full dirichlet trimmedmean 49 5.0min\n"}
+,{"stream_name":"stdout","time":5449.834290312,"data":"[1.51h] start lane1 P3 attacked full iid fedavg 48\n"}
+,{"stream_name":"stdout","time":5449.836051705,"data":"[1.51h] done(rc=0) P3 attacked trainable dirichlet trimmedmean 49 5.0min\n"}
+,{"stream_name":"stdout","time":5449.838225376,"data":"[1.51h] start lane3 P3 attacked trainable iid fedavg 48\n"}
+,{"stream_name":"stdout","time":5449.838623497,"data":"[1.51h] done(rc=0) P3 attacked full dirichlet trimmedmean 51 4.3min\n"}
+,{"stream_name":"stdout","time":5449.841213681,"data":"[1.51h] start lane4 P3 attacked full iid fedavg 49\n"}
+,{"stream_name":"stdout","time":5659.848029274,"data":"[1.57h] done(rc=0) P3 attacked trainable dirichlet trimmedmean 51 4.5min\n"}
+,{"stream_name":"stdout","time":5659.849629988,"data":"[1.57h] start lane0 P3 attacked trainable iid fedavg 49\n"}
+,{"stream_name":"stdout","time":5689.850277695,"data":"[1.58h] done(rc=0) P3 attacked full iid fedavg 47 4.5min\n"}
+,{"stream_name":"stdout","time":5689.852372795,"data":"[1.58h] start lane2 P3 attacked full iid fedavg 50\n"}
+,{"stream_name":"stdout","time":5719.854869204,"data":"[1.59h] done(rc=0) P3 attacked full iid fedavg 49 4.5min\n"}
+,{"stream_name":"stdout","time":5719.857461622,"data":"[1.59h] start lane4 P3 attacked trainable iid fedavg 50\n"}
+,{"stream_name":"stdout","time":5719.85767875,"data":"[1.59h] done(rc=0) P3 attacked trainable iid fedavg 47 4.8min\n"}
+,{"stream_name":"stdout","time":5719.859696097,"data":"[1.59h] start lane5 P3 attacked full iid fedavg 51\n"}
+,{"stream_name":"stdout","time":5749.860406712,"data":"[1.60h] done(rc=0) P3 attacked full iid fedavg 48 5.0min\n"}
+,{"stream_name":"stdout","time":5749.864521515,"data":"[1.60h] start lane1 P3 attacked trainable iid fedavg 51\n"}
+,{"stream_name":"stdout","time":5749.864699694,"data":"[1.60h] done(rc=0) P3 attacked trainable iid fedavg 48 5.0min\n"}
+,{"stream_name":"stdout","time":5749.869105207,"data":"[1.60h] start lane3 P3 attacked full iid krum 51\n"}
+,{"stream_name":"stdout","time":5929.874546242,"data":"[1.65h] done(rc=0) P3 attacked trainable iid fedavg 49 4.5min\n"}
+,{"stream_name":"stdout","time":5929.877473232,"data":"[1.65h] start lane0 P3 attacked trainable iid trimmedmean 45\n"}
+,{"stream_name":"stdout","time":5959.878466294,"data":"[1.66h] done(rc=0) P3 attacked full iid fedavg 50 4.5min\n"}
+,{"stream_name":"stdout","time":5959.883220656,"data":"[1.66h] start lane2 P3 attacked trainable iid trimmedmean 46\n"}
+,{"stream_name":"stdout","time":5974.883898748,"data":"[1.66h] done(rc=0) P3 attacked trainable iid fedavg 50 4.3min\n"}
+,{"stream_name":"stdout","time":5974.890906916,"data":"[1.66h] start lane4 P3 clean trainable dirichlet fedavg 44\n"}
+,{"stream_name":"stdout","time":5989.8915278,"data":"[1.66h] done(rc=0) P3 attacked full iid fedavg 51 4.5min\n"}
+,{"stream_name":"stdout","time":5989.896169803,"data":"[1.66h] start lane5 P3 clean full dirichlet fedavg 47\n"}
+,{"stream_name":"stdout","time":6034.896975075,"data":"[1.68h] done(rc=0) P3 attacked trainable iid fedavg 51 4.8min\n"}
+,{"stream_name":"stdout","time":6034.898386206,"data":"[1.68h] start lane1 P3 clean trainable dirichlet fedavg 47\n"}
+,{"stream_name":"stdout","time":6034.900659309,"data":"[1.68h] done(rc=0) P3 attacked full iid krum 51 4.8min\n"}
+,{"stream_name":"stdout","time":6034.90514012,"data":"[1.68h] start lane3 P3 clean full dirichlet fedavg 48\n"}
+,{"stream_name":"stdout","time":6154.91123105,"data":"[1.71h] done(rc=0) P3 clean full dirichlet fedavg 47 2.8min\n"}
+,{"stream_name":"stdout","time":6154.91348582,"data":"[1.71h] start lane5 P3 clean trainable dirichlet fedavg 48\n"}
+,{"stream_name":"stdout","time":6169.913836422,"data":"[1.71h] done(rc=0) P3 clean trainable dirichlet fedavg 44 3.3min\n"}
+,{"stream_name":"stdout","time":6169.917430599,"data":"[1.71h] start lane4 P3 clean full dirichlet fedavg 49\n"}
+,{"stream_name":"stdout","time":6199.918047734,"data":"[1.72h] done(rc=0) P3 attacked trainable iid trimmedmean 45 4.5min\n"}
+,{"stream_name":"stdout","time":6199.921200677,"data":"[1.72h] start lane0 P3 clean trainable dirichlet fedavg 49\n"}
+,{"stream_name":"stdout","time":6214.921708632,"data":"[1.73h] done(rc=0) P3 clean trainable dirichlet fedavg 47 3.0min\n"}
+,{"stream_name":"stdout","time":6214.925058193,"data":"[1.73h] start lane1 P3 clean full dirichlet fedavg 50\n"}
+,{"stream_name":"stdout","time":6214.925088038,"data":"[1.73h] done(rc=0) P3 attacked trainable iid trimmedmean 46 4.3min\n"}
+,{"stream_name":"stdout","time":6214.925745902,"data":"[1.73h] start lane2 P3 clean trainable dirichlet fedavg 50\n"}
+,{"stream_name":"stdout","time":6214.925939456,"data":"[1.73h] done(rc=0) P3 clean full dirichlet fedavg 48 3.0min\n"}
+,{"stream_name":"stdout","time":6214.929091939,"data":"[1.73h] start lane3 P3 clean full dirichlet fedavg 51\n"}
+,{"stream_name":"stdout","time":6319.934746426,"data":"[1.76h] done(rc=0) P3 clean trainable dirichlet fedavg 48 2.8min\n"}
+,{"stream_name":"stdout","time":6319.936648173,"data":"[1.76h] start lane5 P3 clean trainable dirichlet fedavg 51\n"}
+,{"stream_name":"stdout","time":6334.937398542,"data":"[1.76h] done(rc=0) P3 clean full dirichlet fedavg 49 2.8min\n"}
+,{"stream_name":"stdout","time":6334.942110086,"data":"[1.76h] start lane4 P3 clean full dirichlet foolsgold 45\n"}
+,{"stream_name":"stdout","time":6364.943310678,"data":"[1.77h] done(rc=0) P3 clean trainable dirichlet fedavg 49 2.8min\n"}
+,{"stream_name":"stdout","time":6364.947218046,"data":"[1.77h] start lane0 P3 clean trainable dirichlet foolsgold 45\n"}
+,{"stream_name":"stdout","time":6394.94777164,"data":"[1.78h] done(rc=0) P3 clean full dirichlet fedavg 50 3.0min\n"}
+,{"stream_name":"stdout","time":6394.950196679,"data":"[1.78h] start lane1 P3 clean full dirichlet foolsgold 46\n"}
+,{"stream_name":"stdout","time":6394.950395197,"data":"[1.78h] done(rc=0) P3 clean trainable dirichlet fedavg 50 3.0min\n"}
+,{"stream_name":"stdout","time":6394.953406403,"data":"[1.78h] start lane2 P3 clean trainable dirichlet foolsgold 46\n"}
+,{"stream_name":"stdout","time":6394.953574507,"data":"[1.78h] done(rc=0) P3 clean full dirichlet fedavg 51 3.0min\n"}
+,{"stream_name":"stdout","time":6394.955762611,"data":"[1.78h] start lane3 P3 clean full dirichlet foolsgold 47\n"}
+,{"stream_name":"stdout","time":6484.962060521,"data":"[1.80h] done(rc=0) P3 clean trainable dirichlet fedavg 51 2.8min\n"}
+,{"stream_name":"stdout","time":6484.964401177,"data":"[1.80h] start lane5 P3 clean trainable dirichlet foolsgold 47\n"}
+,{"stream_name":"stdout","time":6514.966448983,"data":"[1.81h] done(rc=0) P3 clean full dirichlet foolsgold 45 3.0min\n"}
+,{"stream_name":"stdout","time":6514.968465082,"data":"[1.81h] start lane4 P3 clean full dirichlet foolsgold 48\n"}
+,{"stream_name":"stdout","time":6529.968983222,"data":"[1.81h] done(rc=0) P3 clean trainable dirichlet foolsgold 45 2.8min\n"}
+,{"stream_name":"stdout","time":6529.970162227,"data":"[1.81h] start lane0 P3 clean trainable dirichlet foolsgold 48\n"}
+,{"stream_name":"stdout","time":6559.970973656,"data":"[1.82h] done(rc=0) P3 clean trainable dirichlet foolsgold 46 2.8min\n"}
+,{"stream_name":"stdout","time":6559.973412311,"data":"[1.82h] start lane2 P3 clean full dirichlet foolsgold 49\n"}
+,{"stream_name":"stdout","time":6574.973874842,"data":"[1.83h] done(rc=0) P3 clean full dirichlet foolsgold 46 3.0min\n"}
+,{"stream_name":"stdout","time":6574.978378791,"data":"[1.83h] start lane1 P3 clean trainable dirichlet foolsgold 49\n"}
+,{"stream_name":"stdout","time":6574.978665739,"data":"[1.83h] done(rc=0) P3 clean full dirichlet foolsgold 47 3.0min\n"}
+,{"stream_name":"stdout","time":6574.98144993,"data":"[1.83h] start lane3 P3 clean full dirichlet foolsgold 50\n"}
+,{"stream_name":"stdout","time":6649.987438146,"data":"[1.85h] done(rc=0) P3 clean trainable dirichlet foolsgold 47 2.8min\n"}
+,{"stream_name":"stdout","time":6649.98945425,"data":"[1.85h] start lane5 P3 clean trainable dirichlet foolsgold 50\n"}
+,{"stream_name":"stdout","time":6679.990122499,"data":"[1.86h] done(rc=0) P3 clean full dirichlet foolsgold 48 2.8min\n"}
+,{"stream_name":"stdout","time":6679.991461942,"data":"[1.86h] start lane4 P3 clean full dirichlet foolsgold 51\n"}
+,{"stream_name":"stdout","time":6694.99306494,"data":"[1.86h] done(rc=0) P3 clean trainable dirichlet foolsgold 48 2.8min\n"}
+,{"stream_name":"stdout","time":6694.996035544,"data":"[1.86h] start lane0 P3 clean trainable dirichlet foolsgold 51\n"}
+,{"stream_name":"stdout","time":6724.996875892,"data":"[1.87h] done(rc=0) P3 clean full dirichlet foolsgold 49 2.8min\n"}
+,{"stream_name":"stdout","time":6725.001257373,"data":"[1.87h] start lane2 P3 clean full dirichlet krum 47\n"}
+,{"stream_name":"stdout","time":6740.001924779,"data":"[1.87h] done(rc=0) P3 clean trainable dirichlet foolsgold 49 2.8min\n"}
+,{"stream_name":"stdout","time":6740.003403064,"data":"[1.87h] start lane1 P3 clean trainable dirichlet krum 47\n"}
+,{"stream_name":"stdout","time":6740.003591464,"data":"[1.87h] done(rc=0) P3 clean full dirichlet foolsgold 50 2.8min\n"}
+,{"stream_name":"stdout","time":6740.006153894,"data":"[1.87h] start lane3 P3 clean full dirichlet krum 48\n"}
+,{"stream_name":"stdout","time":6815.007225244,"data":"[1.89h] done(rc=0) P3 clean trainable dirichlet foolsgold 50 2.8min\n"}
+,{"stream_name":"stdout","time":6815.009425363,"data":"[1.89h] start lane5 P3 clean trainable dirichlet krum 48\n"}
+,{"stream_name":"stdout","time":6860.014521458,"data":"[1.91h] done(rc=0) P3 clean full dirichlet foolsgold 51 3.0min\n"}
+,{"stream_name":"stdout","time":6860.016461466,"data":"[1.91h] start lane4 P3 clean full dirichlet krum 49\n"}
+,{"stream_name":"stdout","time":6875.017077216,"data":"[1.91h] done(rc=0) P3 clean trainable dirichlet foolsgold 51 3.0min\n"}
+,{"stream_name":"stdout","time":6875.020592326,"data":"[1.91h] start lane0 P3 clean trainable dirichlet krum 49\n"}
+,{"stream_name":"stdout","time":6890.021048347,"data":"[1.91h] done(rc=0) P3 clean full dirichlet krum 47 2.8min\n"}
+,{"stream_name":"stdout","time":6890.024627849,"data":"[1.91h] start lane2 P3 clean full dirichlet krum 50\n"}
+,{"stream_name":"stdout","time":6920.027396803,"data":"[1.92h] done(rc=0) P3 clean trainable dirichlet krum 47 3.0min\n"}
+,{"stream_name":"stdout","time":6920.031127954,"data":"[1.92h] start lane1 P3 clean trainable dirichlet krum 50\n"}
+,{"stream_name":"stdout","time":6920.031292034,"data":"[1.92h] done(rc=0) P3 clean full dirichlet krum 48 3.0min\n"}
+,{"stream_name":"stdout","time":6920.033431844,"data":"[1.92h] start lane3 P3 clean full dirichlet krum 51\n"}
+,{"stream_name":"stdout","time":6980.035663989,"data":"[1.94h] done(rc=0) P3 clean trainable dirichlet krum 48 2.8min\n"}
+,{"stream_name":"stdout","time":6980.03748345,"data":"[1.94h] start lane5 P3 clean trainable dirichlet krum 51\n"}
+,{"stream_name":"stdout","time":7040.039049993,"data":"[1.96h] done(rc=0) P3 clean full dirichlet krum 49 3.0min\n"}
+,{"stream_name":"stdout","time":7040.041409466,"data":"[1.96h] start lane4 P3 clean full dirichlet gradcos 47\n"}
+,{"stream_name":"stdout","time":7055.04201155,"data":"[1.96h] done(rc=0) P3 clean trainable dirichlet krum 49 3.0min\n"}
+,{"stream_name":"stdout","time":7055.043531141,"data":"[1.96h] start lane0 P3 clean trainable dirichlet gradcos 47\n"}
+,{"stream_name":"stdout","time":7070.044598068,"data":"[1.96h] done(rc=0) P3 clean full dirichlet krum 50 3.0min\n"}
+,{"stream_name":"stdout","time":7070.049593541,"data":"[1.96h] start lane2 P3 clean full dirichlet gradcos 48\n"}
+,{"stream_name":"stdout","time":7100.050234749,"data":"[1.97h] done(rc=0) P3 clean trainable dirichlet krum 50 3.0min\n"}
+,{"stream_name":"stdout","time":7100.05518233,"data":"[1.97h] start lane1 P3 clean trainable dirichlet gradcos 48\n"}
+,{"stream_name":"stdout","time":7100.055437039,"data":"[1.97h] done(rc=0) P3 clean full dirichlet krum 51 3.0min\n"}
+,{"stream_name":"stdout","time":7100.061098043,"data":"[1.97h] start lane3 P3 clean full dirichlet gradcos 49\n"}
+,{"stream_name":"stdout","time":7145.061835885,"data":"[1.98h] done(rc=0) P3 clean trainable dirichlet krum 51 2.8min\n"}
+,{"stream_name":"stdout","time":7145.06500237,"data":"[1.98h] start lane5 P3 clean trainable dirichlet gradcos 49\n"}
+,{"stream_name":"stdout","time":7220.067730941,"data":"[2.01h] done(rc=0) P3 clean full dirichlet gradcos 47 3.0min\n"}
+,{"stream_name":"stdout","time":7220.070431478,"data":"[2.01h] start lane4 P3 clean full dirichlet gradcos 50\n"}
+,{"stream_name":"stdout","time":7235.070898451,"data":"[2.01h] done(rc=0) P3 clean trainable dirichlet gradcos 47 3.0min\n"}
+,{"stream_name":"stdout","time":7235.072473924,"data":"[2.01h] start lane0 P3 clean trainable dirichlet gradcos 50\n"}
+,{"stream_name":"stdout","time":7250.073359403,"data":"[2.01h] done(rc=0) P3 clean full dirichlet gradcos 48 3.0min\n"}
+,{"stream_name":"stdout","time":7250.077045926,"data":"[2.01h] start lane2 P3 clean full dirichlet gradcos 51\n"}
+,{"stream_name":"stdout","time":7280.077801723,"data":"[2.02h] done(rc=0) P3 clean trainable dirichlet gradcos 48 3.0min\n"}
+,{"stream_name":"stdout","time":7280.080499857,"data":"[2.02h] start lane1 P3 clean trainable dirichlet gradcos 51\n"}
+,{"stream_name":"stdout","time":7280.080917179,"data":"[2.02h] done(rc=0) P3 clean full dirichlet gradcos 49 3.0min\n"}
+,{"stream_name":"stdout","time":7280.084285574,"data":"[2.02h] start lane3 P3 clean full dirichlet bulyan 47\n"}
+,{"stream_name":"stdout","time":7310.084917428,"data":"[2.03h] done(rc=0) P3 clean trainable dirichlet gradcos 49 2.8min\n"}
+,{"stream_name":"stdout","time":7310.088696106,"data":"[2.03h] start lane5 P3 clean trainable dirichlet bulyan 47\n"}
+,{"stream_name":"stdout","time":7400.094758097,"data":"[2.06h] done(rc=0) P3 clean full dirichlet gradcos 50 3.0min\n"}
+,{"stream_name":"stdout","time":7400.098171408,"data":"[2.06h] start lane4 P3 clean full dirichlet bulyan 48\n"}
+,{"stream_name":"stdout","time":7415.098701983,"data":"[2.06h] done(rc=0) P3 clean trainable dirichlet gradcos 50 3.0min\n"}
+,{"stream_name":"stdout","time":7415.101399658,"data":"[2.06h] start lane0 P3 clean trainable dirichlet bulyan 48\n"}
+,{"stream_name":"stdout","time":7415.101554229,"data":"[2.06h] done(rc=0) P3 clean full dirichlet gradcos 51 2.8min\n"}
+,{"stream_name":"stdout","time":7415.104380773,"data":"[2.06h] start lane2 P3 clean full dirichlet bulyan 49\n"}
+,{"stream_name":"stdout","time":7460.105263167,"data":"[2.07h] done(rc=0) P3 clean trainable dirichlet gradcos 51 3.0min\n"}
+,{"stream_name":"stdout","time":7460.109411662,"data":"[2.07h] start lane1 P3 clean trainable dirichlet bulyan 49\n"}
+,{"stream_name":"stdout","time":7460.10962316,"data":"[2.07h] done(rc=0) P3 clean full dirichlet bulyan 47 3.0min\n"}
+,{"stream_name":"stdout","time":7460.11405216,"data":"[2.07h] start lane3 P3 clean full dirichlet bulyan 50\n"}
+,{"stream_name":"stdout","time":7490.116460178,"data":"[2.08h] done(rc=0) P3 clean trainable dirichlet bulyan 47 3.0min\n"}
+,{"stream_name":"stdout","time":7490.119388069,"data":"[2.08h] start lane5 P3 clean trainable dirichlet bulyan 50\n"}
+,{"stream_name":"stdout","time":7565.124836353,"data":"[2.10h] done(rc=0) P3 clean full dirichlet bulyan 48 2.8min\n"}
+,{"stream_name":"stdout","time":7565.126328626,"data":"[2.10h] start lane4 P3 clean full dirichlet bulyan 51\n"}
+,{"stream_name":"stdout","time":7595.126990031,"data":"[2.11h] done(rc=0) P3 clean trainable dirichlet bulyan 48 3.0min\n"}
+,{"stream_name":"stdout","time":7595.130367095,"data":"[2.11h] start lane0 P3 clean trainable dirichlet bulyan 51\n"}
+,{"stream_name":"stdout","time":7595.130535161,"data":"[2.11h] done(rc=0) P3 clean full dirichlet bulyan 49 3.0min\n"}
+,{"stream_name":"stdout","time":7595.132356897,"data":"[2.11h] start lane2 P3 clean full dirichlet rfa 47\n"}
+,{"stream_name":"stdout","time":7640.137055756,"data":"[2.12h] done(rc=0) P3 clean trainable dirichlet bulyan 49 3.0min\n"}
+,{"stream_name":"stdout","time":7640.140505336,"data":"[2.12h] start lane1 P3 clean trainable dirichlet rfa 47\n"}
+,{"stream_name":"stdout","time":7640.140603402,"data":"[2.12h] done(rc=0) P3 clean full dirichlet bulyan 50 3.0min\n"}
+,{"stream_name":"stdout","time":7640.14338117,"data":"[2.12h] start lane3 P3 clean full dirichlet rfa 48\n"}
+,{"stream_name":"stdout","time":7655.143765341,"data":"[2.13h] done(rc=0) P3 clean trainable dirichlet bulyan 50 2.8min\n"}
+,{"stream_name":"stdout","time":7655.145352002,"data":"[2.13h] start lane5 P3 clean trainable dirichlet rfa 48\n"}
+,{"stream_name":"stdout","time":7730.148696421,"data":"[2.15h] done(rc=0) P3 clean full dirichlet bulyan 51 2.8min\n"}
+,{"stream_name":"stdout","time":7730.150612693,"data":"[2.15h] start lane4 P3 clean full dirichlet rfa 49\n"}
+,{"stream_name":"stdout","time":7775.153033776,"data":"[2.16h] done(rc=0) P3 clean trainable dirichlet bulyan 51 3.0min\n"}
+,{"stream_name":"stdout","time":7775.155502797,"data":"[2.16h] start lane0 P3 clean trainable dirichlet rfa 49\n"}
+,{"stream_name":"stdout","time":7775.156426686,"data":"[2.16h] done(rc=0) P3 clean full dirichlet rfa 47 3.0min\n"}
+,{"stream_name":"stdout","time":7775.159439436,"data":"[2.16h] start lane2 P3 clean full dirichlet rfa 50\n"}
+,{"stream_name":"stdout","time":7820.161929602,"data":"[2.17h] done(rc=0) P3 clean trainable dirichlet rfa 47 3.0min\n"}
+,{"stream_name":"stdout","time":7820.163428718,"data":"[2.17h] start lane1 P3 clean trainable dirichlet rfa 50\n"}
+,{"stream_name":"stdout","time":7820.165996484,"data":"[2.17h] done(rc=0) P3 clean full dirichlet rfa 48 3.0min\n"}
+,{"stream_name":"stdout","time":7820.168419013,"data":"[2.17h] start lane3 P3 clean full dirichlet rfa 51\n"}
+,{"stream_name":"stdout","time":7835.169000703,"data":"[2.18h] done(rc=0) P3 clean trainable dirichlet rfa 48 3.0min\n"}
+,{"stream_name":"stdout","time":7835.172415315,"data":"[2.18h] start lane5 P3 clean trainable dirichlet rfa 51\n"}
+,{"stream_name":"stdout","time":7895.176332757,"data":"[2.19h] done(rc=0) P3 clean full dirichlet rfa 49 2.8min\n"}
+,{"stream_name":"stdout","time":7895.178052251,"data":"[2.19h] start lane4 P3 clean full dirichlet fldetector 47\n"}
+,{"stream_name":"stdout","time":7955.18238125,"data":"[2.21h] done(rc=0) P3 clean trainable dirichlet rfa 49 3.0min\n"}
+,{"stream_name":"stdout","time":7955.184415368,"data":"[2.21h] start lane0 P3 clean trainable dirichlet fldetector 47\n"}
+,{"stream_name":"stdout","time":7955.184672669,"data":"[2.21h] done(rc=0) P3 clean full dirichlet rfa 50 3.0min\n"}
+,{"stream_name":"stdout","time":7955.187311329,"data":"[2.21h] start lane2 P3 clean full dirichlet fldetector 48\n"}
+,{"stream_name":"stdout","time":8000.189639031,"data":"[2.22h] done(rc=0) P3 clean trainable dirichlet rfa 50 3.0min\n"}
+,{"stream_name":"stdout","time":8000.191459398,"data":"[2.22h] start lane1 P3 clean trainable dirichlet fldetector 48\n"}
+,{"stream_name":"stdout","time":8000.19309449,"data":"[2.22h] done(rc=0) P3 clean full dirichlet rfa 51 3.0min\n"}
+,{"stream_name":"stdout","time":8000.197138395,"data":"[2.22h] start lane3 P3 clean full dirichlet fldetector 49\n"}
+,{"stream_name":"stdout","time":8015.200198709,"data":"[2.23h] done(rc=0) P3 clean trainable dirichlet rfa 51 3.0min\n"}
+,{"stream_name":"stdout","time":8015.202408834,"data":"[2.23h] start lane5 P3 clean trainable dirichlet fldetector 49\n"}
+,{"stream_name":"stdout","time":8060.205253402,"data":"[2.24h] done(rc=0) P3 clean full dirichlet fldetector 47 2.8min\n"}
+,{"stream_name":"stdout","time":8060.206497701,"data":"[2.24h] start lane4 P3 clean full dirichlet fldetector 50\n"}
+,{"stream_name":"stdout","time":8135.208859247,"data":"[2.26h] done(rc=0) P3 clean trainable dirichlet fldetector 47 3.0min\n"}
+,{"stream_name":"stdout","time":8135.211515683,"data":"[2.26h] start lane0 P3 clean trainable dirichlet fldetector 50\n"}
+,{"stream_name":"stdout","time":8135.21164343,"data":"[2.26h] done(rc=0) P3 clean full dirichlet fldetector 48 3.0min\n"}
+,{"stream_name":"stdout","time":8135.218322002,"data":"[2.26h] start lane2 P3 clean full dirichlet fldetector 51\n"}
+,{"stream_name":"stdout","time":8180.2192654,"data":"[2.27h] done(rc=0) P3 clean trainable dirichlet fldetector 48 3.0min\n"}
+,{"stream_name":"stdout","time":8180.221425598,"data":"[2.27h] start lane1 P3 clean trainable dirichlet fldetector 51\n"}
+,{"stream_name":"stdout","time":8180.221586773,"data":"[2.27h] done(rc=0) P3 clean full dirichlet fldetector 49 3.0min\n"}
+,{"stream_name":"stdout","time":8180.224441048,"data":"[2.27h] start lane3 P3 clean full dirichlet median 47\n"}
+,{"stream_name":"stdout","time":8195.224984478,"data":"[2.28h] done(rc=0) P3 clean trainable dirichlet fldetector 49 3.0min\n"}
+,{"stream_name":"stdout","time":8195.227152094,"data":"[2.28h] start lane5 P3 clean trainable dirichlet median 47\n"}
+,{"stream_name":"stdout","time":8225.229408445,"data":"[2.28h] done(rc=0) P3 clean full dirichlet fldetector 50 2.8min\n"}
+,{"stream_name":"stdout","time":8225.232419935,"data":"[2.28h] start lane4 P3 clean full dirichlet median 48\n"}
+,{"stream_name":"stdout","time":8300.239259076,"data":"[2.31h] done(rc=0) P3 clean full dirichlet fldetector 51 2.8min\n"}
+,{"stream_name":"stdout","time":8300.244104689,"data":"[2.31h] start lane2 P3 clean trainable dirichlet median 48\n"}
+,{"stream_name":"stdout","time":8315.244565937,"data":"[2.31h] done(rc=0) P3 clean trainable dirichlet fldetector 50 3.0min\n"}
+,{"stream_name":"stdout","time":8315.247350949,"data":"[2.31h] start lane0 P3 clean full dirichlet median 49\n"}
+,{"stream_name":"stdout","time":8360.24832402,"data":"[2.32h] done(rc=0) P3 clean trainable dirichlet fldetector 51 3.0min\n"}
+,{"stream_name":"stdout","time":8360.250543078,"data":"[2.32h] start lane1 P3 clean trainable dirichlet median 49\n"}
+,{"stream_name":"stdout","time":8360.251025325,"data":"[2.32h] done(rc=0) P3 clean full dirichlet median 47 3.0min\n"}
+,{"stream_name":"stdout","time":8360.252213007,"data":"[2.32h] start lane3 P3 clean full dirichlet median 50\n"}
+,{"stream_name":"stdout","time":8375.252995582,"data":"[2.33h] done(rc=0) P3 clean trainable dirichlet median 47 3.0min\n"}
+,{"stream_name":"stdout","time":8375.255510336,"data":"[2.33h] start lane5 P3 clean trainable dirichlet median 50\n"}
+,{"stream_name":"stdout","time":8390.261428065,"data":"[2.33h] done(rc=0) P3 clean full dirichlet median 48 2.8min\n"}
+,{"stream_name":"stdout","time":8390.263552162,"data":"[2.33h] start lane4 P3 clean full dirichlet median 51\n"}
+,{"stream_name":"stdout","time":8465.265074693,"data":"[2.35h] done(rc=0) P3 clean trainable dirichlet median 48 2.8min\n"}
+,{"stream_name":"stdout","time":8465.266499733,"data":"[2.35h] start lane2 P3 clean trainable dirichlet median 51\n"}
+,{"stream_name":"stdout","time":8480.270364082,"data":"[2.36h] done(rc=0) P3 clean full dirichlet median 49 2.8min\n"}
+,{"stream_name":"stdout","time":8480.275134022,"data":"[2.36h] start lane0 P3 clean full dirichlet trimmedmean 47\n"}
+,{"stream_name":"stdout","time":8540.276509703,"data":"[2.37h] done(rc=0) P3 clean trainable dirichlet median 49 3.0min\n"}
+,{"stream_name":"stdout","time":8540.281592938,"data":"[2.37h] start lane1 P3 clean trainable dirichlet trimmedmean 47\n"}
+,{"stream_name":"stdout","time":8540.281783805,"data":"[2.37h] done(rc=0) P3 clean full dirichlet median 50 3.0min\n"}
+,{"stream_name":"stdout","time":8540.285451661,"data":"[2.37h] start lane3 P3 clean full dirichlet trimmedmean 48\n"}
+,{"stream_name":"stdout","time":8555.28824863,"data":"[2.38h] done(rc=0) P3 clean trainable dirichlet median 50 3.0min\n"}
+,{"stream_name":"stdout","time":8555.290034648,"data":"[2.38h] start lane5 P3 clean trainable dirichlet trimmedmean 48\n"}
+,{"stream_name":"stdout","time":8570.290505196,"data":"[2.38h] done(rc=0) P3 clean full dirichlet median 51 3.0min\n"}
+,{"stream_name":"stdout","time":8570.29244529,"data":"[2.38h] start lane4 P3 clean full dirichlet trimmedmean 49\n"}
+,{"stream_name":"stdout","time":8645.330012885,"data":"[2.40h] done(rc=0) P3 clean full dirichlet trimmedmean 47 2.8min\n"}
+,{"stream_name":"stdout","time":8645.330164861,"data":"[2.40h] start lane0 P3 clean trainable dirichlet trimmedmean 49\n"}
+,{"stream_name":"stdout","time":8645.330458381,"data":"[2.40h] done(rc=0) P3 clean trainable dirichlet median 51 3.0min\n"}
+,{"stream_name":"stdout","time":8645.332316297,"data":"[2.40h] start lane2 P3 clean full dirichlet trimmedmean 50\n"}
+,{"stream_name":"stdout","time":8720.333451795,"data":"[2.42h] done(rc=0) P3 clean trainable dirichlet trimmedmean 47 3.0min\n"}
+,{"stream_name":"stdout","time":8720.335698717,"data":"[2.42h] start lane1 P3 clean trainable dirichlet trimmedmean 50\n"}
+,{"stream_name":"stdout","time":8720.33582216,"data":"[2.42h] done(rc=0) P3 clean full dirichlet trimmedmean 48 3.0min\n"}
+,{"stream_name":"stdout","time":8720.338352645,"data":"[2.42h] start lane3 P3 clean full dirichlet trimmedmean 51\n"}
+,{"stream_name":"stdout","time":8735.33869016,"data":"[2.43h] done(rc=0) P3 clean full dirichlet trimmedmean 49 2.8min\n"}
+,{"stream_name":"stdout","time":8735.342165466,"data":"[2.43h] start lane4 P3 clean trainable dirichlet trimmedmean 51\n"}
+,{"stream_name":"stdout","time":8735.342468989,"data":"[2.43h] done(rc=0) P3 clean trainable dirichlet trimmedmean 48 3.0min\n"}
+,{"stream_name":"stdout","time":8735.346077932,"data":"[2.43h] start lane5 P3 clean full dirichlet alignins 47\n"}
+,{"stream_name":"stdout","time":8810.347288419,"data":"[2.45h] done(rc=0) P3 clean trainable dirichlet trimmedmean 49 2.8min\n"}
+,{"stream_name":"stdout","time":8810.350445639,"data":"[2.45h] start lane0 P3 clean trainable dirichlet alignins 47\n"}
+,{"stream_name":"stdout","time":8810.350599453,"data":"[2.45h] done(rc=0) P3 clean full dirichlet trimmedmean 50 2.8min\n"}
+,{"stream_name":"stdout","time":8810.357066937,"data":"[2.45h] start lane2 P3 clean full dirichlet alignins 48\n"}
+,{"stream_name":"stdout","time":8900.360940895,"data":"[2.47h] done(rc=0) P3 clean trainable dirichlet trimmedmean 50 3.0min\n"}
+,{"stream_name":"stdout","time":8900.364493492,"data":"[2.47h] start lane1 P3 clean trainable dirichlet alignins 48\n"}
+,{"stream_name":"stdout","time":8900.364602346,"data":"[2.47h] done(rc=0) P3 clean full dirichlet trimmedmean 51 3.0min\n"}
+,{"stream_name":"stdout","time":8900.367993096,"data":"[2.47h] start lane3 P3 clean full dirichlet alignins 49\n"}
+,{"stream_name":"stdout","time":8915.369199632,"data":"[2.48h] done(rc=0) P3 clean trainable dirichlet trimmedmean 51 3.0min\n"}
+,{"stream_name":"stdout","time":8915.372228294,"data":"[2.48h] start lane4 P3 clean trainable dirichlet alignins 49\n"}
+,{"stream_name":"stdout","time":8915.372674984,"data":"[2.48h] done(rc=0) P3 clean full dirichlet alignins 47 3.0min\n"}
+,{"stream_name":"stdout","time":8915.374520653,"data":"[2.48h] start lane5 P3 clean full dirichlet alignins 50\n"}
+,{"stream_name":"stdout","time":8990.379481912,"data":"[2.50h] done(rc=0) P3 clean trainable dirichlet alignins 47 3.0min\n"}
+,{"stream_name":"stdout","time":8990.381462718,"data":"[2.50h] start lane0 P3 clean trainable dirichlet alignins 50\n"}
+,{"stream_name":"stdout","time":8990.381749677,"data":"[2.50h] done(rc=0) P3 clean full dirichlet alignins 48 3.0min\n"}
+,{"stream_name":"stdout","time":8990.384450411,"data":"[2.50h] start lane2 P3 clean full dirichlet alignins 51\n"}
+,{"stream_name":"stdout","time":9080.392995751,"data":"[2.52h] done(rc=0) P3 clean trainable dirichlet alignins 48 3.0min\n"}
+,{"stream_name":"stdout","time":9080.394014089,"data":"[2.52h] start lane1 P3 clean trainable dirichlet alignins 51\n"}
+,{"stream_name":"stdout","time":9080.394579929,"data":"[2.52h] done(rc=0) P3 clean full dirichlet alignins 49 3.0min\n"}
+,{"stream_name":"stdout","time":9080.399258728,"data":"[2.52h] start lane3 P3 clean full iid fedavg 47\n"}
+,{"stream_name":"stdout","time":9080.39986965,"data":"[2.52h] done(rc=0) P3 clean trainable dirichlet alignins 49 2.8min\n"}
+,{"stream_name":"stdout","time":9080.401471815,"data":"[2.52h] start lane4 P3 clean trainable iid fedavg 47\n"}
+,{"stream_name":"stdout","time":9095.403700577,"data":"[2.53h] done(rc=0) P3 clean full dirichlet alignins 50 3.0min\n"}
+,{"stream_name":"stdout","time":9095.406360125,"data":"[2.53h] start lane5 P3 clean full iid fedavg 48\n"}
+,{"stream_name":"stdout","time":9155.409464464,"data":"[2.54h] done(rc=0) P3 clean full dirichlet alignins 51 2.8min\n"}
+,{"stream_name":"stdout","time":9155.411560048,"data":"[2.54h] start lane2 P3 clean trainable iid fedavg 48\n"}
+,{"stream_name":"stdout","time":9170.416308743,"data":"[2.55h] done(rc=0) P3 clean trainable dirichlet alignins 50 3.0min\n"}
+,{"stream_name":"stdout","time":9170.42017585,"data":"[2.55h] start lane0 P3 clean full iid fedavg 49\n"}
+,{"stream_name":"stdout","time":9245.421949086,"data":"[2.57h] done(rc=0) P3 clean trainable iid fedavg 47 2.8min\n"}
+,{"stream_name":"stdout","time":9245.425171234,"data":"[2.57h] start lane4 P3 clean trainable iid fedavg 49\n"}
+,{"stream_name":"stdout","time":9260.425593951,"data":"[2.57h] done(rc=0) P3 clean trainable dirichlet alignins 51 3.0min\n"}
+,{"stream_name":"stdout","time":9260.429254466,"data":"[2.57h] start lane1 P3 clean full iid fedavg 50\n"}
+,{"stream_name":"stdout","time":9260.429677261,"data":"[2.57h] done(rc=0) P3 clean full iid fedavg 47 3.0min\n"}
+,{"stream_name":"stdout","time":9260.43250282,"data":"[2.57h] start lane3 P3 clean trainable iid fedavg 50\n"}
+,{"stream_name":"stdout","time":9275.434040796,"data":"[2.58h] done(rc=0) P3 clean full iid fedavg 48 3.0min\n"}
+,{"stream_name":"stdout","time":9275.435484821,"data":"[2.58h] start lane5 P3 clean full iid fedavg 51\n"}
+,{"stream_name":"stdout","time":9320.440651594,"data":"[2.59h] done(rc=0) P3 clean trainable iid fedavg 48 2.8min\n"}
+,{"stream_name":"stdout","time":9320.445320922,"data":"[2.59h] start lane2 P3 clean trainable iid fedavg 51\n"}
+,{"stream_name":"stdout","time":9335.446122949,"data":"[2.59h] done(rc=0) P3 clean full iid fedavg 49 2.8min\n"}
+,{"stream_name":"stdout","time":9335.447933579,"data":"[2.59h] start lane0 P3 clean full iid foolsgold 47\n"}
+,{"stream_name":"stdout","time":9410.452086351,"data":"[2.61h] done(rc=0) P3 clean trainable iid fedavg 49 2.8min\n"}
+,{"stream_name":"stdout","time":9410.45453554,"data":"[2.61h] start lane4 P3 clean trainable iid foolsgold 47\n"}
+,{"stream_name":"stdout","time":9440.456426218,"data":"[2.62h] done(rc=0) P3 clean full iid fedavg 50 3.0min\n"}
+,{"stream_name":"stdout","time":9440.458496029,"data":"[2.62h] start lane1 P3 clean full iid foolsgold 48\n"}
+,{"stream_name":"stdout","time":9440.458869334,"data":"[2.62h] done(rc=0) P3 clean trainable iid fedavg 50 3.0min\n"}
+,{"stream_name":"stdout","time":9440.461436479,"data":"[2.62h] start lane3 P3 clean trainable iid foolsgold 48\n"}
+,{"stream_name":"stdout","time":9455.462048618,"data":"[2.63h] done(rc=0) P3 clean full iid fedavg 51 3.0min\n"}
+,{"stream_name":"stdout","time":9455.465017225,"data":"[2.63h] start lane5 P3 clean full iid foolsgold 49\n"}
+,{"stream_name":"stdout","time":9485.470504234,"data":"[2.63h] done(rc=0) P3 clean trainable iid fedavg 51 2.8min\n"}
+,{"stream_name":"stdout","time":9485.473569004,"data":"[2.63h] start lane2 P3 clean trainable iid foolsgold 49\n"}
+,{"stream_name":"stdout","time":9500.474140368,"data":"[2.64h] done(rc=0) P3 clean full iid foolsgold 47 2.8min\n"}
+,{"stream_name":"stdout","time":9500.476528905,"data":"[2.64h] start lane0 P3 clean full iid foolsgold 50\n"}
+,{"stream_name":"stdout","time":9575.484955691,"data":"[2.66h] done(rc=0) P3 clean trainable iid foolsgold 47 2.8min\n"}
+,{"stream_name":"stdout","time":9575.487384292,"data":"[2.66h] start lane4 P3 clean trainable iid foolsgold 50\n"}
+,{"stream_name":"stdout","time":9620.490418071,"data":"[2.67h] done(rc=0) P3 clean full iid foolsgold 48 3.0min\n"}
+,{"stream_name":"stdout","time":9620.492349513,"data":"[2.67h] start lane1 P3 clean full iid foolsgold 51\n"}
+,{"stream_name":"stdout","time":9620.492612406,"data":"[2.67h] done(rc=0) P3 clean trainable iid foolsgold 48 3.0min\n"}
+,{"stream_name":"stdout","time":9620.49531625,"data":"[2.67h] start lane3 P3 clean trainable iid foolsgold 51\n"}
+,{"stream_name":"stdout","time":9635.496404484,"data":"[2.68h] done(rc=0) P3 clean full iid foolsgold 49 3.0min\n"}
+,{"stream_name":"stdout","time":9635.501521908,"data":"[2.68h] start lane5 P3 clean full iid alignins 42\n"}
+,{"stream_name":"stdout","time":9650.502092102,"data":"[2.68h] done(rc=0) P3 clean trainable iid foolsgold 49 2.8min\n"}
+,{"stream_name":"stdout","time":9650.503336782,"data":"[2.68h] start lane2 P3 clean trainable iid alignins 42\n"}
+,{"stream_name":"stdout","time":9665.505480253,"data":"[2.68h] done(rc=0) P3 clean full iid foolsgold 50 2.8min\n"}
+,{"stream_name":"stdout","time":9665.510159295,"data":"[2.68h] start lane0 P3 clean full iid alignins 43\n"}
+,{"stream_name":"stdout","time":9740.515409311,"data":"[2.71h] done(rc=0) P3 clean trainable iid foolsgold 50 2.8min\n"}
+,{"stream_name":"stdout","time":9740.5194888,"data":"[2.71h] start lane4 P3 clean trainable iid alignins 43\n"}
+,{"stream_name":"stdout","time":9800.521355876,"data":"[2.72h] done(rc=0) P3 clean full iid foolsgold 51 3.0min\n"}
+,{"stream_name":"stdout","time":9800.524499052,"data":"[2.72h] start lane1 P3 clean full iid alignins 44\n"}
+,{"stream_name":"stdout","time":9800.524599967,"data":"[2.72h] done(rc=0) P3 clean trainable iid foolsgold 51 3.0min\n"}
+,{"stream_name":"stdout","time":9800.526823993,"data":"[2.72h] start lane3 P3 clean trainable iid alignins 44\n"}
+,{"stream_name":"stdout","time":9815.527446699,"data":"[2.73h] done(rc=0) P3 clean full iid alignins 42 3.0min\n"}
+,{"stream_name":"stdout","time":9815.530294761,"data":"[2.73h] start lane5 P3 clean full iid alignins 45\n"}
+,{"stream_name":"stdout","time":9830.530977472,"data":"[2.73h] done(rc=0) P3 clean trainable iid alignins 42 3.0min\n"}
+,{"stream_name":"stdout","time":9830.533671442,"data":"[2.73h] start lane2 P3 clean trainable iid alignins 45\n"}
+,{"stream_name":"stdout","time":9845.535281792,"data":"[2.73h] done(rc=0) P3 clean full iid alignins 43 3.0min\n"}
+,{"stream_name":"stdout","time":9845.540262916,"data":"[2.73h] start lane0 P3 clean full iid alignins 46\n"}
+,{"stream_name":"stdout","time":9905.544549274,"data":"[2.75h] done(rc=0) P3 clean trainable iid alignins 43 2.8min\n"}
+,{"stream_name":"stdout","time":9905.547517994,"data":"[2.75h] start lane4 P3 clean trainable iid alignins 46\n"}
+,{"stream_name":"stdout","time":9980.548623704,"data":"[2.77h] done(rc=0) P3 clean full iid alignins 44 3.0min\n"}
+,{"stream_name":"stdout","time":9980.550958573,"data":"[2.77h] done(rc=0) P3 clean trainable iid alignins 44 3.0min\n"}
+,{"stream_name":"stdout","time":9995.549252196,"data":"[2.78h] done(rc=0) P3 clean trainable iid alignins 45 2.8min\n"}
+,{"stream_name":"stdout","time":9995.549289209,"data":"[2.78h] done(rc=0) P3 clean full iid alignins 45 3.0min\n"}
+,{"stream_name":"stdout","time":10010.549514808,"data":"[2.78h] done(rc=0) P3 clean full iid alignins 46 2.8min\n"}
+,{"stream_name":"stdout","time":10040.55005652,"data":"[2.79h] done(rc=0) P3 clean trainable iid alignins 46 2.3min\n"}
+,{"stream_name":"stdout","time":10040.550115608,"data":"FINISHED after 2.79h; not launched: 0\n"}
+,{"stream_name":"stderr","time":10043.322879759,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":10043.322927441,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":10043.592853832,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":10043.592915003,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":10044.462430673,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":10045.435983247,"data":"[NbConvertApp] Writing 312344 bytes to __results__.html\n"}
+]

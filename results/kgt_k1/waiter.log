@@ -1,0 +1,2 @@
+[2026-10-24 01:54:44] K1 waiter (pid 960552) waiting for the R1 GPU helper
+[2026-10-24 19:10:24] R1 GPU helper gone; waiting 900s before starting K1

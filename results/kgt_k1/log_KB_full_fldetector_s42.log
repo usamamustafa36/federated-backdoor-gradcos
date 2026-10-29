@@ -1,0 +1,10 @@
+===== Kaggle usamaa36/paper08-p3k1-kaggle v1, 2x Tesla T4, torch 2.11.0+cu128, --device cuda (2026-10-29) =====
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] fldetector atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.731 BSR=0.902 | 187s (cum 187s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7435 | 0.5108 | 0.7055 | 0.8000 | 0.0000 | 0.0129 | 0.9745 |

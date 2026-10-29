@@ -1,0 +1,54 @@
+/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py:823: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:109.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+device=cpu dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] foolsgold atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.197 BSR=0.921 | 22381s (cum 22381s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7219 | 0.3907 | 0.0290 | 1.0000 | 0.2375 | 0.0394 | 0.9551 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7267 | 0.3951 | 0.0255 | 1.0000 | 0.2250 | 0.1617 | 0.9512 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7288 | 0.4183 | 0.0134 | 1.0000 | 0.2250 | 0.1550 | 0.9560 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7266 | 0.4085 | 0.0194 | 1.0000 | 0.2250 | 0.1518 | 0.9646 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7277 | 0.4097 | 0.0195 | 1.0000 | 0.2250 | 0.1393 | 0.9713 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7325 | 0.4520 | 0.0175 | 1.0000 | 0.2375 | 0.1336 | 0.9639 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4167 | 0.1036 | 0.6000 | 0.0000 | 0.1234 | 0.9660 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7277 | 0.4186 | 0.0179 | 0.6000 | 0.0000 | 0.1366 | 0.9673 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7274 | 0.4167 | 0.1012 | 0.6500 | 0.0250 | 0.1235 | 0.9724 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7252 | 0.4154 | 0.0903 | 0.7000 | 0.0125 | 0.1250 | 0.9646 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7254 | 0.4167 | 0.0229 | 0.6500 | 0.0000 | 0.1352 | 0.9598 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5917 | 0.1040 | 0.0112 | 0.0000 | 0.7375 | 0.0073 | 0.9912 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4911 | 0.2256 | 0.1458 | 0.0000 | 1.0000 | 0.1188 | 0.9597 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4946 | 0.2099 | 0.2170 | 0.0000 | 1.0000 | 0.1213 | 0.9632 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4555 | 0.2184 | 0.1847 | 0.0000 | 0.8750 | 0.1171 | 0.9555 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4847 | 0.2120 | 0.2275 | 0.0000 | 1.0000 | 0.1207 | 0.9657 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5349 | 0.2570 | 0.1692 | 0.0000 | 1.0000 | 0.1108 | 0.9663 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7287 | 0.4177 | 0.0147 | 1.0000 | 0.0250 | 0.1534 | 0.9571 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7281 | 0.4179 | 0.0199 | 0.9000 | 0.0750 | 0.1312 | 0.9699 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4124 | 0.0144 | 1.0000 | 0.0500 | 0.1463 | 0.9723 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7257 | 0.4125 | 0.0152 | 0.9000 | 0.0750 | 0.1202 | 0.9711 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7273 | 0.4118 | 0.0224 | 0.9000 | 0.0625 | 0.1429 | 0.9610 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7286 | 0.3994 | 0.0226 | 1.0000 | 0.2500 | 0.4049 | 0.6191 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7287 | 0.4007 | 0.0218 | 1.0000 | 0.2375 | 0.5091 | 0.9199 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7304 | 0.4216 | 0.0174 | 1.0000 | 0.2375 | 0.4799 | 0.9142 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4213 | 0.0122 | 1.0000 | 0.2375 | 0.5805 | 0.8942 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7304 | 0.4204 | 0.0136 | 1.0000 | 0.2375 | 0.4844 | 0.8710 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7234 | 0.4103 | 0.0147 | 1.0000 | 0.2375 | 0.5216 | 0.7904 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7202 | 0.3954 | 0.0179 | 1.0000 | 0.0000 | 0.6467 | 0.9043 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7302 | 0.4185 | 0.0126 | 1.0000 | 0.0000 | 0.5061 | 0.8881 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7255 | 0.4117 | 0.0149 | 1.0000 | 0.0000 | 0.6144 | 0.9220 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7300 | 0.4201 | 0.0145 | 1.0000 | 0.0000 | 0.4698 | 0.8918 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7262 | 0.4185 | 0.0130 | 1.0000 | 0.0000 | 0.6025 | 0.8761 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4531 | 0.2103 | 0.4789 | 0.0000 | 0.0000 | 0.4393 | 0.6203 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7114 | 0.3784 | 0.0311 | 0.0000 | 0.0000 | 0.6216 | 0.7432 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7253 | 0.3986 | 0.3639 | 0.0000 | 0.0000 | 0.7430 | 0.7075 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7242 | 0.4149 | 0.0222 | 0.0000 | 0.0000 | 1.0491 | 0.7069 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7276 | 0.4050 | 0.5962 | 0.0000 | 0.0000 | 0.6132 | 0.6397 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5358 | 0.3069 | 0.1387 | 0.0000 | 0.0750 | 0.1162 | 0.8785 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7236 | 0.3904 | 0.0231 | 1.0000 | 0.0250 | 0.6398 | 0.9214 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7321 | 0.4353 | 0.0165 | 1.0000 | 0.0000 | 0.4917 | 0.8701 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7273 | 0.4097 | 0.0201 | 1.0000 | 0.0250 | 0.5851 | 0.9173 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7302 | 0.4191 | 0.0156 | 1.0000 | 0.0000 | 0.4446 | 0.8889 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7292 | 0.4272 | 0.0131 | 1.0000 | 0.0000 | 0.5886 | 0.8851 |

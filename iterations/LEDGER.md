@@ -2062,3 +2062,40 @@ finished here.)
      relaunch R2 (keep ollama stopped; R2 waiter/launcher in experiments/r2_exposed).
   2. When K1 completes: `python3 paper/analyse_k1.py`, write with PREREG_K1's wording (main Sec. Mechanisms).
   3. When the P3 tail completes: `make numbers`, clear the 18-item gate, re-check the RE-CHECK comments.
+
+## Iteration 34 - 2026-10-29 - K1 complete and SUPPORTED (H1 both settings, p_H=0.002; H2 not supported; k^2 law held out of sample); P3 complete (1,040/1,040), gate 18 -> 0; compute moved to GPU + Kaggle at the owner's request; R2 blinding guard
+
+- **State at start (16:55):** rebooted ~16:48, nothing running, CUDA working (first time after a reboot).
+  R2 had been relaunched at 09:43 by the previous session (15/430 complete).
+- **Compute (owner: "use only gpu and kaggle", then "move them to GPU/Kaggle"):** local CPU freed.
+  R2 on the local GPU (`LANES=3`, seeds 3-8 and the rest); R2 H1 seeds 9-12 (48 runs) on Kaggle kernel
+  usamaa36/paper08-r2-kaggle (2x T4; PREREG_R2 Amendment 2; run_r2.sh skips results/r2_exposed/remote_jobs.txt);
+  the 36 pending K1 cells + 219 pending P3 tail cells on Kaggle usamaa36/paper08-p3k1-kaggle (2x T4,
+  PREREG_K1 Amendment 3, PREREG_P3 Amendment 2). All 255 finished in 2.8 h (median 3 min/cell, all 15 rounds,
+  0 ERROR lines, no file clashes); JSONs copied unchanged, Kaggle logs appended to the local logs under a
+  device header; kernel log in results/kaggle/. Kernel sources: experiments/kaggle/.
+  The P3 tail was 70/289 on disk, not 133 (duplicate log lines had been counted).
+- **K1 (80/80, final):** M0 passed (median k_hat KA 6.7, KB 2.4). H1 supported in both (10/10 pairs each,
+  p_H=0.002). H2 not supported (p=0.625): at k>1 both arms agree (KA FLAME 1.00/1.00, FoolsGold 0.00/0.00).
+  M1 supported (median Q_obs/Q_pred 0.83, 39/40 above one). Magnitudes: FLAME DR_def >= 0.9 met (1.00, 1.00);
+  FoolsGold <= 0.1 met in KA (0.00), not KB (0.12). Written with PREREG_K1's committed wording (H1 + "vanished but
+  did not reverse in sign" + M1) in main Sec. Mechanisms, contributions, conclusion; supplement S-k1 with all
+  descriptives. The registered "security reading" sentence (verdict depends on the mask in the opposite
+  direction) was NOT used: it presumes a sign reversal, which H2 did not find; at k>1 the mask stops mattering.
+- **P3 (1,040/1,040):** make numbers; every RE-CHECK verified against final macros (P1-P4 supported p_H=0.0039,
+  S1-S4 not; abstract/exploratory directions unchanged; global Holm still 0 of 220) and removed; all
+  "so far / pending / as cells complete" wording removed; the red-dash \PENDING override deleted.
+- **R2 blinding incident and guard:** make numbers wrote interim R2 values (22 complete runs) into
+  numbers_r2.tex, results/r2_exposed/summary.json and the build log. None was read: numbers_r2.tex restored from
+  git, the other two deleted unread. analyse_r2.py now scores a family only when all its full/nonbt runs are
+  complete (H1 120, H2 240; `--final` overrides); PREREG_R2 Amendment 3. Current: H1 20/120.
+- **Space:** main 11 -> 10 pp (related-work rule list, discussion and limitations compressed; no result removed),
+  supplement 7 -> 6 pp (withdrawn-findings and S-k1 wording). Abstract 249. check_manuscript: all PASS (gate 0).
+  pytest 27 pass. Backups *.pre-iter34.bak.
+- **Jobs left running:** local R2 (GPU, 3 lanes), Kaggle usamaa36/paper08-r2-kaggle (started ~18:40, <=11.5 h).
+- **Score after: 7/10, minor revision.** Every registered test in the paper is now final.
+- **Top 3 priorities:**
+  1. Fetch Kaggle R2 output (`kaggle kernels output usamaa36/paper08-r2-kaggle`), copy complete JSONs; re-push
+     the kernel for unfinished seeds after the weekly GPU-quota reset.
+  2. When H1 has 120/120: `python3 paper/analyse_r2.py`, write R2 in the supplement/limitations (pay for space).
+  3. Final read-through for submission (humanizer pass, cover letter).

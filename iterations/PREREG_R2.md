@@ -100,3 +100,32 @@ are read) applies exactly the tests above.
   (experiments/r2_exposed/wait_r1_then_r2.sh). On CPU one round with `--local_ep 1` took
   about 11 min (plumbing run), so the authors' `local_ep 5` grid is GPU-only. Device does
   not change any test.
+
+## Amendment 2 (2026-10-29 18:45 PKT, after iteration 33): second device. No design change.
+
+- **Why.** The local GPU runs about 1.5 R2 runs per hour (3 lanes), so the 430-run grid would
+  take about 12 days. The owner authorised Kaggle (2026-10-29).
+- **Split, by whole seed.** The H1 runs (krum, `full` and `nonbt`, all c_frac x p) for seeds
+  **9, 10, 11, 12** (48 runs) run on Kaggle (2x Tesla T4, kernel usamaa36/paper08-r2-kaggle,
+  dataset usamaa36/paper08-r2-byzfl: run_byzfl.py and _ext/byzantineFL at acb1a9e, unchanged, plus
+  data/medmnist/bloodmnist.npz). Same harness, same flags as run_r2.sh's run_one, and the same
+  "complete" rule; the device is recorded in each kernel log. Every registered pair
+  (full vs nonbt, same cell and seed) therefore runs on one device. Seeds 3-8 stay on the local
+  GPU; results/r2_exposed/remote_jobs.txt lists the Kaggle jobs, and run_r2.sh skips them.
+  Kaggle JSONs are copied into results/r2_exposed unchanged. Devices are reproductions, not
+  bit-identical copies (as for P3/R1/K1). The remaining jobs (krum trainable, H2, fedavg) may be
+  sent the same way, by whole seed, and logged in the ledger.
+- **Outcomes seen:** none. analyse_r2.py last ran in iteration 33 (5 complete runs, every
+  macro \PENDING). Since the relaunch only the "complete" flags and error strings of the JSONs
+  have been read (15 complete), never a metric.
+
+## Amendment 3 (2026-10-29 ~23:00 PKT, iteration 34): blinding guard. No design change.
+
+`make numbers` (iteration 34) ran paper/analyse_r2.py over the 22 complete full/nonbt runs then on
+disk; it wrote interim per-cell values into paper/numbers_r2.tex and results/r2_exposed/summary.json
+and printed them into a build log. None of these was read: numbers_r2.tex was restored from git
+(all \PENDING), and summary.json and the build log were deleted unread. To stop a routine rebuild
+from unblinding R2, analyse_r2.py now scores a family only when all of its full/nonbt runs are
+complete (H1 120, H2 240; `--final` overrides, for a write-up after a stopped campaign under the
+registered missing-data rule). Until then it reports only run counts. Tests, cells and arms are
+unchanged. **Outcomes seen:** none.

@@ -179,3 +179,15 @@ The two devices are reproductions, not bit-identical copies (as for P3 and R1, P
 Amendment 2). Pairs are formed within (rule, seed, setting) as registered; the device of each
 cell is recorded in its log. **Outcomes seen:** none. `paper/analyse_k1.py` was run by
 `make numbers` and printed only the cell count (26/80); no K1 JSON was opened.
+
+## Amendment 3 (2026-10-29 19:15 PKT, after iteration 33): device. No cell, sign, test or wording changes.
+
+At the owner's request the local CPU is freed: the K1 runner was stopped at 18:57 (44/80 cells on
+disk; the cell in progress, KB full fldetector s42, had no JSON and was discarded). The 36
+remaining cells (all KB) run on Kaggle (kernel usamaa36/paper08-p3k1-kaggle, 2x Tesla T4,
+`--device cuda`, code tarball of src/ experiments/ configs/ at acb1a9e, dataset
+usamaa36/paper08-p3k1-code; data/ciciot2023 parquet files unchanged, usamaa36/paper08-ciciot2023),
+with run_cell's command line. The JSONs are copied back into results/kgt_k1 unchanged. Pairs are formed within
+(rule, seed, setting) as registered. KB pairs whose full arm ran locally and whose trainable
+arm runs on Kaggle: none (both arms of every pending pair are pending). Devices are reproductions,
+not bit-identical copies (Amendment 2). **Outcomes seen:** none; only file existence was checked.

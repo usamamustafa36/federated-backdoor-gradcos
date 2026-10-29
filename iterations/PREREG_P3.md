@@ -164,3 +164,13 @@ prevent. What changes is the reporting rule:
    defense.fltrust_root: natural; results/fltrust_shutdown/natroot_*) are exploratory,
    outside both families, and cannot rescue or replace any registered hypothesis.
 
+
+### Amendment 2 -- 2026-10-29 19:15 PKT, after iteration 33 (device only; no test changed)
+
+**Seen when written:** nothing new; only file existence of the tail cells was checked (70 of the
+289 tail jobs on disk). The P3 tail (results/postfix_p3/jobs_tail.txt, CPU since iteration 28)
+was stopped at 18:57 at the owner's request (local CPU freed); its 219 pending jobs run on Kaggle
+(kernel usamaa36/paper08-p3k1-kaggle, 2x Tesla T4, `--device cuda`, the command of run_p3.sh
+run_job with MAL_EPOCHS=15) and the JSONs are copied back into results/postfix_p3 unchanged. The
+P3 cells were registered on the GPU; the device of each cell is in its log. Reproductions, not
+bit-identical copies.

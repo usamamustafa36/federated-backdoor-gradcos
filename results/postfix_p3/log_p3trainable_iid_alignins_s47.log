@@ -1,0 +1,180 @@
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 5 seed(s) = 5
+
+[  1/5] alignins atk=0 m=0.0 p=0.0 fixed       s47 | CA=0.728 BSR=0.034 | 323s (cum 323s)
+[  2/5] alignins atk=0 m=0.0 p=0.0 fixed       s48 | CA=0.732 BSR=0.010 | 245s (cum 568s)
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 5 seed(s) = 5
+
+[  1/5] alignins atk=1 m=0.2 p=0.1 fixed       s47 | CA=0.732 BSR=0.017 | 700s (cum 700s)
+[  3/5] alignins atk=0 m=0.0 p=0.0 fixed       s49 | CA=0.732 BSR=0.015 | 211s (cum 779s)
+[  4/5] alignins atk=0 m=0.0 p=0.0 fixed       s50 | CA=0.732 BSR=0.014 | 230s (cum 1009s)
+[  5/5] alignins atk=0 m=0.0 p=0.0 fixed       s51 | CA=0.732 BSR=0.013 | 249s (cum 1257s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7220 | 0.3655 | 0.0472 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7197 | 0.3705 | 0.0015 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7099 | 0.3720 | 0.0090 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7260 | 0.4004 | 0.0122 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6942 | 0.3316 | 0.0029 | nan | nan | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7152 | 0.3533 | 0.0559 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7117 | 0.3523 | 0.0004 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7038 | 0.3470 | 0.0087 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7035 | 0.3529 | 0.0052 | 0.0000 | 0.3900 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6959 | 0.3131 | 0.0024 | 0.0000 | 0.3700 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6464 | 0.2790 | 0.0305 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6230 | 0.1718 | 0.0917 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5471 | 0.2342 | 0.0558 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5593 | 0.2215 | 0.0007 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6505 | 0.2337 | 0.1200 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5900 | 0.2575 | 0.0183 | 0.0000 | 0.0000 | -0.0137 | 0.9956 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6188 | 0.1747 | 0.0783 | 0.0000 | 0.0000 | 0.0051 | 0.9984 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4719 | 0.2537 | 0.0564 | 0.0000 | 0.0000 | -0.0127 | 0.9994 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4042 | 0.1744 | 0.0000 | 0.0000 | 0.0000 | 0.0025 | 0.9994 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6557 | 0.2356 | 0.1335 | 0.0000 | 0.0000 | -0.0063 | 0.9993 |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.2366 | 0.1874 | 0.0493 | 0.0000 | 0.9000 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6315 | 0.1817 | 0.0857 | 0.0000 | 0.5300 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.2649 | 0.1826 | 0.0002 | 0.0000 | 0.6000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7219 | 0.3999 | 0.0310 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7158 | 0.3943 | 0.0095 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6885 | 0.3175 | 0.0041 | 0.0000 | 0.2000 | nan | nan |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7180 | 0.3633 | 0.0252 | 1.0000 | 0.0000 | -0.0362 | 0.9972 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7266 | 0.4133 | 0.0025 | 1.0000 | 0.0000 | -0.0078 | 0.9985 |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7220 | 0.3655 | 0.0472 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7197 | 0.3705 | 0.0015 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7260 | 0.4004 | 0.0122 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6942 | 0.3316 | 0.0029 | nan | nan | nan | nan |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7370 | 0.4732 | 0.6001 | nan | nan | 0.4906 | 0.1702 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7264 | 0.4454 | 0.6285 | nan | nan | 0.4002 | 0.2625 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7276 | 0.4375 | 0.3054 | nan | nan | 0.4866 | 0.2309 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7044 | 0.3733 | 0.0933 | nan | nan | 0.4643 | 0.2404 |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7017 | 0.3158 | 0.1095 | 0.0000 | 0.3800 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7233 | 0.3904 | 0.0039 | 0.0000 | 0.3800 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7062 | 0.3488 | 0.0104 | 0.0000 | 0.3800 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6849 | 0.3278 | 0.0260 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6778 | 0.3173 | 0.0038 | 0.0000 | 0.3900 | nan | nan |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6993 | 0.4109 | 0.1651 | 0.1000 | 0.4750 | 0.2670 | 0.3424 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7277 | 0.4068 | 0.0084 | 0.3000 | 0.4250 | 0.3533 | 0.3908 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7174 | 0.3904 | 0.0133 | 0.2500 | 0.4250 | 0.3196 | 0.4132 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6770 | 0.3596 | 0.0234 | 0.4500 | 0.3875 | 0.3686 | 0.3240 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6522 | 0.3666 | 0.0343 | 0.4000 | 0.3875 | 0.2906 | 0.2985 |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6689 | 0.2964 | 0.0353 | 0.0000 | 0.3200 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5954 | 0.1591 | 0.0683 | 0.0000 | 0.8600 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5813 | 0.2125 | 0.0424 | 0.0000 | 0.3200 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.3884 | 0.2285 | 0.0418 | 0.0000 | 0.6300 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6782 | 0.2687 | 0.1154 | 0.0000 | 0.6300 | nan | nan |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6542 | 0.2783 | 0.0297 | 0.2000 | 0.3000 | 0.3239 | 0.3307 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5783 | 0.1821 | 0.0940 | 0.4500 | 0.7375 | 0.3806 | 0.3471 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5588 | 0.2643 | 0.0220 | 0.1500 | 0.2500 | 0.1833 | 0.5228 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.3124 | 0.2259 | 0.0105 | 0.6000 | 0.5750 | 0.3241 | 0.3745 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6430 | 0.2648 | 0.1133 | 0.5000 | 0.5500 | 0.2863 | 0.4466 |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.3317 | 0.3135 | 0.0235 | 0.0000 | 0.7300 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6728 | 0.3059 | 0.0139 | 0.0000 | 0.3200 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.4757 | 0.2263 | 0.0000 | 0.0000 | 0.7100 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7273 | 0.3960 | 0.0266 | 0.0000 | 0.5700 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7308 | 0.4212 | 0.0177 | 0.0000 | 0.5700 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7304 | 0.4228 | 0.0158 | 0.0000 | 0.5700 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7274 | 0.4050 | 0.0201 | 0.0000 | 0.5200 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7244 | 0.4100 | 0.0168 | 0.0000 | 0.5400 | nan | nan |
+| alignins | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7254 | 0.3973 | 0.0278 | 0.8500 | 0.4125 | 0.4497 | 0.5578 |
+[  2/5] alignins atk=1 m=0.2 p=0.1 fixed       s48 | CA=0.732 BSR=0.011 | 642s (cum 1342s)
+[  3/5] alignins atk=1 m=0.2 p=0.1 fixed       s49 | CA=0.732 BSR=0.016 | 610s (cum 1952s)
+[  4/5] alignins atk=1 m=0.2 p=0.1 fixed       s50 | CA=0.731 BSR=0.018 | 738s (cum 2690s)
+[  5/5] alignins atk=1 m=0.2 p=0.1 fixed       s51 | CA=0.731 BSR=0.012 | 718s (cum 3407s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7220 | 0.3655 | 0.0472 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7197 | 0.3705 | 0.0015 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7099 | 0.3720 | 0.0090 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7260 | 0.4004 | 0.0122 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6942 | 0.3316 | 0.0029 | nan | nan | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7152 | 0.3533 | 0.0559 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7117 | 0.3523 | 0.0004 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7038 | 0.3470 | 0.0087 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7035 | 0.3529 | 0.0052 | 0.0000 | 0.3900 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6959 | 0.3131 | 0.0024 | 0.0000 | 0.3700 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6464 | 0.2790 | 0.0305 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6230 | 0.1718 | 0.0917 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5471 | 0.2342 | 0.0558 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5593 | 0.2215 | 0.0007 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6505 | 0.2337 | 0.1200 | 0.0000 | 0.0000 | nan | nan |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5900 | 0.2575 | 0.0183 | 0.0000 | 0.0000 | -0.0137 | 0.9956 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6188 | 0.1747 | 0.0783 | 0.0000 | 0.0000 | 0.0051 | 0.9984 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4719 | 0.2537 | 0.0564 | 0.0000 | 0.0000 | -0.0127 | 0.9994 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4042 | 0.1744 | 0.0000 | 0.0000 | 0.0000 | 0.0025 | 0.9994 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6557 | 0.2356 | 0.1335 | 0.0000 | 0.0000 | -0.0063 | 0.9993 |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.2366 | 0.1874 | 0.0493 | 0.0000 | 0.9000 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6315 | 0.1817 | 0.0857 | 0.0000 | 0.5300 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.2649 | 0.1826 | 0.0002 | 0.0000 | 0.6000 | nan | nan |
+| gradcos | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7240 | 0.3697 | 0.0516 | 0.0000 | 0.2500 | nan | nan |
+| gradcos | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7241 | 0.3986 | 0.0032 | 0.0000 | 0.1000 | nan | nan |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7368 | 0.4717 | 0.7538 | 0.0000 | 0.1750 | -0.0426 | 0.9987 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7406 | 0.4809 | 0.9099 | 0.0000 | 0.0750 | -0.0070 | 0.9988 |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7219 | 0.3999 | 0.0310 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7158 | 0.3943 | 0.0095 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6885 | 0.3175 | 0.0041 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7064 | 0.3420 | 0.0629 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5844 | 0.3480 | 0.0000 | 0.0000 | 0.2000 | nan | nan |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7180 | 0.3633 | 0.0252 | 1.0000 | 0.0000 | -0.0362 | 0.9972 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7266 | 0.4133 | 0.0025 | 1.0000 | 0.0000 | -0.0078 | 0.9985 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7039 | 0.3505 | 0.0063 | 1.0000 | 0.0000 | -0.0302 | 0.9994 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7072 | 0.3473 | 0.0014 | 1.0000 | 0.0000 | -0.0127 | 0.9996 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6836 | 0.2905 | 0.0036 | 1.0000 | 0.0000 | -0.0177 | 0.9994 |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7285 | 0.4081 | 0.0198 | 0.0000 | 0.5600 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7297 | 0.4189 | 0.0146 | 0.0000 | 0.4800 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7233 | 0.4020 | 0.0221 | 0.0000 | 0.5500 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7310 | 0.4253 | 0.0195 | 0.0000 | 0.5100 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7307 | 0.4340 | 0.0201 | 0.0000 | 0.5300 | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7220 | 0.3655 | 0.0472 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7197 | 0.3705 | 0.0015 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7260 | 0.4004 | 0.0122 | nan | nan | nan | nan |
+| fedavg | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6942 | 0.3316 | 0.0029 | nan | nan | nan | nan |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7370 | 0.4732 | 0.6001 | nan | nan | 0.4906 | 0.1702 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7264 | 0.4454 | 0.6285 | nan | nan | 0.4002 | 0.2625 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7276 | 0.4375 | 0.3054 | nan | nan | 0.4866 | 0.2309 |
+| fedavg | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7044 | 0.3733 | 0.0933 | nan | nan | 0.4643 | 0.2404 |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7017 | 0.3158 | 0.1095 | 0.0000 | 0.3800 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7233 | 0.3904 | 0.0039 | 0.0000 | 0.3800 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7062 | 0.3488 | 0.0104 | 0.0000 | 0.3800 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6849 | 0.3278 | 0.0260 | 0.0000 | 0.4000 | nan | nan |
+| flame | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6778 | 0.3173 | 0.0038 | 0.0000 | 0.3900 | nan | nan |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6993 | 0.4109 | 0.1651 | 0.1000 | 0.4750 | 0.2670 | 0.3424 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7277 | 0.4068 | 0.0084 | 0.3000 | 0.4250 | 0.3533 | 0.3908 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7174 | 0.3904 | 0.0133 | 0.2500 | 0.4250 | 0.3196 | 0.4132 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6770 | 0.3596 | 0.0234 | 0.4500 | 0.3875 | 0.3686 | 0.3240 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6522 | 0.3666 | 0.0343 | 0.4000 | 0.3875 | 0.2906 | 0.2985 |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6689 | 0.2964 | 0.0353 | 0.0000 | 0.3200 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5954 | 0.1591 | 0.0683 | 0.0000 | 0.8600 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.5813 | 0.2125 | 0.0424 | 0.0000 | 0.3200 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.3884 | 0.2285 | 0.0418 | 0.0000 | 0.6300 | nan | nan |
+| fltrust | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6782 | 0.2687 | 0.1154 | 0.0000 | 0.6300 | nan | nan |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6542 | 0.2783 | 0.0297 | 0.2000 | 0.3000 | 0.3239 | 0.3307 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5783 | 0.1821 | 0.0940 | 0.4500 | 0.7375 | 0.3806 | 0.3471 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.5588 | 0.2643 | 0.0220 | 0.1500 | 0.2500 | 0.1833 | 0.5228 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.3124 | 0.2259 | 0.0105 | 0.6000 | 0.5750 | 0.3241 | 0.3745 |
+| fltrust | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6430 | 0.2648 | 0.1133 | 0.5000 | 0.5500 | 0.2863 | 0.4466 |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.3317 | 0.3135 | 0.0235 | 0.0000 | 0.7300 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6728 | 0.3059 | 0.0139 | 0.0000 | 0.3200 | nan | nan |
+| foolsgold | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.4757 | 0.2263 | 0.0000 | 0.0000 | 0.7100 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7147 | 0.3506 | 0.0474 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7148 | 0.3886 | 0.0091 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6878 | 0.3108 | 0.0055 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7084 | 0.3495 | 0.0027 | 0.0000 | 0.2000 | nan | nan |
+| krum | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.6809 | 0.3185 | 0.0071 | 0.0000 | 0.2000 | nan | nan |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7169 | 0.3563 | 0.0257 | 1.0000 | 0.0000 | 0.1824 | 0.2627 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7248 | 0.4104 | 0.0053 | 1.0000 | 0.0000 | 0.2841 | 0.2958 |
+| krum | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.6992 | 0.3257 | 0.0028 | 1.0000 | 0.0000 | 0.2114 | 0.3205 |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7273 | 0.3960 | 0.0266 | 0.0000 | 0.5700 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7308 | 0.4212 | 0.0177 | 0.0000 | 0.5700 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7304 | 0.4228 | 0.0158 | 0.0000 | 0.5700 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7274 | 0.4050 | 0.0201 | 0.0000 | 0.5200 | nan | nan |
+| alignins | False | fixed | simple | 1.0000 | 0.0000 | 0.0000 | 0.7244 | 0.4100 | 0.0168 | 0.0000 | 0.5400 | nan | nan |
+| alignins | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7254 | 0.3973 | 0.0278 | 0.8500 | 0.4125 | 0.4497 | 0.5578 |
+| alignins | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7300 | 0.4138 | 0.0179 | 0.8500 | 0.5375 | 0.4002 | 0.5528 |
+| alignins | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7290 | 0.4177 | 0.0142 | 0.9000 | 0.3750 | 0.4194 | 0.6275 |
+| alignins | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7285 | 0.4112 | 0.0900 | 0.8000 | 0.4375 | 0.4028 | 0.5090 |
+| alignins | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7234 | 0.4073 | 0.0157 | 0.9500 | 0.4375 | 0.4702 | 0.5641 |

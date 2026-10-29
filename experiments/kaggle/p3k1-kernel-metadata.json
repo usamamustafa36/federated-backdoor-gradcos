@@ -1,0 +1,5 @@
+{"id": "usamaa36/paper08-p3k1-kaggle", "title": "paper08-p3k1-kaggle", "code_file": "paper08-p3k1-kaggle.py",
+ "language": "python", "kernel_type": "script", "is_private": true, "enable_gpu": true,
+ "enable_tpu": false, "enable_internet": true,
+ "dataset_sources": ["usamaa36/paper08-p3k1-code", "usamaa36/paper08-ciciot2023"],
+ "kernel_sources": [], "competition_sources": [], "model_sources": [], "machine_shape": "NvidiaTeslaT4"}

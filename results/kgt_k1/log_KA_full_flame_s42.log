@@ -1,0 +1,71 @@
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] flame    atk=1 m=0.2 p=0.1 fixed       s42 | ERROR: OutOfMemoryError: CUDA out of memory. Tried to allocate 116.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 99.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1234326 has 2.16 GiB memory in use. Including non-PyTorch memory, this process has 158.00 MiB memory in use. Process 1237279 has 308.00 MiB memory in use. Process 1237280 has 308.00 MiB memory in use. Of the allocated memory 21.27 MiB is allocated by PyTorch, and 20.73 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/run_sweep.py", line 385, in main
+    res = run_one(cfg, ds, device, out_dir, tag, seed_suffix,
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/run_sweep.py", line 167, in run_one
+    hist = engine.run(verbose=False)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 401, in run
+    results = [(None, self._client_fit(c)) for c in selected]
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 401, in <listcomp>
+    results = [(None, self._client_fit(c)) for c in selected]
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/engine.py", line 180, in _client_fit
+    n = tu.local_train(
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/fl/torch_utils.py", line 71, in local_train
+    loss = loss_fn(model(xb), yb)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/src/models/cnn_lstm.py", line 53, in forward
+    out, (h_n, _) = self.lstm(x)     # h_n: (1, batch, lstm_hidden)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/rnn.py", line 1124, in forward
+    result = _VF.lstm(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 116.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 99.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1234326 has 2.16 GiB memory in use. Including non-PyTorch memory, this process has 158.00 MiB memory in use. Process 1237279 has 308.00 MiB memory in use. Process 1237280 has 308.00 MiB memory in use. Of the allocated memory 21.27 MiB is allocated by PyTorch, and 20.73 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py:823: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:109.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+device=cpu dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] flame    atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.731 BSR=0.022 | 1416s (cum 1416s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7267 | 0.3951 | 0.0255 | 1.0000 | 0.2250 | 0.1617 | 0.9512 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7288 | 0.4183 | 0.0134 | 1.0000 | 0.2250 | 0.1550 | 0.9560 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7266 | 0.4085 | 0.0194 | 1.0000 | 0.2250 | 0.1518 | 0.9646 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7277 | 0.4097 | 0.0195 | 1.0000 | 0.2250 | 0.1393 | 0.9713 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4167 | 0.1036 | 0.6000 | 0.0000 | 0.1234 | 0.9660 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7277 | 0.4186 | 0.0179 | 0.6000 | 0.0000 | 0.1366 | 0.9673 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7274 | 0.4167 | 0.1012 | 0.6500 | 0.0250 | 0.1235 | 0.9724 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4911 | 0.2256 | 0.1458 | 0.0000 | 1.0000 | 0.1188 | 0.9597 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4946 | 0.2099 | 0.2170 | 0.0000 | 1.0000 | 0.1213 | 0.9632 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4555 | 0.2184 | 0.1847 | 0.0000 | 0.8750 | 0.1171 | 0.9555 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4847 | 0.2120 | 0.2275 | 0.0000 | 1.0000 | 0.1207 | 0.9657 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7287 | 0.4177 | 0.0147 | 1.0000 | 0.0250 | 0.1534 | 0.9571 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7281 | 0.4179 | 0.0199 | 0.9000 | 0.0750 | 0.1312 | 0.9699 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4124 | 0.0144 | 1.0000 | 0.0500 | 0.1463 | 0.9723 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7304 | 0.4216 | 0.0174 | 1.0000 | 0.2375 | 0.4799 | 0.9142 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7278 | 0.4213 | 0.0122 | 1.0000 | 0.2375 | 0.5805 | 0.8942 |
+| flame | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7304 | 0.4204 | 0.0136 | 1.0000 | 0.2375 | 0.4844 | 0.8710 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7202 | 0.3954 | 0.0179 | 1.0000 | 0.0000 | 0.6467 | 0.9043 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7302 | 0.4185 | 0.0126 | 1.0000 | 0.0000 | 0.5061 | 0.8881 |
+| fldetector | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7255 | 0.4117 | 0.0149 | 1.0000 | 0.0000 | 0.6144 | 0.9220 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7114 | 0.3784 | 0.0311 | 0.0000 | 0.0000 | 0.6216 | 0.7432 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7253 | 0.3986 | 0.3639 | 0.0000 | 0.0000 | 0.7430 | 0.7075 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7242 | 0.4149 | 0.0222 | 0.0000 | 0.0000 | 1.0491 | 0.7069 |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7276 | 0.4050 | 0.5962 | 0.0000 | 0.0000 | 0.6132 | 0.6397 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7236 | 0.3904 | 0.0231 | 1.0000 | 0.0250 | 0.6398 | 0.9214 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7321 | 0.4353 | 0.0165 | 1.0000 | 0.0000 | 0.4917 | 0.8701 |
+| gradcos | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.7273 | 0.4097 | 0.0201 | 1.0000 | 0.0250 | 0.5851 | 0.9173 |

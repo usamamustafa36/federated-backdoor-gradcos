@@ -12,7 +12,7 @@ never do. Writes results/r2_exposed/summary.json and paper/numbers_r2.tex (\\rTw
 """
 from __future__ import annotations
 
-import glob, itertools, json, os, re
+import glob, itertools, json, os, re, sys
 import numpy as np
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -62,8 +62,19 @@ def Y(j):
     return 1.0 - max(r["test_acc"] for r in j["rounds"]) / 100.0
 
 
+FAMILY_RUNS = {"H1": 120, "H2": 240}   # full + nonbt runs per family (10 seeds x 6 cells x 2 arms)
+
+
 def main():
     runs = load()
+    # Blinding guard (PREREG_R2 Amendment 3): a family's cells are scored, written and printed only
+    # when all of its runs are complete; until then only the run counts are reported.
+    have = {"H1": sum(1 for k in runs if k[0] == "krum" and k[3] in ("full", "nonbt")),
+            "H2": sum(1 for k in runs if k[0] != "krum" and k[0] != "fedavg" and k[3] in ("full", "nonbt"))}
+    open_fam = {f for f, n in FAMILY_RUNS.items() if have[f] >= n or "--final" in sys.argv}
+    print(f"R2: complete runs H1 {have['H1']}/120, H2 {have['H2']}/240; scored: {sorted(open_fam) or 'none (blinded)'}")
+    runs = {k: v for k, v in runs.items()
+            if k[0] == "fedavg" or ("H1" if k[0] == "krum" else "H2") in open_fam}
     cells, fam = [], {"H1": [], "H2": []}
     for meth in ("krum", "trimmed_mean", "fang"):
         for c in ("0.1", "0.2", "0.3"):

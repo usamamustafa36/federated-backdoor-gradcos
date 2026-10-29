@@ -1,0 +1,9 @@
+device=cuda dataset=ciciot2023 classes=8 rounds=15
+total cells: 1 x 1 seed(s) = 1
+
+[  1/1] foolsgold atk=1 m=0.2 p=0.1 fixed       s42 | CA=0.630 BSR=0.141 | 199s (cum 199s)
+
+=== SUMMARY ===
+| defense | attack | trigger | variant | trigger_scale | malicious_ratio | poison_rate | CA | macro_f1 | BSR | DR | FPR | salience_gap | mal_pair_cos |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| foolsgold | True | fixed | simple | 1.0000 | 0.2000 | 0.1000 | 0.4911 | 0.2256 | 0.1458 | 0.0000 | 1.0000 | 0.1188 | 0.9597 |
