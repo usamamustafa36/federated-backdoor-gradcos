@@ -137,3 +137,13 @@ krum untarget c0.3 full s11, also existed as a complete local run (2026-10-24, f
 nonbt partner existed only from Kaggle. By Amendment 2's rule (both arms of a pair on one device)
 the Kaggle run is used; the local one is kept, unread, in results/r2_exposed/superseded/ and is not
 analysed. **Outcomes seen:** none (completeness flags only).
+
+## Amendment 5 (2026-10-29 ~23:55 PKT, iteration 34): second Kaggle batch. No design change.
+
+Kaggle ran ~12.6 runs/h against ~1.5 locally, so more of the grid moves there, again by whole seed
+per family: H1 seeds 6, 7, 8; H2 (trimmed_mean, fang; full and nonbt) seeds 9-12; every krum
+`trainable` run (reported, not tested); the 10 fedavg runs. 200 runs not yet complete
+(kernel usamaa36/paper08-r2-kaggle v2, list in experiments/kaggle/paper08-r2-kaggle.py); runs it does
+not finish within a session are re-sent in the next one. results/r2_exposed/remote_jobs.txt (250 lines)
+lists every Kaggle job and run_r2.sh skips them; the local GPU keeps H1 seeds 3-5 and H2 seeds 3-8.
+Every registered pair stays on one device. **Outcomes seen:** none.

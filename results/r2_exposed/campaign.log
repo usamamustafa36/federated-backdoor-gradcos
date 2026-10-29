@@ -456,3 +456,6 @@
 [2026-10-29 21:45:27] done krum target 0.1 nonbt 4
 [2026-10-29 21:59:57] done krum untarget 0.2 full 4
 [2026-10-29 22:24:33] done krum untarget 0.2 nonbt 4
+[2026-10-29 22:45:03] done krum target 0.2 nonbt 4
+[2026-10-29 22:46:18] PREREG_R2 Amendment 5: Kaggle batch 2 (200 runs) listed in remote_jobs.txt; relaunch LANES=3
+[2026-10-29 22:46:18] R2 start DEVICE=cuda LANES=3 jobs=430

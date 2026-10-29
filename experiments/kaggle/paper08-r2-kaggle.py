@@ -1,9 +1,8 @@
-# paper08 R2 (iterations/PREREG_R2.md, Amendment 2): H1 krum full/nonbt runs for whole seeds on
-# Kaggle T4 x2. Same harness/flags as experiments/r2_exposed/run_r2.sh run_one; resumable via
+# paper08 R2 (iterations/PREREG_R2.md, Amendments 2 and 5): an explicit list of R2 runs (whole seeds
+# per family) on Kaggle T4 x2. v1: H1 seeds 9-12; v2: the list below. Same harness/flags as experiments/r2_exposed/run_r2.sh run_one; resumable via
 # the previous version's output (complete JSONs are copied forward and skipped).
 import glob, json, os, shutil, subprocess, sys, tarfile, time
 T0 = time.time(); STOP_LAUNCH = 10.3 * 3600; HARD = 11.5 * 3600
-SEEDS = [int(s) for s in os.environ.get("R2_SEEDS", "12 11 10 9").split()]
 LANES = 4
 W = "/kaggle/working"; OUT = f"{W}/r2_out"; os.makedirs(OUT, exist_ok=True)
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "medmnist"], check=False)
@@ -18,12 +17,209 @@ for f in glob.glob("/kaggle/input/**/byzfl_*.json", recursive=True):   # earlier
     try:
         if json.load(open(f)).get("complete"): shutil.copy(f, OUT)
     except Exception: pass
-jobs = []
-for s in SEEDS:
-    for c in ("0.1", "0.2", "0.3"):
-        for p in ("target", "untarget"):
-            for a in ("full", "nonbt"):
-                jobs.append(("krum", p, c, a, s))
+JOBS = """
+krum target 0.1 full 6
+krum target 0.1 nonbt 6
+krum untarget 0.1 full 6
+krum untarget 0.1 nonbt 6
+krum target 0.2 full 6
+krum target 0.2 nonbt 6
+krum untarget 0.2 full 6
+krum untarget 0.2 nonbt 6
+krum target 0.3 full 6
+krum target 0.3 nonbt 6
+krum untarget 0.3 full 6
+krum untarget 0.3 nonbt 6
+krum target 0.1 full 7
+krum target 0.1 nonbt 7
+krum untarget 0.1 full 7
+krum untarget 0.1 nonbt 7
+krum target 0.2 full 7
+krum target 0.2 nonbt 7
+krum untarget 0.2 full 7
+krum untarget 0.2 nonbt 7
+krum target 0.3 full 7
+krum target 0.3 nonbt 7
+krum untarget 0.3 full 7
+krum untarget 0.3 nonbt 7
+krum target 0.1 full 8
+krum target 0.1 nonbt 8
+krum untarget 0.1 full 8
+krum untarget 0.1 nonbt 8
+krum target 0.2 full 8
+krum target 0.2 nonbt 8
+krum untarget 0.2 full 8
+krum untarget 0.2 nonbt 8
+krum target 0.3 full 8
+krum target 0.3 nonbt 8
+krum untarget 0.3 full 8
+krum untarget 0.3 nonbt 8
+trimmed_mean target 0.1 full 12
+trimmed_mean target 0.1 nonbt 12
+trimmed_mean untarget 0.1 full 12
+trimmed_mean untarget 0.1 nonbt 12
+trimmed_mean target 0.2 full 12
+trimmed_mean target 0.2 nonbt 12
+trimmed_mean untarget 0.2 full 12
+trimmed_mean untarget 0.2 nonbt 12
+trimmed_mean target 0.3 full 12
+trimmed_mean target 0.3 nonbt 12
+trimmed_mean untarget 0.3 full 12
+trimmed_mean untarget 0.3 nonbt 12
+fang target 0.1 full 12
+fang target 0.1 nonbt 12
+fang untarget 0.1 full 12
+fang untarget 0.1 nonbt 12
+fang target 0.2 full 12
+fang target 0.2 nonbt 12
+fang untarget 0.2 full 12
+fang untarget 0.2 nonbt 12
+fang target 0.3 full 12
+fang target 0.3 nonbt 12
+fang untarget 0.3 full 12
+fang untarget 0.3 nonbt 12
+trimmed_mean target 0.1 full 11
+trimmed_mean target 0.1 nonbt 11
+trimmed_mean untarget 0.1 full 11
+trimmed_mean untarget 0.1 nonbt 11
+trimmed_mean target 0.2 full 11
+trimmed_mean target 0.2 nonbt 11
+trimmed_mean untarget 0.2 full 11
+trimmed_mean untarget 0.2 nonbt 11
+trimmed_mean target 0.3 full 11
+trimmed_mean target 0.3 nonbt 11
+trimmed_mean untarget 0.3 full 11
+trimmed_mean untarget 0.3 nonbt 11
+fang target 0.1 full 11
+fang target 0.1 nonbt 11
+fang untarget 0.1 full 11
+fang untarget 0.1 nonbt 11
+fang target 0.2 full 11
+fang target 0.2 nonbt 11
+fang untarget 0.2 full 11
+fang untarget 0.2 nonbt 11
+fang target 0.3 full 11
+fang target 0.3 nonbt 11
+fang untarget 0.3 full 11
+fang untarget 0.3 nonbt 11
+trimmed_mean target 0.1 full 10
+trimmed_mean target 0.1 nonbt 10
+trimmed_mean untarget 0.1 full 10
+trimmed_mean untarget 0.1 nonbt 10
+trimmed_mean target 0.2 full 10
+trimmed_mean target 0.2 nonbt 10
+trimmed_mean untarget 0.2 full 10
+trimmed_mean untarget 0.2 nonbt 10
+trimmed_mean target 0.3 full 10
+trimmed_mean target 0.3 nonbt 10
+trimmed_mean untarget 0.3 full 10
+trimmed_mean untarget 0.3 nonbt 10
+fang target 0.1 full 10
+fang target 0.1 nonbt 10
+fang untarget 0.1 full 10
+fang untarget 0.1 nonbt 10
+fang target 0.2 full 10
+fang target 0.2 nonbt 10
+fang untarget 0.2 full 10
+fang untarget 0.2 nonbt 10
+fang target 0.3 full 10
+fang target 0.3 nonbt 10
+fang untarget 0.3 full 10
+fang untarget 0.3 nonbt 10
+trimmed_mean target 0.1 full 9
+trimmed_mean target 0.1 nonbt 9
+trimmed_mean untarget 0.1 full 9
+trimmed_mean target 0.2 full 9
+trimmed_mean target 0.2 nonbt 9
+trimmed_mean untarget 0.2 full 9
+trimmed_mean untarget 0.2 nonbt 9
+trimmed_mean target 0.3 full 9
+trimmed_mean target 0.3 nonbt 9
+trimmed_mean untarget 0.3 full 9
+trimmed_mean untarget 0.3 nonbt 9
+fang target 0.1 full 9
+fang target 0.1 nonbt 9
+fang untarget 0.1 full 9
+fang untarget 0.1 nonbt 9
+fang target 0.2 full 9
+fang target 0.2 nonbt 9
+fang untarget 0.2 full 9
+fang untarget 0.2 nonbt 9
+fang target 0.3 full 9
+fang target 0.3 nonbt 9
+fang untarget 0.3 full 9
+fang untarget 0.3 nonbt 9
+krum target 0.1 trainable 3
+krum untarget 0.1 trainable 3
+krum target 0.2 trainable 3
+krum untarget 0.2 trainable 3
+krum target 0.3 trainable 3
+krum untarget 0.3 trainable 3
+krum target 0.1 trainable 4
+krum untarget 0.1 trainable 4
+krum target 0.2 trainable 4
+krum untarget 0.2 trainable 4
+krum target 0.3 trainable 4
+krum untarget 0.3 trainable 4
+krum target 0.1 trainable 5
+krum untarget 0.1 trainable 5
+krum target 0.2 trainable 5
+krum untarget 0.2 trainable 5
+krum target 0.3 trainable 5
+krum untarget 0.3 trainable 5
+krum target 0.1 trainable 6
+krum untarget 0.1 trainable 6
+krum target 0.2 trainable 6
+krum untarget 0.2 trainable 6
+krum target 0.3 trainable 6
+krum untarget 0.3 trainable 6
+krum target 0.1 trainable 7
+krum untarget 0.1 trainable 7
+krum target 0.2 trainable 7
+krum untarget 0.2 trainable 7
+krum target 0.3 trainable 7
+krum untarget 0.3 trainable 7
+krum target 0.1 trainable 8
+krum untarget 0.1 trainable 8
+krum target 0.2 trainable 8
+krum untarget 0.2 trainable 8
+krum target 0.3 trainable 8
+krum untarget 0.3 trainable 8
+krum target 0.1 trainable 9
+krum untarget 0.1 trainable 9
+krum target 0.2 trainable 9
+krum untarget 0.2 trainable 9
+krum target 0.3 trainable 9
+krum untarget 0.3 trainable 9
+krum target 0.1 trainable 10
+krum untarget 0.1 trainable 10
+krum target 0.2 trainable 10
+krum untarget 0.2 trainable 10
+krum target 0.3 trainable 10
+krum untarget 0.3 trainable 10
+krum target 0.1 trainable 11
+krum untarget 0.1 trainable 11
+krum target 0.2 trainable 11
+krum untarget 0.2 trainable 11
+krum target 0.3 trainable 11
+krum untarget 0.3 trainable 11
+krum target 0.1 trainable 12
+krum untarget 0.1 trainable 12
+krum target 0.2 trainable 12
+krum untarget 0.2 trainable 12
+krum target 0.3 trainable 12
+krum untarget 0.3 trainable 12
+fedavg target 0.3 full 3
+fedavg target 0.3 full 4
+fedavg target 0.3 full 5
+fedavg target 0.3 full 6
+fedavg target 0.3 full 7
+fedavg target 0.3 full 9
+fedavg target 0.3 full 10
+fedavg target 0.3 full 11
+fedavg target 0.3 full 12
+"""
+jobs = [(m, p, c, a, int(sd)) for m, p, c, a, sd in (l.split() for l in JOBS.strip().split("\n"))]
 def done(f):
     try: return json.load(open(f)).get("complete") is True
     except Exception: return False
