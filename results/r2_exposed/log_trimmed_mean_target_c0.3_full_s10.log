@@ -44,3 +44,51 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
 RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`
+===== Kaggle usamaa36/paper08-r2-kaggle v2 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:48<2:39:41, 48.15s/it]  1%|          | 2/200 [01:35<2:36:48, 47.52s/it]  2%|▏         | 3/200 [02:22<2:36:02, 47.53s/it]  2%|▏         | 4/200 [03:10<2:34:58, 47.44s/it]  2%|▎         | 5/200 [03:57<2:34:06, 47.42s/it]  3%|▎         | 6/200 [04:44<2:32:24, 47.14s/it]  4%|▎         | 7/200 [05:31<2:32:09, 47.30s/it]  4%|▍         | 8/200 [06:19<2:31:22, 47.31s/it]  4%|▍         | 8/200 [06:56<2:46:41, 52.09s/it]
+Round: 0
+Test accuracy: 19.46799087524414
+Test loss: 2.260096920473957
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 8.301666259765625
+Test loss: 2.6621849865148164
+Check accuracy: 19.46799087524414
+patience: 0
+Round: 2
+Test accuracy: 18.240280151367188
+Test loss: 2.049242208659806
+Check accuracy: 19.46799087524414
+patience: 1
+Round: 3
+Test accuracy: 8.301666259765625
+Test loss: 2.1973509421929807
+Check accuracy: 19.46799087524414
+patience: 2
+Round: 4
+Test accuracy: 13.738673210144043
+Test loss: 2.0532362914789286
+Check accuracy: 19.46799087524414
+patience: 3
+Round: 5
+Test accuracy: 13.738673210144043
+Test loss: 2.06470646282554
+Check accuracy: 19.46799087524414
+patience: 4
+Round: 6
+Test accuracy: 13.738673210144043
+Test loss: 2.0896752119691566
+Check accuracy: 19.46799087524414
+patience: 5
+Round: 7
+Test accuracy: 15.609471321105957
+Test loss: 2.0866104478342637
+Check accuracy: 19.46799087524414
+patience: 6
+Round: 8
+Test accuracy: 13.738673210144043
+Test loss: 2.0615952488136235
+Check accuracy: 19.46799087524414
+patience: 7
+Early stopped federated training!

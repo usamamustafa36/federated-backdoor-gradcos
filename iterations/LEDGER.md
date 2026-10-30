@@ -2103,3 +2103,30 @@ finished here.)
   one duplicate (krum untarget c0.3 full s11, also complete locally from 10-24) resolved by the same-device
   pair rule, local copy moved unread to results/r2_exposed/superseded/ (PREREG_R2 Amendment 4).
   R2 H1 now 67/120 (blinded). Local GPU covers seeds 3-8 (53 left).
+
+## Iteration 35 (in progress) - 2026-10-30 - R2 H1 complete and scored; rest of R2 on Kaggle (PREREG_R2 Amendment 6)
+
+- **State at start (12:00):** rebooted ~09:00; local R2 runner dead since ~08:50; Kaggle v2 COMPLETE.
+- **Kaggle v2:** 124/200 complete in 10.72 h (launch limit hit, 0 non-zero exits). JSONs copied unchanged, no
+  clashes; per-run logs appended under a device header; kernel log appended to results/kaggle/. 15 per-run logs
+  (trimmed_mean untarget c0.2/c0.3, seeds 9-12) would not download (stock `kaggle kernels output` hangs: no
+  request timeout; scratchpad kfetch.py with timeouts got everything else).
+- **H1 120/120, scored (Amendment 3 rule):** supported in 3/6 cells, all untargeted (c 0.1/0.2/0.3: dY
+  +0.032/+0.046/+0.041, p_H=0.0117 each); targeted cells not supported (p_H 1, 0.61, 1). Not yet written up.
+- **Kaggle v3 pushed ~13:30:** all 216 remaining runs (H2 146 incl. the re-sent half pair, fedavg 9, krum
+  trainable 60), H2 first. Local GPU runs nothing more. H2 93/240 (blinded).
+- **H1 written up (16:30):** main Discussion paragraph "A published pipeline (registered)" + scope bullet
+  ("In one, the error its authors plot moves under the mask") + conclusion clause; supplement S-III-E with all
+  six cells, M1/M2 descriptives, M3 reported as failed (MPAF excluded in both arms, error still moved).
+  Exploratory macros added to analyse_r2.py (H1 only): MPAF counter 9.4x honest median; full-arm Krum picks the
+  honest client with the most batches in 96% of MPAF rounds (masked 13%; targeted 0%/2%); attackers chosen
+  0%/0% (MPAF). numbers_r2 wired into preamble/Makefile. Data statement names BloodMNIST.
+- **Space:** main 11 -> 10 pp (R2 paragraph tightened; Mechanisms opener and FoolsGold closing sentence cut;
+  Scale and Threat-model limitations and conclusion compressed; no result removed except the conclusion's
+  "leaves FLAME's clean decisions unchanged", stated in Sec. Results). Supplement 7 -> 6 pp (round-one defect,
+  rule descriptions, boilerplate "This section expands" lines; trigger Table S-V turned into one sentence,
+  main ref redirected to Sec. sup:realize). check_manuscript all PASS; pytest 27 pass (PYTHONPATH=.).
+  H2 will need ~6 more supplement lines when it lands.
+- **Next:** fetch v3 (scratchpad kfetch.py or re-create: list all pages, per-file timeout), copy complete
+  JSONs; re-push v4 for anything unfinished (likely the trainable tail; may need the weekly quota reset);
+  write R2 H1 (+ H2 when 240/240) into the supplement/limitations within the page caps.

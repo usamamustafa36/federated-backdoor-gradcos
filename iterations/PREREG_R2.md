@@ -147,3 +147,19 @@ per family: H1 seeds 6, 7, 8; H2 (trimmed_mean, fang; full and nonbt) seeds 9-12
 not finish within a session are re-sent in the next one. results/r2_exposed/remote_jobs.txt (250 lines)
 lists every Kaggle job and run_r2.sh skips them; the local GPU keeps H1 seeds 3-5 and H2 seeds 3-8.
 Every registered pair stays on one device. **Outcomes seen:** none.
+
+## Amendment 6 (2026-10-30 ~13:30 PKT, iteration 35): the rest of the grid on Kaggle. No design change.
+
+The local runner died at a reboot (~08:50); the owner asked for the rest to run on the Kaggle GPU. The
+v2 session (Amendment 5) hit its 10.3 h launch limit with 124/200 complete (0 non-zero exits); those 124
+JSONs were copied in unchanged, with no clashes (15 per-run logs could not be downloaded from Kaggle;
+the kernel log has their start/end lines). Kernel v3 (experiments/kaggle/paper08-r2-kaggle.py) gets every
+run not yet complete, 216: the remaining H2 pairs of seeds 3-8 and the 7 open seed-9 runs (registered
+pairs first, seed-major), then the 9 fedavg and 60 krum `trainable` runs. One local pair was half done
+(trimmed_mean target c0.2 s3: full complete, nonbt cut by the reboot); by the same-device pair rule
+(Amendments 2, 4) both arms go to Kaggle and the local full run is kept unread in
+results/r2_exposed/superseded/. The local GPU runs nothing more; remote_jobs.txt lists all 390 Kaggle jobs.
+Runs a session does not finish are re-sent in the next one.
+**Outcomes seen:** H1 reached 120/120 with these copies and was scored by analyse_r2.py under
+Amendment 3's rule (H1 supported in 3 of 6 cells). That does not bear on this amendment, which moves only
+H2 and unregistered runs between devices. H2: none (completeness flags only).

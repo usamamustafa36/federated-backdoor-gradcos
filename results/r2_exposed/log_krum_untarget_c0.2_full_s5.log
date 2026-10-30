@@ -44,3 +44,75 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
 RuntimeError: GET was unable to find an engine to execute this computation
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [02:15<7:28:10, 135.13s/it]  1%|          | 2/200 [04:22<7:10:48, 130.55s/it]  2%|▏         | 3/200 [06:33<7:08:46, 130.59s/it]  2%|▏         | 4/200 [08:42<7:05:07, 130.14s/it]  2%|▎         | 5/200 [11:00<7:11:57, 132.91s/it]  3%|▎         | 6/200 [13:11<7:07:44, 132.29s/it]  4%|▎         | 7/200 [15:24<7:05:54, 132.41s/it]  4%|▍         | 8/200 [17:40<7:07:51, 133.71s/it]  4%|▍         | 9/200 [19:58<7:09:49, 135.02s/it]  5%|▌         | 10/200 [22:06<7:00:21, 132.75s/it]  6%|▌         | 11/200 [24:22<7:01:50, 133.92s/it]  6%|▌         | 12/200 [26:30<6:53:25, 131.94s/it]  6%|▋         | 13/200 [28:39<6:49:00, 131.23s/it]  6%|▋         | 13/200 [30:58<7:25:39, 142.99s/it]
+Round: 0
+Test accuracy: 62.05787658691406
+Test loss: 1.1519478488755972
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 72.11341857910156
+Test loss: 0.8007308348895722
+Check accuracy: 62.05787658691406
+patience: 0
+Round: 2
+Test accuracy: 74.97807312011719
+Test loss: 0.7031474109282796
+Check accuracy: 72.11341857910156
+patience: 0
+Round: 3
+Test accuracy: 75.73809051513672
+Test loss: 0.6875733055241865
+Check accuracy: 74.97807312011719
+patience: 0
+Round: 4
+Test accuracy: 77.11195373535156
+Test loss: 0.6597968031530037
+Check accuracy: 75.73809051513672
+patience: 0
+Round: 5
+Test accuracy: 77.49195861816406
+Test loss: 0.6708179118165633
+Check accuracy: 77.11195373535156
+patience: 0
+Round: 6
+Test accuracy: 75.67962646484375
+Test loss: 0.7069253394632303
+Check accuracy: 77.49195861816406
+patience: 0
+Round: 7
+Test accuracy: 76.49810028076172
+Test loss: 0.7001892687527975
+Check accuracy: 77.49195861816406
+patience: 1
+Round: 8
+Test accuracy: 75.59193420410156
+Test loss: 0.7041097449754561
+Check accuracy: 77.49195861816406
+patience: 2
+Round: 9
+Test accuracy: 76.79041290283203
+Test loss: 0.7218422174662813
+Check accuracy: 77.49195861816406
+patience: 3
+Round: 10
+Test accuracy: 76.6734848022461
+Test loss: 0.713587223734294
+Check accuracy: 77.49195861816406
+patience: 4
+Round: 11
+Test accuracy: 76.76118469238281
+Test loss: 0.7050680268127923
+Check accuracy: 77.49195861816406
+patience: 5
+Round: 12
+Test accuracy: 76.76118469238281
+Test loss: 0.7124453658633886
+Check accuracy: 77.49195861816406
+patience: 6
+Round: 13
+Test accuracy: 76.99503326416016
+Test loss: 0.721961552481385
+Check accuracy: 77.49195861816406
+patience: 7
+Early stopped federated training!

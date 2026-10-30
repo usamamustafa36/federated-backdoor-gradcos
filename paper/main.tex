@@ -162,7 +162,7 @@ coordinate-wise rules not at all. It holds on real updates to floating-point pre
 to the transmission convention, not to any rule. Three of nine third-party public
 implementations we inspected (and our own pipeline) put the counter in the decision vector or hand it to one,
 including Flower's PyTorch quick-start
-and AlignIns'~\cite{xu2025alignins} official code. We do not claim that published results are wrong.
+and AlignIns'~\cite{xu2025alignins} official code. In one, the error its authors plot moves under the mask (registered).
 \item \textbf{What the counter changes, measured causally} (Sec.~\ref{sec:p1}).
 Every rule runs twice, identical except whether its decisions read the full vector
 or the trainable coordinates (paired seeds, two partitions, clean and attacked, $\pfCellsTarget$ cells,
@@ -427,7 +427,7 @@ the wire.
 traffic should be classified as benign while clean accuracy is preserved.
 \emph{Capabilities:} in attacked runs a fraction $m=0.2$ of the clients (two of
 ten) is malicious and colludes. Each malicious client stamps the \emph{fixed}
-trigger of Table~\ref{tab:trig} on a fraction $p=0.1$ of its attack samples,
+trigger of Sec.~\ref{sup:realize} on a fraction $p=0.1$ of its attack samples,
 relabels them benign, and trains $E_m$ local epochs where honest clients train
 one; it controls its own data and computation, not the server or honest clients,
 and sends an update of the usual format. \emph{Knowledge:} architecture,
@@ -765,10 +765,6 @@ AlignIns & \pfFPRAligninsIidCleanDef & \pfFPRAligninsIidCleanFix & $\pfFPRAligni
 \subsection{Mechanisms}
 \label{sec:mech}
 
-Proposition~\ref{prop:decomp} says what each rule is given. Whether that changes
-what the rule decides depends on the rule, and the three rules below span the
-possibilities.
-
 \textbf{FLTrust: the counter makes every client trustworthy.} FLTrust excludes a
 client only if its update has non-positive cosine with the server's update $g_0$.
 The server's update is itself a transmitted update with a counter block, $B_0$,
@@ -878,9 +874,8 @@ arms exclude most clients (Sec.~\ref{sec:p1}), and a diagnostic run
 $\csFgBaseNMajorDDoS$ of the ten clients have DDoS as their majority class, their
 trainable histories are alike, and FoolsGold reads them as sybils (clean accuracy
 $\csFgBaseCA$); neither our port's weighted mean nor the cumulative history is the
-cause. FoolsGold assumes that honest histories are dissimilar, which fails here
-with or without the counter, so its fixed arm measures this failure, and only its
-defect arm can add a counter effect on top of it.
+cause. FoolsGold's premise, dissimilar honest histories, fails here in both arms;
+only the defect arm can add a counter effect on top.
 
 \textbf{One angle per client.} Split $d_i$ into its counter block $c_i$ and the rest
 $e_i$, and write $q_i=\cos^2\theta_i$, $\theta_i\in[0,\pi/2]$.
@@ -959,6 +954,17 @@ attacker reports for itself, so a detection found only in the defect arm is one 
 attacker could withdraw at no cost by reporting the cohort's count
 (Sec.~\ref{sec:setup}); we have not run that attacker against FoolsGold.
 
+\textbf{A published pipeline (registered).} We re-ran the official code of an exposed
+defense~\cite{lee2024triplet} (ResNet-18, $L=20$, unequal shards; Krum grid, $10$ paired
+seeds, Sec.~\ref{sup:r2}), changing only the vector its rules decide on. The counter carries
+$\rTwoKrumTgtShareMin$--$\rTwoKrumTgtShareMax$ of the squared distances Krum reads. The
+minimum test error the authors plot moves in $\rTwoHOneSupported$ of $6$ cells, all under
+untargeted poisoning (MPAF; $\rTwoKrumUtgOneDiff$ to $\rTwoKrumUtgTwoDiff$,
+$p_H=\rTwoKrumUtgOnePh$), against our prediction; none under the targeted attack. MPAF
+clients are excluded in both arms, but their counter is $\rTwoKrumUtgCtrRatio\times$ the
+honest one, and full-vector Krum then picks the honest client with the most batches in
+$\rTwoKrumUtgTopBFull\%$ of rounds ($\rTwoKrumUtgTopBNonbt\%$ masked; exploratory).
+
 \textbf{What we recommend.} (i) Decide on \texttt{parameters()}, aggregate the
 \sd{}: compute every similarity, distance, norm, clip bound and noise scale on the
 trainable coordinates, and average the full state so that BatchNorm statistics stay
@@ -969,14 +975,13 @@ code under unequal shard sizes, since equal shards hide the distance exposure.
 
 \textbf{Limitations,} in the order we expect them to matter.
 \emph{Scale and attack strength.} The campaign is CPU-sized
-(Sec.~\ref{sec:setup}): $10$ clients, $15$ rounds, $40{,}000$ rows, a weak
-detector. The backdoor implants only because attackers train several local
-epochs (Table~\ref{tab:calib}). No $E_m$ we tried implants on every
-non-IID seed within $15$ rounds (Table~\ref{tab:seedcal}), so attacked BSR is read
-only where undefended FedAvg implants: backdoor results concern one calibrated,
-norm-visible attack on a subset of seeds. Exclusions and clean-accuracy effects do
-not depend on the attack succeeding.
-\emph{One architecture for outcomes} ($L=1$). In federated ResNet-20 rounds on
+(Sec.~\ref{sec:setup}: $10$ clients, $15$ rounds, $40{,}000$ rows, a weak detector).
+The backdoor implants only because attackers train several local epochs
+(Table~\ref{tab:calib}), and on no $E_m$ on every non-IID seed (Table~\ref{tab:seedcal}),
+so backdoor results concern one calibrated, norm-visible attack on the seeds where
+undefended FedAvg implants. Exclusions and clean accuracy do not depend on it.
+\emph{One architecture for outcomes} ($L=1$) in our campaign; the
+re-run above is Krum's only. In federated ResNet-20 rounds on
 CIFAR-10 ($L=\gcNBN$, non-IID) the counter carries a median $\gcCntShareDir\%$ of
 the squared update norm, and FLTrust gives two label flippers $\gcAtkWFullDir\%$ of
 its trust on the full vector against $\gcAtkWTrDir\%$ on the trainable one
@@ -991,28 +996,24 @@ traffic~\cite{pierazzi2020problem}.
 fixed pipeline. A trained, norm-bounded counter falsifier (registered,
 Sec.~\ref{sup:r1}) gains FLTrust step share and Multi-Krum admission
 ($\rOneMechMkDef$ against $\rOneMechMkFix$, $p_H=\rOneMechMkPh$) but not Krum
-admission; at its bound it does not implant even under FedAvg (median BSR
-$\rOneRefBSRmed$), so this is a result on the influence a robust rule bounds, not
-on backdoors.
+admission, and at its bound does not implant even under FedAvg (median BSR
+$\rOneRefBSRmed$).
 
 \section{Conclusion}
 
 Byzantine-robust rules are defined on model updates but run on whatever vector the
-pipeline transmits. A BatchNorm network's \sd{} contains \nbt{}, inert under the
-default momentum yet dominant in the update's norm; it weakens every pairwise cosine
-and enters distances exactly when batch counts differ. The remedy is one mask:
-decide on the trainable coordinates, aggregate the full state. What the counter changes
-is rule-specific: it stops FLTrust from excluding anyone, as
-Corollary~\ref{cor:fltrust} requires (registered); in exploratory cells it leaves
-FLAME's clean decisions unchanged but hides long-training attackers from FLAME and
-FLDetector, and lends FoolsGold detections that the trainable update does not support,
+pipeline transmits; a BatchNorm network's \sd{} adds \nbt{}, inert under the default
+momentum yet dominant in the update's norm. The remedy is one mask: decide on the
+trainable coordinates, aggregate the full state. What the counter changes is
+rule-specific: it stops FLTrust from excluding anyone (registered); it hides long-training attackers from
+FLAME and FLDetector and lends FoolsGold detections the trainable update does not support,
 a direction that replicated on registered held-out seeds and, as
-Proposition~\ref{prop:angle} predicted before the cells ran, vanishes once an attacker's
-update outgrows its batch count. A client may also
-falsify the counter: trained to, it gains FLTrust weight and Multi-Krum admission
-(registered). Restored exclusions do not make FLTrust a detector
-here: what a rule decides and whether it defends are separate questions, and both have
-to be measured with the counter out of the decision vector.
+Proposition~\ref{prop:angle} predicted, vanishes once an attacker's update outgrows its
+batch count; in a published defense's Krum baseline it moves the reported error
+(registered). A client may also falsify the counter and gain FLTrust weight and Multi-Krum
+admission (registered). Restored exclusions do not make FLTrust a detector here: what a
+rule decides and whether it defends are separate questions, and both have to be measured
+with the counter out of the decision vector.
 
 %---------------------------------------------------------------------
 \input{declarations_ieee}

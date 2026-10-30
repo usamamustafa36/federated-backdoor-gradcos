@@ -131,6 +131,36 @@ def main():
                 mac(b + "Chg", c["decision_change_rate"] if has else None, "{:.2f}")]
     sup = sum(1 for c in fam["H1"] if c["n"] > 0 and c["p_holm"] <= 0.05)
     tex.append(mac("HOneSupported", sup if any(c["n"] for c in fam["H1"]) else None, "{}"))
+    h1 = [c for c in fam["H1"] if c["n"]]
+    for p, b in (("target", "Tgt"), ("untarget", "Utg")):
+        cs = [c for c in h1 if c["p"] == p]
+        tex += [mac(f"Krum{b}ShareMin", min(c["counter_share_median"] for c in cs) if cs else None, "{:.2f}"),
+                mac(f"Krum{b}ShareMax", max(c["counter_share_median"] for c in cs) if cs else None, "{:.2f}"),
+                mac(f"Krum{b}ChgMin", min(c["decision_change_rate"] for c in cs) if cs else None, "{:.2f}"),
+                mac(f"Krum{b}ChgMax", max(c["decision_change_rate"] for c in cs) if cs else None, "{:.2f}")]
+    # Exploratory (not registered; iteration 35): whom Krum picks, read through the counter each
+    # received model reports (nbt_first_layer). Closed loop: each arm's own choice in its own runs.
+    ex = {}
+    for (m_, p, c, a, s), j in runs.items():
+        if m_ != "krum" or a not in ("full", "nonbt"):
+            continue
+        for r in j["rounds"]:
+            mo, nb, k = r.get("mal_order"), r.get("nbt_first_layer"), r.get(f"krum_{a}")
+            if not mo or not nb or k is None:
+                continue
+            hon = [x for x, mal in zip(nb, mo) if not mal]
+            d = ex.setdefault((p, a), {"mal": [], "top": [], "ratio": []})
+            d["mal"].append(mo[k])
+            d["top"].append(float(not mo[k] and nb[k] == max(hon)))
+            if any(mo):
+                d["ratio"].append(np.median([x for x, mal in zip(nb, mo) if mal]) / np.median(hon))
+    for p, b in (("target", "Tgt"), ("untarget", "Utg")):
+        for a, A in (("full", "Full"), ("nonbt", "Nonbt")):
+            d = ex.get((p, a))
+            tex += [mac(f"Krum{b}PickMal{A}", 100 * float(np.mean(d["mal"])) if d else None, "{:.0f}"),
+                    mac(f"Krum{b}TopB{A}", 100 * float(np.mean(d["top"])) if d else None, "{:.0f}")]
+        d = ex.get((p, "full"))
+        tex.append(mac(f"Krum{b}CtrRatio", float(np.median(d["ratio"])) if d and d["ratio"] else None, "{:.1f}"))
     open(OUT_TEX, "w").write("".join(tex))
     print(f"R2: {len(runs)} runs; H1 supported {sup}/6 -> {OUT_TEX}")
     for c in cells:

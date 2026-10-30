@@ -41,17 +41,13 @@ Counter''}
 
 \section{Overview}
 \label{sup:overview}
-Section,
-table and equation numbers prefixed with S refer to this document; all others
-refer to the paper, and citation numbers to the paper's reference list. Every number is generated from the released result files by
-the same generators as the paper's.
+Numbers prefixed with S refer to this document, all others to the paper (citations to
+its reference list). Every number is generated from the released result files by the
+paper's generators.
 
 \section{Defect probe details}
 \label{sup:probe}
-This section expands the verification paragraph of Sec.~\ref{sec:defect}.
-
-\textbf{Verification on real local updates.} The decomposition is exact, but it
-is cheap to check against the implementation. Starting from one initialisation,
+\textbf{Verification on real local updates} (Sec.~\ref{sec:defect}). From one initialisation,
 two clients of our CNN\,+\,LSTM run $\dfPropBi$ and $\dfPropBj$ local batches.
 Equation~\eqref{eq:cos} reproduces the measured cosine to within
 $\dfPropCosErr$ and~\eqref{eq:dist} the squared distance to a relative error of
@@ -64,8 +60,7 @@ $\dfPropDistShare\%$ of the pair's squared distance.
 repeat the check on a CIFAR-style ResNet-18 ($\drNBN$ BatchNorm layers,
 $\drNTrain$ trainable coordinates; written out by hand, synthetic
 $3\times32\times32$ inputs, SGD with learning rate $0.01$, momentum $0.9$, batch
-$32$). The counter is again inert under the default momentum, and the
-decomposition again holds to floating-point precision. With $\drPropBi$ and
+$32$). The counter is again inert and the decomposition exact to floating-point precision. With $\drPropBi$ and
 $\drPropBj$ local batches the counter contributes exactly
 $L(B_i-B_j)^2=\drCounterDist$ to the squared distance, which is
 $\drPropDistShare\%$ of it; the buffers as a whole carry $\drBufShareI\%$ of the
@@ -356,6 +351,33 @@ within-$k>1$ test is \koHTwoSup{} ($p=\koHTwoP$, $n=\koHTwoN$): the effect vanis
 reverse in sign. The $k^2$ law is \koMOneSup{} out of sample (median observed/predicted $\koMOneQ$,
 $Q_{\mathrm{obs}}>1$ in $\koMOneAbove$ of $\koMOneN$ pairs).
 
+\subsection{A published pipeline with and without the mask (registered)}
+\label{sup:r2}
+We ran the official code of Lee et al.~\cite{lee2024triplet} (commit \texttt{c6d8de3}; ResNet-18,
+BloodMNIST, ten clients of $500$--$1{,}000$ samples, the authors' defaults) through a harness that
+replaces only the function through which Krum, trimmed mean and Fang read clients: \emph{full}
+(as published) or \emph{masked} (\nbt{} out of the decision vector, aggregation unchanged).
+Outcome: the minimum test error over rounds the authors plot, paired by seed ($3$--$12$, same
+partition, attackers and initialisation, each pair on one device). H1: Krum, per attacker
+fraction $c$ and attack, exact two-sided sign-flip test, Holm over $6$ (trimmed mean and Fang:
+a separate family of $12$). Error full/masked (difference; $p_H$) at $c=0.1,0.2,0.3$, targeted:
+$\rTwoKrumTgtOneYfull$/$\rTwoKrumTgtOneYnonbt$ ($\rTwoKrumTgtOneDiff$; $\rTwoKrumTgtOnePh$),
+$\rTwoKrumTgtTwoYfull$/$\rTwoKrumTgtTwoYnonbt$ ($\rTwoKrumTgtTwoDiff$; $\rTwoKrumTgtTwoPh$),
+$\rTwoKrumTgtThreeYfull$/$\rTwoKrumTgtThreeYnonbt$ ($\rTwoKrumTgtThreeDiff$; $\rTwoKrumTgtThreePh$);
+untargeted (MPAF): $\rTwoKrumUtgOneYfull$/$\rTwoKrumUtgOneYnonbt$ ($\rTwoKrumUtgOneDiff$; $\rTwoKrumUtgOnePh$),
+$\rTwoKrumUtgTwoYfull$/$\rTwoKrumUtgTwoYnonbt$ ($\rTwoKrumUtgTwoDiff$; $\rTwoKrumUtgTwoPh$),
+$\rTwoKrumUtgThreeYfull$/$\rTwoKrumUtgThreeYnonbt$ ($\rTwoKrumUtgThreeDiff$; $\rTwoKrumUtgThreePh$).
+Registered mechanisms: the counter's median share of pairwise squared distances,
+$\rTwoKrumTgtShareMin$--$\rTwoKrumTgtShareMax$ (targeted) and
+$\rTwoKrumUtgShareMin$--$\rTwoKrumUtgShareMax$ (MPAF), exceeds $0.5$; Krum's choice on the same
+models differs between masks in $\rTwoKrumTgtChgMin$--$\rTwoKrumTgtChgMax$ and
+$\rTwoKrumUtgChgMin$--$\rTwoKrumUtgChgMax$ of rounds. ``No change under MPAF, whose clients both
+arms exclude'' failed: they were chosen in $\rTwoKrumUtgPickMalFull\%$/$\rTwoKrumUtgPickMalNonbt\%$
+of rounds, yet the error moved. Exploratory: their counter is $\rTwoKrumUtgCtrRatio\times$ the honest
+median, and the full arm picks the honest client with the most batches in
+$\rTwoKrumUtgTopBFull\%$ of rounds, the masked arm in $\rTwoKrumUtgTopBNonbt\%$ (targeted:
+$\rTwoKrumTgtTopBFull\%$, $\rTwoKrumTgtTopBNonbt\%$).
+
 \subsection{The FoolsGold diagnostic}
 \label{sup:fgdiag}
 A diagnostic run with the round-one copy (trainable arm, clean, non-IID, seed
@@ -405,13 +427,9 @@ clean FPR $\fsNatDirCleanFpr$ ($n=\fsNatDirCleanN$); attacked DR $\fsNatDirAtkDr
 
 \section{Attack calibration and the seed-robust adversary}
 \label{sup:calib}
-This section expands the paragraph ``Attack calibration'' of
-Sec.~\ref{sec:setup}.
-
-\textbf{Attack calibration.} An attack that does not implant under plain
-FedAvg cannot say anything about whether a rule resists it, so we calibrated the
-attack on FedAvg alone before running the rules (seed $42$, the campaign's scale;
-Table~\ref{tab:calib}). With one local epoch, as an earlier run of this campaign
+\textbf{Attack calibration} (Sec.~\ref{sec:setup}). An attack that does not implant under
+FedAvg says nothing about a rule, so we calibrated it on FedAvg alone (seed $42$, the
+campaign's scale; Table~\ref{tab:calib}). With one local epoch, as an earlier run of this campaign
 used, the backdoor does not survive aggregation: attacked BSR is
 $\apDirPoneBSR$ against a clean-model BSR of $\apDirCleanBSR$ (non-IID) and
 $\apIidPoneBSR$ against $\apIidCleanBSR$ (IID). Poisoning five times as many rows
@@ -566,47 +584,36 @@ and backdoor robustness under one calibrated attack only second.
 
 \section{The engine's round-one defect}
 \label{sup:alias}
-This section expands the paragraph ``Round-one aliasing'' of Sec.~\ref{sec:setup}.
-
-\textbf{Round-one aliasing.} A second engine defect, unrelated to the counter, stored the
+A second engine defect (Sec.~\ref{sec:setup}), unrelated to the counter, stored the
 initial global model as NumPy views of the model's own parameter storage, so in
-round~$1$, and only there, each client's local training also overwrote the stored
-global model. The round-$1$ clients therefore trained one after another, each
-starting where the previous one stopped, and the rules received the last
-client's model as the round's reference. In a $\raTraceClients$-client trace the
-last client of round~$1$ starts at trainable distance $\raBugLastStartDist$ from
-the round's initial model (with the copy: $\raFixLastStartDist$), and the
-reference handed to the rule is at distance $\raBugRefToLast$ from the last client's
-model. From round~$2$ on the global model is a fresh array and the defect is
-absent. It is the same in both arms and reaches outcomes (means over rounds
-$11$--$15$) only through the trajectory; the diagnostics exclude round~$1$. FoolsGold is the one rule whose state carries the round-$1$ updates
-forward, since its history is their running sum. We measured the effect directly
-by re-running campaign cells (non-IID, seed $42$) with the stored model copied, and
-compared them with the campaign's own cells. Under FedAvg the copy changes clean
-accuracy by $\raRepFedavgFullCleanCADiff$ and the clean-model BSR by
-$\raRepFedavgFullCleanBSRDiff$. For FoolsGold, the rule that remembers round~$1$,
-the clean-run arm difference (fixed$-$defect) in clean accuracy is
-$\raRepArmFoolsgoldCleanCAFix$ with the copy against $\raRepArmFoolsgoldCleanCABug$
-without, and in FPR $\raRepArmFoolsgoldCleanFPRFix$ against
-$\raRepArmFoolsgoldCleanFPRBug$; under attack the BSR arm difference is
-$\raRepArmFoolsgoldAtkBSRFix$ against $\raRepArmFoolsgoldAtkBSRBug$.
-With the copy, FoolsGold excludes most of the ten round-$1$ updates and never recovers
-(clean accuracy $\raRepFoolsgoldFullCleanCAFix$ defect, $\raRepFoolsgoldTrCleanCAFix$ fixed,
-against $\raRepFoolsgoldFullCleanCABug$ and $\raRepFoolsgoldTrCleanCABug$ without it). The
-first campaign's FoolsGold outcomes are therefore withdrawn (Sec.~\ref{sup:retro}); the re-run
-of Secs.~\ref{sec:p1}--\ref{sec:mech}, the source of every FoolsGold number in the paper,
-uses the copy (\texttt{federated.copy\_initial\_global}).
+round~$1$ only each client's local training also overwrote it: the round-$1$ clients
+trained one after another, each starting where the previous one stopped, and the rules
+received the last client's model as the reference. In a $\raTraceClients$-client trace
+the last client starts at trainable distance $\raBugLastStartDist$ from the round's
+initial model ($\raFixLastStartDist$ with the copy), and the reference is
+$\raBugRefToLast$ from its model. The defect is the same in both arms and reaches
+outcomes (rounds $11$--$15$) only through the trajectory; diagnostics exclude round~$1$.
+Re-running campaign cells (non-IID, seed $42$) with the stored model copied changes
+FedAvg's clean accuracy by $\raRepFedavgFullCleanCADiff$ and its clean-model BSR by
+$\raRepFedavgFullCleanBSRDiff$. FoolsGold, whose history carries the round-$1$ updates
+forward, is the exception: its clean-run arm difference (fixed$-$defect) is
+$\raRepArmFoolsgoldCleanCAFix$ in clean accuracy with the copy against
+$\raRepArmFoolsgoldCleanCABug$ without, $\raRepArmFoolsgoldCleanFPRFix$ against
+$\raRepArmFoolsgoldCleanFPRBug$ in FPR, and $\raRepArmFoolsgoldAtkBSRFix$ against
+$\raRepArmFoolsgoldAtkBSRBug$ in attacked BSR. With the copy it excludes most of the ten
+round-$1$ updates and never recovers (clean accuracy $\raRepFoolsgoldFullCleanCAFix$ defect,
+$\raRepFoolsgoldTrCleanCAFix$ fixed, against $\raRepFoolsgoldFullCleanCABug$ and
+$\raRepFoolsgoldTrCleanCABug$ without it). The first campaign's FoolsGold outcomes are
+withdrawn (Sec.~\ref{sup:retro}); every FoolsGold number in the paper comes from the
+re-run, which uses the copy (\texttt{federated.copy\_initial\_global}).
 % Sources: results/round1_alias/{trace.json,campaign_replay.json}; paper/make_numbers_alias.py.
 
 \section{The thirteen rules in detail}
 \label{sup:rules}
-This section expands the paragraph ``Implementation'' of Sec.~\ref{sec:rules}.
-
-\textbf{Order-statistic and averaging rules.} FedAvg~\cite{mcmahan2017} is the
-undefended, example-weighted mean. The coordinate-wise median and the
-$\beta$-trimmed mean ($\beta=0.2$)~\cite{yin2018} act on each coordinate
-separately and never compare clients as vectors, so the counter receives its own
-order statistic and cannot displace a trainable coordinate.
+\textbf{Order-statistic and averaging rules} (Sec.~\ref{sec:rules}). FedAvg~\cite{mcmahan2017}
+is the undefended, example-weighted mean. The coordinate-wise median and the
+$\beta$-trimmed mean ($\beta=0.2$)~\cite{yin2018} never compare clients as vectors, so
+the counter gets its own order statistic and cannot displace a trainable coordinate.
 
 \textbf{Distance rules.} Multi-Krum~\cite{blanchard2017} scores each update by
 the sum of squared distances to its $n-f-2$ nearest neighbours and averages the
@@ -626,21 +633,18 @@ share of our non-IID runs is $\pfDiagNormInflDir$: clip bound and noise scale ar
 set that many times larger than the trainable update warrants, and the clipping
 factor $\min(1,S/\|d_i\|)$ tracks batch counts rather than update size.
 
-\textbf{Cosine rules.} FLAME~\cite{nguyen2022flame} clusters updates by cosine
-distance (HDBSCAN), keeps the majority cluster, clips the admitted updates to
-their median norm and adds Gaussian noise; its noise is restricted to trainable
-coordinates in both arms (Sec.~\ref{sec:rules}). FLTrust~\cite{cao2021fltrust} trains the global model
-on its root set to obtain a server update $g_0$, weights each client update by
-$\mathrm{ReLU}(\cos(g_i,g_0))$, rescales it to $\|g_0\|$ and averages; a client
-with weight zero is counted as excluded. FoolsGold~\cite{fung2020foolsgold} keeps
-the running sum of each client's updates and down-weights clients whose histories
-are too similar to another's (we implement the history variant without
-feature-importance weighting); a client whose weight falls below $10^{-3}$ is
-counted as excluded. GradCos, a clique test from an earlier version of this study,
-flags clients whose maximum cosine to a peer is a robust outlier above the cohort
-($\kappa=1.5$); we keep it only as one more cosine rule and make no claim for it as
-a defense. By Corollary~\ref{cor:band}, all four read a cosine whose trainable
-part carries weight at most $1-s$.
+\textbf{Cosine rules.} FLAME~\cite{nguyen2022flame} clusters updates by cosine distance
+(HDBSCAN), keeps the majority cluster, clips the admitted updates to their median norm and
+adds Gaussian noise, on trainable coordinates in both arms (Sec.~\ref{sec:rules}).
+FLTrust~\cite{cao2021fltrust} weights each update by $\mathrm{ReLU}(\cos(g_i,g_0))$ against
+a server update $g_0$ trained on its root set, rescales it to $\|g_0\|$ and averages; weight
+zero counts as excluded. FoolsGold~\cite{fung2020foolsgold} down-weights clients whose
+running update sums are too similar to another's (history variant, no feature-importance
+weighting); weight below $10^{-3}$ counts as excluded. GradCos, a clique test from an
+earlier version of this study, flags clients whose maximum cosine to a peer is a robust
+outlier ($\kappa=1.5$); it is one more cosine rule, not a claimed defense. By
+Corollary~\ref{cor:band}, all four read a cosine whose trainable part carries weight at
+most $1-s$.
 
 \textbf{Cross-round rules.} FLDetector~\cite{zhang2022fldetector} predicts each
 client's update from its history with an L-BFGS approximation of the Hessian and
@@ -664,9 +668,8 @@ exposed as NormClip's is. Prediction: under unequal shards TDA selects by batch 
 MPSA is unaffected (Tables~\ref{tab:p1} and~\ref{tab:p1flag}).
 % Implementation: src/defenses/alignins.py; synthetic check experiments/alignins/selftest.py.
 
-\textbf{Hyperparameters} (\texttt{configs/p1\_full.yaml}, both arms): FLAME noise
-$\lambda=10^{-3}$, trimmed-mean $\beta=0.2$, Krum and Bulyan $f=2$, GradCos
-$\kappa=1.5$, RFA $8$ iterations; none was tuned.
+\textbf{Hyperparameters} (\texttt{configs/p1\_full.yaml}, both arms) are as above, with
+FLAME noise $\lambda=10^{-3}$; none was tuned.
 
 \section{The first campaign and the withdrawn findings}
 \label{sup:retro}
@@ -684,26 +687,11 @@ pair, about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}), and the analysis bui
 \label{sec:realizable}
 
 Triggers are defined in standardized feature space, so poisoning and evaluation are
-consistent by construction. Table~\ref{tab:trig} lists the campaign's fixed trigger
-(flag/header features, mixed-sign, $1.5$--$2\sigma$) and two alternatives. Whether real traffic could carry such a trigger is a problem-space
+consistent by construction. The campaign's fixed trigger sets header and TCP-flag features
+(TTL $+2\sigma$, hdr\_len $-1.5\sigma$, syn $+2\sigma$); two alternatives are statistical
+(Rate $-1.5$, Std $+2$, Tot\,size $+1.5$) and temporal (IAT $+2$, Number $+1.5$, size $-1.5$).
+Whether real traffic could carry such a trigger is a problem-space
 question~\cite{pierazzi2020problem} we do not address; our backdoor results are feature-space results.
-
-\begin{table}[!h]
-\caption{Trigger families (units of $\sigma$).}
-\label{tab:trig}
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lll@{}}
-\toprule
-Trigger & Semantics & Example features / values \\
-\midrule
-Fixed & header \& TCP flags & TTL$=+2$, hdr\_len$=-1.5$, syn$=+2$ \\
-Statistical & volume / dispersion & Rate$=-1.5$, Std$=+2$, Tot\,size$=+1.5$ \\
-Temporal & inter-arrival / counts & IAT$=+2$, Number$=+1.5$, size$=-1.5$ \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 % Restore once moved text cites anything (an empty bibliography is a LaTeX error):
 % No bibliography of its own: \cite resolves through xr-hyper to the paper's
