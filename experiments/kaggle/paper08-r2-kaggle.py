@@ -2,10 +2,11 @@
 # per family) on Kaggle T4 x2. v1: H1 seeds 9-12; v2: Amendment 5's 200 runs (124 finished);
 # v3: every run not yet complete (H2 pairs first, then fedavg, then krum trainable; 117/216 finished);
 # v4: the 30 H2 runs still open, in the ~2.2 h of GPU quota left that week;
-# v5: every run still open after v4 (H2 first), sized to the refreshed quota, the list below. Same harness/flags as experiments/r2_exposed/run_r2.sh run_one; resumable via
+# v5: every run still open after v4 (H2 first), sized to the refreshed quota;
+# v6: the first 8 of the 19 open krum trainable runs, in the ~35 min of quota left (Amendment 8), the list below. Same harness/flags as experiments/r2_exposed/run_r2.sh run_one; resumable via
 # the previous version's output (complete JSONs are copied forward and skipped).
 import glob, json, os, shutil, subprocess, sys, tarfile, time
-T0 = time.time(); STOP_LAUNCH = float(os.environ.get('STOP_H', 5.2)) * 3600; HARD = float(os.environ.get('HARD_H', 5.7)) * 3600
+T0 = time.time(); STOP_LAUNCH = float(os.environ.get('STOP_H', 0.2)) * 3600; HARD = float(os.environ.get('HARD_H', 0.48)) * 3600
 LANES = 4
 W = "/kaggle/working"; OUT = f"{W}/r2_out"; os.makedirs(OUT, exist_ok=True)
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "medmnist"], check=False)
@@ -21,69 +22,6 @@ for f in glob.glob("/kaggle/input/**/byzfl_*.json", recursive=True):   # earlier
         if json.load(open(f)).get("complete"): shutil.copy(f, OUT)
     except Exception: pass
 JOBS = """
-fang target 0.1 full 8
-fang untarget 0.2 nonbt 8
-fang target 0.3 full 8
-fang target 0.3 nonbt 8
-fang untarget 0.3 full 8
-fang untarget 0.3 nonbt 8
-fang target 0.2 nonbt 9
-fang untarget 0.2 full 9
-fang untarget 0.2 nonbt 9
-fang target 0.3 full 9
-fang target 0.3 nonbt 9
-fang untarget 0.3 full 9
-fang untarget 0.3 nonbt 9
-fedavg target 0.3 full 3
-fedavg target 0.3 full 4
-fedavg target 0.3 full 5
-fedavg target 0.3 full 6
-fedavg target 0.3 full 7
-fedavg target 0.3 full 9
-fedavg target 0.3 full 10
-fedavg target 0.3 full 11
-fedavg target 0.3 full 12
-krum target 0.1 trainable 3
-krum untarget 0.1 trainable 3
-krum target 0.2 trainable 3
-krum untarget 0.2 trainable 3
-krum target 0.3 trainable 3
-krum untarget 0.3 trainable 3
-krum target 0.1 trainable 4
-krum untarget 0.1 trainable 4
-krum target 0.2 trainable 4
-krum untarget 0.2 trainable 4
-krum target 0.3 trainable 4
-krum untarget 0.3 trainable 4
-krum target 0.1 trainable 5
-krum untarget 0.1 trainable 5
-krum target 0.2 trainable 5
-krum untarget 0.2 trainable 5
-krum target 0.3 trainable 5
-krum untarget 0.3 trainable 5
-krum target 0.1 trainable 6
-krum untarget 0.1 trainable 6
-krum target 0.2 trainable 6
-krum untarget 0.2 trainable 6
-krum target 0.3 trainable 6
-krum untarget 0.3 trainable 6
-krum target 0.1 trainable 7
-krum untarget 0.1 trainable 7
-krum target 0.2 trainable 7
-krum untarget 0.2 trainable 7
-krum target 0.3 trainable 7
-krum untarget 0.3 trainable 7
-krum target 0.1 trainable 8
-krum untarget 0.1 trainable 8
-krum target 0.2 trainable 8
-krum untarget 0.2 trainable 8
-krum target 0.3 trainable 8
-krum untarget 0.3 trainable 8
-krum target 0.1 trainable 9
-krum untarget 0.1 trainable 9
-krum target 0.2 trainable 9
-krum untarget 0.2 trainable 9
-krum target 0.3 trainable 9
 krum untarget 0.3 trainable 9
 krum target 0.1 trainable 10
 krum untarget 0.1 trainable 10
@@ -92,17 +30,6 @@ krum untarget 0.2 trainable 10
 krum target 0.3 trainable 10
 krum untarget 0.3 trainable 10
 krum target 0.1 trainable 11
-krum untarget 0.1 trainable 11
-krum target 0.2 trainable 11
-krum untarget 0.2 trainable 11
-krum target 0.3 trainable 11
-krum untarget 0.3 trainable 11
-krum target 0.1 trainable 12
-krum untarget 0.1 trainable 12
-krum target 0.2 trainable 12
-krum untarget 0.2 trainable 12
-krum target 0.3 trainable 12
-krum untarget 0.3 trainable 12
 """
 jobs = [(m, p, c, a, int(sd)) for m, p, c, a, sd in (l.split() for l in JOBS.strip().split("\n"))]
 def done(f):
