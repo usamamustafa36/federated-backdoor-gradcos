@@ -2130,3 +2130,12 @@ finished here.)
 - **Next:** fetch v3 (scratchpad kfetch.py or re-create: list all pages, per-file timeout), copy complete
   JSONs; re-push v4 for anything unfinished (likely the trainable tail; may need the weekly quota reset);
   write R2 H1 (+ H2 when 240/240) into the supplement/limitations within the page caps.
+
+## Iteration 36 - 2026-10-31 - R2 H2 complete and scored
+- Kaggle v3 117/216 (10.43 h), v4 17/30 (2.00 h, stopped at the quota cap), v5 63/82 (5.42 h); no failures in merged runs. The Kaggle GPU quota is 6 h a week. R2 now holds 411/430 runs: H1 120/120, H2 240/240, fedavg 10/10, krum trainable 41/60. The 19 open runs are `trainable` (reported, not tested) and wait for the quota reset on 2026-11-07.
+- H2 by the registered rule (exact sign-flip, Holm over 12): supported in 6/12 cells. Trimmed mean targeted, all c: Y full/masked 0.596/0.139 (p_H 0.041), 0.551/0.144 (0.0312), 0.721/0.150 (0.0234). Trimmed mean MPAF: +0.006 (0.0703, not supported), +0.020 (0.0234), +0.024 (0.0234). Fang targeted c0.1: 0.167/0.567 (0.0234), the opposite direction. No other Fang cell survives Holm.
+- M1 for trimmed mean holds: per-seed median share > 0.5 in 10/10 seeds at each c (p = 0.000977). M3 fails for trimmed mean at c0.2 and c0.3.
+- Exploratory (not registered): targeted trimmed mean keeps 44% of attackers' updates in full and 0% masked; counters alone reproduce the full-arm kept set in 75% of rounds.
+- Caveats: Fang's final kept set was not logged (the tm_* fields are its inner rule), so no Fang mechanism is claimed and its logged decision-change rate is not reported. 40/60 Fang MPAF runs reach non-finite distances, so those cells' share values are not meaningful. Collapsed runs stop early (patience 8), which bounds their minimum error.
+- Paper: H2 added to main Discussion and supplement S-III-E; the conclusion now says both directions; the limitation "the re-run is Krum's only" removed because it became false. Main 10 pp, supplement 6 pp.
+

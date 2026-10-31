@@ -38,3 +38,81 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 19.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1360802 has 2.21 GiB memory in use. Process 1364883 has 632.00 MiB memory in use. Including non-PyTorch memory, this process has 264.00 MiB memory in use. Of the allocated memory 119.61 MiB is allocated by PyTorch, and 16.39 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+===== Kaggle usamaa36/paper08-r2-kaggle v5 (2x T4), fetched 2026-10-31 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:55<3:04:07, 55.51s/it]  1%|          | 2/200 [01:49<3:00:51, 54.81s/it]  2%|▏         | 3/200 [02:43<2:58:33, 54.38s/it]  2%|▏         | 4/200 [03:36<2:56:06, 53.91s/it]  2%|▎         | 5/200 [04:25<2:49:15, 52.08s/it]  3%|▎         | 6/200 [05:13<2:43:26, 50.55s/it]  4%|▎         | 7/200 [06:02<2:40:55, 50.03s/it]  4%|▍         | 8/200 [06:48<2:35:44, 48.67s/it]  4%|▍         | 9/200 [07:39<2:37:36, 49.51s/it]  5%|▌         | 10/200 [08:34<2:41:49, 51.10s/it]  6%|▌         | 11/200 [09:29<2:45:22, 52.50s/it]  6%|▌         | 12/200 [10:23<2:46:09, 53.03s/it]  6%|▋         | 13/200 [11:18<2:46:59, 53.58s/it]  7%|▋         | 14/200 [12:12<2:46:06, 53.59s/it]  7%|▋         | 14/200 [13:08<2:54:40, 56.35s/it]
+Round: 0
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 16.2525577545166
+Test loss: 3.820619569227166e+22
+Check accuracy: 7.13241720199585
+patience: 0
+Round: 2
+Test accuracy: 11.838644027709961
+Test loss: 6.743844864296256e+28
+Check accuracy: 16.2525577545166
+patience: 0
+Round: 3
+Test accuracy: 16.457176208496094
+Test loss: 2.4047368801147568e+17
+Check accuracy: 16.2525577545166
+patience: 1
+Round: 4
+Test accuracy: 15.492546081542969
+Test loss: 1.2702874027867865e+30
+Check accuracy: 16.457176208496094
+patience: 0
+Round: 5
+Test accuracy: 16.807950973510742
+Test loss: 2.6377537928854438e+19
+Check accuracy: 16.457176208496094
+patience: 1
+Round: 6
+Test accuracy: 42.882198333740234
+Test loss: 22598384.62204034
+Check accuracy: 16.807950973510742
+patience: 0
+Round: 7
+Test accuracy: 16.720256805419922
+Test loss: 3.922930856912118e+21
+Check accuracy: 42.882198333740234
+patience: 0
+Round: 8
+Test accuracy: 16.04793930053711
+Test loss: 2.4420270149050688e+33
+Check accuracy: 42.882198333740234
+patience: 1
+Round: 9
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 42.882198333740234
+patience: 2
+Round: 10
+Test accuracy: 16.018707275390625
+Test loss: 2.3497981834120613e+31
+Check accuracy: 42.882198333740234
+patience: 3
+Round: 11
+Test accuracy: 16.720256805419922
+Test loss: 1.0718202179615765e+25
+Check accuracy: 42.882198333740234
+patience: 4
+Round: 12
+Test accuracy: 14.381759643554688
+Test loss: nan
+Check accuracy: 42.882198333740234
+patience: 5
+Round: 13
+Test accuracy: 16.6325626373291
+Test loss: 6.727178139103608e+26
+Check accuracy: 42.882198333740234
+patience: 6
+Round: 14
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 42.882198333740234
+patience: 7
+Early stopped federated training!

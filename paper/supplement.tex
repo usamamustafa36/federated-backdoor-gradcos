@@ -278,14 +278,10 @@ step is $\ffHonCtrNegM$); with the falsified counter it is admitted with a step 
 $\ffMstarNeg\,\|g_0\|$, against a median honest step of $\ffMhMed\,\|g_0\|$
 ($\ffAmpNeg\times$). An orthogonal update reaches $\ffMstarZero$ ($\ffAmpZero\times$).
 The fixed arm excludes every attacker update with $\rho\le0$ (all excluded: \ffFixedFlagsAll).
-The ratios are modest here because on synthetic inputs the honest non-counter
-blocks align closely with the server's ($\rho_j$ in $\ffRhoMin$--$\ffRhoMax$), and
-by~\eqref{eq:mj} that raises $M_j$. On real non-IID clients the trainable updates
-agree far less (mean pairwise trainable cosine $\pfDiagCosSigDir$), which would
-lower $M_j$, but the re-run logs $q_0$ and $q_j$, not $\rho_j$, so the real-data
-ratio is not measured. What the check establishes is the arithmetic of one round:
-under the defect, admission by FLTrust is something a client can buy with a
-number it chooses.
+The ratios are modest because on synthetic inputs the honest non-counter blocks align
+closely with the server's ($\rho_j$ in $\ffRhoMin$--$\ffRhoMax$), which by~\eqref{eq:mj} raises
+$M_j$; the re-run does not log $\rho_j$, so the real-data ratio is not measured. Under the defect,
+a client can buy admission by FLTrust with a number it chooses.
 
 \subsection{A trained falsifier (registered)}
 \label{sup:r1}
@@ -378,6 +374,19 @@ median, and the full arm picks the honest client with the most batches in
 $\rTwoKrumUtgTopBFull\%$ of rounds, the masked arm in $\rTwoKrumUtgTopBNonbt\%$ (targeted:
 $\rTwoKrumTgtTopBFull\%$, $\rTwoKrumTgtTopBNonbt\%$).
 
+The second family (no direction registered) is supported in $\rTwoHTwoSupported$ of $12$ cells.
+Trimmed mean, targeted, full/masked at $c=0.1,0.2,0.3$: $\rTwoTmTgtOneYfull$/$\rTwoTmTgtOneYnonbt$
+($p_H=\rTwoTmTgtOnePh$), $\rTwoTmTgtTwoYfull$/$\rTwoTmTgtTwoYnonbt$ ($\rTwoTmTgtTwoPh$),
+$\rTwoTmTgtThreeYfull$/$\rTwoTmTgtThreeYnonbt$ ($\rTwoTmTgtThreePh$); the counter's share exceeds
+$0.5$ (M1, $p\le\rTwoMOneTmP$). Under MPAF the error moves little: $\rTwoTmUtgOneDiff$
+($p_H=\rTwoTmUtgOnePh$), $\rTwoTmUtgTwoDiff$ ($\rTwoTmUtgTwoPh$), $\rTwoTmUtgThreeDiff$
+($\rTwoTmUtgThreePh$), so the no-change prediction fails here too. Exploratory, targeted: the rule keeps
+$\rTwoTmTgtKeptFull\%$ of attackers' updates in full and $\rTwoTmTgtKeptNonbt\%$ masked, and the counters
+alone reproduce its full-vector kept set in $\rTwoTmTgtSameCtr\%$ of rounds. Fang runs the other way, once: targeted $c=0.1$,
+$\rTwoFangTgtOneYfull$/$\rTwoFangTgtOneYnonbt$ ($p_H=\rTwoFangTgtOnePh$); we did not log its final
+kept set, so we give no mechanism. Elsewhere both Fang arms often collapse: $\rTwoFangUtgNanRuns$ of $\rTwoFangUtgRuns$ MPAF runs
+reach non-finite distances. Collapsed runs stop early (patience $8$), which bounds their minimum error.
+
 \subsection{The FoolsGold diagnostic}
 \label{sup:fgdiag}
 A diagnostic run with the round-one copy (trainable arm, clean, non-IID, seed
@@ -388,15 +397,11 @@ largest history cosine over rounds $2$--$15$: $\csFgBaseMaxCosMed$). FoolsGold
 reads them as sybils. It keeps a median of $\csFgBaseKeptMed$ clients per round;
 in the last round the kept clients hold $\csFgBaseKeptRowShare$ of the training rows
 and include $\csFgBaseKeptMajorDDoS$ of the DDoS-majority clients. Clean accuracy is
-$\csFgBaseCA$. Our port departs from the authors' code in one respect: their
-aggregator returns the weight-scaled \emph{sum} of the round's updates, ours their
-weighted mean. Using the sum gives clean accuracy $\csFgNormOffCA$, so the port is
-not the cause. Using single-round updates instead of the cumulative history gives
+$\csFgBaseCA$. Our port averages where the authors' aggregator sums; the sum gives clean accuracy
+$\csFgNormOffCA$, so the port is not the cause. Using single-round updates instead of the cumulative history gives
 $\csFgHistOffCA$, with a median of $\csFgHistOffKeptMed$ clients kept. FoolsGold
-assumes that honest histories are dissimilar. Under a label skew in which most
-clients share a majority class, that assumption fails whether or not the counter is
-present. Its fixed-arm outcomes in the re-run will therefore measure this failure,
-and only its defect-arm outcomes can add a counter effect on top of it.
+assumes dissimilar honest histories, which fails under this label skew with or without the
+counter, so its fixed-arm outcomes measure this failure.
 
 \subsection{Why fixed-arm FLTrust shuts down under IID shards}
 \label{sup:fltshut}
@@ -686,12 +691,10 @@ pair, about $\pfDiagCosFullDir$, Corollary~\ref{cor:band}), and the analysis bui
 \label{sup:realize}
 \label{sec:realizable}
 
-Triggers are defined in standardized feature space, so poisoning and evaluation are
-consistent by construction. The campaign's fixed trigger sets header and TCP-flag features
+The campaign's fixed trigger sets header and TCP-flag features
 (TTL $+2\sigma$, hdr\_len $-1.5\sigma$, syn $+2\sigma$); two alternatives are statistical
 (Rate $-1.5$, Std $+2$, Tot\,size $+1.5$) and temporal (IAT $+2$, Number $+1.5$, size $-1.5$).
-Whether real traffic could carry such a trigger is a problem-space
-question~\cite{pierazzi2020problem} we do not address; our backdoor results are feature-space results.
+Whether real traffic could carry such a trigger~\cite{pierazzi2020problem} we do not address.
 
 % Restore once moved text cites anything (an empty bibliography is a LaTeX error):
 % No bibliography of its own: \cite resolves through xr-hyper to the paper's

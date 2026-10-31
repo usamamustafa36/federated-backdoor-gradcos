@@ -663,3 +663,142 @@
 ,{"stream_name":"stderr","time":7220.670972509,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
 ,{"stream_name":"stderr","time":7221.883583544,"data":"[NbConvertApp] Writing 299776 bytes to __results__.html\n"}
 ]
+===== v5 session (PREREG_R2 Amendment 6), fetched 2026-10-31 =====
+[{"stream_name":"stderr","time":4.53170914,"data":"/kaggle/src/script.py:16: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n"}
+,{"stream_name":"stderr","time":4.531760275,"data":"  tarfile.open(tgz[0]).extractall(\"/tmp\")\n"}
+,{"stream_name":"stdout","time":5.113708864,"data":"82 jobs, 82 to run\n"}
+,{"stream_name":"stdout","time":10.314334154,"data":"2.11.0+cu128 2 ['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":10.315107638,"data":"[0.00h] start lane0 ('fang', 'target', '0.1', 'full', 8) try1\n"}
+,{"stream_name":"stdout","time":10.315851727,"data":"[0.00h] start lane1 ('fang', 'untarget', '0.2', 'nonbt', 8) try1\n"}
+,{"stream_name":"stdout","time":10.317079037,"data":"[0.00h] start lane2 ('fang', 'target', '0.3', 'full', 8) try1\n"}
+,{"stream_name":"stdout","time":10.319411529,"data":"[0.00h] start lane3 ('fang', 'target', '0.3', 'nonbt', 8) try1\n"}
+,{"stream_name":"stdout","time":670.324937743,"data":"[0.19h] end lane2 ('fang', 'target', '0.3', 'full', 8) rc=0\n"}
+,{"stream_name":"stdout","time":670.32649292,"data":"[0.19h] start lane2 ('fang', 'untarget', '0.3', 'full', 8) try1\n"}
+,{"stream_name":"stdout","time":790.330338632,"data":"[0.22h] end lane1 ('fang', 'untarget', '0.2', 'nonbt', 8) rc=0\n"}
+,{"stream_name":"stdout","time":790.336190917,"data":"[0.22h] start lane1 ('fang', 'untarget', '0.3', 'nonbt', 8) try1\n"}
+,{"stream_name":"stdout","time":910.334419844,"data":"[0.25h] end lane3 ('fang', 'target', '0.3', 'nonbt', 8) rc=0\n"}
+,{"stream_name":"stdout","time":910.335799139,"data":"[0.25h] start lane3 ('fang', 'target', '0.2', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":1210.339706615,"data":"[0.34h] end lane2 ('fang', 'untarget', '0.3', 'full', 8) rc=0\n"}
+,{"stream_name":"stdout","time":1210.342378065,"data":"[0.34h] start lane2 ('fang', 'untarget', '0.2', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":1510.348613193,"data":"[0.42h] end lane1 ('fang', 'untarget', '0.3', 'nonbt', 8) rc=0\n"}
+,{"stream_name":"stdout","time":1510.350501338,"data":"[0.42h] start lane1 ('fang', 'untarget', '0.2', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":1870.353837406,"data":"[0.52h] end lane2 ('fang', 'untarget', '0.2', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":1870.355740152,"data":"[0.52h] start lane2 ('fang', 'target', '0.3', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":2320.358938913,"data":"[0.64h] end lane3 ('fang', 'target', '0.2', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":2320.364263616,"data":"[0.64h] start lane3 ('fang', 'target', '0.3', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":2470.364086678,"data":"[0.69h] end lane1 ('fang', 'untarget', '0.2', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":2470.364699386,"data":"[0.69h] start lane1 ('fang', 'untarget', '0.3', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":2980.372213942,"data":"[0.83h] end lane3 ('fang', 'target', '0.3', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":2980.372251107,"data":"[0.83h] start lane3 ('fang', 'untarget', '0.3', 'nonbt', 9) try1\n"}
+,{"stream_name":"stdout","time":3250.372891024,"data":"[0.90h] end lane2 ('fang', 'target', '0.3', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":3250.376246391,"data":"[0.90h] start lane2 ('fedavg', 'target', '0.3', 'full', 3) try1\n"}
+,{"stream_name":"stdout","time":3280.374321886,"data":"[0.91h] end lane0 ('fang', 'target', '0.1', 'full', 8) rc=0\n"}
+,{"stream_name":"stdout","time":3280.375335688,"data":"[0.91h] start lane0 ('fedavg', 'target', '0.3', 'full', 4) try1\n"}
+,{"stream_name":"stdout","time":3400.377752109,"data":"[0.94h] end lane1 ('fang', 'untarget', '0.3', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":3400.378333153,"data":"[0.94h] start lane1 ('fedavg', 'target', '0.3', 'full', 5) try1\n"}
+,{"stream_name":"stdout","time":3730.385643195,"data":"[1.04h] end lane0 ('fedavg', 'target', '0.3', 'full', 4) rc=0\n"}
+,{"stream_name":"stdout","time":3730.386747206,"data":"[1.04h] start lane0 ('fedavg', 'target', '0.3', 'full', 6) try1\n"}
+,{"stream_name":"stdout","time":3790.387211138,"data":"[1.05h] end lane3 ('fang', 'untarget', '0.3', 'nonbt', 9) rc=0\n"}
+,{"stream_name":"stdout","time":3790.388240159,"data":"[1.05h] start lane3 ('fedavg', 'target', '0.3', 'full', 7) try1\n"}
+,{"stream_name":"stdout","time":4120.392498849,"data":"[1.14h] end lane2 ('fedavg', 'target', '0.3', 'full', 3) rc=0\n"}
+,{"stream_name":"stdout","time":4120.394188379,"data":"[1.14h] start lane2 ('fedavg', 'target', '0.3', 'full', 9) try1\n"}
+,{"stream_name":"stdout","time":4180.397665218,"data":"[1.16h] end lane0 ('fedavg', 'target', '0.3', 'full', 6) rc=0\n"}
+,{"stream_name":"stdout","time":4180.398594519,"data":"[1.16h] start lane0 ('fedavg', 'target', '0.3', 'full', 10) try1\n"}
+,{"stream_name":"stdout","time":4450.403257575,"data":"[1.24h] end lane1 ('fedavg', 'target', '0.3', 'full', 5) rc=0\n"}
+,{"stream_name":"stdout","time":4450.403609825,"data":"[1.24h] start lane1 ('fedavg', 'target', '0.3', 'full', 11) try1\n"}
+,{"stream_name":"stdout","time":4540.404863188,"data":"[1.26h] end lane3 ('fedavg', 'target', '0.3', 'full', 7) rc=0\n"}
+,{"stream_name":"stdout","time":4540.407208039,"data":"[1.26h] start lane3 ('fedavg', 'target', '0.3', 'full', 12) try1\n"}
+,{"stream_name":"stdout","time":4630.411474199,"data":"[1.29h] end lane0 ('fedavg', 'target', '0.3', 'full', 10) rc=0\n"}
+,{"stream_name":"stdout","time":4630.412724357,"data":"[1.29h] start lane0 ('krum', 'target', '0.1', 'trainable', 3) try1\n"}
+,{"stream_name":"stdout","time":4930.414756182,"data":"[1.37h] end lane1 ('fedavg', 'target', '0.3', 'full', 11) rc=0\n"}
+,{"stream_name":"stdout","time":4930.416231415,"data":"[1.37h] start lane1 ('krum', 'untarget', '0.1', 'trainable', 3) try1\n"}
+,{"stream_name":"stdout","time":4960.417471914,"data":"[1.38h] end lane2 ('fedavg', 'target', '0.3', 'full', 9) rc=0\n"}
+,{"stream_name":"stdout","time":4960.418378884,"data":"[1.38h] start lane2 ('krum', 'target', '0.2', 'trainable', 3) try1\n"}
+,{"stream_name":"stdout","time":5350.424236815,"data":"[1.49h] end lane3 ('fedavg', 'target', '0.3', 'full', 12) rc=0\n"}
+,{"stream_name":"stdout","time":5350.426291588,"data":"[1.49h] start lane3 ('krum', 'untarget', '0.2', 'trainable', 3) try1\n"}
+,{"stream_name":"stdout","time":5590.432501544,"data":"[1.55h] end lane0 ('krum', 'target', '0.1', 'trainable', 3) rc=0\n"}
+,{"stream_name":"stdout","time":5590.434218164,"data":"[1.55h] start lane0 ('krum', 'target', '0.3', 'trainable', 3) try1\n"}
+,{"stream_name":"stdout","time":5710.437626239,"data":"[1.59h] end lane2 ('krum', 'target', '0.2', 'trainable', 3) rc=0\n"}
+,{"stream_name":"stdout","time":5710.438633376,"data":"[1.59h] start lane2 ('krum', 'untarget', '0.3', 'trainable', 3) try1\n"}
+,{"stream_name":"stdout","time":6880.449100196,"data":"[1.91h] end lane3 ('krum', 'untarget', '0.2', 'trainable', 3) rc=0\n"}
+,{"stream_name":"stdout","time":6880.451482735,"data":"[1.91h] start lane3 ('krum', 'target', '0.1', 'trainable', 4) try1\n"}
+,{"stream_name":"stdout","time":7000.453084226,"data":"[1.94h] end lane1 ('krum', 'untarget', '0.1', 'trainable', 3) rc=0\n"}
+,{"stream_name":"stdout","time":7000.453545799,"data":"[1.94h] start lane1 ('krum', 'untarget', '0.1', 'trainable', 4) try1\n"}
+,{"stream_name":"stdout","time":7000.454008212,"data":"[1.94h] end lane2 ('krum', 'untarget', '0.3', 'trainable', 3) rc=0\n"}
+,{"stream_name":"stdout","time":7000.455096846,"data":"[1.94h] start lane2 ('krum', 'target', '0.2', 'trainable', 4) try1\n"}
+,{"stream_name":"stdout","time":7750.463057355,"data":"[2.15h] end lane0 ('krum', 'target', '0.3', 'trainable', 3) rc=0\n"}
+,{"stream_name":"stdout","time":7750.465453739,"data":"[2.15h] start lane0 ('krum', 'untarget', '0.2', 'trainable', 4) try1\n"}
+,{"stream_name":"stdout","time":8230.469842799,"data":"[2.29h] end lane2 ('krum', 'target', '0.2', 'trainable', 4) rc=0\n"}
+,{"stream_name":"stdout","time":8230.472780312,"data":"[2.29h] start lane2 ('krum', 'target', '0.3', 'trainable', 4) try1\n"}
+,{"stream_name":"stdout","time":8560.476088129,"data":"[2.38h] end lane3 ('krum', 'target', '0.1', 'trainable', 4) rc=0\n"}
+,{"stream_name":"stdout","time":8560.478526848,"data":"[2.38h] start lane3 ('krum', 'untarget', '0.3', 'trainable', 4) try1\n"}
+,{"stream_name":"stdout","time":8770.480921641,"data":"[2.44h] end lane1 ('krum', 'untarget', '0.1', 'trainable', 4) rc=0\n"}
+,{"stream_name":"stdout","time":8770.482309427,"data":"[2.44h] start lane1 ('krum', 'target', '0.1', 'trainable', 5) try1\n"}
+,{"stream_name":"stdout","time":9250.487066537,"data":"[2.57h] end lane2 ('krum', 'target', '0.3', 'trainable', 4) rc=0\n"}
+,{"stream_name":"stdout","time":9250.490320521,"data":"[2.57h] start lane2 ('krum', 'untarget', '0.1', 'trainable', 5) try1\n"}
+,{"stream_name":"stdout","time":9310.490874561,"data":"[2.59h] end lane0 ('krum', 'untarget', '0.2', 'trainable', 4) rc=0\n"}
+,{"stream_name":"stdout","time":9310.492274481,"data":"[2.59h] start lane0 ('krum', 'target', '0.2', 'trainable', 5) try1\n"}
+,{"stream_name":"stdout","time":10270.503934967,"data":"[2.85h] end lane3 ('krum', 'untarget', '0.3', 'trainable', 4) rc=0\n"}
+,{"stream_name":"stdout","time":10270.504596914,"data":"[2.85h] start lane3 ('krum', 'untarget', '0.2', 'trainable', 5) try1\n"}
+,{"stream_name":"stdout","time":10420.508041635,"data":"[2.89h] end lane0 ('krum', 'target', '0.2', 'trainable', 5) rc=0\n"}
+,{"stream_name":"stdout","time":10420.509649105,"data":"[2.89h] start lane0 ('krum', 'target', '0.3', 'trainable', 5) try1\n"}
+,{"stream_name":"stdout","time":10420.509669321,"data":"[2.89h] end lane1 ('krum', 'target', '0.1', 'trainable', 5) rc=0\n"}
+,{"stream_name":"stdout","time":10420.511402322,"data":"[2.89h] start lane1 ('krum', 'untarget', '0.3', 'trainable', 5) try1\n"}
+,{"stream_name":"stdout","time":10990.516871443,"data":"[3.05h] end lane1 ('krum', 'untarget', '0.3', 'trainable', 5) rc=0\n"}
+,{"stream_name":"stdout","time":10990.518404993,"data":"[3.05h] start lane1 ('krum', 'target', '0.1', 'trainable', 6) try1\n"}
+,{"stream_name":"stdout","time":11020.518708953,"data":"[3.06h] end lane2 ('krum', 'untarget', '0.1', 'trainable', 5) rc=0\n"}
+,{"stream_name":"stdout","time":11020.519966143,"data":"[3.06h] start lane2 ('krum', 'untarget', '0.1', 'trainable', 6) try1\n"}
+,{"stream_name":"stdout","time":11050.52047247,"data":"[3.07h] end lane0 ('krum', 'target', '0.3', 'trainable', 5) rc=0\n"}
+,{"stream_name":"stdout","time":11050.523218616,"data":"[3.07h] start lane0 ('krum', 'target', '0.2', 'trainable', 6) try1\n"}
+,{"stream_name":"stdout","time":11710.52715557,"data":"[3.25h] end lane0 ('krum', 'target', '0.2', 'trainable', 6) rc=0\n"}
+,{"stream_name":"stdout","time":11710.528496686,"data":"[3.25h] start lane0 ('krum', 'untarget', '0.2', 'trainable', 6) try1\n"}
+,{"stream_name":"stdout","time":12070.534347309,"data":"[3.35h] end lane1 ('krum', 'target', '0.1', 'trainable', 6) rc=0\n"}
+,{"stream_name":"stdout","time":12070.537182462,"data":"[3.35h] start lane1 ('krum', 'target', '0.3', 'trainable', 6) try1\n"}
+,{"stream_name":"stdout","time":12520.541235162,"data":"[3.48h] end lane3 ('krum', 'untarget', '0.2', 'trainable', 5) rc=0\n"}
+,{"stream_name":"stdout","time":12520.544518011,"data":"[3.48h] start lane3 ('krum', 'untarget', '0.3', 'trainable', 6) try1\n"}
+,{"stream_name":"stdout","time":13510.554882062,"data":"[3.75h] end lane0 ('krum', 'untarget', '0.2', 'trainable', 6) rc=0\n"}
+,{"stream_name":"stdout","time":13510.556368443,"data":"[3.75h] start lane0 ('krum', 'target', '0.1', 'trainable', 7) try1\n"}
+,{"stream_name":"stdout","time":13540.556773514,"data":"[3.76h] end lane2 ('krum', 'untarget', '0.1', 'trainable', 6) rc=0\n"}
+,{"stream_name":"stdout","time":13540.557699424,"data":"[3.76h] start lane2 ('krum', 'untarget', '0.1', 'trainable', 7) try1\n"}
+,{"stream_name":"stdout","time":13900.559682969,"data":"[3.86h] end lane1 ('krum', 'target', '0.3', 'trainable', 6) rc=0\n"}
+,{"stream_name":"stdout","time":13900.56248477,"data":"[3.86h] start lane1 ('krum', 'target', '0.2', 'trainable', 7) try1\n"}
+,{"stream_name":"stdout","time":14020.563213086,"data":"[3.89h] end lane3 ('krum', 'untarget', '0.3', 'trainable', 6) rc=0\n"}
+,{"stream_name":"stdout","time":14020.565241757,"data":"[3.89h] start lane3 ('krum', 'untarget', '0.2', 'trainable', 7) try1\n"}
+,{"stream_name":"stdout","time":14380.570421827,"data":"[3.99h] end lane2 ('krum', 'untarget', '0.1', 'trainable', 7) rc=0\n"}
+,{"stream_name":"stdout","time":14380.571565485,"data":"[3.99h] start lane2 ('krum', 'target', '0.3', 'trainable', 7) try1\n"}
+,{"stream_name":"stdout","time":14440.574757846,"data":"[4.01h] end lane0 ('krum', 'target', '0.1', 'trainable', 7) rc=0\n"}
+,{"stream_name":"stdout","time":14440.577833305,"data":"[4.01h] start lane0 ('krum', 'untarget', '0.3', 'trainable', 7) try1\n"}
+,{"stream_name":"stdout","time":14920.583886269,"data":"[4.14h] end lane2 ('krum', 'target', '0.3', 'trainable', 7) rc=0\n"}
+,{"stream_name":"stdout","time":14920.584898147,"data":"[4.14h] start lane2 ('krum', 'target', '0.1', 'trainable', 8) try1\n"}
+,{"stream_name":"stdout","time":14980.586248831,"data":"[4.16h] end lane1 ('krum', 'target', '0.2', 'trainable', 7) rc=0\n"}
+,{"stream_name":"stdout","time":14980.588332774,"data":"[4.16h] start lane1 ('krum', 'untarget', '0.1', 'trainable', 8) try1\n"}
+,{"stream_name":"stdout","time":15310.590317844,"data":"[4.25h] end lane3 ('krum', 'untarget', '0.2', 'trainable', 7) rc=0\n"}
+,{"stream_name":"stdout","time":15310.591774432,"data":"[4.25h] start lane3 ('krum', 'target', '0.2', 'trainable', 8) try1\n"}
+,{"stream_name":"stdout","time":16000.600830565,"data":"[4.44h] end lane0 ('krum', 'untarget', '0.3', 'trainable', 7) rc=0\n"}
+,{"stream_name":"stdout","time":16000.606202159,"data":"[4.44h] start lane0 ('krum', 'untarget', '0.2', 'trainable', 8) try1\n"}
+,{"stream_name":"stdout","time":16360.606418278,"data":"[4.54h] end lane1 ('krum', 'untarget', '0.1', 'trainable', 8) rc=0\n"}
+,{"stream_name":"stdout","time":16360.607675298,"data":"[4.54h] start lane1 ('krum', 'target', '0.3', 'trainable', 8) try1\n"}
+,{"stream_name":"stdout","time":16360.607962188,"data":"[4.54h] end lane2 ('krum', 'target', '0.1', 'trainable', 8) rc=0\n"}
+,{"stream_name":"stdout","time":16360.61023125,"data":"[4.54h] start lane2 ('krum', 'untarget', '0.3', 'trainable', 8) try1\n"}
+,{"stream_name":"stdout","time":16720.611473644,"data":"[4.64h] end lane3 ('krum', 'target', '0.2', 'trainable', 8) rc=0\n"}
+,{"stream_name":"stdout","time":16720.615215726,"data":"[4.64h] start lane3 ('krum', 'target', '0.1', 'trainable', 9) try1\n"}
+,{"stream_name":"stdout","time":17530.620947981,"data":"[4.87h] end lane3 ('krum', 'target', '0.1', 'trainable', 9) rc=0\n"}
+,{"stream_name":"stdout","time":17530.622271002,"data":"[4.87h] start lane3 ('krum', 'untarget', '0.1', 'trainable', 9) try1\n"}
+,{"stream_name":"stdout","time":17740.626366901,"data":"[4.93h] end lane1 ('krum', 'target', '0.3', 'trainable', 8) rc=0\n"}
+,{"stream_name":"stdout","time":17740.628027665,"data":"[4.93h] start lane1 ('krum', 'target', '0.2', 'trainable', 9) try1\n"}
+,{"stream_name":"stdout","time":18010.631100272,"data":"[5.00h] end lane2 ('krum', 'untarget', '0.3', 'trainable', 8) rc=0\n"}
+,{"stream_name":"stdout","time":18010.63211584,"data":"[5.00h] start lane2 ('krum', 'untarget', '0.2', 'trainable', 9) try1\n"}
+,{"stream_name":"stdout","time":18520.638396253,"data":"[5.14h] end lane0 ('krum', 'untarget', '0.2', 'trainable', 8) rc=0\n"}
+,{"stream_name":"stdout","time":18520.639167976,"data":"[5.14h] start lane0 ('krum', 'target', '0.3', 'trainable', 9) try1\n"}
+,{"stream_name":"stdout","time":19240.646838304,"data":"[5.34h] end lane3 ('krum', 'untarget', '0.1', 'trainable', 9) rc=0\n"}
+,{"stream_name":"stdout","time":19270.647202043,"data":"[5.35h] end lane0 ('krum', 'target', '0.3', 'trainable', 9) rc=0\n"}
+,{"stream_name":"stdout","time":19420.648441554,"data":"[5.39h] end lane1 ('krum', 'target', '0.2', 'trainable', 9) rc=0\n"}
+,{"stream_name":"stdout","time":19510.649196511,"data":"[5.42h] end lane2 ('krum', 'untarget', '0.2', 'trainable', 9) rc=0\n"}
+,{"stream_name":"stdout","time":19510.668203696,"data":"FINISHED: 63/82 complete after 5.42h\n"}
+,{"stream_name":"stderr","time":19513.195325145,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":19513.195353409,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":19513.424574804,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":19513.424607209,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":19514.167699352,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":19515.044084969,"data":"[NbConvertApp] Writing 302590 bytes to __results__.html\n"}
+]

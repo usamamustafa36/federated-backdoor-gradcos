@@ -949,13 +949,11 @@ $n=\pfDRKrumIidAtkN$): as their trainable norm alone predicts.
 \textbf{Why the hazard survives review.} No accuracy curve reveals an inert
 counter, equal shards hide it from distance rules, and its errors run both ways: a
 defense can look weaker (FLAME, FLDetector) or stronger (FoolsGold) than it is. The stronger-looking case is the worse one:
-the arms differ only in the buffer block, whose dominant coordinate is a count the
-attacker reports for itself, so a detection found only in the defect arm is one an
-attacker could withdraw at no cost by reporting the cohort's count
-(Sec.~\ref{sec:setup}); we have not run that attacker against FoolsGold.
+a detection found only in the defect arm rests on a count the attacker reports for itself, and
+reporting the cohort's count would withdraw it at no cost (Sec.~\ref{sec:setup}; not run against FoolsGold).
 
 \textbf{A published pipeline (registered).} We re-ran the official code of an exposed
-defense~\cite{lee2024triplet} (ResNet-18, $L=20$, unequal shards; Krum grid, $10$ paired
+defense~\cite{lee2024triplet} (ResNet-18, $L=20$, unequal shards; $10$ paired
 seeds, Sec.~\ref{sup:r2}), changing only the vector its rules decide on. The counter carries
 $\rTwoKrumTgtShareMin$--$\rTwoKrumTgtShareMax$ of the squared distances Krum reads. The
 minimum test error the authors plot moves in $\rTwoHOneSupported$ of $6$ cells, all under
@@ -963,7 +961,10 @@ untargeted poisoning (MPAF; $\rTwoKrumUtgOneDiff$ to $\rTwoKrumUtgTwoDiff$,
 $p_H=\rTwoKrumUtgOnePh$), against our prediction; none under the targeted attack. MPAF
 clients are excluded in both arms, but their counter is $\rTwoKrumUtgCtrRatio\times$ the
 honest one, and full-vector Krum then picks the honest client with the most batches in
-$\rTwoKrumUtgTopBFull\%$ of rounds ($\rTwoKrumUtgTopBNonbt\%$ masked; exploratory).
+$\rTwoKrumUtgTopBFull\%$ of rounds ($\rTwoKrumUtgTopBNonbt\%$ masked; exploratory). For trimmed
+mean and Fang $\rTwoHTwoSupported$ of $12$ cells move, both ways: targeted at $c=0.2$, trimmed mean's
+error is $\rTwoTmTgtTwoYfull$ as published and $\rTwoTmTgtTwoYnonbt$ masked ($p_H=\rTwoTmTgtTwoPh$);
+at $c=0.1$, Fang's is $\rTwoFangTgtOneYfull$ and $\rTwoFangTgtOneYnonbt$ ($p_H=\rTwoFangTgtOnePh$).
 
 \textbf{What we recommend.} (i) Decide on \texttt{parameters()}, aggregate the
 \sd{}: compute every similarity, distance, norm, clip bound and noise scale on the
@@ -978,10 +979,8 @@ code under unequal shard sizes, since equal shards hide the distance exposure.
 (Sec.~\ref{sec:setup}: $10$ clients, $15$ rounds, $40{,}000$ rows, a weak detector).
 The backdoor implants only because attackers train several local epochs
 (Table~\ref{tab:calib}), and on no $E_m$ on every non-IID seed (Table~\ref{tab:seedcal}),
-so backdoor results concern one calibrated, norm-visible attack on the seeds where
-undefended FedAvg implants. Exclusions and clean accuracy do not depend on it.
-\emph{One architecture for outcomes} ($L=1$) in our campaign; the
-re-run above is Krum's only. In federated ResNet-20 rounds on
+so backdoor results concern one norm-visible attack on the seeds where FedAvg implants. Exclusions and clean accuracy do not depend on it.
+\emph{One architecture for outcomes} ($L=1$) in our campaign. In federated ResNet-20 rounds on
 CIFAR-10 ($L=\gcNBN$, non-IID) the counter carries a median $\gcCntShareDir\%$ of
 the squared update norm, and FLTrust gives two label flippers $\gcAtkWFullDir\%$ of
 its trust on the full vector against $\gcAtkWTrDir\%$ on the trainable one
@@ -991,10 +990,8 @@ separate the arms at $n=\gcFtN$ (Sec.~\ref{sup:probe}).
 traffic~\cite{pierazzi2020problem}.
 \emph{Survey scope.} Ten hand-read implementations show the convention exists, not its prevalence.
 \emph{Momentum.} With \texttt{momentum=None} PyTorch reads the counter (not studied).
-\emph{Hyperparameters} are untuned defaults shared by both arms.
-\emph{Threat model.} Static, feature-space attacker; no adaptive attack on the
-fixed pipeline. A trained, norm-bounded counter falsifier (registered,
-Sec.~\ref{sup:r1}) gains FLTrust step share and Multi-Krum admission
+\emph{Threat model.} Static attacker; no adaptive attack on the fixed pipeline. A trained,
+norm-bounded falsifier (registered, Sec.~\ref{sup:r1}) gains FLTrust step share and Multi-Krum admission
 ($\rOneMechMkDef$ against $\rOneMechMkFix$, $p_H=\rOneMechMkPh$) but not Krum
 admission, and at its bound does not implant even under FedAvg (median BSR
 $\rOneRefBSRmed$).
@@ -1009,11 +1006,10 @@ rule-specific: it stops FLTrust from excluding anyone (registered); it hides lon
 FLAME and FLDetector and lends FoolsGold detections the trainable update does not support,
 a direction that replicated on registered held-out seeds and, as
 Proposition~\ref{prop:angle} predicted, vanishes once an attacker's update outgrows its
-batch count; in a published defense's Krum baseline it moves the reported error
+batch count; in a published defense's baselines it moves the reported error, both ways
 (registered). A client may also falsify the counter and gain FLTrust weight and Multi-Krum
 admission (registered). Restored exclusions do not make FLTrust a detector here: what a
-rule decides and whether it defends are separate questions, and both have to be measured
-with the counter out of the decision vector.
+rule decides and whether it defends are separate questions, both to be measured without the counter.
 
 %---------------------------------------------------------------------
 \input{declarations_ieee}

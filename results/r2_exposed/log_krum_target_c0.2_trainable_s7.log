@@ -52,3 +52,126 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 125, in forward
     return F.linear(input, self.weight, self.bias)
 RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`
+===== Kaggle usamaa36/paper08-r2-kaggle v5 (2x T4), fetched 2026-10-31 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:45<2:30:33, 45.40s/it]  1%|          | 2/200 [01:30<2:28:30, 45.00s/it]  2%|▏         | 3/200 [02:07<2:17:01, 41.73s/it]  2%|▏         | 4/200 [02:52<2:20:15, 42.94s/it]  2%|▎         | 5/200 [03:37<2:21:47, 43.63s/it]  3%|▎         | 6/200 [04:22<2:22:15, 44.00s/it]  4%|▎         | 7/200 [05:06<2:22:00, 44.15s/it]  4%|▍         | 8/200 [05:51<2:22:10, 44.43s/it]  4%|▍         | 9/200 [06:36<2:21:35, 44.48s/it]  5%|▌         | 10/200 [07:21<2:21:13, 44.59s/it]  6%|▌         | 11/200 [08:05<2:20:04, 44.47s/it]  6%|▌         | 12/200 [08:50<2:19:29, 44.52s/it]  6%|▋         | 13/200 [09:35<2:19:11, 44.66s/it]  7%|▋         | 14/200 [10:19<2:18:36, 44.71s/it]  8%|▊         | 15/200 [11:04<2:17:45, 44.68s/it]  8%|▊         | 16/200 [11:49<2:17:25, 44.81s/it]  8%|▊         | 17/200 [12:34<2:17:00, 44.92s/it]  9%|▉         | 18/200 [13:19<2:15:52, 44.79s/it] 10%|▉         | 19/200 [14:03<2:14:51, 44.70s/it] 10%|█         | 20/200 [14:47<2:13:36, 44.54s/it] 10%|█         | 21/200 [15:32<2:13:04, 44.61s/it] 11%|█         | 22/200 [16:17<2:12:12, 44.56s/it] 12%|█▏        | 23/200 [17:01<2:11:34, 44.60s/it] 12%|█▏        | 23/200 [17:46<2:16:47, 46.37s/it]
+Round: 0
+Test accuracy: 64.42560577392578
+Test loss: 1.0413017261798394
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 68.31336212158203
+Test loss: 0.8788721976103193
+Check accuracy: 64.42560577392578
+patience: 0
+Round: 2
+Test accuracy: 70.79801177978516
+Test loss: 0.7946628301821755
+Check accuracy: 68.31336212158203
+patience: 0
+Round: 3
+Test accuracy: 72.31803894042969
+Test loss: 0.775085217281588
+Check accuracy: 70.79801177978516
+patience: 0
+Round: 4
+Test accuracy: 72.87342834472656
+Test loss: 0.7635818387778381
+Check accuracy: 72.31803894042969
+patience: 0
+Round: 5
+Test accuracy: 72.87342834472656
+Test loss: 0.7620304534742617
+Check accuracy: 72.87342834472656
+patience: 0
+Round: 6
+Test accuracy: 73.51651763916016
+Test loss: 0.7653734976002711
+Check accuracy: 72.87342834472656
+patience: 1
+Round: 7
+Test accuracy: 73.69190216064453
+Test loss: 0.767711024993834
+Check accuracy: 73.51651763916016
+patience: 0
+Round: 8
+Test accuracy: 73.4872817993164
+Test loss: 0.7890677431179606
+Check accuracy: 73.69190216064453
+patience: 0
+Round: 9
+Test accuracy: 73.66267395019531
+Test loss: 0.7839834909625863
+Check accuracy: 73.69190216064453
+patience: 1
+Round: 10
+Test accuracy: 73.92575073242188
+Test loss: 0.7913022413479588
+Check accuracy: 73.69190216064453
+patience: 2
+Round: 11
+Test accuracy: 73.04881286621094
+Test loss: 0.8128852052529699
+Check accuracy: 73.92575073242188
+patience: 0
+Round: 12
+Test accuracy: 73.57498168945312
+Test loss: 0.8051994209992053
+Check accuracy: 73.92575073242188
+patience: 1
+Round: 13
+Test accuracy: 73.1949691772461
+Test loss: 0.8331964287065129
+Check accuracy: 73.92575073242188
+patience: 2
+Round: 14
+Test accuracy: 73.4872817993164
+Test loss: 0.8197032256072043
+Check accuracy: 73.92575073242188
+patience: 3
+Round: 15
+Test accuracy: 74.27652740478516
+Test loss: 0.7996684177268217
+Check accuracy: 73.92575073242188
+patience: 4
+Round: 16
+Test accuracy: 73.57498168945312
+Test loss: 0.8167593944006515
+Check accuracy: 74.27652740478516
+patience: 0
+Round: 17
+Test accuracy: 74.27652740478516
+Test loss: 0.8219160756253597
+Check accuracy: 74.27652740478516
+patience: 1
+Round: 18
+Test accuracy: 73.69190216064453
+Test loss: 0.8432046778192996
+Check accuracy: 74.27652740478516
+patience: 2
+Round: 19
+Test accuracy: 74.04267883300781
+Test loss: 0.83821133834094
+Check accuracy: 74.27652740478516
+patience: 3
+Round: 20
+Test accuracy: 73.89652252197266
+Test loss: 0.8248446279713648
+Check accuracy: 74.27652740478516
+patience: 4
+Round: 21
+Test accuracy: 73.13651275634766
+Test loss: 0.8720285771918276
+Check accuracy: 74.27652740478516
+patience: 5
+Round: 22
+Test accuracy: 74.10114288330078
+Test loss: 0.8374450915530912
+Check accuracy: 74.27652740478516
+patience: 6
+Round: 23
+Test accuracy: 73.60420989990234
+Test loss: 0.8502017447419489
+Check accuracy: 74.27652740478516
+patience: 7
+Early stopped federated training!

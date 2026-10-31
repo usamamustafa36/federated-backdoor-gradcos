@@ -90,3 +90,71 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/parameter.py", line 68, in __deepcopy__
     self.data.clone(memory_format=torch.preserve_format), self.requires_grad
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 7.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1277095 has 2.17 GiB memory in use. Process 1290331 has 632.00 MiB memory in use. Including non-PyTorch memory, this process has 224.00 MiB memory in use. Of the allocated memory 121.71 MiB is allocated by PyTorch, and 10.29 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+===== Kaggle usamaa36/paper08-r2-kaggle v5 (2x T4), fetched 2026-10-31 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:48<2:39:51, 48.20s/it]  1%|          | 2/200 [01:35<2:37:37, 47.76s/it]  2%|▏         | 3/200 [02:23<2:36:28, 47.66s/it]  2%|▏         | 4/200 [03:10<2:35:15, 47.53s/it]  2%|▎         | 5/200 [03:58<2:34:44, 47.61s/it]  3%|▎         | 6/200 [04:46<2:34:04, 47.65s/it]  4%|▎         | 7/200 [05:33<2:33:09, 47.61s/it]  4%|▍         | 8/200 [06:21<2:32:16, 47.59s/it]  4%|▍         | 9/200 [07:08<2:31:32, 47.61s/it]  5%|▌         | 10/200 [07:56<2:30:49, 47.63s/it]  6%|▌         | 11/200 [08:44<2:30:15, 47.70s/it]  6%|▌         | 12/200 [09:31<2:29:04, 47.58s/it]  6%|▌         | 12/200 [10:10<2:39:31, 50.91s/it]
+Round: 0
+Test accuracy: 63.66559600830078
+Test loss: 1.1088482127207757
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 72.87342834472656
+Test loss: 0.7739256585909239
+Check accuracy: 63.66559600830078
+patience: 0
+Round: 2
+Test accuracy: 76.14732360839844
+Test loss: 0.6874392324635523
+Check accuracy: 72.87342834472656
+patience: 0
+Round: 3
+Test accuracy: 77.81350708007812
+Test loss: 0.6257466235658433
+Check accuracy: 76.14732360839844
+patience: 0
+Round: 4
+Test accuracy: 78.6319808959961
+Test loss: 0.6156977531123112
+Check accuracy: 77.81350708007812
+patience: 0
+Round: 5
+Test accuracy: 78.6319808959961
+Test loss: 0.6137791243048308
+Check accuracy: 78.6319808959961
+patience: 0
+Round: 6
+Test accuracy: 78.28120422363281
+Test loss: 0.6256602459293957
+Check accuracy: 78.6319808959961
+patience: 1
+Round: 7
+Test accuracy: 78.57351684570312
+Test loss: 0.6206818418661707
+Check accuracy: 78.6319808959961
+patience: 2
+Round: 8
+Test accuracy: 77.66735076904297
+Test loss: 0.6396091431074413
+Check accuracy: 78.6319808959961
+patience: 3
+Round: 9
+Test accuracy: 77.9888916015625
+Test loss: 0.6377655247853047
+Check accuracy: 78.6319808959961
+patience: 4
+Round: 10
+Test accuracy: 78.45658874511719
+Test loss: 0.6407328229032738
+Check accuracy: 78.6319808959961
+patience: 5
+Round: 11
+Test accuracy: 78.01811981201172
+Test loss: 0.6413265095576666
+Check accuracy: 78.6319808959961
+patience: 6
+Round: 12
+Test accuracy: 77.72581481933594
+Test loss: 0.6519922793381955
+Check accuracy: 78.6319808959961
+patience: 7
+Early stopped federated training!

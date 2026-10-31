@@ -13,6 +13,7 @@ never do. Writes results/r2_exposed/summary.json and paper/numbers_r2.tex (\\rTw
 from __future__ import annotations
 
 import glob, itertools, json, os, re, sys
+from math import comb
 import numpy as np
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -161,6 +162,45 @@ def main():
                     mac(f"Krum{b}TopB{A}", 100 * float(np.mean(d["top"])) if d else None, "{:.0f}")]
         d = ex.get((p, "full"))
         tex.append(mac(f"Krum{b}CtrRatio", float(np.median(d["ratio"])) if d and d["ratio"] else None, "{:.1f}"))
+    fam2 = [c for c in fam["H2"] if c["n"]]
+    tex.append(mac("HTwoSupported", sum(1 for c in fam2 if c["p_holm"] <= 0.05) if fam2 else None, "{}"))
+    # M1 (registered): one-sided sign test over seeds of the per-seed median share against 0.5.
+    for m_, b in (("krum", "Krum"), ("trimmed_mean", "Tm")):
+        pm = []
+        for c in fam[("H1" if m_ == "krum" else "H2")]:
+            if c["method"] != m_ or c["p"] != "target" or not c["n"]:
+                continue
+            v = [np.median([r["counter_share_dist"] for r in runs[(m_, "target", c["c"], "full", s)]["rounds"]
+                            if r.get("counter_share_dist") is not None]) for s in c["seeds"]]
+            k = sum(x > 0.5 for x in v)
+            pm.append(sum(comb(len(v), i) for i in range(k, len(v) + 1)) / 2 ** len(v))
+        tex.append(mac(f"MOne{b}P", max(pm) if pm else None, "{:.3g}"))
+    # Exploratory (not registered; iteration 36): trimmed mean's kept set, each arm's own choice in
+    # its own runs, and how often the full arm's set is the one the counters alone would give.
+    # Fang's final set is not logged (its tm_* fields are the inner rule), so Fang is not read here.
+    kept, same = {}, []
+    for (m_, p, c, a, s), j in runs.items():
+        if m_ != "trimmed_mean" or a not in ("full", "nonbt"):
+            continue
+        for r in j["rounds"]:
+            mo, k = r.get("mal_order"), r.get(f"tm_{a}")
+            if not mo or not k or not any(mo):
+                continue
+            kept.setdefault((p, a), []).append(sum(mo[i] for i in k) / sum(mo))
+            if a == "full" and p == "target":
+                nb = np.asarray(r["nbt_first_layer"], float)
+                d = ((nb[:, None] - nb[None, :]) ** 2).sum(axis=1)
+                order = np.argsort(np.abs(d - np.sort(d)[(len(d) - 1) // 2]), kind="stable")
+                same.append(set(int(i) for i in order[:len(k)]) == set(k))
+    for p, b in (("target", "Tgt"), ("untarget", "Utg")):
+        for a, A in (("full", "Full"), ("nonbt", "Nonbt")):
+            d = kept.get((p, a))
+            tex.append(mac(f"Tm{b}Kept{A}", 100 * float(np.mean(d)) if d else None, "{:.0f}"))
+    tex.append(mac("TmTgtSameCtr", 100 * float(np.mean(same)) if same else None, "{:.0f}"))
+    fu = [(a, s, j) for (m_, p, c, a, s), j in runs.items() if m_ == "fang" and p == "untarget" and a in ("full", "nonbt")]
+    tex.append(mac("FangUtgNanRuns", sum(1 for _, _, j in fu if any(
+        r.get("counter_share_dist") is None or r["counter_share_dist"] != r["counter_share_dist"] for r in j["rounds"])) if fu else None, "{}"))
+    tex.append(mac("FangUtgRuns", len(fu) if fu else None, "{}"))
     open(OUT_TEX, "w").write("".join(tex))
     print(f"R2: {len(runs)} runs; H1 supported {sup}/6 -> {OUT_TEX}")
     for c in cells:
