@@ -28,4 +28,4 @@ cd paper && make numbers && make && make check
 
 ## Status of the published-pipeline re-run
 
-Registered families are complete: H1 120/120 runs and H2 240/240. Of the 60 Krum `trainable` runs, which are reported but not tested, 41 are complete in this version.
+Registered families are complete: H1 120/120 runs and H2 240/240. Of the 60 Krum `trainable` runs, which are reported but not tested, 45 are complete in this version; the other 15 are still open.

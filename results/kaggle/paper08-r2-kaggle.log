@@ -802,3 +802,24 @@
 ,{"stream_name":"stderr","time":19514.167699352,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
 ,{"stream_name":"stderr","time":19515.044084969,"data":"[NbConvertApp] Writing 302590 bytes to __results__.html\n"}
 ]
+===== v6 session (PREREG_R2 Amendment 8), fetched 2026-10-31 =====
+[{"stream_name":"stderr","time":6.702909282,"data":"/kaggle/src/script.py:17: DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives and reject files or modify their metadata. Use the filter argument to control this behavior.\n"}
+,{"stream_name":"stderr","time":6.702964946,"data":"  tarfile.open(tgz[0]).extractall(\"/tmp\")\n"}
+,{"stream_name":"stdout","time":7.324648276,"data":"8 jobs, 8 to run\n"}
+,{"stream_name":"stdout","time":15.812580636,"data":"2.11.0+cu128 2 ['Tesla T4', 'Tesla T4']\n"}
+,{"stream_name":"stdout","time":15.813435776,"data":"[0.00h] start lane0 ('krum', 'untarget', '0.3', 'trainable', 9) try1\n"}
+,{"stream_name":"stdout","time":15.814200693,"data":"[0.00h] start lane1 ('krum', 'target', '0.1', 'trainable', 10) try1\n"}
+,{"stream_name":"stdout","time":15.815520521,"data":"[0.00h] start lane2 ('krum', 'untarget', '0.1', 'trainable', 10) try1\n"}
+,{"stream_name":"stdout","time":15.817670788000001,"data":"[0.00h] start lane3 ('krum', 'target', '0.2', 'trainable', 10) try1\n"}
+,{"stream_name":"stdout","time":1395.827313605,"data":"[0.39h] end lane3 ('krum', 'target', '0.2', 'trainable', 10) rc=0\n"}
+,{"stream_name":"stdout","time":1545.828497792,"data":"[0.43h] end lane0 ('krum', 'untarget', '0.3', 'trainable', 9) rc=0\n"}
+,{"stream_name":"stdout","time":1635.829094594,"data":"[0.45h] end lane2 ('krum', 'untarget', '0.1', 'trainable', 10) rc=0\n"}
+,{"stream_name":"stdout","time":1725.830065312,"data":"[0.48h] end lane1 ('krum', 'target', '0.1', 'trainable', 10) rc=0\n"}
+,{"stream_name":"stdout","time":1725.832624153,"data":"FINISHED: 4/8 complete after 0.48h\n"}
+,{"stream_name":"stderr","time":1728.594646303,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1728.594673358,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1728.907905156,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1728.907944687,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1729.785621051,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1730.877612548,"data":"[NbConvertApp] Writing 298870 bytes to __results__.html\n"}
+]
