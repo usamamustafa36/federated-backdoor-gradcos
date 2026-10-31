@@ -2139,3 +2139,9 @@ finished here.)
 - Caveats: Fang's final kept set was not logged (the tm_* fields are its inner rule), so no Fang mechanism is claimed and its logged decision-change rate is not reported. 40/60 Fang MPAF runs reach non-finite distances, so those cells' share values are not meaningful. Collapsed runs stop early (patience 8), which bounds their minimum error.
 - Paper: H2 added to main Discussion and supplement S-III-E; the conclusion now says both directions; the limitation "the re-run is Krum's only" removed because it became false. Main 10 pp, supplement 6 pp.
 
+
+## Iteration 37 - 2026-10-31 - Final polish
+- Read through main and supplement. Conflict fixed: main treats coordinate-wise trimmed mean as a negative control, but Lee et al.'s "trimmed mean" selects whole clients by summed squared distance, so it is a distance rule; both documents now say so. Fang's use of it is stated too.
+- Abstract now carries the published-pipeline result (250 words). The scope bullet says both directions. Light wording edits only; no result changed.
+- Cover letter rewritten for TIFS with the current title and results (the old one was the JISA letter for an earlier paper). README.txt, make_package.sh and the Makefile package target no longer describe the Elsevier package. Flat package builds at 10 pp.
+- Open before submission: the public repository named in the data statement was last pushed 2026-08-25 and this clone has no remote, so it lacks this work. Suggested reviewers need names.

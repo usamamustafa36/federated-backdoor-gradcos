@@ -1,105 +1,44 @@
-# Cover letter — Journal of Information Security and Applications
+# Cover letter: IEEE Transactions on Information Forensics and Security
 
-**Draft.** Fill in the editor's name and the date, and confirm the suggested
-reviewers before sending.
+**Draft.** Add the editor's name and the date, and fill in the suggested reviewers, before sending.
 
 ---
 
-To the Editors,
-Journal of Information Security and Applications
+To the Editor-in-Chief,
+IEEE Transactions on Information Forensics and Security
 
-Dear Editors,
+Dear Editor,
 
-We submit for your consideration **"Direction Is Not Enough: Trigger Salience and
-Adaptive Collusion against Byzantine-Robust Federated Intrusion Detection"** as an
-original research article.
+We submit "A Silent Measurement Hazard in PyTorch Federated Learning: When Byzantine-Robust Aggregators Decide on a BatchNorm Counter" for consideration as a regular paper.
 
-Federated learning is an increasingly common way to build network intrusion
-detectors across organisations that cannot pool their traffic, and a large
-literature now offers Byzantine-robust aggregation rules to protect the resulting
-models from compromised participants. Our paper reports that most of those rules
-read the same underlying quantity — where a client's update points — and that this
-shared signal fails in two ways that the literature's usual evaluation protocol
-does not surface.
+Robust aggregation rules compare the updates clients send. Many PyTorch pipelines send a `state_dict()`, which for a network with BatchNorm includes `num_batches_tracked`. Under the default momentum this integer does nothing to the model, yet once the update is flattened it can dominate the vector the rule reads. In our intrusion detector on CICIoT2023, the buffers carry most of the squared update norm. The evaluation then measures something other than the rule it set out to measure, and no error or accuracy curve shows it.
 
-The paper's contribution is primarily negative, and deliberately so:
+The paper makes four contributions:
 
-1. What decides whether a similarity-based defense holds is how far the trigger
-   rotates the poisoned update off the honest consensus direction. We define this
-   *salience gap* operationally, log it every round, and sweep trigger magnitude
-   along it, so the claim rests on a measured axis rather than on a contrast
-   between named trigger families. The malicious-client fraction, which this
-   literature usually treats as the governing parameter, is not what decides it.
+1. An exact decomposition of cosines and squared distances between transmitted updates. It predicts that cosine rules are always exposed and distance rules are exposed exactly when clients run different numbers of batches.
+2. A seed-paired A/B over thirteen rules that changes only the coordinates their decisions read. In registered tests, the counter stops FLTrust from excluding anyone, and a trained, norm-bounded attacker that falsifies the counter gains FLTrust weight and Multi-Krum admission. The counter also changes detection in both directions: it hides attackers from FLAME and FLDetector and lends FoolsGold detections the trainable update does not support. We found those detection effects by exploration, and their directions then replicated on registered held-out seeds.
+3. Mechanisms for these effects, including a falsified-counter result for FLTrust and an identity whose registered consequence for attackers with larger updates we tested. The effect vanished as predicted, but did not reverse in sign as we had also registered.
+4. A survey and a re-run of published code. Three of nine third-party implementations we inspected put the counter in the decision vector or hand it to one, including Flower's PyTorch example. We re-ran one published defense's official code with and without the mask. The error its authors plot moved in 9 of 18 registered cells, in both directions: masking lowered the error of its targeted trimmed-mean baseline from 0.55 to 0.14 at a 20% attacker fraction, and raised targeted Fang's from 0.17 to 0.57 at 10%.
 
-2. The collusion signal these defenses depend on is cheap to delete. An attacker
-   who adds zero-sum noise across the colluding cohort decorrelates its members
-   while leaving the aggregate untouched — no optimisation, no feedback channel,
-   one scalar parameter. That a *weaker* attacker than the published adaptive
-   attacks still works is, we think, worse news for the defenses than a stronger
-   one would be. We evaluate every direction-based rule in the paper against it,
-   including the one we propose.
+We think the work suits TIFS because it concerns how the security of a deployed class of defenses is evaluated, and because the remedy, one mask on the decision vector, is simple and can be applied to existing pipelines. We do not claim that the mask makes these rules good defenses: FLTrust with its exclusions restored is still not a useful detector in our setting, and the mask worsens one Fang cell.
 
-3. Detection rates reported without false-positive rates mislead. Once FPR is
-   visible, FLAME's low backdoor rate turns out to be bought by discarding two
-   honest clients in five, which accounts for its clean-accuracy deficit; and our
-   own detector, on low-salience triggers, is flagging clients at close to chance
-   rather than being merely conservative.
+Our registrations are dated commits with hash manifests in the released repository, not entries in a third-party registry. Our main scale is CPU-sized (ten clients, fifteen rounds), which the paper states as a limitation. The code, per-round logs, registration documents and result files are released, and the numbers in the manuscript's tables and text are generated from those files. The supplement holds the full proofs, calibration and withdrawn findings from an earlier version of this study.
 
-4. A joint-distribution audit shows the "in-distribution trigger" premise this
-   literature relies on does not follow from the marginal checks usually offered
-   for it. A trigger deviating by 0.5σ on any single feature can still sit beyond
-   the 99.99th percentile of joint benign variation. This finding is a correction
-   to our own earlier premise as much as to anyone else's.
-
-We also propose GradCos, a reference-free aggregator, and report its limits as
-plainly as its results: it inherits the family blind spot, it is bimodal across
-seeds on one of the two datasets, and it fails against the adaptive attacker above.
-
-We believe the work fits JISA's readership because it is about the evaluation
-practice of a deployed-security technique rather than about a single algorithm,
-and because its recommendations — report false-positive rates, measure salience
-instead of naming triggers, test against an attacker who knows what the aggregator
-measures — are directly actionable by practitioners building federated detectors.
-
-The study uses two public 2023 benchmarks, CICIoT2023 and FLNET2023. Every number
-in the manuscript is machine-generated from committed result files by a generator
-released with the code; nothing is transcribed by hand. The pipeline, the
-per-round update-geometry logs, the trigger realizability audit and all result
-files are publicly available.
-
-**Open access.** We wish to publish on the subscription track and decline the
-open-access option.
-
-The manuscript is original, has not been published elsewhere, and is not under
-consideration by another journal. All authors have approved the submission and
-declare no competing interests.
-
-Thank you for your consideration.
+This manuscript is original, has not been published elsewhere and is not under consideration by another journal. Both authors have approved the submission and declare no competing interests. The work received no specific grant.
 
 Sincerely,
 
-Usama Mustafa (corresponding author)
-Imran Rashid
+Usama Mustafa (corresponding author, usamamustafa1@gmail.com)
+Imran Rashid (irashid@mcs.edu.pk)
 Department of Information Security, Military College of Signals,
 National University of Sciences and Technology, Rawalpindi, Pakistan
-usamamustafa1@gmail.com
 
 ---
 
-## Suggested reviewers — TO CONFIRM BEFORE SENDING
+## Suggested reviewers: TO FILL IN BEFORE SENDING
 
-Editorial Manager will ask for these. Candidates whose work the paper engages
-directly, none of them collaborators of the authors. **Verify current affiliations
-and e-mail addresses before entering them, and check none is a conflict.**
+Not part of the letter. Choose named people, check affiliations and e-mail addresses, and rule out conflicts. Lines of work the paper engages directly:
 
-- A researcher on federated-learning poisoning defenses (the FLAME / DeepSight
-  line of work).
-- A researcher on adaptive attacks against robust aggregation (the Shejwalkar &
-  Houmansadr / Fang et al. line).
-- A researcher on problem-space vs. feature-space adversarial ML in security (the
-  Pierazzi et al. line), for the realizability audit.
-- A researcher on federated intrusion detection specifically (the SecFedNIDS /
-  WeiDetect line).
-
-Do not suggest anyone from the FLNET2023 or CICIoT2023 dataset groups if the paper
-is critical of the benchmark; it is not, but check.
+- Poisoning defenses for federated learning (the FLAME and FLTrust lines).
+- Adaptive attacks on robust aggregation (Shejwalkar and Houmansadr; Fang et al.).
+- Batch normalization in federated learning (FedBN; FBN).

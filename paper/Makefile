@@ -85,9 +85,8 @@ gate:
 check: gate
 	@$(PY) tools/check_manuscript.py
 
-# Flat folder for Editorial Manager -- Elsevier forbids subfolders in a
-# submission. Verifies the flattened copy still builds.
-package: main.pdf highlights
+# Flat submission folder. Verifies the flattened copy still builds.
+package: main.pdf supplement.pdf
 	@bash tools/make_package.sh
 
 clean:

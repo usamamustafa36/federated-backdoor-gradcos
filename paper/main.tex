@@ -37,12 +37,11 @@ the public, commercial or not-for-profit sectors.}}
 \maketitle
 
 \begin{abstract}
-Byzantine-robust aggregation rules protect federated learning by comparing the updates
-that clients send. Many PyTorch pipelines send each model as a \texttt{state\_dict()},
+Byzantine-robust aggregation rules protect federated learning by comparing client updates. Many PyTorch pipelines send each model as a \texttt{state\_dict()},
 which for a network with BatchNorm includes \texttt{num\_batches\_tracked}: an integer
 that counts local mini-batches and, under PyTorch's default momentum, does not affect the
-model. We show that aggregation rules nonetheless decide on it. An exact decomposition explains which rules are exposed: every pairwise cosine
-weights the trainable signal by at most one minus the buffer share, whatever the data,
+model. Aggregation rules nonetheless decide on it. An exact decomposition explains which rules are exposed: every pairwise cosine
+weights the trainable signal by at most one minus the buffer share,
 while distances are exposed only when clients run different numbers of batches. In a
 non-IID intrusion detector on CICIoT2023 the buffers carry a median
 $\pfDiagBufNormShareDir$ of the squared update norm. A seed-paired A/B that changes only
@@ -51,15 +50,15 @@ counter stops FLTrust from excluding anyone (Holm $p\le\pfPrePThreePh$) and a
 trained, norm-bounded attacker that falsifies it gains FLTrust weight and Multi-Krum
 admission (Holm $p\le\rOneMechFltPh$). It also changes, in both directions, whether
 defenses catch a backdoor attacker: it hides attackers from FLAME (detection rate
-$\pfDRFlameIidAtkDef$ against $\pfDRFlameIidAtkFix$, IID) and FLDetector
-($\pfDRFldetectorIidAtkDef$ against $\pfDRFldetectorIidAtkFix$), and makes FoolsGold
+$\pfDRFlameIidAtkDef$ against $\pfDRFlameIidAtkFix$, IID) and FLDetector, and makes FoolsGold
 exclude attackers it otherwise admits (backdoor success $\pfBSRFoolsgoldIidAtkDef$
 against $\pfBSRFoolsgoldIidAtkFix$). These exploratory directions replicated on
 registered held-out seeds ($\pxXOneN$ pairs, $p=\pxXOneP$). Evaluations on
 such pipelines can understate or overstate a defense.
 Three of nine inspected third-party implementations put the counter in that vector,
 including a 2025 defense's reference code and Flower's PyTorch example, whose updates
-Flower's own Krum and Bulyan compare.
+Flower's own Krum and Bulyan compare. In one published pipeline the mask moved the
+reported error, both ways (registered).
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -100,7 +99,7 @@ counter, so it does nothing to the model. But $B$ is large compared with a typic
 update: in the detector studied here the counter is one coordinate of
 $\dfNTrain$ trainable ones, yet the buffers carry a median $\pfDiagBufNormShareDir$
 of each transmitted update's squared norm over $\pfDiagBufNormShareDirRuns$ non-IID runs.
-Nothing errors; what changes is what the defenses compare. Clients whose
+Nothing raises an error; what changes is what the defenses compare. Clients whose
 trainable updates have a mean pairwise cosine of $\pfDiagCosSigDir$ appear,
 over the transmitted vectors, to agree at $\pfDiagCosFullDir$
 (Fig.~\ref{fig:schematic}). A rule that separates clients by angle is then separating
@@ -162,7 +161,7 @@ coordinate-wise rules not at all. It holds on real updates to floating-point pre
 to the transmission convention, not to any rule. Three of nine third-party public
 implementations we inspected (and our own pipeline) put the counter in the decision vector or hand it to one,
 including Flower's PyTorch quick-start
-and AlignIns'~\cite{xu2025alignins} official code. In one, the error its authors plot moves under the mask (registered).
+and AlignIns'~\cite{xu2025alignins} official code. In one, the error its authors plot moves under the mask, both ways (registered).
 \item \textbf{What the counter changes, measured causally} (Sec.~\ref{sec:p1}).
 Every rule runs twice, identical except whether its decisions read the full vector
 or the trainable coordinates (paired seeds, two partitions, clean and attacked, $\pfCellsTarget$ cells,
@@ -279,9 +278,6 @@ For any two clients $i,j$ with $u_i,u_j,b_i,b_j\neq 0$,
 The blocks $u$, $r$ and $c$ occupy disjoint coordinates, so inner products and
 squared norms add across them (full proof in Sec.~\ref{sup:proofs}).
 \end{proof}
-
-The proposition is elementary; its use is that it separates, exactly, what each
-family of aggregation rules reads.
 
 \begin{corollary}[Cosine rules are always exposed]
 \label{cor:band}
@@ -954,7 +950,8 @@ reporting the cohort's count would withdraw it at no cost (Sec.~\ref{sec:setup};
 
 \textbf{A published pipeline (registered).} We re-ran the official code of an exposed
 defense~\cite{lee2024triplet} (ResNet-18, $L=20$, unequal shards; $10$ paired
-seeds, Sec.~\ref{sup:r2}), changing only the vector its rules decide on. The counter carries
+seeds, Sec.~\ref{sup:r2}), changing only the vector its rules decide on; its ``trimmed mean'' drops
+whole clients by summed squared distance, unlike the coordinate-wise rule of Table~\ref{tab:rules}. The counter carries
 $\rTwoKrumTgtShareMin$--$\rTwoKrumTgtShareMax$ of the squared distances Krum reads. The
 minimum test error the authors plot moves in $\rTwoHOneSupported$ of $6$ cells, all under
 untargeted poisoning (MPAF; $\rTwoKrumUtgOneDiff$ to $\rTwoKrumUtgTwoDiff$,

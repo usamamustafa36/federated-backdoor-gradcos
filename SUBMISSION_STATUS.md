@@ -1,3 +1,5 @@
+> **Current (2026-10-31): venue is IEEE TIFS, title "A Silent Measurement Hazard in PyTorch Federated Learning: When Byzantine-Robust Aggregators Decide on a BatchNorm Counter".** The manuscript moved back to IEEEtran in iteration 11. See iterations/LEDGER.md. Everything below predates this and is kept as history.
+
 # Paper 8, submission status
 
 > **Venue: Elsevier JISA, not IEEE TIFS.** Retargeted 5 September 2026; see the
