@@ -43,3 +43,19 @@ paper/submission/
 # R2: third-party code (cloned at pinned commits, see iterations/PREREG_R2.md) and private torchvision
 experiments/r2_exposed/_ext/
 experiments/r2_exposed/.pylib/
+
+# ---- Internal notes, kept locally, not released ----
+CONTRIBUTION.md
+PROGRESS.md
+PUBLISHABILITY.md
+QA_FINDINGS.md
+REFRAME.md
+RESUME_HERE.md
+SUBMISSION_STATUS.md
+iterations/AGENT_BRIEF.md
+iterations/BLIND_REVIEW_1.md
+iterations/LEDGER.md
+paper/cover_letter.md
+paper/*.bak
+paper/_dropped/
+paper/submission/

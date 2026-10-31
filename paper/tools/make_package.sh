@@ -22,7 +22,7 @@ cp figs/*.pdf "$OUT"/
 cp main.pdf supplement.pdf "$OUT"/
 
 # Not uploaded; carried so the folder is self-describing.
-cp README.txt cover_letter.md "$OUT"/
+cp README.txt "$OUT"/
 
 echo "Flat submission folder: $(pwd)/$OUT"
 echo
