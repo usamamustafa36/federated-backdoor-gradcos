@@ -163,3 +163,8 @@ Runs a session does not finish are re-sent in the next one.
 **Outcomes seen:** H1 reached 120/120 with these copies and was scored by analyse_r2.py under
 Amendment 3's rule (H1 supported in 3 of 6 cells). That does not bear on this amendment, which moves only
 H2 and unregistered runs between devices. H2: none (completeness flags only).
+
+## Amendment 7 (2026-10-31, iteration 38): the last 19 `trainable` runs on the local GPU. No design change.
+
+The Kaggle GPU quota (6 h a week) ran out at the v5 session with 19 krum `trainable` runs open; the next reset is 2026-11-07. Amendment 6 said the local GPU runs nothing more; this amendment reverses that for these 19 runs only, at the owner's request to finish now. They are listed in results/r2_exposed/local_jobs_am7.txt and run through the same harness and code. `trainable` is reported, not tested, and has no pair rule, so no registered test changes.
+**Outcomes seen:** H1 and H2 complete and scored (3/6 and 6/12). `trainable`: completeness flags only; no `trainable` outcome has been read.
