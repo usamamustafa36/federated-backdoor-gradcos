@@ -48,3 +48,121 @@ Traceback (most recent call last):
   File "/home/ubuntu/Projects/THESIS/completed/usama-phd/paper08-tifs-direction-is-not-enough/experiments/r2_exposed/_ext/byzantineFL/utils/attack.py", line 21, in untargeted_attack
     tmp += (w[k].to(args.device) - w_base) * args.mp_lambda
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 15.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1309892 has 2.24 GiB memory in use. Process 1337635 has 438.00 MiB memory in use. Including non-PyTorch memory, this process has 344.00 MiB memory in use. Of the allocated memory 205.31 MiB is allocated by PyTorch, and 8.69 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+===== Kaggle usamaa36/paper08-r2-kaggle v3 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:56<3:07:35, 56.56s/it]  1%|          | 2/200 [01:54<3:09:36, 57.46s/it]  2%|▏         | 3/200 [02:52<3:08:41, 57.47s/it]  2%|▏         | 4/200 [03:48<3:06:52, 57.21s/it]  2%|▎         | 5/200 [04:31<2:48:32, 51.86s/it]  3%|▎         | 6/200 [05:29<2:54:11, 53.87s/it]  4%|▎         | 7/200 [06:26<2:56:53, 54.99s/it]  4%|▍         | 8/200 [07:21<2:56:10, 55.05s/it]  4%|▍         | 9/200 [08:16<2:55:30, 55.14s/it]  5%|▌         | 10/200 [09:13<2:55:54, 55.55s/it]  6%|▌         | 11/200 [10:11<2:57:20, 56.30s/it]  6%|▌         | 12/200 [11:10<2:59:16, 57.22s/it]  6%|▋         | 13/200 [12:08<2:58:41, 57.33s/it]  7%|▋         | 14/200 [13:03<2:56:11, 56.83s/it]  8%|▊         | 15/200 [13:54<2:49:14, 54.89s/it]  8%|▊         | 16/200 [14:50<2:49:42, 55.34s/it]  8%|▊         | 17/200 [15:48<2:51:17, 56.16s/it]  9%|▉         | 18/200 [16:43<2:49:03, 55.73s/it] 10%|▉         | 19/200 [17:39<2:48:36, 55.89s/it] 10%|█         | 20/200 [18:35<2:47:43, 55.91s/it] 10%|█         | 21/200 [19:32<2:47:21, 56.10s/it] 11%|█         | 22/200 [20:28<2:46:47, 56.22s/it] 11%|█         | 22/200 [21:24<2:53:16, 58.41s/it]
+Round: 0
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 11.312481880187988
+Test loss: 8.635575430719335e+20
+Check accuracy: 7.13241720199585
+patience: 0
+Round: 2
+Test accuracy: 7.892429351806641
+Test loss: 8.001859156503737e+20
+Check accuracy: 11.312481880187988
+patience: 0
+Round: 3
+Test accuracy: 7.0154924392700195
+Test loss: 6.880919304447443e+21
+Check accuracy: 11.312481880187988
+patience: 1
+Round: 4
+Test accuracy: 36.24671173095703
+Test loss: 66739.17261034786
+Check accuracy: 11.312481880187988
+patience: 2
+Round: 5
+Test accuracy: 7.950891494750977
+Test loss: 3.1977972037423034e+17
+Check accuracy: 36.24671173095703
+patience: 0
+Round: 6
+Test accuracy: 8.79859733581543
+Test loss: 4.842392199875226e+16
+Check accuracy: 36.24671173095703
+patience: 1
+Round: 7
+Test accuracy: 6.109324932098389
+Test loss: 1.0361863426276188e+24
+Check accuracy: 36.24671173095703
+patience: 2
+Round: 8
+Test accuracy: 5.904706001281738
+Test loss: 3.121599854119525e+25
+Check accuracy: 36.24671173095703
+patience: 3
+Round: 9
+Test accuracy: 49.3422966003418
+Test loss: 246250929.72581115
+Check accuracy: 36.24671173095703
+patience: 4
+Round: 10
+Test accuracy: 14.498684883117676
+Test loss: 2.0899703915244884e+16
+Check accuracy: 49.3422966003418
+patience: 0
+Round: 11
+Test accuracy: 11.663256645202637
+Test loss: 4.106283866716341e+19
+Check accuracy: 49.3422966003418
+patience: 1
+Round: 12
+Test accuracy: 10.669394493103027
+Test loss: 3.5029936008993905e+20
+Check accuracy: 49.3422966003418
+patience: 2
+Round: 13
+Test accuracy: 6.986261367797852
+Test loss: 1.03280148837754e+28
+Check accuracy: 49.3422966003418
+patience: 3
+Round: 14
+Test accuracy: 55.013153076171875
+Test loss: 199216701993.15756
+Check accuracy: 49.3422966003418
+patience: 4
+Round: 15
+Test accuracy: 8.097047805786133
+Test loss: 1.4733057716219718e+24
+Check accuracy: 55.013153076171875
+patience: 0
+Round: 16
+Test accuracy: 6.752411365509033
+Test loss: 1.682660310029676e+30
+Check accuracy: 55.013153076171875
+patience: 1
+Round: 17
+Test accuracy: 7.103186130523682
+Test loss: 3.9042435123187417e+31
+Check accuracy: 55.013153076171875
+patience: 2
+Round: 18
+Test accuracy: 11.020169258117676
+Test loss: 3.568447182498292e+25
+Check accuracy: 55.013153076171875
+patience: 3
+Round: 19
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 55.013153076171875
+patience: 4
+Round: 20
+Test accuracy: 10.114002227783203
+Test loss: 1.6432841026850868e+27
+Check accuracy: 55.013153076171875
+patience: 5
+Round: 21
+Test accuracy: 9.997076988220215
+Test loss: 4.834022220901417e+27
+Check accuracy: 55.013153076171875
+patience: 6
+Round: 22
+Test accuracy: 13.300204277038574
+Test loss: 2.000547620748693e+28
+Check accuracy: 55.013153076171875
+patience: 7
+Early stopped federated training!

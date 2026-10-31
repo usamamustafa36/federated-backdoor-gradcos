@@ -46,3 +46,51 @@ CUDA kernel errors might be asynchronously reported at some other API call, so t
 For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
 
+===== Kaggle usamaa36/paper08-r2-kaggle v4 (2x T4), fetched 2026-10-31 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [01:19<4:23:17, 79.38s/it]  1%|          | 2/200 [02:39<4:22:34, 79.57s/it]  2%|▏         | 3/200 [03:58<4:20:25, 79.32s/it]  2%|▏         | 4/200 [05:16<4:17:57, 78.96s/it]  2%|▎         | 5/200 [06:35<4:17:03, 79.09s/it]  3%|▎         | 6/200 [07:54<4:15:37, 79.06s/it]  4%|▎         | 7/200 [09:14<4:14:39, 79.17s/it]  4%|▍         | 8/200 [10:33<4:12:58, 79.06s/it]  4%|▍         | 8/200 [11:50<4:44:18, 88.85s/it]
+Round: 0
+Test accuracy: 52.38234329223633
+Test loss: 1.3829865286971212
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 8.301666259765625
+Test loss: 2.217394113192186
+Check accuracy: 52.38234329223633
+patience: 0
+Round: 2
+Test accuracy: 19.46799087524414
+Test loss: 2.1614882740421066
+Check accuracy: 52.38234329223633
+patience: 1
+Round: 3
+Test accuracy: 8.301666259765625
+Test loss: 2.213790501045644
+Check accuracy: 52.38234329223633
+patience: 2
+Round: 4
+Test accuracy: 24.378835678100586
+Test loss: 2.016928250453027
+Check accuracy: 52.38234329223633
+patience: 3
+Round: 5
+Test accuracy: 17.743349075317383
+Test loss: 2.073713889703246
+Check accuracy: 52.38234329223633
+patience: 4
+Round: 6
+Test accuracy: 8.301666259765625
+Test loss: 2.09922013537851
+Check accuracy: 52.38234329223633
+patience: 5
+Round: 7
+Test accuracy: 17.42180633544922
+Test loss: 2.0411232304621842
+Check accuracy: 52.38234329223633
+patience: 6
+Round: 8
+Test accuracy: 14.469453811645508
+Test loss: 1.999986775121435
+Check accuracy: 52.38234329223633
+patience: 7
+Early stopped federated training!

@@ -86,3 +86,56 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/parameter.py", line 68, in __deepcopy__
     self.data.clone(memory_format=torch.preserve_format), self.requires_grad
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 13.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1102359 has 92.00 MiB memory in use. Process 1309892 has 2.19 GiB memory in use. Process 1317087 has 524.00 MiB memory in use. Including non-PyTorch memory, this process has 304.00 MiB memory in use. Of the allocated memory 164.26 MiB is allocated by PyTorch, and 9.74 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+===== Kaggle usamaa36/paper08-r2-kaggle v3 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [01:12<4:00:25, 72.49s/it]  1%|          | 2/200 [02:25<3:59:56, 72.71s/it]  2%|▏         | 3/200 [03:37<3:58:00, 72.49s/it]  2%|▏         | 4/200 [04:50<3:56:57, 72.54s/it]  2%|▎         | 5/200 [06:03<3:56:21, 72.72s/it]  3%|▎         | 6/200 [07:16<3:56:01, 73.00s/it]  4%|▎         | 7/200 [08:29<3:54:17, 72.83s/it]  4%|▍         | 8/200 [09:41<3:52:22, 72.62s/it]  4%|▍         | 9/200 [10:54<3:51:11, 72.62s/it]  4%|▍         | 9/200 [12:06<4:16:57, 80.72s/it]
+Round: 0
+Test accuracy: 14.35252857208252
+Test loss: 2.202302885348251
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 19.935691833496094
+Test loss: 2.1077122603268417
+Check accuracy: 14.35252857208252
+patience: 0
+Round: 2
+Test accuracy: 18.474130630493164
+Test loss: 2.291110585426525
+Check accuracy: 19.935691833496094
+patience: 0
+Round: 3
+Test accuracy: 14.001753807067871
+Test loss: 2.083999227899029
+Check accuracy: 19.935691833496094
+patience: 1
+Round: 4
+Test accuracy: 14.761765480041504
+Test loss: 2.1828434020585745
+Check accuracy: 19.935691833496094
+patience: 2
+Round: 5
+Test accuracy: 13.738673210144043
+Test loss: 2.093329444401308
+Check accuracy: 19.935691833496094
+patience: 3
+Round: 6
+Test accuracy: 13.826366424560547
+Test loss: 2.1400489216135177
+Check accuracy: 19.935691833496094
+patience: 4
+Round: 7
+Test accuracy: 13.738673210144043
+Test loss: 2.0813074990065954
+Check accuracy: 19.935691833496094
+patience: 5
+Round: 8
+Test accuracy: 13.738673210144043
+Test loss: 2.1229024093703757
+Check accuracy: 19.935691833496094
+patience: 6
+Round: 9
+Test accuracy: 13.767904281616211
+Test loss: 2.064864015063498
+Check accuracy: 19.935691833496094
+patience: 7
+Early stopped federated training!

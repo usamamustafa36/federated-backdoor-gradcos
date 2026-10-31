@@ -46,3 +46,66 @@ CUDA kernel errors might be asynchronously reported at some other API call, so t
 For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
 
+===== Kaggle usamaa36/paper08-r2-kaggle v4 (2x T4), fetched 2026-10-31 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [01:10<3:54:57, 70.84s/it]  1%|          | 2/200 [02:20<3:52:12, 70.36s/it]  2%|▏         | 3/200 [03:30<3:49:30, 69.90s/it]  2%|▏         | 4/200 [04:40<3:48:25, 69.93s/it]  2%|▎         | 5/200 [05:50<3:48:11, 70.21s/it]  3%|▎         | 6/200 [07:02<3:48:07, 70.55s/it]  4%|▎         | 7/200 [08:12<3:47:08, 70.61s/it]  4%|▍         | 8/200 [09:23<3:46:04, 70.65s/it]  4%|▍         | 9/200 [10:33<3:44:32, 70.54s/it]  5%|▌         | 10/200 [11:44<3:43:52, 70.70s/it]  6%|▌         | 11/200 [12:55<3:42:46, 70.72s/it]  6%|▌         | 11/200 [14:06<4:02:18, 76.92s/it]
+Round: 0
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 17.451038360595703
+Test loss: 24461350573558.57
+Check accuracy: 7.13241720199585
+patience: 0
+Round: 2
+Test accuracy: 16.98333740234375
+Test loss: 10751235839358.84
+Check accuracy: 17.451038360595703
+patience: 0
+Round: 3
+Test accuracy: 19.46799087524414
+Test loss: 33273470236100.285
+Check accuracy: 17.451038360595703
+patience: 1
+Round: 4
+Test accuracy: 19.380298614501953
+Test loss: 95275833905284.9
+Check accuracy: 19.46799087524414
+patience: 0
+Round: 5
+Test accuracy: 19.380298614501953
+Test loss: 325296632235861.4
+Check accuracy: 19.46799087524414
+patience: 1
+Round: 6
+Test accuracy: 19.234142303466797
+Test loss: 1252229300295608.8
+Check accuracy: 19.46799087524414
+patience: 2
+Round: 7
+Test accuracy: 19.17568016052246
+Test loss: 4661828823891657.0
+Check accuracy: 19.46799087524414
+patience: 3
+Round: 8
+Test accuracy: 19.204910278320312
+Test loss: 1.8204678019991904e+16
+Check accuracy: 19.46799087524414
+patience: 4
+Round: 9
+Test accuracy: 19.321836471557617
+Test loss: 7.246808245003923e+16
+Check accuracy: 19.46799087524414
+patience: 5
+Round: 10
+Test accuracy: 19.35106658935547
+Test loss: 2.8799568811059846e+17
+Check accuracy: 19.46799087524414
+patience: 6
+Round: 11
+Test accuracy: 19.26337242126465
+Test loss: 1.1261300451361188e+18
+Check accuracy: 19.46799087524414
+patience: 7
+Early stopped federated training!

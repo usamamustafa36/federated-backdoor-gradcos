@@ -52,3 +52,61 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 125, in forward
     return F.linear(input, self.weight, self.bias)
 RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`
+===== Kaggle usamaa36/paper08-r2-kaggle v3 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:54<3:00:27, 54.41s/it]  1%|          | 2/200 [01:46<2:54:34, 52.90s/it]  2%|▏         | 3/200 [02:35<2:48:35, 51.35s/it]  2%|▏         | 4/200 [03:27<2:48:31, 51.59s/it]  2%|▎         | 5/200 [04:22<2:51:28, 52.76s/it]  3%|▎         | 6/200 [05:18<2:54:00, 53.82s/it]  4%|▎         | 7/200 [06:12<2:52:59, 53.78s/it]  4%|▍         | 8/200 [07:02<2:48:58, 52.81s/it]  4%|▍         | 9/200 [07:53<2:46:15, 52.23s/it]  5%|▌         | 10/200 [08:46<2:45:35, 52.29s/it]  5%|▌         | 10/200 [09:40<3:03:52, 58.06s/it]
+Round: 0
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 17.53873062133789
+Test loss: 2.136694568995403e+28
+Check accuracy: 7.13241720199585
+patience: 0
+Round: 2
+Test accuracy: 37.91289138793945
+Test loss: 3262.372159090909
+Check accuracy: 17.53873062133789
+patience: 0
+Round: 3
+Test accuracy: 17.53873062133789
+Test loss: 6.344880393034382e+17
+Check accuracy: 37.91289138793945
+patience: 0
+Round: 4
+Test accuracy: 17.217187881469727
+Test loss: 3.716782385437838e+29
+Check accuracy: 37.91289138793945
+patience: 1
+Round: 5
+Test accuracy: 15.872551918029785
+Test loss: 3.819388123460306e+31
+Check accuracy: 37.91289138793945
+patience: 2
+Round: 6
+Test accuracy: 17.50950050354004
+Test loss: 1.4079044316997603e+20
+Check accuracy: 37.91289138793945
+patience: 3
+Round: 7
+Test accuracy: 15.989477157592773
+Test loss: 6.382319410067738e+27
+Check accuracy: 37.91289138793945
+patience: 4
+Round: 8
+Test accuracy: 16.6325626373291
+Test loss: 8.248348452016049e+21
+Check accuracy: 37.91289138793945
+patience: 5
+Round: 9
+Test accuracy: 16.194095611572266
+Test loss: 4.1782578605829225e+29
+Check accuracy: 37.91289138793945
+patience: 6
+Round: 10
+Test accuracy: 16.720256805419922
+Test loss: 5.583273332685596e+23
+Check accuracy: 37.91289138793945
+patience: 7
+Early stopped federated training!

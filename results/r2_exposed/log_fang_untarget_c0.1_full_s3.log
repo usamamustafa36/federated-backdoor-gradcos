@@ -57,3 +57,56 @@ CUDA kernel errors might be asynchronously reported at some other API call, so t
 For debugging consider passing CUDA_LAUNCH_BLOCKING=1
 Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
 
+===== Kaggle usamaa36/paper08-r2-kaggle v3 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [01:09<3:50:56, 69.63s/it]  1%|          | 2/200 [02:19<3:49:47, 69.63s/it]  2%|▏         | 3/200 [03:28<3:47:52, 69.41s/it]  2%|▏         | 4/200 [04:37<3:45:42, 69.10s/it]  2%|▎         | 5/200 [05:44<3:42:51, 68.57s/it]  3%|▎         | 6/200 [06:52<3:41:22, 68.46s/it]  4%|▎         | 7/200 [08:02<3:41:05, 68.73s/it]  4%|▍         | 8/200 [09:10<3:39:45, 68.68s/it]  4%|▍         | 9/200 [10:19<3:38:54, 68.77s/it]  4%|▍         | 9/200 [11:27<4:03:19, 76.43s/it]
+Round: 0
+Test accuracy: 7.13241720199585
+Test loss: nan
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 13.300204277038574
+Test loss: 30467019758842.54
+Check accuracy: 7.13241720199585
+patience: 0
+Round: 2
+Test accuracy: 7.8631978034973145
+Test loss: 10084678842610.455
+Check accuracy: 13.300204277038574
+patience: 0
+Round: 3
+Test accuracy: 5.64162540435791
+Test loss: 20861572650716.453
+Check accuracy: 13.300204277038574
+patience: 1
+Round: 4
+Test accuracy: 5.232388019561768
+Test loss: 71505026833361.61
+Check accuracy: 13.300204277038574
+patience: 2
+Round: 5
+Test accuracy: 5.378544330596924
+Test loss: 256671010767370.03
+Check accuracy: 13.300204277038574
+patience: 3
+Round: 6
+Test accuracy: 6.021631240844727
+Test loss: 921339212001563.8
+Check accuracy: 13.300204277038574
+patience: 4
+Round: 7
+Test accuracy: 6.372405529022217
+Test loss: 3587317325682181.0
+Check accuracy: 13.300204277038574
+patience: 5
+Round: 8
+Test accuracy: 6.343174457550049
+Test loss: 1.4362863144146892e+16
+Check accuracy: 13.300204277038574
+patience: 6
+Round: 9
+Test accuracy: 6.606255531311035
+Test loss: 5.613860162455399e+16
+Check accuracy: 13.300204277038574
+patience: 7
+Early stopped federated training!

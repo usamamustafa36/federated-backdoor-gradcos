@@ -94,3 +94,51 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/nn/modules/linear.py", line 125, in forward
     return F.linear(input, self.weight, self.bias)
 RuntimeError: CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`
+===== Kaggle usamaa36/paper08-r2-kaggle v3 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:50<2:46:18, 50.15s/it]  1%|          | 2/200 [01:39<2:43:51, 49.65s/it]  2%|▏         | 3/200 [02:28<2:42:34, 49.52s/it]  2%|▏         | 4/200 [03:18<2:41:37, 49.47s/it]  2%|▎         | 5/200 [04:07<2:40:48, 49.48s/it]  3%|▎         | 6/200 [04:57<2:39:51, 49.44s/it]  4%|▎         | 7/200 [05:45<2:38:17, 49.21s/it]  4%|▍         | 8/200 [06:34<2:36:57, 49.05s/it]  4%|▍         | 8/200 [07:23<2:57:34, 55.49s/it]
+Round: 0
+Test accuracy: 25.606548309326172
+Test loss: 2.089192051178041
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 18.240280151367188
+Test loss: 2.1806456948609005
+Check accuracy: 25.606548309326172
+patience: 0
+Round: 2
+Test accuracy: 9.529376983642578
+Test loss: 2.124606755002135
+Check accuracy: 25.606548309326172
+patience: 1
+Round: 3
+Test accuracy: 8.301666259765625
+Test loss: 2.1630111154636005
+Check accuracy: 25.606548309326172
+patience: 2
+Round: 4
+Test accuracy: 8.301666259765625
+Test loss: 2.0950196864694854
+Check accuracy: 25.606548309326172
+patience: 3
+Round: 5
+Test accuracy: 20.08184814453125
+Test loss: 2.103138245396083
+Check accuracy: 25.606548309326172
+patience: 4
+Round: 6
+Test accuracy: 15.989477157592773
+Test loss: 2.062538233949092
+Check accuracy: 25.606548309326172
+patience: 5
+Round: 7
+Test accuracy: 22.0111083984375
+Test loss: 2.06296524810568
+Check accuracy: 25.606548309326172
+patience: 6
+Round: 8
+Test accuracy: 21.66033363342285
+Test loss: 2.0397927630752615
+Check accuracy: 25.606548309326172
+patience: 7
+Early stopped federated training!

@@ -44,3 +44,51 @@ Traceback (most recent call last):
   File "/home/ubuntu/.local/lib/python3.10/site-packages/torch/autograd/graph.py", line 823, in _engine_run_backward
     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 7.75 GiB of which 15.69 MiB is free. Process 707875 has 4.62 GiB memory in use. Process 1309892 has 2.24 GiB memory in use. Process 1352660 has 438.00 MiB memory in use. Including non-PyTorch memory, this process has 438.00 MiB memory in use. Of the allocated memory 295.17 MiB is allocated by PyTorch, and 12.83 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+===== Kaggle usamaa36/paper08-r2-kaggle v3 (2x T4), session ending 2026-10-30 =====
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [00:59<3:16:38, 59.29s/it]  1%|          | 2/200 [02:00<3:20:18, 60.70s/it]  2%|▏         | 3/200 [03:02<3:19:54, 60.89s/it]  2%|▏         | 4/200 [04:03<3:19:29, 61.07s/it]  2%|▎         | 5/200 [05:05<3:19:07, 61.27s/it]  3%|▎         | 6/200 [06:07<3:19:21, 61.66s/it]  4%|▎         | 7/200 [07:11<3:20:18, 62.27s/it]  4%|▍         | 8/200 [08:08<3:14:21, 60.73s/it]  4%|▍         | 8/200 [09:06<3:38:29, 68.28s/it]
+Round: 0
+Test accuracy: 25.168079376220703
+Test loss: 1.999546589610243
+Check accuracy: 0
+patience: 0
+Round: 1
+Test accuracy: 24.58345603942871
+Test loss: 2.2301251752374465
+Check accuracy: 25.168079376220703
+patience: 0
+Round: 2
+Test accuracy: 8.301666259765625
+Test loss: 2.234724761240317
+Check accuracy: 25.168079376220703
+patience: 1
+Round: 3
+Test accuracy: 9.178603172302246
+Test loss: 2.151738126387341
+Check accuracy: 25.168079376220703
+patience: 2
+Round: 4
+Test accuracy: 8.301666259765625
+Test loss: 2.138666232682501
+Check accuracy: 25.168079376220703
+patience: 3
+Round: 5
+Test accuracy: 8.506284713745117
+Test loss: 2.116191713477533
+Check accuracy: 25.168079376220703
+patience: 4
+Round: 6
+Test accuracy: 8.301666259765625
+Test loss: 2.0518176210654895
+Check accuracy: 25.168079376220703
+patience: 5
+Round: 7
+Test accuracy: 8.301666259765625
+Test loss: 2.065609884833565
+Check accuracy: 25.168079376220703
+patience: 6
+Round: 8
+Test accuracy: 10.523239135742188
+Test loss: 1.9644073111660403
+Check accuracy: 25.168079376220703
+patience: 7
+Early stopped federated training!
